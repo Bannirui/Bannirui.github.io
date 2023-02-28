@@ -16,22 +16,25 @@
   <meta name="author" content="Banirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="反向代理与CDN加速网站响应 CND 部署在网络提供商的机房，使用户在请求网站服务时，可以从距离自己最近的网络提供商机房获取数据 反向代理 部署在网站的中心机房，当用户请求到达中心机房后，首先访问的服务器是反向代理服务器，如果反向代理服务器中缓存着用户请求的资源，就将其直接返回给用户  分布式数据库分布式数据库是网站数据库拆分的最后手段，只有在单表数据规模非常庞大的时候才使用。不到不得已时，网站更">
+    <meta name="description" content="GitHub Pages + Hexo组合搭建个人博客环境 1 Github1.1 创建仓库创建仓库{用户名}.github.io，将来即可根据域名https:&#x2F;&#x2F;{用户名}.github.io&#x2F;访问博客。 1.2 设置GitHub Pages  1.3 创建Token给Hexo使用  2 Hexo2.1 安装先安装node，通过node安装Hexo 12brew i">
 <meta property="og:type" content="article">
-<meta property="og:title" content="大型网站技术架构-核心原理与案例分析">
-<meta property="og:url" content="http://example.com/2023/02/28/%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84-%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90/index.html">
+<meta property="og:title" content="个人博客搭建">
+<meta property="og:url" content="http://example.com/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/index.html">
 <meta property="og:site_name" content="光秃秃的猫子">
-<meta property="og:description" content="反向代理与CDN加速网站响应 CND 部署在网络提供商的机房，使用户在请求网站服务时，可以从距离自己最近的网络提供商机房获取数据 反向代理 部署在网站的中心机房，当用户请求到达中心机房后，首先访问的服务器是反向代理服务器，如果反向代理服务器中缓存着用户请求的资源，就将其直接返回给用户  分布式数据库分布式数据库是网站数据库拆分的最后手段，只有在单表数据规模非常庞大的时候才使用。不到不得已时，网站更">
+<meta property="og:description" content="GitHub Pages + Hexo组合搭建个人博客环境 1 Github1.1 创建仓库创建仓库{用户名}.github.io，将来即可根据域名https:&#x2F;&#x2F;{用户名}.github.io&#x2F;访问博客。 1.2 设置GitHub Pages  1.3 创建Token给Hexo使用  2 Hexo2.1 安装先安装node，通过node安装Hexo 12brew i">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-02-27T16:20:24.000Z">
-<meta property="article:modified_time" content="2023-02-27T16:21:02.353Z">
+<meta property="og:image" content="http://example.com/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E8%AE%BE%E7%BD%AEgithubpages.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E5%88%9B%E5%BB%BAtoken%E7%BB%99hexo%E4%BD%BF%E7%94%A8.png">
+<meta property="article:published_time" content="2023-02-28T00:46:26.000Z">
+<meta property="article:modified_time" content="2023-02-28T01:28:08.489Z">
 <meta property="article:author" content="Banirui">
-<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="博客环境">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E8%AE%BE%E7%BD%AEgithubpages.png">
   
   
   
-  <title>大型网站技术架构-核心原理与案例分析 - 光秃秃的猫子</title>
+  <title>个人博客搭建 - 光秃秃的猫子</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -214,7 +217,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="大型网站技术架构-核心原理与案例分析"></span>
+            <span id="subtitle" data-typed-text="个人博客搭建"></span>
           
         </div>
 
@@ -225,8 +228,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-02-28 00:20" pubdate>
-          2023年2月28日 凌晨
+        <time datetime="2023-02-28 08:46" pubdate>
+          2023年2月28日 早上
         </time>
       </span>
     
@@ -237,7 +240,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          647 字
+          1.2k 字
         
       </span>
     
@@ -248,7 +251,7 @@
         
         
         
-          6 分钟
+          10 分钟
         
       </span>
     
@@ -294,65 +297,54 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">大型网站技术架构-核心原理与案例分析</h1>
+            <h1 style="display: none">个人博客搭建</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="反向代理与CDN加速网站响应"><a href="#反向代理与CDN加速网站响应" class="headerlink" title="反向代理与CDN加速网站响应"></a>反向代理与CDN加速网站响应</h2><ul>
-<li>CND 部署在网络提供商的机房，使用户在请求网站服务时，可以从距离自己最近的网络提供商机房获取数据</li>
-<li>反向代理 部署在网站的中心机房，当用户请求到达中心机房后，首先访问的服务器是反向代理服务器，如果反向代理服务器中缓存着用户请求的资源，就将其直接返回给用户</li>
-</ul>
-<h2 id="分布式数据库"><a href="#分布式数据库" class="headerlink" title="分布式数据库"></a>分布式数据库</h2><p>分布式数据库是网站数据库拆分的最后手段，只有在单表数据规模非常庞大的时候才使用。不到不得已时，网站更常用的数据库拆分手段是业务分库，将不同业务的数据库部署在不同的物理服务器上</p>
-<h2 id="分布式方案"><a href="#分布式方案" class="headerlink" title="分布式方案"></a>分布式方案</h2><ul>
-<li>分布式应用和服务</li>
-<li>分布式静态资源</li>
-<li>分布式数据和存储</li>
-<li>分布式计算</li>
-</ul>
-<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><ul>
-<li>CDN</li>
-<li>反向代理</li>
-<li>本地缓存</li>
-<li>分布式缓存</li>
-</ul>
-<h2 id="架构要素"><a href="#架构要素" class="headerlink" title="架构要素"></a>架构要素</h2><ul>
-<li>性能</li>
-<li>可用性</li>
-<li>伸缩性</li>
-<li>扩展性<ul>
-<li>事件驱动</li>
-<li>分布式服务</li>
-</ul>
-</li>
-<li>安全性</li>
-</ul>
-<h2 id="服务降级"><a href="#服务降级" class="headerlink" title="服务降级"></a>服务降级</h2><ul>
-<li>拒绝服务<ul>
-<li>拒绝低优先级应用的调用，减少服务调用并发数，确保核心应用正常使用</li>
-<li>随机拒绝部分请求调用，节约资源，让一部分请求得以成功</li>
-</ul>
-</li>
-<li>关闭功能 关闭部分不重要的服务</li>
-</ul>
-<h2 id="分布式缓存的一致性Hash算法"><a href="#分布式缓存的一致性Hash算法" class="headerlink" title="分布式缓存的一致性Hash算法"></a>分布式缓存的一致性Hash算法</h2><p>一致性Hash算法通过一致性Hash环的数据结构实现Key到缓存服务器的Hash映射</p>
-<h2 id="事件驱动架构"><a href="#事件驱动架构" class="headerlink" title="事件驱动架构"></a>事件驱动架构</h2><p>事件驱动架构(Event Driven Architecture)，通过在低耦合的模块之间传输事件消息，以保持模块的松耦合，并借助事件消息的通信完成模块间的合作</p>
-<h2 id="网络攻击手段"><a href="#网络攻击手段" class="headerlink" title="网络攻击手段"></a>网络攻击手段</h2><ul>
-<li><p>XSS攻击 跨站点校本攻击，黑客通过篡改网页，注入恶意HTML脚本，在用户浏览网页时，控制用户浏览器进行恶意操作的一种攻击方式</p>
-<ul>
-<li>反射型</li>
-<li>持久型</li>
-</ul>
-</li>
-<li><p>注入攻击</p>
-<ul>
-<li>SQL注入</li>
-<li>OS注入</li>
-</ul>
-</li>
-<li><p>CSRF攻击 攻击者通过跨站请求，以合法用户的身份进行非法操作</p>
-</li>
-</ul>
+                <p>GitHub Pages + Hexo组合搭建个人博客环境</p>
+<h2 id="1-Github"><a href="#1-Github" class="headerlink" title="1 Github"></a>1 Github</h2><h3 id="1-1-创建仓库"><a href="#1-1-创建仓库" class="headerlink" title="1.1 创建仓库"></a>1.1 创建仓库</h3><p>创建仓库{用户名}.github.io，将来即可根据域名https:&#x2F;&#x2F;{用户名}.github.io&#x2F;访问博客。</p>
+<h3 id="1-2-设置GitHub-Pages"><a href="#1-2-设置GitHub-Pages" class="headerlink" title="1.2 设置GitHub Pages"></a>1.2 设置GitHub Pages</h3><img src="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E8%AE%BE%E7%BD%AEgithubpages.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="1-3-创建Token给Hexo使用"><a href="#1-3-创建Token给Hexo使用" class="headerlink" title="1.3 创建Token给Hexo使用"></a>1.3 创建Token给Hexo使用</h3><img src="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E5%88%9B%E5%BB%BAtoken%E7%BB%99hexo%E4%BD%BF%E7%94%A8.png" srcset="/img/loading.gif" lazyload class="">
+
+<h2 id="2-Hexo"><a href="#2-Hexo" class="headerlink" title="2 Hexo"></a>2 Hexo</h2><h3 id="2-1-安装"><a href="#2-1-安装" class="headerlink" title="2.1 安装"></a>2.1 安装</h3><p>先安装node，通过node安装Hexo</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew install node<br>npm install -g hexo-cli<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-创建项目"><a href="#2-2-创建项目" class="headerlink" title="2.2 创建项目"></a>2.2 创建项目</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo init hexo-blog<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-初始化启动"><a href="#2-3-初始化启动" class="headerlink" title="2.3 初始化启动"></a>2.3 初始化启动</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd hexo-blog<br>npm install<br>hexo s<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-4-安装Fluid主题"><a href="#2-4-安装Fluid主题" class="headerlink" title="2.4 安装Fluid主题"></a>2.4 安装Fluid主题</h3><p><a target="_blank" rel="noopener" href="https://github.com/fluid-dev/hexo-theme-fluid">Fluid官网</a>，根据README操作。</p>
+<h4 id="2-4-1-指定主题"><a href="#2-4-1-指定主题" class="headerlink" title="2.4.1 指定主题"></a>2.4.1 指定主题</h4><p>修改hexo-blog项目目录下_config.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">theme:</span> <span class="hljs-string">fluid</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="2-4-2-创建AboutMe"><a href="#2-4-2-创建AboutMe" class="headerlink" title="2.4.2 创建AboutMe"></a>2.4.2 创建AboutMe</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo new page about<br></code></pre></td></tr></table></figure>
+
+<p>修改<code>/source/about/index.md</code>，添加<code>layout</code>属性</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">more <span class="hljs-built_in">source</span>/about/index.md</span><br>---<br>title: about<br>date: 2023-02-27 22:43:06<br>layout: about<br>---<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-5-文章同名资源目录"><a href="#2-5-文章同名资源目录" class="headerlink" title="2.5 文章同名资源目录"></a>2.5 文章同名资源目录</h3><p>存放图片文件</p>
+<p>修改hexo-blog项目目录下_config.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">post_asset_folder:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-6-个性化页面"><a href="#2-6-个性化页面" class="headerlink" title="2.6 个性化页面"></a>2.6 个性化页面</h3><h4 id="2-6-1-浏览器tab页名称"><a href="#2-6-1-浏览器tab页名称" class="headerlink" title="2.6.1 浏览器tab页名称"></a>2.6.1 浏览器tab页名称</h4><p>修改<code>/hexo-blog/_config.yml</code>中<code>title</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-number">5</span> <span class="hljs-comment"># Site</span><br><span class="hljs-attr">6 title:</span> <span class="hljs-string">光秃秃的猫子</span><br><span class="hljs-attr">7 subtitle:</span> <span class="hljs-string">&#x27;&#x27;</span><br><span class="hljs-attr">8 description:</span> <span class="hljs-string">&#x27;Bannirui博客&#x27;</span><br><span class="hljs-attr">9 keywords:</span><br><span class="hljs-attr">10 author:</span> <span class="hljs-string">Banirui</span><br><span class="hljs-attr">11 language:</span> <span class="hljs-string">zh-CN</span><br><span class="hljs-attr">12 timezone:</span> <span class="hljs-string">&#x27;&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="2-6-2-博客主题"><a href="#2-6-2-博客主题" class="headerlink" title="2.6.2 博客主题"></a>2.6.2 博客主题</h4><p>修改<code>/hexo-blog/themes/fluid</code>中<code>blog_title</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">blog_title:</span> <span class="hljs-string">&quot;光秃秃的猫子&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="2-6-3-主页文字"><a href="#2-6-3-主页文字" class="headerlink" title="2.6.3 主页文字"></a>2.6.3 主页文字</h4><p>修改<code>/hexo-blog/themes/fluid</code>中<code>text</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">text:</span> <span class="hljs-string">&quot;Bannriui的个人博客&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-7-发布到GitHub"><a href="#2-7-发布到GitHub" class="headerlink" title="2.7 发布到GitHub"></a>2.7 发布到GitHub</h3><h4 id="2-7-1-安装hexo-deployer-git"><a href="#2-7-1-安装hexo-deployer-git" class="headerlink" title="2.7.1 安装hexo-deployer-git"></a>2.7.1 安装hexo-deployer-git</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">npm install hexo-deployer-git --save<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-7-2-配置token"><a href="#2-7-2-配置token" class="headerlink" title="2.7.2 配置token"></a>2.7.2 配置token</h4><p>修改<code>/hexo-blog/_config.yml</code>中<code>deploy</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">deploy:</span><br>  <span class="hljs-attr">type:</span> <span class="hljs-string">git</span><br>  <span class="hljs-attr">repo:</span> <span class="hljs-string">git@github.com:Bannirui/Bannirui.github.io.git</span><br>  <span class="hljs-attr">branch:</span> <span class="hljs-string">master</span><br>  <span class="hljs-attr">token:</span> <span class="hljs-string">xxx</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="2-7-3-创建文章"><a href="#2-7-3-创建文章" class="headerlink" title="2.7.3 创建文章"></a>2.7.3 创建文章</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo new post &#123;文章名称&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-7-4-发布访问"><a href="#2-7-4-发布访问" class="headerlink" title="2.7.4 发布访问"></a>2.7.4 发布访问</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo g -d<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -371,7 +363,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="category-chain-item">读书笔记</a>
+  <a href="/categories/%E5%B7%A5%E5%85%B7/" class="category-chain-item">工具</a>
   
   
 
@@ -386,7 +378,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">#分布式</a>
+        <a href="/tags/%E5%8D%9A%E5%AE%A2%E7%8E%AF%E5%A2%83/">#博客环境</a>
       
     </div>
   
@@ -398,8 +390,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>大型网站技术架构-核心原理与案例分析</div>
-      <div>http://example.com/2023/02/28/大型网站技术架构-核心原理与案例分析/</div>
+      <div>个人博客搭建</div>
+      <div>http://example.com/2023/02/28/个人博客搭建/</div>
     </div>
     <div class="license-meta">
       
@@ -443,18 +435,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" title="个人博客搭建">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">个人博客搭建</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/02/28/%E5%A4%A7%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%AB%99%E6%9E%B6%E6%9E%84-%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" title="大型分布式网站架构-设计与实现">
-                        <span class="hidden-mobile">大型分布式网站架构-设计与实现</span>
+                      <a href="/2023/02/28/%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84-%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90/" title="大型网站技术架构-核心原理与案例分析">
+                        <span class="hidden-mobile">大型网站技术架构-核心原理与案例分析</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
