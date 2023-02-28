@@ -286,7 +286,7 @@ web_analytics:  # 网页访问统计
     app_key: 9dmR6WL34qul6QR3KpDr7pEz
     # REST API 服务器地址，国际版不填
     # Only the Chinese mainland users need to set
-    server_url:
+    server_url: https://48wso0qa.lc-cn-n1-shared.com
     # 统计页面时获取路径的属性
     # Get the attribute of the page path during statistics
     path: window.location.pathname
@@ -441,7 +441,7 @@ footer:
     # Options: busuanzi | leancloud
     source: "leancloud"
     pv_foramt: "总访问量 {} 次"
-    uv_format: "总访客数 {} 次"
+    uv_format: "总访客数 {} 人"
 
   # 国内大陆服务器的备案信息
   # For Chinese mainland website policy, other areas keep disable
