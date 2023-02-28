@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>codestyle</title>
+    <link href="/2023/02/28/codestyle/"/>
+    <url>/2023/02/28/codestyle/</url>
+    
+    <content type="html"><![CDATA[<p>IDEA设置code style，通过format方式格式化代码，并设置配套的check style进行规范检查。</p><h2 id="1-文件下载"><a href="#1-文件下载" class="headerlink" title="1 文件下载"></a>1 文件下载</h2><h3 id="1-1-code-style"><a href="#1-1-code-style" class="headerlink" title="1.1 code style"></a>1.1 code style</h3><p>从<a href="https://github.com/google/styleguide.git">GitHub</a>下载文件intellij-java-google-style.xml</p><h3 id="1-2-check-style"><a href="#1-2-check-style" class="headerlink" title="1.2 check style"></a>1.2 check style</h3><p>从<a href="https://github.com/checkstyle/checkstyle.git">GitHub</a>下载google-checks.xml</p><h2 id="2-根据自己风格修改对应配置项"><a href="#2-根据自己风格修改对应配置项" class="headerlink" title="2 根据自己风格修改对应配置项"></a>2 根据自己风格修改对应配置项</h2><h2 id="3-配置code-style"><a href="#3-配置code-style" class="headerlink" title="3 配置code style"></a>3 配置code style</h2><img src="/2023/02/28/codestyle/20230228094509570.png" class=""><p><code>IntelliJ IDEA code style xml</code>选项卡导入intellij-java-google-style.xml</p><p><code>Checkstyle configuration</code>选项卡导入google-checks.xml</p><h2 id="4-配置check-style"><a href="#4-配置check-style" class="headerlink" title="4 配置check style"></a>4 配置check style</h2><h3 id="4-1-插件下载"><a href="#4-1-插件下载" class="headerlink" title="4.1 插件下载"></a>4.1 插件下载</h3><p>下载插件CheckStyle-IDEA</p><h3 id="4-2-配置插件"><a href="#4-2-配置插件" class="headerlink" title="4.2 配置插件"></a>4.2 配置插件</h3><img src="/2023/02/28/codestyle/20230228095201528.png" class=""><h3 id="4-3-使用插件"><a href="#4-3-使用插件" class="headerlink" title="4.3 使用插件"></a>4.3 使用插件</h3><img src="/2023/02/28/codestyle/20230228095406830.png" class="">]]></content>
+    
+    
+    <categories>
+      
+      <category>工具</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>代码规范</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>个人博客搭建</title>
     <link href="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
     <url>/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</url>
