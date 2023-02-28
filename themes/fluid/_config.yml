@@ -239,8 +239,9 @@ custom_css:
 
 # 网页访问统计
 # Analysis of website visitors
+# todo fluid该插件不支持从环境变量读取参数 但是该配置文件又托管在git上 先不配置访问统计通能
 web_analytics:  # 网页访问统计
-  enable: true
+  enable: false
 
   # 遵循访客浏览器"请勿追踪"的设置，如果开启则不统计其访问
   # Follow the "Do Not Track" setting of the visitor's browser
@@ -281,18 +282,19 @@ web_analytics:  # 网页访问统计
 
   # LeanCloud 计数统计，可用于 PV UV 展示，如果 `web_analytics: enable` 没有开启，PV UV 展示只会查询不会增加
   # LeanCloud count statistics, which can be used for PV UV display. If `web_analytics: enable` is false, PV UV display will only query and not increase
+# todo fluid该插件不支持从环境变量读取参数 但是该配置文件又托管在git上 先不配置访问统计通能
   leancloud:
-    app_id: 48Wso0QAZpL69Rgfcwo3Qfes-gzGzoHsz
-    app_key: 9dmR6WL34qul6QR3KpDr7pEz
+    app_id: 
+    app_key: 
     # REST API 服务器地址，国际版不填
     # Only the Chinese mainland users need to set
-    server_url: https://48wso0qa.lc-cn-n1-shared.com
+    server_url: 
     # 统计页面时获取路径的属性
     # Get the attribute of the page path during statistics
     path: window.location.pathname
     # 开启后不统计本地路径( localhost 与 127.0.0.1 )
     # If true, ignore localhost & 127.0.0.1
-    ignore_local: false
+    ignore_local: true
 
 # 对页面中的图片和评论插件进行懒加载处理，可见范围外的元素不会提前加载
 # Lazy loading of images and comment plugin on the page
@@ -579,8 +581,9 @@ post:
 
     # 浏览量计数
     # Number of visits
+    # todo 该插件不支持读取环境变量 需要明文配置参数 先不开启访问统计功能
     views:
-      enable: true
+      enable: false
       # 统计数据来源
       # Data Source
       # Options: busuanzi | leancloud
