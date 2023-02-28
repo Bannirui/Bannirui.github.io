@@ -108,4 +108,4 @@ deploy:
   type: git
   repo: git@github.com:Bannirui/Bannirui.github.io.git
   branch: master
-  token: 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
+  token: $GITHUB_TOKEN_FOR_HEXO
