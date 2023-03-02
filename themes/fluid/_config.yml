@@ -233,10 +233,10 @@ web_analytics:  # 网页访问统计
 # LEANCLOUD_APP_KEY
 # LEANCLOUD_SERVER_URL
   leancloud:
-    app_id: 
-    app_key: 
+    app_id:
+    app_key:
     # REST API 服务器地址，国际版不填
-    server_url: 
+    server_url:
     # 统计页面时获取路径的属性
     path: window.location.pathname
     # 开启后不统计本地路径( localhost 与 127.0.0.1 )
@@ -649,8 +649,8 @@ gitalk:
 # 基于 LeanCloud
 # See: https://valine.js.org/
 valine:
-  appId: 
-  appKey: 
+  appId:
+  appKey:
   path: window.location.pathname
   placeholder:
   avatar: 'retro'
@@ -785,21 +785,22 @@ tag:
 
 #---------------------------
 # 关于页
-# About Page
 #---------------------------
 about:
   enable: true
   banner_img: /img/default.png
   banner_img_height: 60
   banner_mask_alpha: 0.3
-  avatar: /img/avatar.png
-  name: "Bannirui"
+  # 资源路径 /source/img
+  # 默认使用的是 /img/avatar.png
+  avatar: /img/chacha.png
+  name: "DingRui"
   intro: ""
   # 更多图标可从 https://hexo.fluid-dev.com/docs/icon/ 查找，`class` 代表图标的 css class，添加 `qrcode` 后，图标不再是链接而是悬浮二维码
   icons:
     - { class: "iconfont icon-github-fill", link: "https://github.com/Bannirui", tip: "GitHub" }
-      #- { class: "iconfont icon-douban-fill", link: "https://douban.com", tip: "豆瓣" }
-      #- { class: "iconfont icon-wechat-fill", qrcode: "/img/favicon.png" }
+    #- { class: "iconfont icon-douban-fill", link: "https://douban.com", tip: "豆瓣" }
+    #- { class: "iconfont icon-wechat-fill", qrcode: "/img/chacha.png" }
 
 
 #---------------------------
