@@ -1,0 +1,16 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "13301834",
+      "name": "outlook",
+      "font_class": "outlook",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    }
+  ]
+}

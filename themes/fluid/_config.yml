@@ -190,6 +190,8 @@ custom_js:
 
 # 指定自定义 .css 文件路径，用法和 custom_js 相同
 custom_css:
+  - /css/iconfont_gmail/iconfont.css
+  - /css/iconfont_outlook/iconfont.css
 
 # 网页访问统计
 # todo fluid该插件不支持从环境变量读取参数 但是该配置文件又托管在git上 先不配置访问统计通能
@@ -799,7 +801,7 @@ about:
   # 更多图标可从 https://hexo.fluid-dev.com/docs/icon/ 查找，`class` 代表图标的 css class，添加 `qrcode` 后，图标不再是链接而是悬浮二维码
   icons:
     - { class: "iconfont icon-github-fill", link: "https://github.com/Bannirui", tip: "GitHub" }
-    #- { class: "iconfont icon-douban-fill", link: "https://douban.com", tip: "豆瓣" }
+    - { class: "iconfont icon-gmail", link: "https://mail.google.com/mail", tip: "hotburton@gmail.com" }
     #- { class: "iconfont icon-wechat-fill", qrcode: "/img/chacha.png" }
 
 
