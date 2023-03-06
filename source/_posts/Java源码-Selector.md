@@ -73,17 +73,9 @@ public class SelectorTest {
 
 重点API：
 
-* ```java
-  Selector.open()
-  ```
-
-* ```java
-  serverSocketChannel.register()
-  ```
-
-* ```java
-  selector.select()
-  ```
+* Selector.open()
+* serverSocketChannel.register()
+* selector.select()
 
 整体执行流程：
 
