@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://example.com/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/202211112312121.png">
 <meta property="og:image" content="http://example.com/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/202211112314087.png">
 <meta property="article:published_time" content="2023-03-06T13:37:01.000Z">
-<meta property="article:modified_time" content="2023-03-06T13:44:11.892Z">
+<meta property="article:modified_time" content="2023-03-06T14:45:59.517Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Netty@4.1.169">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
             
               <div class="markdown-body">
                 
-                <p>前文已经了解过了<a href="Netty%E6%BA%90%E7%A0%81-01-NioEventLoopGroup.md">NioEventLoopGroup</a>和<a href="Netty%E6%BA%90%E7%A0%81-03-NioEventLoop.md">NioEventLoop</a>。</p>
+                <p>前文已经了解过了<a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-01-NioEventLoopGroup/" title="Netty源码-01-NioEventLoopGroup">NioEventLoopGroup</a>和<a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" title="Netty源码-03-NioEventLoop">NioEventLoop</a>。</p>
 <p>在Netty中是用的是Reactor线程模型(IO多路复用器+多个线程)，真正处理业务流程的worker线程都是单个线程，一个线程处理多个Channel，一个Channel始终都是由特定的线程进行处理。</p>
 <p>在这样的情况下，如果某个Channel的业务流程耗时较久或者阻塞，那么绑定在当前线程上所有的任务都会受到影响，这样的场景如何处理呢？</p>
 <p>再看一下EventLoop的继承关系：</p>
@@ -347,9 +347,8 @@
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// SingleThreadEventExecutor.java</span><br><span class="hljs-keyword">protected</span> Queue&lt;Runnable&gt; <span class="hljs-title function_">newTaskQueue</span><span class="hljs-params">(<span class="hljs-type">int</span> maxPendingTasks)</span> &#123; <span class="hljs-comment">// DefaultEventLoop不支持复用器 阻塞点发生在任务队列的存取上 因此任务队列的实现使用阻塞队列 NioEventLoop阻塞点发生在复用器上 因此不需要依赖阻塞队列 自己单独去实现</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedBlockingQueue</span>&lt;Runnable&gt;(maxPendingTasks);<br>&#125;<br></code></pre></td></tr></table></figure>
 
+<a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/" title="Netty源码-06-MpscQueue">NioEventLoop中队列</a>实现跟DefaultEventLoop中队列实现不同
 
-
-<p><a href="../Netty%E6%BA%90%E7%A0%81-06-MspcQueue%E5%AE%9E%E7%8E%B0.md">NioEventLoop中队列实现</a>跟DefaultEventLoop中队列实现不同</p>
 <h3 id="2-线程轮询"><a href="#2-线程轮询" class="headerlink" title="2 线程轮询"></a>2 线程轮询</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultEventLoop.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">for</span> (;;) &#123;<br>        <span class="hljs-type">Runnable</span> <span class="hljs-variable">task</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.takeTask();<br>        <span class="hljs-keyword">if</span> (task != <span class="hljs-literal">null</span>) &#123;<br>            task.run();<br>            updateLastExecutionTime();<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (confirmShutdown()) &#123;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 

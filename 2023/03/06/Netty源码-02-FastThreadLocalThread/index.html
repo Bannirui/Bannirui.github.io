@@ -24,7 +24,7 @@
 <meta property="og:description" content="对Java Thread做的优化。 一 Demo123456789101112131415161718192021222324252627282930public class FastThreadLocalTest00 &amp;#123;    private final static FastThreadLocal&lt;Long&gt; v &#x3D; new FastThreadLocal&lt;Long">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-03-06T13:03:29.000Z">
-<meta property="article:modified_time" content="2023-03-06T13:09:25.324Z">
+<meta property="article:modified_time" content="2023-03-06T14:44:37.668Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Netty@4.1.169">
 <meta name="twitter:card" content="summary_large_image">
@@ -314,8 +314,6 @@
 
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// InternalThreadLocalMap.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">setIndexedVariable</span><span class="hljs-params">(<span class="hljs-type">int</span> index, Object value)</span> &#123;<br>    Object[] lookup = <span class="hljs-built_in">this</span>.indexedVariables;<br>    <span class="hljs-keyword">if</span> (index &lt; lookup.length) &#123;<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">oldValue</span> <span class="hljs-operator">=</span> lookup[index];<br>        lookup[index] = value;<br>        <span class="hljs-keyword">return</span> oldValue == UNSET;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        expandIndexedVariableTableAndSet(index, value); <span class="hljs-comment">// 扩容</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-
 
 <h2 id="五-remove方法"><a href="#五-remove方法" class="headerlink" title="五 remove方法"></a>五 remove方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">remove</span><span class="hljs-params">()</span> &#123;<br>    remove(InternalThreadLocalMap.getIfSet());<br>&#125;<br></code></pre></td></tr></table></figure>
 

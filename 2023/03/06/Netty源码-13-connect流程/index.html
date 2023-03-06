@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2023/03/06/Netty%E6%BA%90%E7%A0%81-13-connect%E6%B5%81%E7%A8%8B/202211150002227.png">
 <meta property="article:published_time" content="2023-03-06T13:49:08.000Z">
-<meta property="article:modified_time" content="2023-03-06T13:55:30.451Z">
+<meta property="article:modified_time" content="2023-03-06T14:42:44.960Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Netty@4.1.169">
 <meta name="twitter:card" content="summary_large_image">
@@ -273,7 +273,7 @@
             
               <div class="markdown-body">
                 
-                <p><a href="Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B.md">有过之前对服务端bind流程</a>的分析之后，客户端的connect流程就显得简单了。</p>
+                <p>有过之前对服务端<a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/" title="Netty源码-12-bind流程">bind流程</a>的分析之后，客户端的connect流程就显得简单了。</p>
 <h2 id="一-入口"><a href="#一-入口" class="headerlink" title="一 入口"></a>一 入口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Bootstrap.java</span><br><span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">connect</span><span class="hljs-params">(String inetHost, <span class="hljs-type">int</span> inetPort)</span> &#123; <span class="hljs-comment">// 异步</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.connect(InetSocketAddress.createUnresolved(inetHost, inetPort));<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
@@ -286,7 +286,7 @@
 
 <p>核心方法有2个:</p>
 <ul>
-<li><a href="Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B.md">initAndRegister(…)方法在服务端bind流程中已经分析过。</a></li>
+<li><a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/" title="Netty源码-12-bind流程">initAndRegister(...)方法在服务端bind流程中已经分析过</a>。</li>
 <li>doResolveAndConnect0(…)方法。</li>
 </ul>
 <p>initAndRegister跟NioServerSocket中的bind(…)流程一样。</p>
