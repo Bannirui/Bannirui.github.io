@@ -458,7 +458,7 @@
     <link href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-05-FileTxnSnaplog/"/>
     <url>/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-05-FileTxnSnaplog/</url>
     
-    <content type="html"><![CDATA[<p>文件处理器，事务日志和内存数据映射的文件工具类。<code>ZooKeeperServer</code>中持有该实例的引用。</p><h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><ul><li>zks.takeSnapshot()</li></ul>]]></content>
+    <content type="html"><![CDATA[<p>文件处理器，事务日志和内存数据映射的文件工具类。<code>ZooKeeperServer</code>中持有该实例的引用。</p><h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><ul><li>zks.takeSnapshot()</li><li>restore</li></ul>]]></content>
     
     
     <categories>
