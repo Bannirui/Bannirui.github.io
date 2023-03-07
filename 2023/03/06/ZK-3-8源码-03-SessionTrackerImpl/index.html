@@ -16,18 +16,21 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="在ZooKeeperServe中维护这一个sessionTracker，负责对session会话的管理，主要是针对过期的会话进行关闭。SessionTrackerImpl就是这个会话管理器的实现。">
+    <meta name="description" content="在ZooKeeperServe中维护这一个sessionTracker，负责对session会话的管理，主要是针对过期的会话进行关闭。SessionTrackerImpl就是这个会话管理器的实现。 1 类图关系通过继承关系，可以明确知道两点：  SessionTracker定义了一个会话跟踪器。 ZK初始化中使用的线程跟踪器SessionTrackerImpl其本质是线程。因此启动线程跟踪器的核心">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ZK@3.8源码-03-SessionTrackerImpl">
 <meta property="og:url" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/index.html">
 <meta property="og:site_name" content="光秃秃的猫子">
-<meta property="og:description" content="在ZooKeeperServe中维护这一个sessionTracker，负责对session会话的管理，主要是针对过期的会话进行关闭。SessionTrackerImpl就是这个会话管理器的实现。">
+<meta property="og:description" content="在ZooKeeperServe中维护这一个sessionTracker，负责对session会话的管理，主要是针对过期的会话进行关闭。SessionTrackerImpl就是这个会话管理器的实现。 1 类图关系通过继承关系，可以明确知道两点：  SessionTracker定义了一个会话跟踪器。 ZK初始化中使用的线程跟踪器SessionTrackerImpl其本质是线程。因此启动线程跟踪器的核心">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/image-20230307114714152.png">
+<meta property="og:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/image-20230307124129292.png">
 <meta property="article:published_time" content="2023-03-06T09:38:53.000Z">
-<meta property="article:modified_time" content="2023-03-06T10:37:22.997Z">
+<meta property="article:modified_time" content="2023-03-07T04:50:10.840Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="ZK@3.8">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/image-20230307114714152.png">
   
   
   
@@ -217,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          98 字
+          2.8k 字
         
       </span>
     
@@ -228,7 +231,7 @@
         
         
         
-          1 分钟
+          23 分钟
         
       </span>
     
@@ -272,6 +275,40 @@
               <div class="markdown-body">
                 
                 <p>在<code>ZooKeeperServe</code>中维护这一个<code>sessionTracker</code>，负责对session会话的管理，主要是针对过期的会话进行关闭。<code>SessionTrackerImpl</code>就是这个会话管理器的实现。</p>
+<h2 id="1-类图关系"><a href="#1-类图关系" class="headerlink" title="1 类图关系"></a>1 类图关系</h2><p>通过继承关系，可以明确知道两点：</p>
+<ul>
+<li>SessionTracker定义了一个会话跟踪器。</li>
+<li>ZK初始化中使用的线程跟踪器<code>SessionTrackerImpl</code>其本质是线程。因此启动线程跟踪器的核心逻辑就应该在<code>run()</code>方法中。</li>
+</ul>
+<p><img src="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/image-20230307114714152.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2-run-方法"><a href="#2-run-方法" class="headerlink" title="2 run()方法"></a>2 run()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-keyword">while</span> (running) &#123;<br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * ExpiryQueue中expirationInterval设计的好处之一</span><br><span class="hljs-comment">                 *   - 保证了过期时间相对集中 不会绝对离散 那么这边可能要等待的时间waitTime就不会密集且多 一定程度上让出了cpu执行权</span><br><span class="hljs-comment">                 * 考虑个场景</span><br><span class="hljs-comment">                 *   - 过期时间没有归一 所有连接间隔1ms依次过期 那么这边一直处于轮询中 cpu打满</span><br><span class="hljs-comment">                 */</span><br>            <span class="hljs-type">long</span> <span class="hljs-variable">waitTime</span> <span class="hljs-operator">=</span> sessionExpiryQueue.getWaitTime(); <span class="hljs-comment">// 还有多久就到了队列中维护的过期时间了</span><br>            <span class="hljs-keyword">if</span> (waitTime &gt; <span class="hljs-number">0</span>) &#123;<br>                Thread.sleep(waitTime);<br>                <span class="hljs-keyword">continue</span>;<br>            &#125;<br><br>            <span class="hljs-keyword">for</span> (SessionImpl s : sessionExpiryQueue.poll()) &#123; <span class="hljs-comment">// 出队的这一拨连接全部过期</span><br>                ServerMetrics.getMetrics().STALE_SESSIONS_EXPIRED.add(<span class="hljs-number">1</span>);<br>                setSessionClosing(s.sessionId);<br>                expirer.expire(s); <span class="hljs-comment">// 过期管理器负责处理过期的会话 expirer指向的就是ZooKeeperServer实现</span><br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>        handleException(<span class="hljs-built_in">this</span>.getName(), e);<br>    &#125;<br>    LOG.info(<span class="hljs-string">&quot;SessionTrackerImpl exited loop!&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-1-sessionExpiryQueue这个队列以一定机制维护连接的过期信息"><a href="#2-1-sessionExpiryQueue这个队列以一定机制维护连接的过期信息" class="headerlink" title="2.1 sessionExpiryQueue这个队列以一定机制维护连接的过期信息"></a>2.1 sessionExpiryQueue这个队列以一定机制维护连接的过期信息</h3><p>这个就得看<code>ExpiryQueue</code>数据结构的具体设计了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">long</span> <span class="hljs-variable">waitTime</span> <span class="hljs-operator">=</span> sessionExpiryQueue.getWaitTime(); <span class="hljs-comment">// 还有多久就到了队列中维护的过期时间了</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>过期的连接需要通过过期管理器进行处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">expirer.expire(s); <span class="hljs-comment">// 过期管理器负责处理过期的会话 expirer指向的就是ZooKeeperServer实现</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-ZooKeeperServer作为连接管理器的职责"><a href="#2-2-ZooKeeperServer作为连接管理器的职责" class="headerlink" title="2.2 ZooKeeperServer作为连接管理器的职责"></a>2.2 ZooKeeperServer作为连接管理器的职责</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">expire</span><span class="hljs-params">(Session session)</span> &#123;<br>    <span class="hljs-type">long</span> <span class="hljs-variable">sessionId</span> <span class="hljs-operator">=</span> session.getSessionId();<br>    LOG.info(<br>        <span class="hljs-string">&quot;Expiring session 0x&#123;&#125;, timeout of &#123;&#125;ms exceeded&quot;</span>,<br>        Long.toHexString(sessionId),<br>        session.getTimeout());<br>    close(sessionId); <span class="hljs-comment">// 关闭会话</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>看到了熟悉的代码，想服务端提交请求，管中窥豹，可以猜测整个ZK系统交互也是有点想EDA设计，都是基于消息驱动的。这样的设计可以有效解耦业务，统一入口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">close</span><span class="hljs-params">(<span class="hljs-type">long</span> sessionId)</span> &#123;<br>    <span class="hljs-type">Request</span> <span class="hljs-variable">si</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Request</span>(<span class="hljs-literal">null</span>, sessionId, <span class="hljs-number">0</span>, OpCode.closeSession, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);<br>    submitRequest(si); <span class="hljs-comment">// 关联连接也是通过消息驱动</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-ExpireQueue数据结构"><a href="#3-ExpireQueue数据结构" class="headerlink" title="3 ExpireQueue数据结构"></a>3 ExpireQueue数据结构</h2><p>维护了以下阈值，巧妙的使用expirationInterval，这个设计的收益在于：</p>
+<ul>
+<li>加少了hash表中数组大小</li>
+<li>过期机制通过时间判定永远都会存在误差，在可接受的范围内，尽量将连接的过期时间归一化，减少离散，容易管理庞大的连接请求</li>
+<li>一次性可以处理多个连接</li>
+<li>不至于让cpu负担过重，配置sleep机制可以让出cpu执行权</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * key-&gt;会话对象</span><br><span class="hljs-comment">     * value-&gt;归一化后的超时时间</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ConcurrentHashMap&lt;E, Long&gt; elemMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrentHashMap</span>&lt;E, Long&gt;();<br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * The maximum number of buckets is equal to max timeout/expirationInterval,</span><br><span class="hljs-comment">     * so the expirationInterval should not be too small compared to the</span><br><span class="hljs-comment">     * max timeout that this expiry queue needs to maintain.</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * 以超时时间为key的缓存</span><br><span class="hljs-comment">     * key-&gt;归一化超时时间</span><br><span class="hljs-comment">     * value-&gt;在该时间过期的会话集合</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ConcurrentHashMap&lt;Long, Set&lt;E&gt;&gt; expiryMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrentHashMap</span>&lt;Long, Set&lt;E&gt;&gt;();<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">AtomicLong</span> <span class="hljs-variable">nextExpirationTime</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AtomicLong</span>(); <span class="hljs-comment">// 迭代维护下一个过期时间 这样就可以拿着过期时间直接去hash表去这个过期时间映射的连接</span><br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 相当于是基数</span><br><span class="hljs-comment">     * 假定expirationInterval = 10000，</span><br><span class="hljs-comment">     * connection_1_timeout_point = 1599715479084</span><br><span class="hljs-comment">     * connection_2_timeout_point =  1599715479184</span><br><span class="hljs-comment">     * connection_3_timeout_point =  1599715479384</span><br><span class="hljs-comment">     * 那么通过归一化计算他们三个的超时时间点都变成了1599715480000</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> expirationInterval;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-连接过期管理流程图"><a href="#4-连接过期管理流程图" class="headerlink" title="4 连接过期管理流程图"></a>4 连接过期管理流程图</h2><p>绿色实线标识的就是SessionTracker组件委托持有的SessionExpirer组件提交关闭连接的一个请求。</p>
+<p><img src="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/image-20230307124129292.png" srcset="/img/loading.gif" lazyload></p>
 
                 
               </div>
