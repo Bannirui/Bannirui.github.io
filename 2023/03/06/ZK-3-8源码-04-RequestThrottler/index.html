@@ -16,18 +16,22 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Bannirui博客">
+    <meta name="description" content="回顾一下创建时机，在ZK单机服务启动流程中启动节流器。 1234&#x2F;**         * 请求节流器         *&#x2F;startRequestThrottler();    启动节流器的时候对节流器进行了实例话和启动，并将节流器指针维护在ZK实例中。 12345protected void startRequestThrottler() &amp;#123;    requestThrottler">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ZK@3.8源码-04-RequestThrottler">
 <meta property="og:url" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/index.html">
 <meta property="og:site_name" content="光秃秃的猫子">
-<meta property="og:description" content="Bannirui博客">
+<meta property="og:description" content="回顾一下创建时机，在ZK单机服务启动流程中启动节流器。 1234&#x2F;**         * 请求节流器         *&#x2F;startRequestThrottler();    启动节流器的时候对节流器进行了实例话和启动，并将节流器指针维护在ZK实例中。 12345protected void startRequestThrottler() &amp;#123;    requestThrottler">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/image-20230307130728543.png">
+<meta property="og:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/image-20230307131236282.png">
+<meta property="og:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/image-20230307133039602.png">
 <meta property="article:published_time" content="2023-03-06T09:46:17.000Z">
-<meta property="article:modified_time" content="2023-03-06T10:37:31.767Z">
+<meta property="article:modified_time" content="2023-03-07T05:34:35.363Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="ZK@3.8">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/image-20230307130728543.png">
   
   
   
@@ -217,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          0 字
+          1.2k 字
         
       </span>
     
@@ -228,7 +232,7 @@
         
         
         
-          1 分钟
+          10 分钟
         
       </span>
     
@@ -271,7 +275,33 @@
             
               <div class="markdown-body">
                 
-                
+                <p>回顾一下创建时机，在ZK单机服务启动流程中启动节流器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 请求节流器</span><br><span class="hljs-comment">         */</span><br>startRequestThrottler();<br></code></pre></td></tr></table></figure>
+
+
+
+<p>启动节流器的时候对节流器进行了实例话和启动，并将节流器指针维护在ZK实例中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">startRequestThrottler</span><span class="hljs-params">()</span> &#123;<br>    requestThrottler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RequestThrottler</span>(<span class="hljs-built_in">this</span>);<br>    requestThrottler.start();<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1-类图"><a href="#1-类图" class="headerlink" title="1 类图"></a>1 类图</h2><p>继承关系很简单，就是一个线程，因此核心就是关注它的<code>run()</code>方法是怎么实现的。</p>
+<p><img src="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/image-20230307130728543.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2-构造方法"><a href="#2-构造方法" class="headerlink" title="2 构造方法"></a>2 构造方法</h2><p>构造方法的作用是在节流器内维护ZK实例的指针。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">RequestThrottler</span><span class="hljs-params">(ZooKeeperServer zks)</span> &#123;<br>    <span class="hljs-built_in">super</span>(<span class="hljs-string">&quot;RequestThrottler&quot;</span>, zks.getZooKeeperServerListener());<br>    <span class="hljs-built_in">this</span>.zks = zks;<br>    <span class="hljs-built_in">this</span>.stopping = <span class="hljs-literal">false</span>;<br>    <span class="hljs-built_in">this</span>.killed = <span class="hljs-literal">false</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>至于为什么要在节流器内持有ZK实例，从代码架构设计来讲，讲究一个职责清晰，每个组件只关注自己的事情，那么将来对请求的处理还是要交给ZK服务器。</p>
+<p>从源码上还可以看到一点之前提过的，就是EDA事件驱动，ZK服务都是用Request消息驱动。</p>
+<p><img src="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/image-20230307131236282.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3-run-方法"><a href="#3-run-方法" class="headerlink" title="3 run()方法"></a>3 run()方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 节流机制的体现</span><br><span class="hljs-comment">                 *   - 要么丢掉请求，不处理该请求了</span><br><span class="hljs-comment">                 *   - 要么等待服务端入口流量下来了，再提交该请求</span><br><span class="hljs-comment">                 * submitRequestNow这个方法是将请求转发给ZK实例，让其执行</span><br><span class="hljs-comment">                 * 也就是在submitRequestNow这个方法之前多一层过滤机制</span><br><span class="hljs-comment">                 */</span><br><span class="hljs-keyword">if</span> (maxRequests &gt; <span class="hljs-number">0</span>) &#123;<br>    <span class="hljs-keyword">while</span> (!killed) &#123;<br>        <span class="hljs-keyword">if</span> (dropStaleRequests &amp;&amp; request.isStale()) &#123;<br>            <span class="hljs-comment">// Note: this will close the connection</span><br>            dropRequest(request);<br>            ServerMetrics.getMetrics().STALE_REQUESTS_DROPPED.add(<span class="hljs-number">1</span>);<br>            request = <span class="hljs-literal">null</span>;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (zks.getInProcess() &lt; maxRequests) &#123;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        throttleSleep(stallTime);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>ZK服务真正处理请求，而ZK实例又将请求派发给<code>firstProcessor</code>指向的<a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-06-RequestProcessor/" title="ZK@3.8源码-06-RequestProcessor">职责链</a>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">zks.submitRequestNow(request); <span class="hljs-comment">// 真正立马要执行的请求控制权给到ZK服务 让其执行</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-组件流程图"><a href="#4-组件流程图" class="headerlink" title="4 组件流程图"></a>4 组件流程图</h2><p><img src="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/image-20230307133039602.png" srcset="/img/loading.gif" lazyload></p>
+
                 
               </div>
             
