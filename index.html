@@ -231,7 +231,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-08-ZKDatabase/" target="_self">
         <div>
-          TODO zks.getZKDatabase().append(si) zks.getZKDatabase().rollLog() ZooKeeperServer::processTxn()方法
+          ZKDatabase是ZK实现的内存数据库，DataTree是内存数据结构模型，对数据库的CURD最终都会通过dataTree进行操作节点。 组件流程图如下：  1 processTxn()方法123public ProcessTxnResult processTxn(TxnHeader hdr, Record txn, TxnDigest digest) &#123;    return dat
         </div>
       </a>
 
