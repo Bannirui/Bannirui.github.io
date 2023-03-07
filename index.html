@@ -231,7 +231,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-07-NettyServerCnxn/" target="_self">
         <div>
-          
+          经过CnxnChannelHandler处理器的关联，目前Netty和ZK之间的关系如下：  下面就要分析NettyServerCnxn这个组件如何将数据读取出来封装成Request交给ZK的。 1 从Netty读取数据Netty有数据可读的时候数据流开始来到NettyServerCnxn中。 1cnxn.processMessage((ByteBuf) msg); // 数据的拥有权就从Nett
         </div>
       </a>
 
@@ -245,6 +245,34 @@
           </div>
         
         
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
         
       </div>
     </article>
