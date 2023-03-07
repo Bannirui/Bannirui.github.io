@@ -71,7 +71,7 @@ protected void setupRequestProcessors() {
 * 三个处理器都是RequestProcessor的派生类，因此要关注接口中声明的方法`processRequest`。
 * `PreRequestProcessor`和`SyncRequestProcessor`同时又是`Thread`的派生类，也就是说这两个处理器本质是线程，因此其运行模型就是线程执行，关注其`run()`方法就行。
 
-![](../../../../../Library/Application Support/typora-user-images/image-20230307135023806.png)
+![](ZK-3-8源码-06-RequestProcessor/image-20230307135023806.png)
 
 ## 3 PreRequestProcessor
 
