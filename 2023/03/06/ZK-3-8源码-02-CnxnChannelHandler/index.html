@@ -16,18 +16,20 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="上节梳理了zk单机启动流程，NettyServerCnxnFactory提供了标准的Netty服务端开发模板，ZooKeeperServer定义了请求处理责任链。现在两个独立的线程，如何将Socket的数据映射成zk请求，CnxnChannelHandler成功关键的枢纽。">
+    <meta name="description" content="上节梳理了zk单机启动流程，NettyServerCnxnFactory提供了标准的Netty服务端开发模板，ZooKeeperServer定义了请求处理责任链。现在两个独立的线程，如何将Socket的数据映射成zk请求，CnxnChannelHandler成为了将Netty和ZK连接起来的枢纽。 1 类图关系从类图继承可以看出来这个Handler负责读写。 当前为服务端，我们先只关注客户端连接成">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ZK@3.8源码-02-CnxnChannelHandler">
 <meta property="og:url" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-02-CnxnChannelHandler/index.html">
 <meta property="og:site_name" content="光秃秃的猫子">
-<meta property="og:description" content="上节梳理了zk单机启动流程，NettyServerCnxnFactory提供了标准的Netty服务端开发模板，ZooKeeperServer定义了请求处理责任链。现在两个独立的线程，如何将Socket的数据映射成zk请求，CnxnChannelHandler成功关键的枢纽。">
+<meta property="og:description" content="上节梳理了zk单机启动流程，NettyServerCnxnFactory提供了标准的Netty服务端开发模板，ZooKeeperServer定义了请求处理责任链。现在两个独立的线程，如何将Socket的数据映射成zk请求，CnxnChannelHandler成为了将Netty和ZK连接起来的枢纽。 1 类图关系从类图继承可以看出来这个Handler负责读写。 当前为服务端，我们先只关注客户端连接成">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-02-CnxnChannelHandler/image-20230307102213028.png">
 <meta property="article:published_time" content="2023-03-06T07:29:32.000Z">
-<meta property="article:modified_time" content="2023-03-06T07:34:20.326Z">
+<meta property="article:modified_time" content="2023-03-07T02:44:49.989Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="ZK@3.8">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-02-CnxnChannelHandler/image-20230307102213028.png">
   
   
   
@@ -217,7 +219,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          137 字
+          961 字
         
       </span>
     
@@ -228,7 +230,7 @@
         
         
         
-          2 分钟
+          9 分钟
         
       </span>
     
@@ -271,7 +273,25 @@
             
               <div class="markdown-body">
                 
-                <p>上节梳理了zk单机启动流程，<code>NettyServerCnxnFactory</code>提供了标准的Netty服务端开发模板，<code>ZooKeeperServer</code>定义了请求处理责任链。现在两个独立的线程，如何将Socket的数据映射成zk请求，<code>CnxnChannelHandler</code>成功关键的枢纽。</p>
+                <p>上节梳理了zk单机启动流程，<code>NettyServerCnxnFactory</code>提供了标准的Netty服务端开发模板，<code>ZooKeeperServer</code>定义了请求处理责任链。现在两个独立的线程，如何将Socket的数据映射成zk请求，<code>CnxnChannelHandler</code>成为了将Netty和ZK连接起来的枢纽。</p>
+<h2 id="1-类图关系"><a href="#1-类图关系" class="headerlink" title="1 类图关系"></a>1 类图关系</h2><p>从类图继承可以看出来这个Handler负责读写。</p>
+<p>当前为服务端，我们先只关注客户端连接成功以及客户端发送数据过来这两个流程，所以只要关注这个Handler的两个方法即可：</p>
+<ul>
+<li>channelActive</li>
+<li>channelRead</li>
+</ul>
+<p><img src="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-02-CnxnChannelHandler/image-20230307102213028.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2-channelActive方法"><a href="#2-channelActive方法" class="headerlink" title="2 channelActive方法"></a>2 channelActive方法</h2><p>引入了组件<code>NettyServerCnxn</code>，跟Channel绑定起来，也就是说NettyServerCnxn将负责整个IO的生命周期之间的处理：</p>
+<ul>
+<li>连接管理</li>
+<li>会话管理</li>
+<li>数据管理</li>
+</ul>
+<p>那么NettyServerCnxn就相当于Netty和ZK之间的连接组件，只要在组件中持有ZK实例，便可以将Netty请求转交给ZK，在此过程中还可以随心所欲进行拦截处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">NettyServerCnxn</span> <span class="hljs-variable">cnxn</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NettyServerCnxn</span>(channel, zkServer, NettyServerCnxnFactory.<span class="hljs-built_in">this</span>);<br>ctx.channel().attr(CONNECTION_ATTRIBUTE).set(cnxn); <span class="hljs-comment">// 服务端Channel跟zk实例绑定起来 数据的读写依赖Channel 将来读写的时候将权利转移给zk实例</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="3-channelRead方法"><a href="#3-channelRead方法" class="headerlink" title="3 channelRead方法"></a>3 channelRead方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 读数据 客户端连接服务端的时候就已经给每个Channel绑定上了一个NettyServerCnxn实例</span><br><span class="hljs-type">NettyServerCnxn</span> <span class="hljs-variable">cnxn</span> <span class="hljs-operator">=</span> ctx.channel().attr(CONNECTION_ATTRIBUTE).get();<br><span class="hljs-keyword">if</span> (cnxn == <span class="hljs-literal">null</span>) &#123;<br>    LOG.error(<span class="hljs-string">&quot;channelRead() on a closed or closing NettyServerCnxn&quot;</span>);<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    cnxn.processMessage((ByteBuf) msg); <span class="hljs-comment">// 数据的拥有权就从Netty转移到了NettyServerCnxn组件上了</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
