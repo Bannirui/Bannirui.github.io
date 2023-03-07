@@ -719,7 +719,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-05-FileTxnSnaplog/" target="_self">
         <div>
-          文件处理器，事务日志和内存数据映射的文件工具类。ZooKeeperServer中持有该实例的引用。 TODO zks.takeSnapshot() restore
+          文件处理器，事务日志和内存数据映射的文件工具类。ZooKeeperServer中持有该实例的引用。 1 内存数据序列化至文件save()方法 12// 将内存数据dataTree和sessions序列化到snapshotFile中snapLog.serialize(dataTree, sessionsWithTimeouts, snapshotFile, syncSnap);  2 磁盘数据反序列
         </div>
       </a>
 
