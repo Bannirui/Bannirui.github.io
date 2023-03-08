@@ -25,7 +25,7 @@ IDEA设置code style，通过format方式格式化代码，并设置配套的che
 
 ## 3 配置code style
 
-{% asset_img 20230228094509570.png %}
+![](codestyle/20230228094509570.png)
 
 `IntelliJ IDEA code style xml`选项卡导入intellij-java-google-style.xml
 
@@ -39,8 +39,14 @@ IDEA设置code style，通过format方式格式化代码，并设置配套的che
 
 ### 4.2 配置插件
 
-{% asset_img 20230228095201528.png %}
+如下配置项：
+
+org.checkstyle.google.suppressionfilter.config = checkstyle-suppressions.xml
+
+org.checkstyle.google.suppressionxpathfilter.config = checkstyle-xpath-suppressions.xml
+
+![](codestyle/20230228095201528.png )
 
 ### 4.3 使用插件
 
-{% asset_img 20230228095406830.png %}
+![](codestyle/20230228095406830.png)
