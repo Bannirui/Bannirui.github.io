@@ -223,6 +223,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" target="_self">
+          Netty源码-03-NioEventLoop
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" target="_self">
+        <div>
+          Netty没有简单地使用线程池复用线程的方式，而是自己实现了一套EventLoopGroup管理器，管理着EventLoop。  一个Group多个线程方式保证服务器的吞吐率。每个线程负责一个Channel的整个生命周期事件，虽然单个事件效率可能下降，但是利用异步方式增加了吞吐率。 每个NioEventLoop维护一个Selector多路复用器，保证IO读写事件始终在一个线程内处理。 在多线程下不
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-06 21:11" pubdate>
+              2023-03-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-02-FastThreadLocalThread/" target="_self">
           Netty源码-02-FastThreadLocalThread
         </a>
@@ -759,67 +820,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/ZK-3-8/">#ZK@3.8</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/04/Java%E6%BA%90%E7%A0%81-Timer/" target="_self">
-          Java源码-Timer
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/04/Java%E6%BA%90%E7%A0%81-Timer/" target="_self">
-        <div>
-          定时器，调度执行延时任务。 1 使用方式12345678910111213141516171819202122232425262728/** * 定时器. * * @author dingrui * @since 2023/3/4 */public class TimerTest &#123;    private class MyTask extends TimerTask &#123;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-04 11:15" pubdate>
-              2023-03-04
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java%E6%BA%90%E7%A0%81/" class="category-chain-item">Java源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java-15/">#Java@15</a>
             
           </div>
         
