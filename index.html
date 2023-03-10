@@ -223,6 +223,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/" target="_self">
+          ZK@3.8源码-13-选主过程通信和算法
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/" target="_self">
+        <div>
+          我们一贯的套路是先总览框架，然后细看每个组件，最后再梳理整个流程。 1 组件图在选主算法中，涉及到的组件有：  QuorumPeer 负责入口的驱动 QuorumCnxManager 负责网络通信 对接的数据协议是字节和Message ListenerHandler 负责通信连接和验证 RecvWorker 负责网络数据接收的线程 SenderWorker 负责网络数据发送的线程   FastLe
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-10 10:34" pubdate>
+              2023-03-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" target="_self">
           ZK@3.8源码-12-FastLeaderElection组件
         </a>
@@ -720,67 +781,6 @@
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/" target="_self">
         <div>
           研究服务端的启动流程。 一 入口123456789// AbstractBootstrap.java/**     * 异步非阻塞方法     *     - 异步 比如main线程发起调用 真正的bind结果main线程并不是直接去取 而是将来真正bind成功的线程将结果回调     *     - 非阻塞 比如main线程发起调用 最后真正执行bind操作的是其他线程(Nio线程 NioEve
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:48" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" target="_self">
-          Netty源码-11-Pipeline
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" target="_self">
-        <div>
-          在Channel的初始化过程中会给每个Channel实例构造一个Pipeline，因此研究pipeline的入口就是构造方法。 一 类图是继承关系上看，pipeline的实现比较简单。  二 JavaDoc Netty采用Reactor的线程模型，一个IO线程负责读写，至于怎么操作读写的逻辑则定义在不同的handler中，pipline就是handler的栖身之所，pipeline负责组织和管理着
         </div>
       </a>
 
