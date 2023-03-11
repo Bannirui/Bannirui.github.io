@@ -223,6 +223,250 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-07-NettyServerCnxn/" target="_self">
+          ZK@3.8源码-07-NettyServerCnxn
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-07-NettyServerCnxn/" target="_self">
+        <div>
+          经过CnxnChannelHandler处理器的关联，目前Netty和ZK之间的关系如下：  下面就要分析NettyServerCnxn这个组件如何将数据读取出来封装成Request交给ZK的。 1 从Netty读取数据Netty有数据可读的时候数据流开始来到NettyServerCnxn中。 1cnxn.processMessage((ByteBuf) msg); // 数据的拥有权就从Nett
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-07 10:45" pubdate>
+              2023-03-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" target="_self">
+          Java源码-Selector
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" target="_self">
+        <div>
+          对操作系统而言： 1 多路复用就是os提供了系统调用，能一次性知道多个fd的状态。 2 不同的操作系统类型有不同的实现方式，实现方式即使是轮询也是发生在kernel中，其效率肯定远远大于在内核外的轮询。  select 数组容量限制fd数量的无差别轮询O(N) 发生内存拷贝 poll 没有fd数量限制的链表无差别轮询O(N) 发生内存拷贝 epoll 近乎O(1)时间复杂度  就Java而言，封装
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-06 22:49" pubdate>
+              2023-03-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java%E6%BA%90%E7%A0%81/" class="category-chain-item">Java源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-13-connect%E6%B5%81%E7%A8%8B/" target="_self">
+          Netty源码-13-connect流程
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-13-connect%E6%B5%81%E7%A8%8B/" target="_self">
+        <div>
+          有过之前对服务端bind流程的分析之后，客户端的connect流程就显得简单了。 一 入口1234// Bootstrap.javapublic ChannelFuture connect(String inetHost, int inetPort) &#123; // 异步    return this.connect(InetSocketAddress.createUnresolved(ine
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-06 21:49" pubdate>
+              2023-03-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/" target="_self">
+          Netty源码-12-bind流程
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/" target="_self">
+        <div>
+          研究服务端的启动流程。 一 入口123456789// AbstractBootstrap.java/**     * 异步非阻塞方法     *     - 异步 比如main线程发起调用 真正的bind结果main线程并不是直接去取 而是将来真正bind成功的线程将结果回调     *     - 非阻塞 比如main线程发起调用 最后真正执行bind操作的是其他线程(Nio线程 NioEve
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-06 21:48" pubdate>
+              2023-03-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" target="_self">
           Netty源码-11-Pipeline
         </a>
@@ -583,255 +827,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/" target="_self">
-          Netty源码-05-EventLoop
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/" target="_self">
-        <div>
-          前文已经了解过了NioEventLoopGroup和NioEventLoop。 在Netty中是用的是Reactor线程模型(IO多路复用器+多个线程)，真正处理业务流程的worker线程都是单个线程，一个线程处理多个Channel，一个Channel始终都是由特定的线程进行处理。 在这样的情况下，如果某个Channel的业务流程耗时较久或者阻塞，那么绑定在当前线程上所有的任务都会受到影响，这样的
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:37" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-04-Selector/" target="_self">
-          Netty源码-04-Selector
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-04-Selector/" target="_self">
-        <div>
-          Netty对Selector的优化体现在两个方面：  数据结构替换，数组替换hash表，轮询时直接寻址，提高查询效率。 基于Linux系统epoll封装的Selector可能存存在空轮询风险，尽量减少空轮询出现带来的负面影响。  一 数据结构每个IO线程都绑定了唯一的复用器，因此Selector的初始化时机是在创建NioEventLoop时。 123456789101112131415161718
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:30" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" target="_self">
-          Netty源码-03-NioEventLoop
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" target="_self">
-        <div>
-          Netty没有简单地使用线程池复用线程的方式，而是自己实现了一套EventLoopGroup管理器，管理着EventLoop。  一个Group多个线程方式保证服务器的吞吐率。每个线程负责一个Channel的整个生命周期事件，虽然单个事件效率可能下降，但是利用异步方式增加了吞吐率。 每个NioEventLoop维护一个Selector多路复用器，保证IO读写事件始终在一个线程内处理。 在多线程下不
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:11" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-02-FastThreadLocalThread/" target="_self">
-          Netty源码-02-FastThreadLocalThread
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-02-FastThreadLocalThread/" target="_self">
-        <div>
-          对Java Thread做的优化。 一 Demo123456789101112131415161718192021222324252627282930public class FastThreadLocalTest00 &#123;    private final static FastThreadLocal&lt;Long&gt; v = new FastThreadLocal&lt;Long
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:03" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
