@@ -223,6 +223,433 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/" target="_self">
+          ZK@3.8源码-13-选主过程通信和算法
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/" target="_self">
+        <div>
+          我们一贯的套路是先总览框架，然后细看每个组件，最后再梳理整个流程。 1 组件图在选主算法中，涉及到的组件有：  QuorumPeer 负责入口的驱动 QuorumCnxManager 负责网络通信 对接的数据协议是字节和Message ListenerHandler 负责通信连接和验证 RecvWorker 负责网络数据接收的线程 SenderWorker 负责网络数据发送的线程   FastLe
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-10 10:34" pubdate>
+              2023-03-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" target="_self">
+          ZK@3.8源码-12-FastLeaderElection组件
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" target="_self">
+        <div>
+          前文已经分析过QuorumCnxManger组件关注的是选主投票的网络通信，现在FastLeaderElection组件关注的投票数据。 1 组件示意图该图仅仅是在集群模式启动之初，组件初始化后的实例，还不设计工作状态和工作流程。 下面跟着源码进行分析组件如何工作的以及数据交互流程是什么。  2 线程启动入口调度起来Messenger中WorkerSender和WorkerReceiver开始工作
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-09 10:53" pubdate>
+              2023-03-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" target="_self">
+          ZK@3.8源码-11-QuorumCnxManager组件
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" target="_self">
+        <div>
+          1 QuorumCnxManager实例化通过构造方法创建了QuorumCnxManager组件，并且Listener是QuorumCnxManger中的一个组件，也在构造方法中创建出来了。 12345/**             * 网络通信组件             * 负责选主投票通信             */QuorumCnxManager qcm = createCnxnMana
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-09 10:52" pubdate>
+              2023-03-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/" target="_self">
+          ZK@3.8源码-10-集群模式
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/" target="_self">
+        <div>
+          1 调试配置为了调试方便，先配置集群启动的调试面板。 1.1 调试面板 1.2 配置文件配置文件内容如下： 123456789101112131415tickTime=2000initLimit=10syncLimit=5# zk数据dataDir=/tmp/zookeeper/data# 事务日志dataLogDir=/tmp/zookeeper/logclientPort=2181# 定时任务
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-08 20:21" pubdate>
+              2023-03-08
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-09-%E5%8D%95%E6%9C%BA%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%B1%87%E6%80%BB/" target="_self">
+          ZK@3.8源码-09-单机启动流程汇总
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-09-%E5%8D%95%E6%9C%BA%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%B1%87%E6%80%BB/" target="_self">
+        <div>
+          本章节起到起承转合作用，有两个目的：  从宏观上回顾ZK单机启动流程以及涉及到的重要组件 为后续集群模式做铺垫  1 全局流程图 2 核心组件只列举服务核心部分  ZooKeeperServer  ZK单机服务实例 组件的外层容器，负责协调各个组件进行配合工作   FileTxnSnapLog  文件管理器 管理着快照文件和日志文件 负责内存和磁盘之间的交互   ZKDatabase  内存数据库
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-08 19:37" pubdate>
+              2023-03-08
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-08-ZKDatabase/" target="_self">
+          ZK@3.8源码-08-ZKDatabase
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-08-ZKDatabase/" target="_self">
+        <div>
+          ZKDatabase是ZK实现的内存数据库，DataTree是内存数据结构模型，对数据库的CURD最终都会通过dataTree进行操作节点。 组件流程图如下：  1 processTxn()方法123public ProcessTxnResult processTxn(TxnHeader hdr, Record txn, TxnDigest digest) &#123;    return dat
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-07 14:18" pubdate>
+              2023-03-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-07-NettyServerCnxn/" target="_self">
+          ZK@3.8源码-07-NettyServerCnxn
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-07-NettyServerCnxn/" target="_self">
+        <div>
+          经过CnxnChannelHandler处理器的关联，目前Netty和ZK之间的关系如下：  下面就要分析NettyServerCnxn这个组件如何将数据读取出来封装成Request交给ZK的。 1 从Netty读取数据Netty有数据可读的时候数据流开始来到NettyServerCnxn中。 1cnxn.processMessage((ByteBuf) msg); // 数据的拥有权就从Nett
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-07 10:45" pubdate>
+              2023-03-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" target="_self">
           Java源码-Selector
         </a>
@@ -362,433 +789,6 @@
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
             <time datetime="2023-03-06 21:48" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" target="_self">
-          Netty源码-11-Pipeline
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" target="_self">
-        <div>
-          在Channel的初始化过程中会给每个Channel实例构造一个Pipeline，因此研究pipeline的入口就是构造方法。 一 类图是继承关系上看，pipeline的实现比较简单。  二 JavaDoc Netty采用Reactor的线程模型，一个IO线程负责读写，至于怎么操作读写的逻辑则定义在不同的handler中，pipline就是handler的栖身之所，pipeline负责组织和管理着
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:48" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" target="_self">
-          Netty源码-10-ChannelFuture
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" target="_self">
-        <div>
-          Netty为了提高系统的吞吐，大量使用异步线程模型。 一 Demo12345678910111213141516171819202122232425262728293031323334353637383940414243444546public class FutureTest00 &#123;    public static void main(String[] args) throws In
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:48" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-09-ServerBootstrapAcceptor/" target="_self">
-          Netty源码-09-ServerBootstrapAcceptor
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-09-ServerBootstrapAcceptor/" target="_self">
-        <div>
-          在ServerBootstrapAcceptor启用之前，此刻Reactor状态应该是：  NioServerSocketChannel在IO多路复用器上关注着Accept(16)事件 pipeline中有4个handler head bossHandler ServerBootstrapAcceptor tail   NioEventLoop已经启动 阻塞在复用器的select上 等待有客户端连
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:48" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/" target="_self">
-          Netty源码-08-ChannelInitializer
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/" target="_self">
-        <div>
-          一 回顾几个时机点 pipeline的初始化 用户向pipeline添加ChannelInitializer辅助实例 Channel注册到复用器之后回调  1 pipeline的初始化初始化Channel的时候触发了pipeline的初始化 12// AbstractChannel.javapipeline = this.newChannelPipeline(); // 每个channel内部都会
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:48" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-07-Channel/" target="_self">
-          Netty源码-07-Channel
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-07-Channel/" target="_self">
-        <div>
-          一 类图关系 在Java的NIO体系中定义了ServerSocketChannel和SocketChannel。Netty为了支持Reactor线程模型和异步编程，自己也实现了与Java中对应的两个实现：  NioServerSocketChannel。 NioSocketChannel。  从功能职责来看：  NioServerSocketChannel负责连接数据。 NioSocketChan
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:47" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/" target="_self">
-          Netty源码-06-MpscQueue
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/" target="_self">
-        <div>
-          在IO线程NioEventLoop中维护了一个队列实现，用于存放非IO任务，一个IO线程负责N个Channel，为了保证一个线程贯穿始终负责一个Channel的所有任务(任务执行次序有先后区分需要)，因此可能IO线程自己将待执行的内容封装成异步任务，也有可能其他线程提交任务(立即执行或者定时任务)。 面对这种场景：  多个线程充当生产者 唯一线程充当消费者  Netty选择了JCTools的实现M
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:44" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/" target="_self">
-          Netty源码-05-EventLoop
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/" target="_self">
-        <div>
-          前文已经了解过了NioEventLoopGroup和NioEventLoop。 在Netty中是用的是Reactor线程模型(IO多路复用器+多个线程)，真正处理业务流程的worker线程都是单个线程，一个线程处理多个Channel，一个Channel始终都是由特定的线程进行处理。 在这样的情况下，如果某个Channel的业务流程耗时较久或者阻塞，那么绑定在当前线程上所有的任务都会受到影响，这样的
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:37" pubdate>
               2023-03-06
             </time>
           </div>
