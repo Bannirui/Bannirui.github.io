@@ -361,7 +361,7 @@ execute task...
 
 ##### 2.2.1 execute(...)
 
-(最终真正执行execute方法的就是EventLoop。)(Netty源码-03-NioEventLoop.md)
+{% post_link Netty源码-03-NioEventLoop 最终真正执行execute方法的就是EventLoop。%}
 
 ```java
 // Demo.java
