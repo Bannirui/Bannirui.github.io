@@ -399,7 +399,7 @@ public class singleReactorMultipleThreadTest {
 特点
 
 * 多个reactor负责请求的接收和派发
-  * main 主负责连接请求的接收和派发给acceptor
+  * main 负责连接请求的接收和派发给acceptor
   * sub 负责读写请求的接收和派发给handler 可以有一个或多个sub reactor
 
 ### 3.1 reactor组件
