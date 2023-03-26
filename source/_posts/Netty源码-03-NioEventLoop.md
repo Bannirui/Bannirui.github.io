@@ -88,7 +88,7 @@ NioEventLoop(NioEventLoopGroup parent, // 标识EventLoop归属于哪个group
 }
 ```
 
-NioEventLoop构造起的作用就是为NioEventLoop这个zujian初始化一些比较重要的属性：
+NioEventLoop构造起的作用就是为NioEventLoop这个组件初始化一些比较重要的属性：
 
 * IO多路复用器Selector。
   * Netty在Java基础上优化的IO多路复用器版本。
