@@ -162,7 +162,7 @@ Poposer向一个Acceptor集合发送提案
 
 #### 6.4.2 Proposer生成提案
 
-Proposer在产生一个编号为M<sub>n</sub>的提案时，必须要知道某一个将要活着已经被半数以上Acceptor批准的编号小于M<sub>n</sub>但为最大编号的提案，并且Proposer会要求所有的Acceptor都不要再批准任何编号小于M<sub>n</sub>的提案
+Proposer在产生一个编号为M<sub>n</sub>的提案时，必须要知道某一个将要或者已经被半数以上Acceptor批准的编号小于M<sub>n</sub>但为最大编号的提案，并且Proposer会要求所有的Acceptor都不要再批准任何编号小于M<sub>n</sub>的提案
 
 #### 6.4.3 Acceptor批准提案
 
