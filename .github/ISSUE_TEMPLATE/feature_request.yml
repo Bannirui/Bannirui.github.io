@@ -1,0 +1,44 @@
+name: Feature Request
+title: "[Feature] Feature title "
+description: I want to suggest a feature for this project.
+labels: [ "feature" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For better global communication, Please write in English.
+
+  - type: checkboxes
+    attributes:
+      label: Search before asking
+      description: >
+        Please make sure to search in the [issues](https://github.com/Bannirui/Bannirui.github.io/issues)
+        first to see whether the same issue was reported already.
+      options:
+        - label: >
+            I had searched in the [issues](https://github.com/Bannirui/Bannirui.github.io/issues) and found
+            no similar issues.
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Feature Request
+      description: Describe the feature.
+      placeholder: >
+        First of all: Have you checked GitHub issues whether someone else has already reported your issue?
+        Maybe the feature already exists?
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: Are you willing to submit PR?
+      description: >
+        This is absolutely not required, but we are happy to guide you in the contribution process
+        especially if you already have a good understanding of how to implement the fix.
+      options:
+        - label: Yes I am willing to submit a PR!
+
+  - type: markdown
+    attributes:
+      value: "Thanks for completing our form!"

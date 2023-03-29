@@ -1,0 +1,34 @@
+name: Question
+title: "[Question] Question title "
+description: I have a question that isn't answered in docs or issue.
+labels: [ "question" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For better global communication, Please write in English.
+
+  - type: checkboxes
+    attributes:
+      label: Search before asking
+      description: >
+        Please make sure to search in the [issues](https://github.com/Bannirui/Bannirui.github.io/issues)
+        first to see whether the same issue was reported already.
+      options:
+        - label: >
+            I had searched in the [issues](https://github.com/Bannirui/Bannirui.github.io/issues) and found
+            no similar issues.
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Question
+      description: Describe your question.
+      placeholder: >
+        Describe your question here :D
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "Thanks for completing our form!"
