@@ -1,11 +1,9 @@
 ---
 title: Redis-0x04-sds字符串
-index_img: /img/Redis-0x04-sds字符串.png
 date: 2023-03-29 23:14:49
-tags:
-- Redis@6.2
-categories:
-- Redis
+index_img: /img/Redis-0x04-sds字符串.png
+tags: [ Redis@6.2 ]
+categories: [ Redis ]
 ---
 
 ## 1 sds.h
