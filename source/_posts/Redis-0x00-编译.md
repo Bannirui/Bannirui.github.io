@@ -1,6 +1,7 @@
 ---
 title: Redis-0x00-编译
 date: 2023-03-23 10:21:59
+index_img: /img/Redis-default.png
 tags:
 - Redis@6.2
 categories:

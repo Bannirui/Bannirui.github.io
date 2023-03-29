@@ -1,6 +1,7 @@
 ---
 title: Redis-0x02-List双链表
 date: 2023-03-24 09:45:28
+index_img: /img/Redis-0x02-List双链表.png
 tags:
 - Redis@6.2
 categories:
