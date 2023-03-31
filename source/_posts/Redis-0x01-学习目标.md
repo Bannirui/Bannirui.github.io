@@ -24,19 +24,19 @@ Redis主要源码都在src目录下，没有分更多的模块。根据一份网
 
 ## 3 struct结构体
 
-| status | 文件          | 说明                                                |
-|:------:|:------------|:--------------------------------------------------|
-|   1    | adlist.c    | 链表。                                               |
-|   1    | dict.c      | 内存中的hash进行管理。                                     |
-|   1    | sds.c       | 用于对字符串的定义。                                        |
-|   0    | sparkline.c | 拥有sample列表的序列。                                    |
-|   0    | t_hash.c    | hash在Server/Client中的应答操作，主要通过redisObject进行类型转换。   |
-|   0    | t_list.c    | list在Server/Client中的应答操作，主要通过redisObject进行类型转换。   |
-|   0    | t_set.c     | set在Server/Client中的应答操作，主要通过redisObject进行类型转换。    |
+| status | 文件        | 说明                                                         |
+| :----: | :---------- | :----------------------------------------------------------- |
+|   1    | adlist.c    | 链表。                                                       |
+|   1    | dict.c      | 内存中的hash进行管理。                                       |
+|   1    | sds.c       | 用于对字符串的定义。                                         |
+|   0    | sparkline.c | 拥有sample列表的序列。                                       |
+|   0    | t_hash.c    | hash在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
+|   0    | t_list.c    | list在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
+|   0    | t_set.c     | set在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
 |   0    | t_string.c  | string在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
-|   0    | t_zset.c    | zset在Server/Client中的应答操作，主要通过redisObject进行类型转换。   |
-|   0    | ziplist.c   | ziplist是类似于list的存储对象，原理类似zipmap。                  |
-|   0    | zipmap.c    | zipmap是一个类似于hash的存储对象。                            |
+|   0    | t_zset.c    | zset在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
+|   1    | ziplist.c   | ziplist是类似于list的存储对象，原理类似zipmap。              |
+|   0    | zipmap.c    | zipmap是一个类似于hash的存储对象。                           |
 
 ## 4 event事件
 
