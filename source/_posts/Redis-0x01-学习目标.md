@@ -36,7 +36,7 @@ Redis主要源码都在src目录下，没有分更多的模块。根据一份网
 |   0    | t_string.c  | string在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
 |   0    | t_zset.c    | zset在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
 |   1    | ziplist.c   | ziplist是类似于list的存储对象，原理类似zipmap。              |
-|   0    | zipmap.c    | zipmap是一个类似于hash的存储对象。                           |
+|   1    | zipmap.c    | zipmap是一个类似于hash的存储对象。                           |
 
 ## 4 event事件
 
