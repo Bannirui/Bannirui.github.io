@@ -1,11 +1,9 @@
 ---
-title: Redis-0x03-dict哈希表
+title: Redis-0x03-dict
 date: 2023-03-29 11:35:15
-index_img: /img/Redis-0x03-dict哈希表.png
-tags:
-- Redis@6.2
-categories:
-- Redis
+index_img: /img/Redis-0x03-dict.png
+tags: [ Redis@6.2 ]
+categories: [ Redis ]
 ---
 
 ## 1 dict.h

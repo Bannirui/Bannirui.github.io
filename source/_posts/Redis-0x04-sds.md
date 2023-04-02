@@ -1,5 +1,5 @@
 ---
-title: Redis-0x04-sds字符串
+title: Redis-0x04-sds
 date: 2023-03-29 23:14:49
 index_img: /img/Redis-0x04-sds.png
 tags: [ Redis@6.2 ]
