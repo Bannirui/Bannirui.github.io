@@ -110,3 +110,84 @@ int hashTypeNext(hashTypeIterator *hi) {
 }
 ```
 
+## 3 编码转换
+
+ziplist转换dict。
+
+```c
+// 编码类型转换
+// ziplist->zipmap
+// @param enc 新的编码类型
+void hashTypeConvert(robj *o, int enc) {
+    if (o->encoding == OBJ_ENCODING_ZIPLIST) {
+        hashTypeConvertZiplist(o, enc);
+    } else if (o->encoding == OBJ_ENCODING_HT) {
+        serverPanic("Not implemented");
+    } else {
+        serverPanic("Unknown hash encoding");
+    }
+}
+```
+
+
+
+```c
+// 编码类型转换 ziplist->dict
+// @param enc 新的编码类型 即dict
+void hashTypeConvertZiplist(robj *o, int enc) {
+    serverAssert(o->encoding == OBJ_ENCODING_ZIPLIST);
+
+    if (enc == OBJ_ENCODING_ZIPLIST) {
+        /* Nothing to do... */
+
+    } else if (enc == OBJ_ENCODING_HT) {
+        hashTypeIterator *hi;
+        dict *dict;
+        int ret;
+
+        // redisObject的数据类型是OBJ_HASH 其编码类型只有两种 OBJ_ENCODING_ZIPLIST或者OBJ_ENCODING_HT
+        // 那么这个地方的对应底层数据结构就是ziplist的迭代器
+        hi = hashTypeInitIterator(o);
+        // 初始化dict实例
+        dict = dictCreate(&hashDictType, NULL);
+
+        while (hashTypeNext(hi) != C_ERR) { // 迭代器遍历ziplist的数据
+            sds key, value;
+
+            key = hashTypeCurrentObjectNewSds(hi,OBJ_HASH_KEY);
+            value = hashTypeCurrentObjectNewSds(hi,OBJ_HASH_VALUE);
+            ret = dictAdd(dict, key, value);
+            if (ret != DICT_OK) {
+                serverLogHexDump(LL_WARNING,"ziplist with dup elements dump",
+                    o->ptr,ziplistBlobLen(o->ptr));
+                serverPanic("Ziplist corruption detected");
+            }
+        }
+        hashTypeReleaseIterator(hi);
+        zfree(o->ptr); // 数据原来的编码方式为OBJ_ENCODING_ZIPLIST 释放内存
+        o->encoding = OBJ_ENCODING_HT; // redisObject数据新的编码方式
+        o->ptr = dict; // 数据新的编码方式为OBJ_ENCODING_HT 数据内容
+    } else {
+        serverPanic("Unknown hash encoding");
+    }
+}
+```
+
+
+
+举个例子，假设键值对为：
+
+```json
+{
+    "name": "ding rui",
+    "age": "30"
+}
+```
+
+### 3.1 ziplist编码
+
+![](Redis-0x07-t-hash/image-20230403214457298.png)
+
+### 3.2 dict编码
+
+![](Redis-0x07-t-hash/image-20230403214631317.png)
