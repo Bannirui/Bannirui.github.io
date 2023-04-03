@@ -12,7 +12,7 @@ categories: [ Redis ]
 
 从注释上可以看出ziplist结构如下。
 
-![](Reids-0x05-ziplist/image-20230330223845470.png)
+![](Redis-0x05-ziplist/image-20230330223845470.png)
 
 ### 1.2 字段解释
 
@@ -30,7 +30,7 @@ categories: [ Redis ]
 
 从注释上可以看出entry的结构如下。
 
-![](Reids-0x05-ziplist/image-20230330225305188.png)
+![](Redis-0x05-ziplist/image-20230330225305188.png)
 
 ### 2.2 字段解释
 
@@ -48,7 +48,7 @@ categories: [ Redis ]
 
 前驱entry地址=当前entry地址-前驱entry大小
 
-![](Reids-0x05-ziplist/image-20230330230319123.png)
+![](Redis-0x05-ziplist/image-20230330230319123.png)
 
 #### 2.3.2 encoding字段
 
@@ -56,29 +56,29 @@ encoding二进制表示形式的高2位作为标识位，决定entry中数据内
 
 ##### 2.3.2.1 存储字符串
 
-![](Reids-0x05-ziplist/image-20230330231108397.png)
+![](Redis-0x05-ziplist/image-20230330231108397.png)
 
 ##### 2.3.2.2 存储整数
 
-![](Reids-0x05-ziplist/image-20230330230815003.png)
+![](Redis-0x05-ziplist/image-20230330230815003.png)
 
 ## 3 初始化ziplist
 
-![](Reids-0x05-ziplist/image-20230330232221382.png)
+![](Redis-0x05-ziplist/image-20230330232221382.png)
 
-![](Reids-0x05-ziplist/image-20230330232312936.png)
+![](Redis-0x05-ziplist/image-20230330232312936.png)
 
 ## 4 entry字段prevlen
 
 ### 4.1 prevlen前驱长度编码
 
-![](Reids-0x05-ziplist/image-20230331084824509.png)
+![](Redis-0x05-ziplist/image-20230331084824509.png)
 
 ### 4.2 prevlen前驱长度
 
-![](Reids-0x05-ziplist/image-20230331085858894.png)
+![](Redis-0x05-ziplist/image-20230331085858894.png)
 
-![](Reids-0x05-ziplist/image-20230331090437381.png)
+![](Redis-0x05-ziplist/image-20230331090437381.png)
 
 ### 4.3 prevlen需要多大内存 && prevlen字段写入
 
@@ -130,7 +130,7 @@ int zipStorePrevEntryLengthLarge(unsigned char *p, unsigned int len) {
 }
 ```
 
-![](Reids-0x05-ziplist/image-20230331105456800.png)
+![](Redis-0x05-ziplist/image-20230331105456800.png)
 
 ## 5 entry字段encoding
 
@@ -172,7 +172,7 @@ int zipTryEncoding(unsigned char *entry, unsigned int entrylen, long long *v, un
 }
 ```
 
-![](Reids-0x05-ziplist/image-20230331101514463.png)
+![](Redis-0x05-ziplist/image-20230331101514463.png)
 
 ### 5.2 encoding需要多大内存 && encoding字段写入
 
@@ -222,7 +222,7 @@ unsigned int zipStoreEntryEncoding(unsigned char *p, unsigned char encoding, uns
 }
 ```
 
-![](Reids-0x05-ziplist/image-20230331110748619.png)
+![](Redis-0x05-ziplist/image-20230331110748619.png)
 
 ## 6 entry字段entry-data
 
@@ -455,5 +455,76 @@ unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsigned cha
 
 ### 8.2 节点挂在中间
 
+## 9 按照脚标查找元素
 
+```c
+// 按照entry的相对脚标查找
+// @param zl ziplist实例
+// @param index 给定的脚标位置
+//                           负数 从后往前找
+//                           非负数 从前往后找脚标位置
+unsigned char *ziplistIndex(unsigned char *zl, int index) {
+    unsigned char *p;
+    unsigned int prevlensize, prevlen = 0;
+    // 取出ziplist中zlbytes字段的值
+    size_t zlbytes = intrev32ifbe(ZIPLIST_BYTES(zl));
+    if (index < 0) { // 从后往前找
+        index = (-index)-1;
+        p = ZIPLIST_ENTRY_TAIL(zl); // 最后一个entry地址
+        if (p[0] != ZIP_END) {
+            /* No need for "safe" check: when going backwards, we know the header
+             * we're parsing is in the range, we just need to assert (below) that
+             * the size we take doesn't cause p to go outside the allocation. */
+            ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);
+            while (prevlen > 0 && index--) {
+                p -= prevlen;
+                assert(p >= zl + ZIPLIST_HEADER_SIZE && p < zl + zlbytes - ZIPLIST_END_SIZE);
+                ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);
+            }
+        }
+    } else { // 从前往后找
+        p = ZIPLIST_ENTRY_HEAD(zl); // 首个entry地址
+        while (index--) {
+            /* Use the "safe" length: When we go forward, we need to be careful
+             * not to decode an entry header if it's past the ziplist allocation. */
+            // p指向的entry节点的大小 指针后移到下一个entry节点
+            p += zipRawEntryLengthSafe(zl, zlbytes, p);
+            if (p[0] == ZIP_END)
+                break;
+        }
+    }
+    // ziplist是空的 没有entry节点
+    if (p[0] == ZIP_END || index > 0)
+        return NULL;
+    zipAssertValidEntry(zl, zlbytes, p);
+    return p;
+}
+```
+
+## 10 entry节点的后继节点
+
+```c
+// @param zl ziplist实例
+// @param p entry节点
+unsigned char *ziplistNext(unsigned char *zl, unsigned char *p) {
+    ((void) zl);
+    // ziplist的blbytes字段值
+    size_t zlbytes = intrev32ifbe(ZIPLIST_BYTES(zl));
+
+    /* "p" could be equal to ZIP_END, caused by ziplistDelete,
+     * and we should return NULL. Otherwise, we should return NULL
+     * when the *next* element is ZIP_END (there is no next entry). */
+    if (p[0] == ZIP_END) { // p已经指向了end 之后没有entry节点了
+        return NULL;
+    }
+
+    p += zipRawEntryLength(p); // 指针后移到下一个entry节点
+    if (p[0] == ZIP_END) { // 刚才的p已经是ziplist中的最后一个entry了 现在指向了end节点
+        return NULL;
+    }
+
+    zipAssertValidEntry(zl, zlbytes, p);
+    return p;
+}
+```
 

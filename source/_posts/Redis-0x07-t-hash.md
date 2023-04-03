@@ -1,0 +1,112 @@
+---
+title: Redis-0x07-t_hash
+date: 2023-04-02 13:45:17
+tags: [ Redis@6.2 ]
+categories: [ Redis ]
+---
+
+## 1 数据结构关系
+
+| 数据类型       | 实现   | 编码方式             | 数据结构 |
+| -------------- | ------ | -------------------- | -------- |
+| 哈希表OBJ_HASH | t_hash | OBJ_ENCODING_ZIPLIST | ziplist  |
+|                |        | OBJ_ENCODING_HT      | dict     |
+
+## 2 redisObject的hash类型数据迭代器
+
+### 2.1 数据结构
+
+```c
+// redisObject数据类型是OBJ_HASH 迭代器
+typedef struct {
+    robj *subject; // 维护redisObject实例
+    int encoding; // redisObject的数据编码类型
+
+    unsigned char *fptr, *vptr; // 编码方式是OBJ_ENCODING_ZIPLIST时使用 ziplist中的entry存放的是[key, value]键值对 也就是步进值为2 依次存放hash数据类型的key和value
+
+    dictIterator *di; // redisObject编码方式是OBJ_ENCODING_HT时使用dict的迭代器
+    dictEntry *de; // dict编码方式下迭代器的next元素 即entry节点
+} hashTypeIterator;
+```
+
+
+
+![](Redis-0x07-t-hash/image-20230403145253833.png)
+
+### 2.2 初始化
+
+```c
+// redisObject的hash表类型数据的迭代器
+// redisObject的数据类型是OBJ_HASH
+// @param subect redisObject实例
+// @return redisObject的OBJ_HASH类型数据的迭代器
+hashTypeIterator *hashTypeInitIterator(robj *subject) {
+    // redisObject的迭代器
+    hashTypeIterator *hi = zmalloc(sizeof(hashTypeIterator));
+    // 维护redisObject的信息
+    // subject字段 redisObject实例
+    hi->subject = subject;
+    // encoding字段 redisObject的编码方式
+    hi->encoding = subject->encoding;
+
+    if (hi->encoding == OBJ_ENCODING_ZIPLIST) { // redisObject编码使用的是ziplist
+        hi->fptr = NULL; // ziplist编码中键值对的key
+        hi->vptr = NULL; // ziplist编码中键值对的value
+    } else if (hi->encoding == OBJ_ENCODING_HT) { // redisObject编码使用的是dict
+        hi->di = dictGetIterator(subject->ptr);
+    } else {
+        serverPanic("Unknown hash encoding");
+    }
+    return hi;
+}
+```
+
+### 2.3 迭代
+
+```c
+// 迭代器的迭代操作
+// @param hi redisObject数据类型是hash时候的迭代器
+// @return 操作码 0-标识迭代器有next元素
+//               1-标识迭代器遍历完了 没有了next元素
+int hashTypeNext(hashTypeIterator *hi) {
+    if (hi->encoding == OBJ_ENCODING_ZIPLIST) { // redisObject编码方式为ziplist
+        unsigned char *zl;
+        unsigned char *fptr, *vptr;
+
+        zl = hi->subject->ptr; // ziplist实例
+        fptr = hi->fptr; // ziplist中存放key的entry节点
+        vptr = hi->vptr; // ziplist中存放value的entry节点
+
+        // ziplist的迭代器一旦开始工作 首个元素一定维护在迭代器实例中 为空说明迭代器初始化之后还没尽心过元素的遍历
+        if (fptr == NULL) { // 迭代器刚初始化完
+            /* Initialize cursor */
+            serverAssert(vptr == NULL);
+            // ziplist中的首个entry就是要找的key
+            fptr = ziplistIndex(zl, 0);
+        } else {
+            /* Advance cursor */
+            serverAssert(vptr != NULL);
+            // 上一次迭代的value的后继节点就是这次迭代的key
+            fptr = ziplistNext(zl, vptr);
+        }
+        if (fptr == NULL) return C_ERR;
+
+        /* Grab pointer to the value (fptr points to the field) */
+        // 这次迭代的key是fptr指向的entry节点
+        // 那么value就是fptr的后继节点
+        vptr = ziplistNext(zl, fptr);
+        serverAssert(vptr != NULL);
+
+        /* fptr, vptr now point to the first or next pair */
+        // 将迭代器要迭代的[key, value]键值对维护在迭代器的字段中
+        hi->fptr = fptr;
+        hi->vptr = vptr;
+    } else if (hi->encoding == OBJ_ENCODING_HT) { // redisObject编码方式为dict
+        if ((hi->de = dictNext(hi->di)) == NULL) return C_ERR; // 直接使用dict中的迭代器实现 de指向本次要迭代的[key, value]entry节点
+    } else {
+        serverPanic("Unknown hash encoding");
+    }
+    return C_OK;
+}
+```
+

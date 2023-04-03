@@ -389,3 +389,112 @@ dictEntry *dictFind(dict *d, const void *key)
 }
 ```
 
+## 9 迭代器
+
+### 9.1 数据结构
+
+```c
+// 迭代器
+// 迭代器分为安全迭代和非安全迭代
+// 安全迭代中会将rehash暂停
+// fingerprint根据字典内存地址生成的64位hash值 代表着字典当前状态 非安全迭代中 如果字典内存发生了新的变化 则fingerprint的值也会发生变化 用于非安全迭代的快速失败
+typedef struct dictIterator {
+    dict *d; // 指向字典指针
+    long index; // 标识着哪些槽已经遍历过
+    // table 当前正在迭代的hash表 [0...1]
+    // safe 标识是否安全
+    int table, safe;
+    // entry 标识当前已经返回的节点
+    // nextEntry 标识下一个节点
+    dictEntry *entry, *nextEntry;
+    /* unsafe iterator fingerprint for misuse detection. */
+    // 字典dict当前状态签名 64位hash值
+    long long fingerprint;
+} dictIterator;
+```
+
+![](Redis-0x03-dict/image-20230403134027984.png)
+
+### 9.2 创建迭代器
+
+#### 9.2.1 非安全模式
+
+```c
+// 获取字典的非安全模式迭代器
+// @param d dict实例
+// @return 迭代器
+dictIterator *dictGetIterator(dict *d)
+{
+    // 分配迭代器内存
+    dictIterator *iter = zmalloc(sizeof(*iter));
+    // 迭代器初始化
+    iter->d = d;
+    iter->table = 0; // 不管是否在rehash中 从旧表开始准没错的
+    iter->index = -1; // 刚初始化出来的迭代器 -1标识还没有遍历过hash桶 也就是说下一次迭代从0号桶开始
+    iter->safe = 0; // 迭代过程中不强制要求rehash暂停
+    iter->entry = NULL;
+    iter->nextEntry = NULL;
+    return iter;
+}
+```
+
+#### 9.2.2 安全模式
+
+```c
+// 获取字典的安全模式迭代器
+// @param d dict实例
+// @return 迭代器实例
+dictIterator *dictGetSafeIterator(dict *d) {
+    dictIterator *i = dictGetIterator(d);
+    // 安全模式的迭代器 在迭代过程中暂停rehash
+    i->safe = 1;
+    return i;
+}
+```
+
+### 9.3 迭代器遍历数据
+
+```c
+// 通过迭代器遍历节点
+// @param iter 迭代器
+// @return entry键值对
+dictEntry *dictNext(dictIterator *iter)
+{
+    while (1) {
+        // 什么时候会entry位null
+        // 初始化完迭代器后首次调用这个方法的时候
+        // 某个hash桶是空的
+        // 某个hash桶的链表遍历完之后
+        if (iter->entry == NULL) {
+            dictht *ht = &iter->d->ht[iter->table]; // hash表
+            if (iter->index == -1 && iter->table == 0) { // 初始化刚进来
+                if (iter->safe)
+                    dictPauseRehashing(iter->d); // 安全迭代模式 暂停rehash
+                else
+                    iter->fingerprint = dictFingerprint(iter->d); // 非安全模式迭代 给字典内存地址来个签名
+            }
+            iter->index++; // 推进hash表桶脚标
+            if (iter->index >= (long) ht->size) { // 整张hash表的所有hash桶都遍历完了
+                if (dictIsRehashing(iter->d) && iter->table == 0) { // 字典在做rehash 也就说还有数据在新表上 继续遍历第二张表
+                    iter->table++;
+                    iter->index = 0;
+                    ht = &iter->d->ht[1];
+                } else {
+                    break; // 字典没有在rehash 所有数据都在第一张hash表上 遍历完了整个hash表 迭代过程也就结束了
+                }
+            }
+            iter->entry = ht->table[iter->index];
+        } else {
+            iter->entry = iter->nextEntry;
+        }
+        if (iter->entry) {
+            /* We need to save the 'next' here, the iterator user
+             * may delete the entry we are returning. */
+            iter->nextEntry = iter->entry->next;
+            return iter->entry;
+        }
+    }
+    return NULL;
+}
+```
+
