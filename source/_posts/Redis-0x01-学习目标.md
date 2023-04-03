@@ -6,7 +6,28 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
-Redis主要源码都在src目录下，没有分更多的模块。根据一份网上的文件结构说明，跟着分类学习。
+Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。
+
+## 1 编码方式
+
+| status | 文件      | 说明                                                         |
+| :----: | :-------- | :----------------------------------------------------------- |
+|   1    | dict.c    | OBJ_ENCODING_HT                                              |
+|   1    | sds.c     | 字符串。                                                     |
+|   1    | ziplist.c | OBJ_ENCODING_ZIPLIST                                         |
+|   1    | zipmap.c  | OBJ_ENCODING_ZIPMAP 可能已经弃用了。                         |
+|   1    | adlist.c  | OBJ_ENCODING_LINKEDLIST 双链表，已经弃用，应该是切换成了quicklist。 |
+|   1    | quicklist | OBJ_ENCODING_QUICKLIST 使用ziplist存储数据的双端链表。       |
+
+## 2 数据类型
+
+| status | 文件       | 说明                |
+| :----: | :--------- | :------------------ |
+|   1    | t_hash.c   | OBJ_HASH 哈希表。   |
+|   0    | t_list.c   | OBJ_LIST 列表。     |
+|   0    | t_set.c    | OBJ_SET 集合。      |
+|   0    | t_string.c | OBJ_STRING 字符串。 |
+|   0    | t_zset.c   | OBJ_ZSET 有序集合。 |
 
 ## 1 main主程序
 
@@ -21,22 +42,6 @@ Redis主要源码都在src目录下，没有分更多的模块。根据一份网
 |:------:|:-------------|:----------------------|
 |   0    | anet.c       | Server/Client通信的基础封装。 |
 |   0    | networking.c | 网络协议传输方法定义。           |
-
-## 3 struct结构体
-
-| status | 文件        | 说明                                                         |
-| :----: | :---------- | :----------------------------------------------------------- |
-|   1    | adlist.c    | 链表。                                                       |
-|   1    | dict.c      | 内存中的hash进行管理。                                       |
-|   1    | sds.c       | 用于对字符串的定义。                                         |
-|   0    | sparkline.c | 拥有sample列表的序列。                                       |
-|   0    | t_hash.c    | hash在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
-|   0    | t_list.c    | list在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
-|   0    | t_set.c     | set在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
-|   0    | t_string.c  | string在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
-|   0    | t_zset.c    | zset在Server/Client中的应答操作，主要通过redisObject进行类型转换。 |
-|   1    | ziplist.c   | ziplist是类似于list的存储对象，原理类似zipmap。              |
-|   1    | zipmap.c    | zipmap是一个类似于hash的存储对象。                           |
 
 ## 4 event事件
 
