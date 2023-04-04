@@ -323,6 +323,8 @@ unsigned char *ziplistResize(unsigned char *zl, size_t len) {
 
 ## 8 添加节点
 
+### 8.1 任意位置插入节点
+
 ```c
 // 添加内容 以entry节点形式挂到ziplist上
 // @param zl ziplist
@@ -451,9 +453,26 @@ unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsigned cha
 }
 ```
 
-### 8.1 节点挂在最后
+### 8.2 头插\尾插
 
-### 8.2 节点挂在中间
+```c
+/**
+ * @brief push的语义是头插还是尾插
+ * @param zl ziplist实例
+ * @param s 元素
+ * @param slen 元素大小 几个字节
+ * @param where 新增元素插入到哪个entry节点之后
+ * @return ziplist实例
+ */
+unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int slen, int where) {
+    unsigned char *p;
+    // 头插还是尾插
+    p = (where == ZIPLIST_HEAD) ? ZIPLIST_ENTRY_HEAD(zl) : ZIPLIST_ENTRY_END(zl);
+    return __ziplistInsert(zl,p,s,slen);
+}
+```
+
+
 
 ## 9 按照脚标查找元素
 
