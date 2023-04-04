@@ -72,11 +72,49 @@ encoding二进制表示形式的高2位作为标识位，决定entry中数据内
 
 ### 4.1 prevlen前驱长度编码
 
-![](Redis-0x05-ziplist/image-20230331084824509.png)
+```c
+/**
+ * @brief ptr指向entry中的prevlen字段 将prevlen的编码长度写到prevlensize中
+ *                                  prevlen的值<0xfe 说明prevlen就1个字节 存储的就是前驱点占用多少bytes
+ *                                  prevlen的值>=0xfe 说明prevlen共5个字节 第1个字节是0xfe标识 后4个字节存储前驱节点占用多少bytes
+ * @param ptr 指向entry
+ * @param prevlensize entry中prevlen字段的编码长度
+ */
+#define ZIP_DECODE_PREVLENSIZE(ptr, prevlensize) do {                          \
+    if ((ptr)[0] < ZIP_BIG_PREVLEN) {                                          \
+        (prevlensize) = 1;                                                     \
+    } else {                                                                   \
+        (prevlensize) = 5;                                                     \
+    }                                                                          \
+} while(0)
+```
 
 ### 4.2 prevlen前驱长度
 
-![](Redis-0x05-ziplist/image-20230331085858894.png)
+```c
+/**
+ * @brief ptr指向entry节点 将entrty中的prevlen字段向zlentry中的prevlensize和prevlen字段写入
+ * @param ptr 指向entry节点
+ * @param prevlensize 用来接收entry中prevlen字段的编码
+ *                                    prevlen<255 1个字节表示长度 即prevlensize=1
+ *                                    prevlen>=255 5个字节表示长度 即prevlensize=5
+ * @param prevlen 用来接收entry中prevlen字段的值
+ *                                    prevlen<255 zlentry中prevlen字段值=entry中prevlen字段值
+ *                                    prevlen>=255 zlentry中prevlen字段值=entry中prevlen字段的后4个字节值
+ */
+#define ZIP_DECODE_PREVLEN(ptr, prevlensize, prevlen) do { \
+    ZIP_DECODE_PREVLENSIZE(ptr, prevlensize);                                  \
+    if ((prevlensize) == 1) {                                                  \
+        (prevlen) = (ptr)[0];                                                  \
+    } else { /* prevlensize == 5 */                                            \
+        (prevlen) = ((ptr)[4] << 24) |                                         \
+                    ((ptr)[3] << 16) |                                         \
+                    ((ptr)[2] <<  8) |                                         \
+                    ((ptr)[1]);                                                \
+    }                                                                          \
+} while(0)
+
+```
 
 ![](Redis-0x05-ziplist/image-20230331090437381.png)
 
@@ -545,5 +583,176 @@ unsigned char *ziplistNext(unsigned char *zl, unsigned char *p) {
     zipAssertValidEntry(zl, zlbytes, p);
     return p;
 }
+```
+
+## 11 zlentry
+
+### 11.1 数据结构
+
+```c
+// 实际存放数据的节点
+typedef struct zlentry {
+    // 前驱节点entry的长度为prevrawlen 编码prevrawlen需要几个字节
+    unsigned int prevrawlensize; /* Bytes used to encode the previous entry len*/
+    // 前驱节点entry的长度为prevrawlen
+    unsigned int prevrawlen;     /* Previous entry len. */
+    // 当前节点entry的长度为len 编码len需要几个字节
+    unsigned int lensize;        /* Bytes used to encode this entry type/len.
+                                    For example strings have a 1, 2 or 5 bytes
+                                    header. Integers always use a single byte.*/
+    // 当前节点entry的长度为len
+    unsigned int len;            /* Bytes used to represent the actual entry.
+                                    For strings this is just the string length
+                                    while for integers it is 1, 2, 3, 4, 8 or
+                                    0 (for 4 bit immediate) depending on the
+                                    number range. */
+    // 节点头部所需要的字节数=prevrawlensize+lensize
+    unsigned int headersize;     /* prevrawlensize + lensize. */
+    // 编码方式 整数\字符数组
+    unsigned char encoding;      /* Set to ZIP_STR_* or ZIP_INT_* depending on
+                                    the entry encoding. However for 4 bits
+                                    immediate integers this can assume a range
+                                    of values and must be range-checked. */
+    // 数据节点的数据(包含头部信息)以字符串形式保存
+    unsigned char *p;            /* Pointer to the very start of the entry, that
+                                    is, this points to prev-entry-len field. */
+} zlentry;
+```
+
+
+
+### 11.2 示意图
+
+![image-20230404175853209](../../../../../Library/Application Support/typora-user-images/image-20230404175853209.png)
+
+### 11.3 数据结构转换
+
+#### 11.3.1 entry信息写到zlentry
+
+```c
+/**
+ * @brief 将p指向的entry信息写到zlentry中
+ * @param p ziplist中entry节点
+ * @param e zlentry
+ */
+static inline void zipEntry(unsigned char *p, zlentry *e) {
+    // entry的prevlen字段写到zlentry的prevrawlensize和prevrawlen字段
+    ZIP_DECODE_PREVLEN(p, e->prevrawlensize, e->prevrawlen);
+    // entry的encoding写到zlentry的encoding字段
+    ZIP_ENTRY_ENCODING(p + e->prevrawlensize, e->encoding);
+    // entry的encoding以及data-entry写到zlentry的lensize和len字段
+    ZIP_DECODE_LENGTH(p + e->prevrawlensize, e->encoding, e->lensize, e->len);
+    assert(e->lensize != 0); /* check that encoding was valid. */
+    // 写zlentry的headersize字段
+    e->headersize = e->prevrawlensize + e->lensize;
+    e->p = p;
+}
+```
+
+
+
+##### 11.3.1.1 entry中prevlen字段解析到zlentry中prevrawlensize和prevrawlen
+
+```c
+/**
+ * @brief ptr指向entry节点 将entrty中的prevlen字段向zlentry中的prevrawlensize和prevrawlen字段写入
+ * @param ptr 指向entry节点
+ * @param prevlensize zlentry中的prevrawlensize字段 用来接收entry中prevlen字段的编码
+ *                                    prevlen<255 1个字节表示长度 即prevlensize=1
+ *                                    prevlen>=255 5个字节表示长度 即prevlensize=5
+ * @param prevlen zlentry中prevrawlen字段 用来接收entry中prevlen字段的值
+ *                                    prevlen<255 zlentry中prevlen字段值=entry中prevlen字段值
+ *                                    prevlen>=255 zlentry中prevlen字段值=entry中prevlen字段的后4个字节值
+ */
+#define ZIP_DECODE_PREVLEN(ptr, prevlensize, prevlen) do { \
+    ZIP_DECODE_PREVLENSIZE(ptr, prevlensize);                                  \
+    if ((prevlensize) == 1) {                                                  \
+        (prevlen) = (ptr)[0];                                                  \
+    } else { /* prevlensize == 5 */                                            \
+        (prevlen) = ((ptr)[4] << 24) |                                         \
+                    ((ptr)[3] << 16) |                                         \
+                    ((ptr)[2] <<  8) |                                         \
+                    ((ptr)[1]);                                                \
+    }                                                                          \
+} while(0)
+
+```
+
+
+
+```c
+/**
+ * @brief ptr指向entry中的prevlen字段 将prevlen的编码长度写到zlentry中的prevrawlensize字段
+ *                                  prevlen的值<0xfe 说明prevlen就1个字节 存储的就是前驱点占用多少bytes
+ *                                  prevlen的值>=0xfe 说明prevlen共5个字节 第1个字节是0xfe标识 后4个字节存储前驱节点占用多少bytes
+ * @param ptr 指向entry
+ * @param prevlensize zlentry中的prevrawlensize字段 用来接收entry中prevlen字段的编码长度
+ */
+#define ZIP_DECODE_PREVLENSIZE(ptr, prevlensize) do {                          \
+    if ((ptr)[0] < ZIP_BIG_PREVLEN) {                                          \
+        (prevlensize) = 1;                                                     \
+    } else {                                                                   \
+        (prevlensize) = 5;                                                     \
+    }                                                                          \
+} while(0)
+```
+
+##### 11.3.1.2 entry中encoding字段解析到zlentry中encoding字段
+
+```c
+/**
+ * @brief ptr指向entry的encoding字段 把entry的encoding的高2位编码信息写到zlentry的encoding字段中
+ * @param ptr 指向了entry的encoding字段
+ * @param encoding 代指zlentry的encoding字段
+ */
+#define ZIP_ENTRY_ENCODING(ptr, encoding) do {  \
+    (encoding) = ((ptr)[0]); \
+    if ((encoding) < ZIP_STR_MASK) (encoding) &= ZIP_STR_MASK; \
+} while(0)
+
+```
+
+##### 11.3.1.3 entry中encoding和data-entry字段解析到zlentry中lensize和len字段
+
+```c
+/**
+ * @brief entry的encoding以及data-entry写到zlentry的lensize和len字段
+ * @param ptr指向entry的encoding字段地址
+ * @param encoding 代指zlentry的encoding字段
+ * @param lensize 代指zlentry的lensize字段
+ * @param len 代指zlentry的len字段
+ */
+#define ZIP_DECODE_LENGTH(ptr, encoding, lensize, len) do {                    \
+    if ((encoding) < ZIP_STR_MASK) {                                           \
+        if ((encoding) == ZIP_STR_06B) {                                       \
+            (lensize) = 1;                                                     \
+            (len) = (ptr)[0] & 0x3f;                                           \
+        } else if ((encoding) == ZIP_STR_14B) {                                \
+            (lensize) = 2;                                                     \
+            (len) = (((ptr)[0] & 0x3f) << 8) | (ptr)[1];                       \
+        } else if ((encoding) == ZIP_STR_32B) {                                \
+            (lensize) = 5;                                                     \
+            (len) = ((ptr)[1] << 24) |                                         \
+                    ((ptr)[2] << 16) |                                         \
+                    ((ptr)[3] <<  8) |                                         \
+                    ((ptr)[4]);                                                \
+        } else {                                                               \
+            (lensize) = 0; /* bad encoding, should be covered by a previous */ \
+            (len) = 0;     /* ZIP_ASSERT_ENCODING / zipEncodingLenSize, or  */ \
+                           /* match the lensize after this macro with 0.    */ \
+        }                                                                      \
+    } else {                                                                   \
+        (lensize) = 1;                                                         \
+        if ((encoding) == ZIP_INT_8B)  (len) = 1;                              \
+        else if ((encoding) == ZIP_INT_16B) (len) = 2;                         \
+        else if ((encoding) == ZIP_INT_24B) (len) = 3;                         \
+        else if ((encoding) == ZIP_INT_32B) (len) = 4;                         \
+        else if ((encoding) == ZIP_INT_64B) (len) = 8;                         \
+        else if (encoding >= ZIP_INT_IMM_MIN && encoding <= ZIP_INT_IMM_MAX)   \
+            (len) = 0; /* 4 bit immediate */                                   \
+        else                                                                   \
+            (lensize) = (len) = 0; /* bad encoding */                          \
+    }                                                                          \
+} while(0)
 ```
 
