@@ -623,7 +623,7 @@ typedef struct zlentry {
 
 ### 11.2 示意图
 
-![image-20230404175853209](../../../../../Library/Application Support/typora-user-images/image-20230404175853209.png)
+![](Redis-0x05-ziplist/image-20230404175853209.png)
 
 ### 11.3 数据结构转换
 
@@ -754,5 +754,183 @@ static inline void zipEntry(unsigned char *p, zlentry *e) {
             (lensize) = (len) = 0; /* bad encoding */                          \
     }                                                                          \
 } while(0)
+```
+
+#### 11.3.2 entry信息写到zlentry并校验
+
+```c
+/**
+ * @brief 将p指向的entry节点信息封装到zlentry中
+ * @param zl ziplist实例
+ * @param zlbytes ziplist的zlbytes字段 ziplist所占内存大小
+ * @param p 当前指向的entry节点地址
+ * @param e 将entry节点信息填充到zlentry中 e指向的就是该zlentry
+ * @param validate_prevlen 是否要校验前驱节点有没有越界 合法entry节点内存地址区间为[HEAD...END]
+ * @return 1标识p指向的entry节点合法 0标识不合法
+ */
+static inline int zipEntrySafe(unsigned char* zl, size_t zlbytes, unsigned char *p, zlentry *e, int validate_prevlen) {
+    // HEAD节点
+    unsigned char *zlfirst = zl + ZIPLIST_HEADER_SIZE;
+    // END节点
+    unsigned char *zllast = zl + zlbytes - ZIPLIST_END_SIZE;
+#define OUT_OF_RANGE(p) (unlikely((p) < zlfirst || (p) > zllast))
+
+    /* If threre's no possibility for the header to reach outside the ziplist,
+     * take the fast path. (max lensize and prevrawlensize are both 5 bytes) */
+    if (p >= zlfirst && p + 10 < zllast) { // 1个entry=prevlen+encoding+entry-data prevlen最大值为5byte encoding最大值为5byte 该if分支确保了在[p...END]这一片内存上是有entry节点的
+        // 从p地址开始 将整个entry信息写到zlentry实例中
+        ZIP_DECODE_PREVLEN(p, e->prevrawlensize, e->prevrawlen);
+        ZIP_ENTRY_ENCODING(p + e->prevrawlensize, e->encoding);
+        ZIP_DECODE_LENGTH(p + e->prevrawlensize, e->encoding, e->lensize, e->len);
+        e->headersize = e->prevrawlensize + e->lensize;
+        e->p = p;
+        /* We didn't call ZIP_ASSERT_ENCODING, so we check lensize was set to 0. */
+        if (unlikely(e->lensize == 0))
+            return 0; // 合法性校验 entry内容长度为0
+        /* Make sure the entry doesn't rech outside the edge of the ziplist */
+        if (OUT_OF_RANGE(p + e->headersize + e->len))
+            return 0; // 合法性校验 越界 p指向的节点超出了ziplist上entry界限
+        /* Make sure prevlen doesn't rech outside the edge of the ziplist */
+        if (validate_prevlen && OUT_OF_RANGE(p - e->prevrawlen)) // 是否需要对前驱节点进行校验
+            return 0; // 合法性校验 越界 前驱节点超出了ziplist上entry界限
+        return 1;
+    }
+
+    /* Make sure the pointer doesn't rech outside the edge of the ziplist */
+    if (OUT_OF_RANGE(p))
+        return 0;
+
+    /* Make sure the encoded prevlen header doesn't reach outside the allocation */
+    // entry的prevlen编码写到zlentry的prevrawlensize字段
+    ZIP_DECODE_PREVLENSIZE(p, e->prevrawlensize);
+    if (OUT_OF_RANGE(p + e->prevrawlensize))
+        return 0;
+
+    /* Make sure encoded entry header is valid. */
+    // entry的encoding字段的高2位编码标识写到zlentry的encoding字段
+    ZIP_ENTRY_ENCODING(p + e->prevrawlensize, e->encoding);
+    // 根据zlentry的encoding字段解析出lensize字段
+    e->lensize = zipEncodingLenSize(e->encoding);
+    if (unlikely(e->lensize == ZIP_ENCODING_SIZE_INVALID))
+        return 0;
+
+    /* Make sure the encoded entry header doesn't reach outside the allocation */
+    if (OUT_OF_RANGE(p + e->prevrawlensize + e->lensize))
+        return 0;
+
+    /* Decode the prevlen and entry len headers. */
+    // 填充zlentry的prevrawlensize和prevrawlen字段
+    ZIP_DECODE_PREVLEN(p, e->prevrawlensize, e->prevrawlen);
+    // 填充zlentry的len字段
+    ZIP_DECODE_LENGTH(p + e->prevrawlensize, e->encoding, e->lensize, e->len);
+    // zlentry的headersize字段
+    e->headersize = e->prevrawlensize + e->lensize;
+
+    /* Make sure the entry doesn't rech outside the edge of the ziplist */
+    if (OUT_OF_RANGE(p + e->headersize + e->len))
+        return 0;
+
+    /* Make sure prevlen doesn't rech outside the edge of the ziplist */
+    if (validate_prevlen && OUT_OF_RANGE(p - e->prevrawlen))
+        return 0;
+
+    e->p = p;
+    return 1;
+#undef OUT_OF_RANGE
+}
+```
+
+### 11.4 entry所占内存
+
+```c
+/**
+ * @brief p指向的entry所占内存 现将p指向的entry封装成zlentry 然后通过hadersize+len直接计算出entry节点的内存大小
+ * @param zl ziplist实例
+ * @param zlbytes ziplist所占内存大小
+ * @param p 指向的entry地址
+ * @return p指向的entry所占内存
+ */
+static inline unsigned int zipRawEntryLengthSafe(unsigned char* zl, size_t zlbytes, unsigned char *p) {
+    zlentry e;
+    // 将p指向的entry封装成zlentry
+    assert(zipEntrySafe(zl, zlbytes, p, &e, 0));
+    // entry节点所占内存
+    return e.headersize + e.len;
+}
+```
+
+## 12 读取entry节点中的元素
+
+```c
+/**
+ * @brief p指向的entry中的entry-data读取出来
+ * @param p entry地址
+ * @param sstr entry中存储的元素是字符串 该字符串的字符数组地址
+ * @param slen entry中存储的元素是字符串 该字符串的长度
+ * @param sval entry中存储的元素是整数 该整数的值
+ * @return 1标识p指向的是ziplist中合法的entry节点 并将entry中的元素读取了出来
+ *         0标识p指向的不是合法entry节点地址 没有正确的元素被读取出来
+ */
+unsigned int ziplistGet(unsigned char *p, unsigned char **sstr, unsigned int *slen, long long *sval) {
+    zlentry entry;
+    if (p == NULL || p[0] == ZIP_END) return 0;
+    if (sstr) *sstr = NULL;
+
+    // 将p指向的entry信息封装到zlentry数据结构中 方便计算
+    zipEntry(p, &entry); /* no need for "safe" variant since the input pointer was validated by the function that returned it. */
+    if (ZIP_IS_STR(entry.encoding)) { // entry中存储的元素编码方式是字符数组
+        if (sstr) {
+            *slen = entry.len; // 字符串的长度
+            *sstr = p+entry.headersize; // 字符数组地址
+        }
+    } else { // entry中存储的元素编码方式是整数
+        if (sval) {
+            // p+entry.headersize指向的是entry中的entry-data字段
+            *sval = zipLoadInteger(p+entry.headersize,entry.encoding); // 整数
+        }
+    }
+    return 1;
+}
+```
+
+## 13 读取entry节点中整数元素
+
+```c
+/**
+ * @brief entry的整数编码中 将整数数值读取出来
+ * @param p 指向的是entry中的entry-data字段
+ * @param encoding entry中的encoding字段值
+ * @return entry中存储的整数元素的值
+ */
+int64_t zipLoadInteger(unsigned char *p, unsigned char encoding) {
+    int16_t i16;
+    int32_t i32;
+    int64_t i64, ret = 0;
+    if (encoding == ZIP_INT_8B) { // 11 111111 + 8bit有符号整数
+        ret = ((int8_t*)p)[0];
+    } else if (encoding == ZIP_INT_16B) { // 11 000000 + 16bit有符号整数
+        memcpy(&i16,p,sizeof(i16));
+        memrev16ifbe(&i16);
+        ret = i16;
+    } else if (encoding == ZIP_INT_32B) { // 11 010000 + 32bit有符号整数
+        memcpy(&i32,p,sizeof(i32));
+        memrev32ifbe(&i32);
+        ret = i32;
+    } else if (encoding == ZIP_INT_24B) { // 11 110000 + 24bit有符号整数
+        i32 = 0;
+        memcpy(((uint8_t*)&i32)+1,p,sizeof(i32)-sizeof(uint8_t));
+        memrev32ifbe(&i32);
+        ret = i32>>8;
+    } else if (encoding == ZIP_INT_64B) { // 11 100000 + 64bit有符号整数
+        memcpy(&i64,p,sizeof(i64));
+        memrev64ifbe(&i64);
+        ret = i64;
+    } else if (encoding >= ZIP_INT_IMM_MIN && encoding <= ZIP_INT_IMM_MAX) { // 11 11???? 4bit无符号整数
+        ret = (encoding & ZIP_INT_IMM_MASK)-1; // encoding这1byte上的后4bit就是存储的整数
+    } else {
+        assert(NULL);
+    }
+    return ret;
+}
 ```
 
