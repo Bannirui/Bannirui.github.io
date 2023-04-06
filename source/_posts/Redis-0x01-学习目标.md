@@ -24,7 +24,7 @@ Redis主要源码都在src目录下，没有分更多的模块。结合一份网
 | status | 文件       | 说明                |
 | :----: | :--------- | :------------------ |
 |   1    | t_hash.c   | OBJ_HASH 哈希表。   |
-|   0    | t_list.c   | OBJ_LIST 列表。     |
+|   1    | t_list.c   | OBJ_LIST 列表。     |
 |   0    | t_set.c    | OBJ_SET 集合。      |
 |   0    | t_string.c | OBJ_STRING 字符串。 |
 |   0    | t_zset.c   | OBJ_ZSET 有序集合。 |

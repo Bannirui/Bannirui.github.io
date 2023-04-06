@@ -12,7 +12,9 @@ categories: [ Redis ]
 | 哈希表OBJ_HASH | t_hash | OBJ_ENCODING_ZIPLIST | ziplist  |
 |                |        | OBJ_ENCODING_HT      | dict     |
 
-## 2 redisObject的hash类型数据迭代器
+![](Redis-0x07-t-hash/image-20230406113414943.png)
+
+## 2 哈希迭代器
 
 ### 2.1 数据结构
 

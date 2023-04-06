@@ -43,3 +43,15 @@ categories: [ Redis ]
 ### 1.5 refcount字段
 
 ### 1.6 ptr字段
+
+## 2 类型转换
+
+### 2.1 字符串转redisObject
+
+listPopSaver
+
+createStringObject
+
+### 2.2 整数转redisObject
+
+createStringObjectFromLongLong
