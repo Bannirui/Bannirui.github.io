@@ -12,22 +12,28 @@ Redis主要源码都在src目录下，没有分更多的模块。结合一份网
 
 | status | 文件      | 说明                                                         |
 | :----: | :-------- | :----------------------------------------------------------- |
-|   1    | dict.c    | OBJ_ENCODING_HT                                              |
-|   1    | sds.c     | 字符串。                                                     |
-|   1    | ziplist.c | OBJ_ENCODING_ZIPLIST                                         |
-|   1    | zipmap.c  | OBJ_ENCODING_ZIPMAP 可能已经弃用了。                         |
-|   1    | adlist.c  | OBJ_ENCODING_LINKEDLIST 双链表，已经弃用，应该是切换成了quicklist。 |
-|   1    | quicklist | OBJ_ENCODING_QUICKLIST 使用ziplist存储数据的双端链表。       |
+|        |           | OBJ_ENCODING_RAW                                             |
+|        |           | OBJ_ENCODING_INT                                             |
+|   1    | dict.c    | {% post_link Redis-0x03-dict OBJ_ENCODING_HT %}              |
+|   1    | zipmap.c  | {% post_link Redis-0x06-zipmap OBJ_ENCODING_ZIPMAP %} 可能已经弃用了。 |
+|   1    | adlist.c  | {% post_link Redis-0x02-list OBJ_ENCODING_LINKEDLIST %} 双链表，已经弃用，应该是切换成了quicklist。 |
+|   1    | ziplist.c | {% post_link Redis-0x05-ziplist OBJ_ENCODING_ZIPLIST %}      |
+|   1    | intset.c  | OBJ_ENCODING_INTSET                                          |
+|        |           | OBJ_ENCODING_SKIPLIST                                        |
+|        |           | OBJ_ENCODING_EMBSTR                                          |
+|   1    | quicklist | {% post_link Redis-0x0d-quicklist OBJ_ENCODING_QUICKLIST %} 使用ziplist存储数据的双端链表。 |
+|        |           | OBJ_ENCODING_STREAM                                          |
+|   1    | sds.c     | {% post_link Redis-0x04-sds 字符串。 %}                      |
 
 ## 2 数据类型
 
-| status | 文件       | 说明                |
-| :----: | :--------- | :------------------ |
-|   1    | t_hash.c   | OBJ_HASH 哈希表。   |
-|   1    | t_list.c   | OBJ_LIST 列表。     |
-|   0    | t_set.c    | OBJ_SET 集合。      |
-|   0    | t_string.c | OBJ_STRING 字符串。 |
-|   0    | t_zset.c   | OBJ_ZSET 有序集合。 |
+| status | 文件       | 说明                                                    |
+| :----: | :--------- | :------------------------------------------------------ |
+|   1    | t_string.c | {% post_link Redis-0x09-t-string OBJ_STRING 字符串。 %} |
+|   1    | t_list.c   | { % post_link Redis-0x0a-t-list OBJ_LIST 列表。 %}      |
+|   1    | t_set.c    | { % post_link Redis-0x0b-t-set OBJ_SET 集合。 %}        |
+|   0    | t_zset.c   | { % post_link Redis-0x0c-t-zset OBJ_ZSET 有序集合。 %}  |
+|   1    | t_hash.c   | {% post_link Redis-0x07-t-hash OBJ_HASH 哈希。 %}       |
 
 ## 1 main主程序
 
