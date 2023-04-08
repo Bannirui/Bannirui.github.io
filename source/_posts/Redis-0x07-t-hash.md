@@ -7,10 +7,10 @@ categories: [ Redis ]
 
 ## 1 数据结构关系
 
-| 数据类型       | 实现   | 编码方式             | 数据结构 |
-| -------------- | ------ | -------------------- | -------- |
-| 哈希表OBJ_HASH | t_hash | OBJ_ENCODING_ZIPLIST | ziplist  |
-|                |        | OBJ_ENCODING_HT      | dict     |
+| 数据类型       | 实现   | 编码方式                                                | 数据结构 |
+| -------------- | ------ | ------------------------------------------------------- | -------- |
+| 哈希表OBJ_HASH | t_hash | {% post_link Redis-0x05-ziplist OBJ_ENCODING_ZIPLIST %} | ziplist  |
+|                |        | {% post_link Redis-0x03-dict OBJ_ENCODING_HT %}         | dict     |
 
 ![](Redis-0x07-t-hash/image-20230406113414943.png)
 

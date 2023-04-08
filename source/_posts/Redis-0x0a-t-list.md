@@ -7,10 +7,10 @@ categories: [ Redis ]
 
 ## 1 数据结构关系
 
-| 数据类型     | 实现   | 编码方式               | 数据结构  |
-| ------------ | ------ | ---------------------- | --------- |
-| 列表OBJ_LIST | t_list | OBJ_ENCODING_QUICKLIST | quicklist |
-|              |        | OBJ_ENCODING_ZIPLIST   | ziplist   |
+| 数据类型     | 实现   | 编码方式                                                    | 数据结构  |
+| ------------ | ------ | ----------------------------------------------------------- | --------- |
+| 列表OBJ_LIST | t_list | {% post_link Redis-0x0d-quicklist OBJ_ENCODING_QUICKLIST %} | quicklist |
+|              |        | {% post_link Redis-0x05-ziplist OBJ_ENCODING_ZIPLIST %}     | ziplist   |
 
 ![](Redis-0x0a-t-list/image-20230406113255919.png)
 
