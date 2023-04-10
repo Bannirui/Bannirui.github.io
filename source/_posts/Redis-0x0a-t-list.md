@@ -5,6 +5,8 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
+数据类型List列表。
+
 ## 1 list列表 数据结构关系
 
 | 数据类型     | 实现   | 编码方式                                                    | 数据结构  |
@@ -14,65 +16,7 @@ categories: [ Redis ]
 
 ![](Redis-0x0a-t-list/image-20230406113255919.png)
 
-## 2 push操作
-
-```c
-/**
- * @brief OBJ_LIST 列表类型数据类型 添加元素
- * @param subject redisObject实例
- * @param value 要添加的元素
- * @param where 0标识头插 否则标识尾插
- */
-void listTypePush(robj *subject, robj *value, int where) {
-    if (subject->encoding == OBJ_ENCODING_QUICKLIST) { // 编码类型 说明列表类型只有quicklist这一种编码方式 而quicklist的节点又通过ziplist进行数据存储
-        // 元素进行头插还是尾插
-        int pos = (where == LIST_HEAD) ? QUICKLIST_HEAD : QUICKLIST_TAIL;
-        if (value->encoding == OBJ_ENCODING_INT) { // 整数转字符串
-            char buf[32];
-            ll2string(buf, 32, (long)value->ptr);
-            quicklistPush(subject->ptr, buf, strlen(buf), pos);
-        } else {
-            quicklistPush(subject->ptr, value->ptr, sdslen(value->ptr), pos);
-        }
-    } else {
-        serverPanic("Unknown list encoding");
-    }
-}
-```
-
-## 3 pop操作
-
-```c
-/**
- * @brief OBJ_LIST列表数据类型
- * @param subject redisObject实例
- * @param where 标识方向 0标识从head弹出 否则从tail弹出
- * @return 弹出的元素被加工成了redisObject类型
- */
-robj *listTypePop(robj *subject, int where) {
-    long long vlong;
-    robj *value = NULL;
-    // 从列表头弹出元素还是列表尾弹出元素
-    int ql_where = where == LIST_HEAD ? QUICKLIST_HEAD : QUICKLIST_TAIL;
-    if (subject->encoding == OBJ_ENCODING_QUICKLIST) { // OBJ_LIST列表类型数据只支持quicklist的编码方式
-        /**
-         * quicklistPopCustom函数返回值1标识从quicklist中pop出来了一个元素
-         *   - pop出来的元素是字符串 通过listPopSaver回调函数 将字符串加工成redisObject实例放在value上
-         *   - pop出来的元素是整数 通过createStringObjectFromLongLong函数 将整数加工成redisObject实例
-         */
-        if (quicklistPopCustom(subject->ptr, ql_where, (unsigned char **)&value,
-                               NULL, &vlong, listPopSaver)) {
-            if (!value)
-                value = createStringObjectFromLongLong(vlong);
-        }
-    } else {
-        serverPanic("Unknown list encoding");
-    }
-    return value;
-}
-```
-
-## 4 列表长度
+## 2 列表长度
 
 ```c
 /**
@@ -91,9 +35,9 @@ unsigned long listTypeLength(const robj *subject) {
 }
 ```
 
-## 5 列表迭代器
+## 3 列表迭代器
 
-### 5.1 数据结构
+### 3.1 数据结构
 
 ```c
 // 加上填充字节 该结构体24byte
@@ -111,7 +55,7 @@ typedef struct {
 
 ![](Redis-0x0a-t-list/image-20230406092426043.png)
 
-### 5.2 创建列表迭代器
+### 3.2 创建列表迭代器
 
 ```c
 /**
@@ -145,7 +89,7 @@ listTypeIterator *listTypeInitIterator(robj *subject, long index,
 }
 ```
 
-### 5.3 释放列表迭代器
+### 3.3 释放列表迭代器
 
 ```c
 // 释放列表迭代器
@@ -155,7 +99,7 @@ void listTypeReleaseIterator(listTypeIterator *li) {
 }
 ```
 
-### 5.4 列表迭代器遍历
+### 3.4 列表迭代器遍历
 
 ```c
 /**
@@ -181,17 +125,77 @@ int listTypeNext(listTypeIterator *li, listTypeEntry *entry) {
 }
 ```
 
+## 4 增
+
+### 4.1 push实现
+
+```c
+/**
+ * @brief 向列表中添加元素
+ *          - lpush key value
+ *          - rpush key value
+ * @param subject redisObject实例
+ * @param value 要添加的元素
+ * @param where 0标识头插 否则标识尾插
+ */
+void listTypePush(robj *subject, robj *value, int where) {
+    if (subject->encoding == OBJ_ENCODING_QUICKLIST) { // 编码类型 说明列表类型只有quicklist这一种编码方式 而quicklist的节点又通过ziplist进行数据存储
+        // 元素进行头插还是尾插
+        int pos = (where == LIST_HEAD) ? QUICKLIST_HEAD : QUICKLIST_TAIL;
+        if (value->encoding == OBJ_ENCODING_INT) { // 整数转字符串
+            char buf[32];
+            ll2string(buf, 32, (long)value->ptr);
+            quicklistPush(subject->ptr, buf, strlen(buf), pos);
+        } else {
+            quicklistPush(subject->ptr, value->ptr, sdslen(value->ptr), pos);
+        }
+    } else {
+        serverPanic("Unknown list encoding");
+    }
+}
+```
+
+## 5 删
+
+### 5.1 pop实现
+
+```c
+/**
+ * @brief 从列表中删除元素
+ * @param subject redisObject实例
+ * @param where 标识方向 0标识从head弹出 否则从tail弹出
+ * @return 弹出的元素被加工成了redisObject类型
+ */
+robj *listTypePop(robj *subject, int where) {
+    long long vlong;
+    robj *value = NULL;
+    // 从列表头弹出元素还是列表尾弹出元素
+    int ql_where = where == LIST_HEAD ? QUICKLIST_HEAD : QUICKLIST_TAIL;
+    if (subject->encoding == OBJ_ENCODING_QUICKLIST) { // OBJ_LIST列表类型数据只支持quicklist的编码方式
+        /**
+         * quicklistPopCustom函数返回值1标识从quicklist中pop出来了一个元素
+         *   - pop出来的元素是字符串 通过listPopSaver回调函数 将字符串加工成redisObject实例放在value上
+         *   - pop出来的元素是整数 通过createStringObjectFromLongLong函数 将整数加工成redisObject实例
+         */
+        if (quicklistPopCustom(subject->ptr, ql_where, (unsigned char **)&value,
+                               NULL, &vlong, listPopSaver)) {
+            if (!value)
+                value = createStringObjectFromLongLong(vlong);
+        }
+    } else {
+        serverPanic("Unknown list encoding");
+    }
+    return value;
+}
+```
 
 
-## 6 增
-
-## 7 删
 
 ## 8 改
 
-## 9 查
+## 7 查
 
-### 9.1 列表迭代器遍历
+### 7.1 列表迭代器遍历
 
 ```c
 /**
@@ -217,7 +221,7 @@ int listTypeNext(listTypeIterator *li, listTypeEntry *entry) {
 }
 ```
 
-## 10 数据转换redisObject
+## 8 编码类型转换
 
 ```c
 /**
