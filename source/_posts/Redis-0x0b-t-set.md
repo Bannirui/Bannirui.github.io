@@ -5,7 +5,9 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
-## 1 set集合 数据结构关系
+数据类型Set集合。
+
+## 1 数据结构关系
 
 | 数据类型    | 实现  | 编码方式                                              | 数据结构 |
 | ----------- | ----- | ----------------------------------------------------- | -------- |
@@ -73,7 +75,7 @@ void setTypeReleaseIterator(setTypeIterator *si) {
 }
 ```
 
-## 2.4 迭代器查询
+### 2.4 迭代器查询
 
 ```c
 /**
@@ -189,11 +191,11 @@ int setTypeRemove(robj *setobj, sds value) {
 }
 ```
 
-
-
 ## 5 改
 
-### 5.1 编码方式转换
+## 6 查
+
+## 7 编码方式转换
 
 ```c
 /**
@@ -238,4 +240,3 @@ void setTypeConvert(robj *setobj, int enc) {
 }
 ```
 
-## 6 查
