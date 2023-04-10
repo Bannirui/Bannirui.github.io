@@ -39,7 +39,7 @@ Redis主要源码都在src目录下，没有分更多的模块。结合一份网
 
 | status | 文件          | 说明        |
 |:------:|:------------|:----------|
-|   0    | redis.c     | redis服务端。 |
+|   0    | server.c     | redis服务端。 |
 |   0    | redis_cli.c | redis客户端。 |
 
 ## 2 net网络
