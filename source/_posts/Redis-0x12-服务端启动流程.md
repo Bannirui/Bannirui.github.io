@@ -10,7 +10,7 @@ categories:  [ Redis ]
 
 ![](Redis-0x12-服务端启动流程/image-20230411213917369.png)
 
-## 1 内存OOM处理器
+## 1 {% post_link Redis-0x13-注册OOM处理器 内存OOM处理器 %}
 
 ```c
 // 内存oom的处理器 注册了一个回调函数
