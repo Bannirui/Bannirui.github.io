@@ -10,20 +10,20 @@ Redis主要源码都在src目录下，没有分更多的模块。结合一份网
 
 ## 1 编码方式
 
-| status | 文件        | 说明                                                         |
-| :----: | :---------- | :----------------------------------------------------------- |
-|   1    |             | OBJ_ENCODING_RAW                                             |
-|   1    |             | OBJ_ENCODING_INT                                             |
-|   1    | dict.c      | {% post_link Redis-0x03-dict OBJ_ENCODING_HT %}              |
-|   1    | zipmap.c    | {% post_link Redis-0x06-zipmap OBJ_ENCODING_ZIPMAP %} 可能已经弃用了。 |
-|   1    | adlist.c    | {% post_link Redis-0x02-list OBJ_ENCODING_LINKEDLIST %} 双链表，作为数据类型编码已经切换成quicklist，现在主要用在redisServer实例里面的双链表数据结构。 |
-|   1    | ziplist.c   | {% post_link Redis-0x05-ziplist OBJ_ENCODING_ZIPLIST %}      |
-|   1    | intset.c    | {% post_link Redis-0x0e-intset OBJ_ENCODING_INTSET %}        |
-|   1    | t_zset.c    | {% post_link Redis-0x0f-zskiplist OBJ_ENCODING_SKIPLIST %}   |
-|   1    |             | OBJ_ENCODING_EMBSTR                                          |
-|   1    | quicklist.c | {% post_link Redis-0x0d-quicklist OBJ_ENCODING_QUICKLIST %} 使用ziplist存储数据的双端链表。 |
-|        |             | OBJ_ENCODING_STREAM                                          |
-|   1    | sds.c       | {% post_link Redis-0x04-sds 字符串。 %}                      |
+| status | struct          | 文件        | 说明                                                         |
+| :----: | --------------- | :---------- | :----------------------------------------------------------- |
+|   1    | redisObject\sds | object.c    | {% post_link Redis-0x08-redisObject OBJ_ENCODING_RAW %}      |
+|   1    |                 |             | OBJ_ENCODING_INT                                             |
+|   1    | dict            | dict.c      | {% post_link Redis-0x03-dict OBJ_ENCODING_HT %}              |
+|   1    | zipmap          | zipmap.c    | {% post_link Redis-0x06-zipmap OBJ_ENCODING_ZIPMAP %} 可能已经弃用了。 |
+|   1    | list            | adlist.c    | {% post_link Redis-0x02-list OBJ_ENCODING_LINKEDLIST %} 双链表，作为数据类型编码已经切换成quicklist，现在主要用在redisServer实例里面的双链表数据结构。 |
+|   1    | ziplist         | ziplist.c   | {% post_link Redis-0x05-ziplist OBJ_ENCODING_ZIPLIST %}      |
+|   1    | intset          | intset.c    | {% post_link Redis-0x0e-intset OBJ_ENCODING_INTSET %}        |
+|   1    | zskiplist       | t_zset.c    | {% post_link Redis-0x0f-zskiplist OBJ_ENCODING_SKIPLIST %}   |
+|   1    | redisObject\sds | object.c    | {% post_link Redis-0x08-redisObject OBJ_ENCODING_EMBSTR %}   |
+|   1    | quicklist       | quicklist.c | {% post_link Redis-0x0d-quicklist OBJ_ENCODING_QUICKLIST %} 使用ziplist存储数据的双端链表。 |
+|        |                 |             | OBJ_ENCODING_STREAM                                          |
+|   1    | sds             | sds.c       | {% post_link Redis-0x04-sds 字符串。 %}                      |
 
 ## 2 数据类型
 
@@ -37,9 +37,9 @@ Redis主要源码都在src目录下，没有分更多的模块。结合一份网
 
 ## 3 数据结构
 
-| status | struct      | 文件              | mark                    |
-| ------ | ----------- | ----------------- | ----------------------- |
-| 1      | redisObject | server.h\object.c | redis中数据的统一封装。 |
+| status | struct      | 文件              | mark                                                         |
+| ------ | ----------- | ----------------- | ------------------------------------------------------------ |
+| 1      | redisObject | server.h\object.c | {% post_link Redis-0x08-redisObject redis中数据的统一封装。 %} |
 
 ## 1 main主程序
 
