@@ -17,7 +17,7 @@ categories:  [ Redis ]
 zmalloc_set_oom_handler(redisOutOfMemoryHandler);
 ```
 
-## 2 哨兵模式检查
+## 2 {% post_link Redis-0x14-哨兵模式检查 哨兵模式检查 %}
 
 ```c
 /**
