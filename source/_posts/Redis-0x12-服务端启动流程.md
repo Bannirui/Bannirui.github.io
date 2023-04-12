@@ -76,7 +76,7 @@ else if (strstr(argv[0],"redis-check-aof") != NULL) // 运行redis-check-aof可�
     redis_check_aof_main(argc,argv); // 检测AOF文件
 ```
 
-## 9 {% post_link Redis-0x15-初始化server服务配置 解析配置文件配置项 %}
+## 9 {% post_link Redis-0x16-加载配置文件 解析配置文件配置项 %}
 
 ```c
 // 解析配置文件配置项
@@ -98,28 +98,28 @@ int background = server.daemonize && !server.supervised;
 if (background) daemonize();
 ```
 
-## 12 初始化server服务
+## 12 {% post_link Redis-0x18-初始化服务端 初始化server服务 %}
 
 ```c
 // 初始化server服务
 initServer();
 ```
 
-## 13 加载数据
+## 13 {% post_link Redis-0x19-持久化文件加载内存数据库 加载数据 %}
 
 ```c
 // 恢复持久化的数据到内存数据库
 loadDataFromDisk();
 ```
 
-## 14 开启监听
+## 14 {% post_link Redis-0x1a-开启事件监听器 开启事件监听器 %}
 
 ```c
 // ze主循环 开启监听
 aeMain(server.el);
 ```
 
-## 15 删除监听
+## 15 删除事件监听器
 
 ```c
 // 删除监听
