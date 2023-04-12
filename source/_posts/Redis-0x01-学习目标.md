@@ -35,6 +35,12 @@ Redis主要源码都在src目录下，没有分更多的模块。结合一份网
 |   1    | t_zset.c   | {% post_link Redis-0x0c-t-zset OBJ_ZSET 有序集合。 %}   |
 |   1    | t_hash.c   | {% post_link Redis-0x07-t-hash OBJ_HASH 哈希。 %}       |
 
+## 3 数据结构
+
+| status | struct      | 文件              | mark                    |
+| ------ | ----------- | ----------------- | ----------------------- |
+| 1      | redisObject | server.h\object.c | redis中数据的统一封装。 |
+
 ## 1 main主程序
 
 | status | 文件          | 说明        |

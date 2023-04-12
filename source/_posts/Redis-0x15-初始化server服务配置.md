@@ -7,6 +7,8 @@ categories: [ Redis ]
 
 预先填充redisServer实例中的一部分字段的值。
 
+## 1 显式设值
+
 ```c
 /**
  * @brief 初始化server配置 即填充redisServer实例中的部分字段
@@ -155,3 +157,57 @@ void initServerConfig(void) {
 }
 ```
 
+## 2 通过宏函数设值
+
+```c
+/**
+ * @brief 通过宏函数设置默认值
+ */
+void initConfigValues() {
+    for (standardConfig *config = configs; config->name != NULL; config++) {
+        config->interface.init(config->data);
+    }
+}
+```
+
+### 2.1 以内存淘汰策略为例
+
+```c
+createEnumConfig("maxmemory-policy", NULL, MODIFIABLE_CONFIG, maxmemory_policy_enum, server.maxmemory_policy, MAXMEMORY_NO_EVICTION, NULL, NULL), // 内存淘汰策略
+```
+
+
+
+```c
+createEnumConfig(name, alias, flags, enum, config_addr, default, is_valid, update){ \
+    .name = (name), \
+    .alias = (alias), \
+    .flags = (flags),
+    
+    .interface = { \
+        .init = (enumConfigInit), \
+        .set = (enumConfigSet), \
+        .get = (enumConfigGet), \
+        .rewrite = (enumConfigRewrite) \
+	},
+    .data.enumd = { \
+        .config = &(config_addr), \
+        .default_value = (default), \
+        .is_valid_fn = (is_valid), \
+        .update_fn = (update), \
+        .enum_value = (enum), \
+    } \
+}
+```
+
+
+
+```c
+static void enumConfigInit(typeData data) {
+    *data.enumd.config = data.enumd.default_value;
+}
+```
+
+将宏展开代入`enumConfigInit`，就是向enum实例赋值一个默认值，即server.maxmemory_policy=MAXMEMORY_NO_EVICTION。
+
+即默认的内存淘汰策略是不进行淘汰，内存OOM了就回调处理器。
