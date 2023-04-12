@@ -6,6 +6,8 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
+数据类型的编码方式。
+
 ## 1 ziplist是什么
 
 ### 1.1 结构

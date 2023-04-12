@@ -6,6 +6,8 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
+数据类型的编码方式。
+
 ## 1 数据结构
 
 ![](Redis-0x03-dict/image-20230403095942861.png)

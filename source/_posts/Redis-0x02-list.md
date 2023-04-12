@@ -6,6 +6,8 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
+不作为数据类型的编码方式使用，使用在redisServer字段上，单纯作为双链表数据结构使用。
+
 ## 1 数据结构
 
 ### 1.1 链表节点

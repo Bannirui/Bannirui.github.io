@@ -6,6 +6,8 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
+数据类型的编码方式。
+
 ## 1 数据结构
 
 ### 1.1 跳表节点
