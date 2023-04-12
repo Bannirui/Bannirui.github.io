@@ -76,7 +76,7 @@ else if (strstr(argv[0],"redis-check-aof") != NULL) // 运行redis-check-aof可�
     redis_check_aof_main(argc,argv); // 检测AOF文件
 ```
 
-## 9 解析配置文件配置项
+## 9 {% post_link Redis-0x15-初始化server服务配置 解析配置文件配置项 %}
 
 ```c
 // 解析配置文件配置项
@@ -90,7 +90,7 @@ loadServerConfig(server.configfile, config_from_stdin, options);
 if (server.sentinel_mode) loadSentinelConfigFromQueue();
 ```
 
-## 11 开启守护进程
+## 11 {% post_link Redis-0x17-守护进程 开启守护进程 %}
 
 ```c
 // 根据配置 开启守护进程
