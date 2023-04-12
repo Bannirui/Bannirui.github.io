@@ -5,6 +5,8 @@ tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
+## 1 开启后台进程
+
 ```c
 /**
  * @brief 以后台进程方式运行服务
@@ -41,6 +43,26 @@ void daemonize(void) {
         dup2(fd, STDOUT_FILENO);
         dup2(fd, STDERR_FILENO);
         if (fd > STDERR_FILENO) close(fd);
+    }
+}
+```
+
+## 2 记录进程号
+
+```c
+/**
+ * @brief 创建pid文件 写入进程号
+ */
+void createPidFile(void) {
+    /* If pidfile requested, but no pidfile defined, use
+     * default pidfile path */
+    if (!server.pidfile) server.pidfile = zstrdup(CONFIG_DEFAULT_PID_FILE);
+
+    /* Try to write the pid file in a best-effort way. */
+    FILE *fp = fopen(server.pidfile,"w");
+    if (fp) {
+        fprintf(fp,"%d\n",(int)getpid()); // 记录进程号
+        fclose(fp);
     }
 }
 ```
