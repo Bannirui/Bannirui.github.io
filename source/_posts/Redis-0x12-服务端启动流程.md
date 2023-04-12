@@ -28,7 +28,7 @@ zmalloc_set_oom_handler(redisOutOfMemoryHandler);
 server.sentinel_mode = checkForSentinelMode(argc,argv);
 ```
 
-## 3 初始化server配置
+## 3 {% post_link Redis-0x15-初始化server服务配置 初始化server配置 %}
 
 ```c
 // 初始化server配置 填充redisServer中的字段
