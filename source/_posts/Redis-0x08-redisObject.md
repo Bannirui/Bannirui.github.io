@@ -60,7 +60,7 @@ categories: [ Redis ]
 
 数据
 
-## 2 字符串
+## 2 String字符串对象
 
 ```c
 /**
@@ -228,5 +228,133 @@ robj *createObject(int type, void *ptr) {
 
 ![](Redis-0x08-redisObject/image-20230412234114968.png)
 
+## 3 List列表对象
 
+### 3.1 quicklist编码
+
+```c
+/**
+ * @brief List列表对象
+ *        编码方式为quicklist
+ * @return
+ */
+robj *createQuicklistObject(void) {
+    quicklist *l = quicklistCreate(); // 数据类型实现是quicklist
+    robj *o = createObject(OBJ_LIST,l); // 数据类型是List列表
+    o->encoding = OBJ_ENCODING_QUICKLIST; // 编码类型为quicklist
+    return o;
+}
+```
+
+### 3.2 ziplist编码
+
+```c
+/**
+ * @brief List列表对象
+ *        编码方式为ziplist
+ * @return
+ */
+robj *createZiplistObject(void) {
+    unsigned char *zl = ziplistNew();
+    robj *o = createObject(OBJ_LIST,zl); // 数据类型为List列表
+    o->encoding = OBJ_ENCODING_ZIPLIST; // 编码方式为ziplist
+    return o;
+}
+```
+
+##  4 Set集合对象
+
+### 4.1 dict编码
+
+```c
+/**
+ * @brief Set集合对象
+ *        数据类型是set集合 数据结构实现是dict
+ *        编码类型是dict
+ * @return 
+ */
+robj *createSetObject(void) {
+    dict *d = dictCreate(&setDictType,NULL);
+    robj *o = createObject(OBJ_SET,d);
+    o->encoding = OBJ_ENCODING_HT;
+    return o;
+}
+```
+
+### 4.2 intset编码
+
+```c
+/**
+ * @brief Set集合对象
+ *        数据类型是set集合 数据结构实现是intset
+ *        编码类型是intset
+ * @return
+ */
+robj *createIntsetObject(void) {
+    intset *is = intsetNew();
+    robj *o = createObject(OBJ_SET,is);
+    o->encoding = OBJ_ENCODING_INTSET;
+    return o;
+}
+```
+
+## 5 ZSet有序集合对象
+
+### 5.1 zskiplist编码
+
+```c
+/**
+ * @brief ZSet有序集合对象
+ *        数据类型是zset 数据结构实现是zset
+ *        编码实现是zskiplist
+ * @return
+ */
+robj *createZsetObject(void) {
+    zset *zs = zmalloc(sizeof(*zs));
+    robj *o;
+
+    zs->dict = dictCreate(&zsetDictType,NULL);
+    zs->zsl = zslCreate();
+    o = createObject(OBJ_ZSET,zs);
+    o->encoding = OBJ_ENCODING_SKIPLIST;
+    return o;
+}
+```
+
+### 5.2 ziplist编码
+
+```c
+/**
+ * @brief ZSet有序集合对象
+ *        数据类型是zet 数据结构实现是ziplist
+ *        编码方式是ziplist
+ * @return
+ */
+robj *createZsetZiplistObject(void) {
+    unsigned char *zl = ziplistNew();
+    robj *o = createObject(OBJ_ZSET,zl);
+    o->encoding = OBJ_ENCODING_ZIPLIST;
+    return o;
+}
+```
+
+## 6 Hash哈希对象
+
+### 6.1 ziplist编码
+
+```c
+/**
+ * @brief Hash哈希对象
+ *        数据类型是hash
+ *        数据结构是ziplist
+ *        编码方式是ziplist
+ * @return
+ */
+robj *createHashObject(void) {
+    unsigned char *zl = ziplistNew();
+    robj *o = createObject(OBJ_HASH, zl);
+    o->encoding = OBJ_ENCODING_ZIPLIST;
+    return o;
+}
+```
 
