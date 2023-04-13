@@ -1,10 +1,11 @@
 ---
 title: Redis-0x11-object
-index_img: /img/Redis-0x11-object.png
 date: 2023-04-10 10:44:59
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
+
+源码中redis对象redisObject相关的实现都在object.c文件中，该篇内容跟{% post_link Redis-0x08-redisObject redisObject那篇 %}内容都出自object.c。
 
 ## 1 字符串内存压缩
 
