@@ -1,12 +1,11 @@
 ---
 title: Redis-0x10-db
-index_img: /img/Redis-0x10-db.png
 date: 2023-04-10 10:33:44
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
 
-1 设置键
+## 1 设置键
 
 ```c
 /**
