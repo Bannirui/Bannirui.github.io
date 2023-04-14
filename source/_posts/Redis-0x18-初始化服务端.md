@@ -129,7 +129,7 @@ server.el = aeCreateEventLoop(server.maxclients+CONFIG_FDSET_INCR);
 server.db = zmalloc(sizeof(redisDb)*server.dbnum);
 ```
 
-## 7 socket创建监听
+## 7 {% post_link Redis-0x1b-Socket编程 socket创建监听 %}
 
 ```c
     /**
@@ -191,13 +191,15 @@ for (j = 0; j < server.dbnum; j++) {
 }
 ```
 
-## 9 注册serverCron函数
+## 9 {% post_link Redis-0x1c-serverCron任务 注册serverCron函数 %}
 
 ```c
     /**
-     * 注册serverCron函数
-     * serverCron是个定期执行的函数 执行周期是100ms
-     * 当前注册 在1ms之后调度serverCron
+     * 创建一个时间事件注册到事件管理器eventLoop上
+     * 由eventLoop来管理调度事件
+     *   - 期待该事件在1ms后被eventLoop事件管理器调度起来
+     *   - 具体的执行逻辑定义在serverCron中
+     *     - 这个serverCron是周期性任务 每隔100ms执行一次
      */
     if (aeCreateTimeEvent(server.el, 1, serverCron, NULL, NULL) == AE_ERR) {
         serverPanic("Can't create event loop timers.");
@@ -205,7 +207,7 @@ for (j = 0; j < server.dbnum; j++) {
     }
 ```
 
-## 10 监听在端口上的socket加到监控列表
+## 10 {% post_link Redis-0x1d-acceptTcpHandler处理连接请求 监听在端口上的socket加到监控列表 %}
 
 ```c
     /**

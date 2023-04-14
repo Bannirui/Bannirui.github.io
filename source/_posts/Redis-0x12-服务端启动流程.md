@@ -8,7 +8,7 @@ categories:  [ Redis ]
 
 流程图
 
-![](Redis-0x12-服务端启动流程/image-20230412170356151.png)
+![](Redis-0x12-服务端启动流程/image-20230414103010186.png)
 
 ## 1 {% post_link Redis-0x13-注册OOM处理器 内存OOM处理器 %}
 
