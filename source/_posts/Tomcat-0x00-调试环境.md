@@ -47,7 +47,7 @@ git remote set-url --push upstream no_push
 
 ![](Tomcat-0x00-调试环境/image-20230415110556860.png)
 
-#### 3.1 根目录新建文件件tomcat-build-libs
+#### 3.1 根目录新建文件夹tomcat-build-libs
 
 ![](Tomcat-0x00-调试环境/image-20230415110745767.png)
 
