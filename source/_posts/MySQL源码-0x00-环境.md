@@ -1,6 +1,5 @@
 ---
 title: MySQL源码-0x00-环境
-index_img: /img/MySQL源码-0x00-环境.png
 date: 2023-04-25 22:56:50
 tags: [ MySQL@8.0.32 ]
 categories: [ MySQL ]
