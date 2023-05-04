@@ -126,7 +126,7 @@ static void MacOSXStartup(int argc, char *argv[]) {
 
 即线程被cpu调度之后，开始执行的逻辑。
 
-这个里面还涉及到{% post_link JVM-0x04-dlsym系统调用 系统调用slsym %}。
+这个里面还涉及到{% post_link JVM-0x05-加载动态链接库 系统调用slsym %}。
 
 ```c
 /**

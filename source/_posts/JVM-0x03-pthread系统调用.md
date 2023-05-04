@@ -5,6 +5,8 @@ tags:  [ JVM@15 ]
 categories: [ JVM ]
 ---
 
+系统调用。
+
 ### 1 pthread_create
 
 #### 1.1 函数原型

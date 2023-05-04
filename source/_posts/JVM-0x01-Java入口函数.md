@@ -86,7 +86,23 @@ categories: [ JVM ]
 
 ![](JVM-0x01-Java入口函数/image-20230428143738915.png)
 
-### 3 加载JVM
+### 3 {% post_link JVM-0x04-加载JVM 加载JVM %}
+
+```c
+    /**
+     * 加载JVM
+     * 从JVM动态链接库中加载好启动JVM需要的函数 在后面进行JVM启动时机直接调用
+     *
+     * jvmpath /jdk/build/macosx-x86_64-server-slowdebug/jdk/lib/server/lib/libjvm.dylib
+     * 从jvm动态链接库加载出3个函数放在ifn中
+     *   - JNI_CreateJavaVM
+     *   - JNI_GetDefaultJavaVMInitArgs
+     *   - JNI_GetCreatedJavaVMs
+     */
+    if (!LoadJavaVM(jvmpath, &ifn)) {
+        return(6);
+    }
+```
 
 ### 4 解析命令行参数
 
