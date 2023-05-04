@@ -136,3 +136,35 @@ JVM启动的前置准备，JVM的启动参数。
 
 * JVM启动函数
 * JVM启动参数
+
+```c
+    /**
+     * 启动JVM
+     *   - ifn 包含了JVM动态链接库的3个函数
+     *     - JNI_CreateJavaVM函数
+     *     - JNI_GetDefaultJavaVMInitArgs函数
+     *     - JNI_GetCreatedJavaVMs函数
+     *   - threadStackSize 0
+     *   - argc JVM启动参数 0
+     *   - argv JVM启动参数 null
+     *   - mode JVM启动方式
+     *     - 1 Class启动方式
+     *     - 2 Jar包启动方式
+     *     - ...
+     *   - what
+     *     - JVM要加载的字节码文件 VMLoaderTest
+     *   -ret JVM退出方式
+     *     - 0 正常退出
+     *
+     * 语义就是启动JVM 让JVM以Class启动方式加载VMLoaderTest这个class字节码文件
+     * 该函数本身并不直接负责启动JVM 其内部通过创建新线程的方式将JVM的启动这个动作控制权转移给新的线程
+     * 而JVM启动时机就是新线程被CPU调度的时候 新线程被调度之后执行的是JavaMain方法 即JVM的启动逻辑在JavaMain方法中
+     */
+    return JVMInit(&ifn, threadStackSize, argc, argv, mode, what, ret);
+```
+
+### 6 小结
+
+上述一系列流程如下图，JVM的启动核心逻辑在JavaMain函数中。
+
+![](JVM-0x01-Java入口函数/image-20230504165958744.png)
