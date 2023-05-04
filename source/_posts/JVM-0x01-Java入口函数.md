@@ -88,6 +88,8 @@ categories: [ JVM ]
 
 ### 3 {% post_link JVM-0x04-加载JVM 加载JVM %}
 
+JVM启动的前置准备，JVM的启动函数。
+
 ```c
     /**
      * 加载JVM
@@ -104,6 +106,33 @@ categories: [ JVM ]
     }
 ```
 
-### 4 解析命令行参数
+### 4 {% post_link JVM-0x06-JVM启动参数 解析JVM启动参数 %}
 
-### 5 启动JVM
+JVM启动的前置准备，JVM的启动参数。
+
+```c
+    /**
+     * 解析JVM启动参数
+     *   - argc 1
+     *   - argv VMLoaderTest
+     *   - jrepath /jdk/build/macosx-x86_64-server-slowdebug/jdk/bin/java
+     * 解析出来的结果存放
+     *   - mode 启动方式
+     *     - 1 Class启动方式
+     *     - 2 Jar包启动方式
+     *   - what JVM加载的class字节码文件
+     *     - VMLoaderTest
+     *   - ret JVM退出方式
+     *     - 0 正常退出
+     */
+    if (!ParseArguments(&argc, &argv, &mode, &what, &ret, jrepath)) {
+        return(ret);
+    }
+```
+
+### 5 {% post_link JVM-0x07-JVM启动 启动JVM %}
+
+根据前置准备好的信息，正式启动JVM。
+
+* JVM启动函数
+* JVM启动参数

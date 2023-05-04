@@ -4,7 +4,7 @@ date: 2023-05-04 14:17:45
 tags:  [ JVM@15 ]
 categories: [ JVM ]
 ---
-LoadJavaVM函数
+JVM启动的前置准备，JVM的启动涉及到的函数。
 
 ```c
 /**
