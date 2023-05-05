@@ -63,7 +63,7 @@ categories: [ JVM ]
     SelectVersion(argc, argv, &main_class);
 ```
 
-### 2 {% post_link JVM-0x02-创建运行环境 创建运行环境 %}
+### 2 {% post_link JVM-0x02-设置运行环境参数 设置运行环境参数 %}
 
 ```c
     /**
@@ -86,7 +86,7 @@ categories: [ JVM ]
 
 ![](JVM-0x01-Java入口函数/image-20230428143738915.png)
 
-### 3 {% post_link JVM-0x04-加载JVM 加载JVM %}
+### 3 {% post_link JVM-0x04-加载JVM 加载JVM动态链接库 %}
 
 JVM启动的前置准备，JVM的启动函数。
 

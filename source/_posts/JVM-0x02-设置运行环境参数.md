@@ -1,5 +1,5 @@
 ---
-title: JVM-0x02-创建运行环境
+title: JVM-0x02-设置运行环境参数
 date: 2023-04-28 13:31:57
 tags:  [ JVM@15 ]
 categories: [ JVM ]
