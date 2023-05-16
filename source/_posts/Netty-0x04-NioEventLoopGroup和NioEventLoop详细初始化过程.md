@@ -7,8 +7,6 @@ categories: [ Netty ]
 
 ### 1 NioEventLoopGroup
 
-#### 1.1 server端
-
 ```java
     /**
      * @param nThreads
@@ -241,31 +239,93 @@ categories: [ Netty ]
 一般而言，bossGroup和workerGroup的区别在于nThreads的指定
 
 * bossGroup手动显式指定1
+
 * workerGroup交给Netty进行推断，DEFAULT_EVENT_LOOP_THREADS
 
-#### 1.2 client端
+  ```java
+  DEFAULT_EVENT_LOOP_THREADS = Math.max(1, SystemPropertyUtil.getInt("io.netty.eventLoopThreads", NettyRuntime.availableProcessors() * 2));
+  ```
 
-### 1.3 公共成员\方法\组件
+### 2 公共成员\方法\组件
 
-##### 1.3.1 SelectorProvider
+#### 2.1 {% post_link Java源码-Selector SelectorProvider %}
 
 SelectorProvider是java提供的类，屏蔽了OS的平台差异，对于我们用户而言，可以将其当成黑盒直接使用。
 
 SelectorProvider::provider提供了一个多路复用器的具体实现。
 
-##### 1.3.2 SelectStrategyFactory
+##### 2.1.1 提供器
+
+```java
+    /**
+     * 提供给客户端一个SelectorProvider实例 将来用于创建Selector
+     * 因为Slector本身是跨平台的 所以SelectorProvider跟它是配套的 也是跨平台的
+     *   - macosx
+     *     - select
+     *     - poll
+     *     - kqueue
+     */
+    public static SelectorProvider provider() {
+        return Holder.INSTANCE;
+    }
+```
+
+##### 2.1.2 创建Selector
+
+```java
+    public abstract AbstractSelector openSelector()
+        throws IOException;
+```
+
+![](Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程/image-20230516221538606.png)
+
+#### 2.2 SelectStrategyFactory
 
 DefaultSelectStrategyFactory.INSTANCE
 
 select策略，在Netty中NioEventLoop这个工作线程需要关注的事件包括了IO任务和普通任务，将来线程会阻塞在Selector多路复用器上，执行一次select调用怎么筛选IO任务普通任务。
 
-##### 1.3.3 RejectedExecutionHandlers
+```java
+    /**
+     * 函数编程
+     * selectSupplier回调接口
+     *     - 在NioEventLoop中是IO多路复用器Selector的非阻塞方式执行select()方法 返回值只有两种情况
+     *         - 0值 没有Channel处于IO事件就绪状态
+     *         - 正数 IO事件就绪的Channel数量
+     * hasTasks
+     *     - taskQueue常规任务队列或者tailTasks收尾任务队列不为空就界定为有待执行任务 hasTasks为True
+     *
+     * 也就是说如果有非IO任务 使用非阻塞方式执行一次复用器的select()操作 尽量多执行一些任务
+     * 如果没有非IO任务 就直接准备以阻塞方式执行一次复用器的select()操作
+     */
+    @Override
+    public int calculateStrategy(IntSupplier selectSupplier, boolean hasTasks) throws Exception {
+        return hasTasks ? selectSupplier.get() : SelectStrategy.SELECT;
+    }
+```
 
-RejectedExecutionHandlers.reject()
+#### 2.3 RejectedExecutionHandlers
 
-拒绝策略，taskQueue队列中任务满了如何处理。
+拒绝策略，taskQueue队列中任务满了直接上抛异常。
 
-##### 1.3.4 EventExecutorChooserFactory
+```java
+    public static RejectedExecutionHandler reject() {
+        return REJECT;
+    }
+```
+
+
+
+```java
+    private static final RejectedExecutionHandler REJECT = new RejectedExecutionHandler() {
+        @Override
+        public void rejected(Runnable task, SingleThreadEventExecutor executor) {
+            throw new RejectedExecutionException();
+        }
+    };
+```
+
+#### 2.4 EventExecutorChooserFactory
 
 线程选择器，从NioEventLoopGroup的children数组中选择一个NioEventLoop实例，达到负载均衡效果。
 
@@ -300,7 +360,7 @@ RejectedExecutionHandlers.reject()
     }
 ```
 
-###### 1.3.4.1 PowerOfTwoEventExecutorChooser
+##### 2.4.1 PowerOfTwoEventExecutorChooser
 
 ```java
         /**
@@ -313,7 +373,7 @@ RejectedExecutionHandlers.reject()
         }
 ```
 
-###### 1.3.4.2 GenericEventExecutorChooser
+##### 2.4.2 GenericEventExecutorChooser
 
 ```java
         /*
@@ -325,7 +385,7 @@ RejectedExecutionHandlers.reject()
         }
 ```
 
-##### 1.3.5 ThreadPerTaskExecutor
+#### 2.5 ThreadPerTaskExecutor
 
 用于执行NioEventLoop中taskQueue里面的任务。
 
@@ -350,9 +410,7 @@ RejectedExecutionHandlers.reject()
     }
 ```
 
-
-
-##### 1.3.6 newChild方法
+#### 2.6 newChild方法
 
 主要就是用来实例化NioEventLoop。
 
@@ -409,13 +467,26 @@ RejectedExecutionHandlers.reject()
     }
 ```
 
-### 2 NioEventLoop
+### 3 NioEventLoop
 
-#### 2.1 创建队列实现
+#### 3.1 {% post_link Netty-0x06-数据结构优化 创建队列实现MPSC %}
 
-newTaskQueue方法
+```java
+    private static Queue<Runnable> newTaskQueue(
+            EventLoopTaskQueueFactory queueFactory) {
+        if (queueFactory == null) {
+            /**
+             * 依赖jctools的MPSC队列实现
+             *   - 多生产者
+             *   - 单消费者
+             */
+            return newTaskQueue0(DEFAULT_MAX_PENDING_TASKS);
+        }
+        return queueFactory.newTaskQueue(DEFAULT_MAX_PENDING_TASKS);
+    }
+```
 
-#### 2.2 构造方法
+#### 3.2 构造方法
 
 ```java
     /**
@@ -525,20 +596,6 @@ newTaskQueue方法
     }
 ```
 
+### 4 组件示意图
 
-
-### 3 启动引导
-
-#### 3.1 server端
-
-#### 3.2 client端
-
-### 4 Selector优化版本
-
-final SelectorTuple selectorTuple = this.openSelector();
-
-### 5 队列模型
-
-MPSC队列
-
-*newTaskQueue*(taskQueueFactory)
+![](Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程/image-20230516224202667.png)
