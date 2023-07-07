@@ -94,7 +94,7 @@ make CONF=macosx-x86_64-server-slowdebug
 
 ##### 2.3.2 clean
 
-![](Java源码-编译openjdk/202211192136188.png)
+![image-20230707144648495](Java源码-编译openjdk/image-20230707144648495.png)
 
 #### 2.4 构建目标
 
