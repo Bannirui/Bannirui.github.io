@@ -82,9 +82,17 @@ make CONF=macosx-x86_64-server-slowdebug
 
 ![](Java源码-编译openjdk/202211192124928.png)
 
+![](Java源码-编译openjdk/image-20230707151821394.png)
+
 #### 2.2 源码目录
 
 ![](Java源码-编译openjdk/202211192127851.png)
+
+
+
+设置到项目根目录
+
+![](Java源码-编译openjdk/image-20230707152911646.png)
 
 #### 2.3 配置
 
