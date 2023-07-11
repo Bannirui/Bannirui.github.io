@@ -13,7 +13,7 @@ categories: [ 单片机 ]
 | Clion             | 2023.1.4  | -                 | -                                                            |
 | STM32CubeMX       | 6.8.1     | 创建初始化stm工程 | https://www.st.com/en/development-tools/stm32cubemx.html#get-software |
 | arm-none-eabi-gcc | 12.2.Rel1 | 交叉编译          | https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads |
-| open-ocd          | 0.11.0    | 烧录器            | brew install open-ocd                                        |
+| open-ocd          | 0.12.0    | 烧录器            | brew install open-ocd                                        |
 
 ### 2 STM32CubeMX安装
 
@@ -150,7 +150,16 @@ LED阳极是3.3V电压，阴极接的是PC13网络标号的管脚。
 
 ##### 5.3.1 配置文件
 
-![](stm32单片机开发环境/image-20230422094904642.png)
+```shell
+set CPUTAPID 0
+source [find interface/stlink.cfg]
+transport select hla_swd
+source [find target/stm32f1x.cfg]
+adapter speed 10000
+reset_config none
+```
+
+![](stm32单片机开发环境/image-20230711093405031.png)
 
 ##### 5.3.2 配置项
 
@@ -160,17 +169,35 @@ LED阳极是3.3V电压，阴极接的是PC13网络标号的管脚。
 
 ![](stm32单片机开发环境/image-20230422100503658.png)
 
-
-
 #### 5.4 code
 
 ![](stm32单片机开发环境/image-20230422095443839.png)
 
-#### 5.5 烧录
+上面4.3.6设置GPIO的时候给PC13设置过网络标号，这个地方也可以使用网络标号
 
-##### 5.5.1 烧录程序
+```c
+HAL_GPIO_WritePin(D2_GPIO_Port, D2_Pin, GPIO_PIN_SET);
+HAL_Delay(500);
+HAL_GPIO_WritePin(D2_GPIO_Port, D2_Pin, GPIO_PIN_RESET);
+HAL_Delay(500);
+```
+
+#### 5.5 仿真器接线
+
+![](stm32单片机开发环境/image-20230711094916664.png)
+
+板子是最小系统，只支持SWD接口。
+
+仿真器是ST-Link，支持SWD和TTL两种模式。
+
+在仿真器上有防呆标识，不要连错串口。
+
+#### 5.6 烧录
+
+##### 5.6.1 烧录程序
 
 ![](stm32单片机开发环境/image-20230422100203760.png)
 
-##### 5.5.2 观察开发板led闪烁情况
+##### 5.6.2 观察开发板led闪烁情况
 
+![](stm32单片机开发环境/image-20230711094006084.png)
