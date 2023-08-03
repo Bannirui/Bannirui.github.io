@@ -120,68 +120,7 @@ categories: [ 工具 ]
 
 #### 1.3 native pom
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.github.bannirui</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>native</artifactId>
-    <packaging>so</packaging>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>native-maven-plugin</artifactId>
-                <version>1.0-alpha-8</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <compilerProvider>generic-classic</compilerProvider>
-                    <compilerExecutable>gcc</compilerExecutable>
-                    <linkerExecutable>gcc</linkerExecutable>
-                    <sources>
-                        <source>
-                            <directory>${basedir}/src/main/c/jni</directory>
-                            <fileNames>
-                                <fileName>com_zto_route_scheme_Distance.c</fileName>
-                            </fileNames>
-                        </source>
-                    </sources>
-                    <compilerStartOptions>
-                        <compilerStartOption>-I ${JAVA_HOME}/include/</compilerStartOption>
-                        <compilerStartOption>-I ${JAVA_HOME}/include/linux/</compilerStartOption>
-                        <compilerStartOption>-I ${JAVA_HOME}/include/darwin/</compilerStartOption>
-                    </compilerStartOptions>
-                    <compilerEndOptions>
-                        <compilerEndOption>-shared</compilerEndOption>
-                        <compilerEndOption>-fPIC</compilerEndOption>
-                    </compilerEndOptions>
-                    <linkerStartOptions>
-                        <linkerStartOption>-I ${JAVA_HOME}/include/</linkerStartOption>
-                        <linkerStartOption>-I ${JAVA_HOME}/include/linux/</linkerStartOption>
-                        <linkerStartOption>-I ${JAVA_HOME}/include/darwin/</linkerStartOption>
-                    </linkerStartOptions>
-                    <linkerEndOptions>
-                        <linkerEndOption>-shared</linkerEndOption>
-                        <linkerEndOption>-fPIC</linkerEndOption>
-                    </linkerEndOptions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project>
-```
+见下文。
 
 ### 2 header文件生成
 
@@ -194,15 +133,18 @@ PACKAGE_DIR = $(subst .,/,$(PACKAGE_NAME))
 CLASS_NAME = Distance
 
 default:
-	# gen
-	export CLASSPATH=$(SRC_DIR)/$(PACKAGE_DIR)
-	cd $(SRC_DIR)/jni/src/main/java/$(PACKAGE_DIR) && javac -d $(SRC_DIR)/$(PACKAGE_DIR) $(CLASS_NAME).java
+  # gen
+	export CLASSPATH=$(SRC_DIR)/jni/src/main/java/$(PACKAGE_DIR)
+	cd $(SRC_DIR)/jni/src/main/java/$(PACKAGE_DIR) && javac -d $(SRC_DIR)/jni/src/main/java/$(PACKAGE_DIR) $(CLASS_NAME).java
 	cd $(SRC_DIR)/jni/src/main/java && javah $(PACKAGE_NAME).$(CLASS_NAME)
 	# mv
 	mv $(SRC_DIR)/jni/src/main/java/com_zto_route_scheme_$(CLASS_NAME).h $(SRC_DIR)/native/src/main/c/jni/
+	# clean
+	rm -rf $(SRC_DIR)/jni/src/main/java/com/zto/route/scheme/com
 
 .PHONY: clean
 clean:
+	rm -rf $(SRC_DIR)/jni/src/main/java/com/zto/route/scheme/com
 	rm -rf $(SRC_DIR)/jni/src/main/java/$(PACKAGE_DIR)/*.class
 	rm -rf $(SRC_DIR)/jni/src/main/java/*.h
 ```
