@@ -20,22 +20,70 @@ categories:
 
 #### 1.2 系统工具
 
-* macOS Big Sur 11.5.2
-* Xcode 12.5.1
-* openjdk 15.0.2
-* Make 3.81
-* autoconf (GNU Autoconf) 2.71
-* Apple clang version 12.0.5 (clang-1205.0.22.11)
-* ccache version 4.6
-* freetype-confi 2.12.0
+##### 1.2.1 platform
+
+* MacOS
+
+  * macOS Big Sur 11.5.2
+
+  * Xcode 12.5.1
+
+  * openjdk 15.0.2
+
+  * Make 3.81
+
+  * autoconf (GNU Autoconf) 2.71
+
+  * Apple clang version 12.0.5 (clang-1205.0.22.11)
+
+  * ccache version 4.6
+
+  * freetype-confi 2.12.0
+
+* Linux
+
+  * Ubuntu 22.04.3 LTS
+  * libcups2-dev
+  * libasound2-dev
+
+##### 1.2.2 Boot JDK
+
+###### 1.2.2.1 requirement
+
+![](Java源码-编译openjdk/image-20230810163733538.png)
+
+###### 1.2.2.2 download
+
+```shell
+apt-cache search openjdk-15
+```
+
+https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
+
+###### 1.2.2.3 install
+
+```shell
+mkdir -p /home/rui/Documents/softWare/java
+cd /home/rui/Documents/softWare/java
+cp ~/Downloads/jdk-15_linux-x64_bin.tar.gz ./
+tar -zxvf jdk-15_linux-x64_bin.tar.gz
+```
+
+the Boot JDK home is /home/rui/Documents/softWare/java/jdk-15
 
 #### 1.3 编译
+
+shell scripts for building
+
+![](Java源码-编译openjdk/image-20230810173201297.png)
 
 ##### 1.3.1 字符集修改
 
 ![](Java源码-编译openjdk/202211212308471.png)
 
 ##### 1.3.2 配置
+
+###### 1.3.2.1 macos
 
 ```shell
 bash ./configure \
@@ -48,7 +96,21 @@ bash ./configure \
 --enable-dtrace
 ```
 
+###### 1.3.2.2 ubuntu
+
+```shell
+bash ./configure \
+--with-debug-level=slowdebug \
+--with-jvm-variants=server \
+--with-freetype=bundled \
+--with-boot-jdk=/home/rui/Documents/softWare/java/jdk-15 \
+--with-target-bits=64 \
+--disable-warnings-as-errors
+```
+
 ##### 1.3.3 编译
+
+###### 1.3.3.1 macos
 
 ```shell
 make CONF=macosx-x86_64-server-slowdebug compile-commands
@@ -56,7 +118,16 @@ make CONF=macosx-x86_64-server-slowdebug compile-commands
 make CONF=macosx-x86_64-server-slowdebug
 ```
 
+###### 1.3.3.2 ubuntu
+
+```shell
+make CONF=linux-x86_64-server-slowdebug compile-commands
+make CONF=linux-x86_64-server-slowdebug
+```
+
 ##### 1.3.4 验证编译结果
+
+###### 1.3.4.1 macos
 
 ```shell
 ./build/macosx-x86_64-server-slowdebug/jdk/bin/java -version
@@ -64,12 +135,28 @@ make CONF=macosx-x86_64-server-slowdebug
 
 ![](Java源码-编译openjdk/202211192118571.png)
 
+###### 1.3.4.2 ubuntu
+
+```shell
+./build/linux-x86_64-server-slowdebug/jdk/bin/java --version
+```
+
+![](Java源码-编译openjdk/image-20230810173014328.png)
+
 ##### 1.3.5 重新编译
 
 比如在jdk源码中进行了注释，调试断点错行了，就需要重新编译。
 
+###### 1.3.5.1 macos
+
 ```sh
 make CONF=macosx-x86_64-server-slowdebug
+```
+
+###### 1.3.5.2 ubuntu
+
+```shell
+make CONF=linux-x86_64-server-slowdebug
 ```
 
 ### 2 Clion调试
