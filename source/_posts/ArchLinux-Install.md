@@ -376,3 +376,80 @@ systemctl reboot
 ![](ArchLinux-Install/image-20230811093737885.png)
 
 ## Physic Machine
+
+#### 1 ISO
+
+https://archlinux.org/download/
+
+#### 2 bootloader
+
+https://etcher.balena.io/
+
+#### 3 reboot
+
+Delete while rebooting
+
+#### 4 BIOS
+
+* secure boot -> enabled
+* secure boot mode -> standard
+
+![](ArchLinux-Install/image-20230815130325943.png)
+
+* secure boot
+  * boot option #1 -> usb
+
+![](ArchLinux-Install/image-20230815130538175.png)
+
+F4 -> save & exit
+
+#### 5 wifi
+
+```shell
+rfkill list
+
+iwctl
+
+device list
+station wlan0 scan
+station wlan0 get-networks
+station wlan0 connect bannirui
+```
+
+bannirui is my wifi name, and then type your pwd.
+
+```shell
+quit
+
+ping www.baidu.com
+```
+
+![](ArchLinux-Install/image-20230815132140951.png)
+
+#### 6 archinstall
+
+```shell
+archinstall
+```
+
+![](ArchLinux-Install/image-20230815132447648.png)
+
+#### 7 reboot
+
+* exec `exit` to exit archinstall while archinstall succ
+
+  ```shell
+  exit
+  ```
+
+* remove bootloader installation
+
+* restart pc
+
+  ```shell
+  reboot
+  ```
+
+#### 8 archlinux desk
+
+![](ArchLinux-Install/image-20230815132946916.png)
