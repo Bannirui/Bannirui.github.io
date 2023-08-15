@@ -452,4 +452,4 @@ archinstall
 
 #### 8 archlinux desk
 
-![](ArchLinux-Install/image-20230815132946916.png)
+![](ArchLinux-Install/image-20230815134358605.png)
