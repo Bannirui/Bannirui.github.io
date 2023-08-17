@@ -453,3 +453,38 @@ archinstall
 #### 8 archlinux desk
 
 ![](ArchLinux-Install/image-20230815134358605.png)
+
+## Archlinux Software
+
+### 1 中文输入法
+
+#### 1.1 install
+
+```shell
+sudo pacman -Syu fcitx5-im
+sudo pacman -S fcitx5-chinese-addons
+```
+
+#### 1.2 path
+
+```shell
+# ~.zshrc
+export INPUT_METHOD=fcitx5
+export GTK_IM_MODULE=fcitx5
+export QT_IM_MODULE=fcitx5
+export XMODIFIERS=@im=fcitx5
+```
+
+#### 1.2 system setting
+
+##### 1.2.1 系统设置
+
+System-Settings->Input Devices->Virtual Keyboard->Fcitx5
+
+##### 1.2.2 输入法添加
+
+System-Settings->Regional Settings->Input Method->Add Input Method->Pinyin
+
+#### 1.3 系统自启动
+
+System-Settings->Startup and Shutdown->Autostart->Add->Fcitx5
