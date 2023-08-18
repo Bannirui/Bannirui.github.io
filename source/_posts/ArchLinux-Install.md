@@ -479,12 +479,34 @@ export XMODIFIERS=@im=fcitx5
 
 ##### 1.2.1 系统设置
 
-System-Settings->Input Devices->Virtual Keyboard->Fcitx5
+![](ArchLinux-Install/image-20230818141018262.png)
 
 ##### 1.2.2 输入法添加
 
-System-Settings->Regional Settings->Input Method->Add Input Method->Pinyin
+列表中输入法顺序就是切换顺序，顺位第一个输入法就是系统启动后的默认输入法。当前管理界面没有上移\下移的操作，因此要切换默认输入法的方式是先移除，然后按照需要的顺序添加。
 
-#### 1.3 系统自启动
+![](ArchLinux-Install/image-20230818141115074.png)
 
-System-Settings->Startup and Shutdown->Autostart->Add->Fcitx5
+##### 1.2.3 系统自启动
+
+![](ArchLinux-Install/image-20230818141237173.png)
+
+### 2 截图
+
+flameshot
+
+#### 2.1 install
+
+```shell
+sudo pacman -S flameshot
+```
+
+#### 2.2 开机启动项
+
+![](ArchLinux-Install/image-20230818141635127.png)
+
+#### 2.3 快捷键
+
+自定义截图快捷键
+
+![](ArchLinux-Install/image-20230818141809060.png)
