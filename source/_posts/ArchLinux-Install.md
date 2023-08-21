@@ -510,3 +510,14 @@ sudo pacman -S flameshot
 自定义截图快捷键
 
 ![](ArchLinux-Install/image-20230818141809060.png)
+
+### 3 yay
+
+```shell
+sudo pacman -S git
+sudo git clone https://aur.archlinux.org/yay-git.git
+cd yay-git
+makepkg -si
+
+yay --version
+```
