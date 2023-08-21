@@ -39,12 +39,39 @@ categories:
   * ccache version 4.6
 
   * freetype-confi 2.12.0
-
-* Linux
+  
+* Ubuntu
 
   * Ubuntu 22.04.3 LTS
   * libcups2-dev
   * libasound2-dev
+  
+* ArchLinux
+  * 6.4.10-arch1-1 (64-bit)
+  
+  * {% post_link Java源码-编译openjdk yay%}
+  
+  * debtap
+  
+    ```shell
+    yay -Ss debtap
+    yay -S debtap
+    
+    debtap --version
+    ```
+  
+  * jdk15
+  
+    ```shell
+    sudo debtap -u
+    sudo debtap jdk-15_linux-x64_bin.deb
+    ```
+  
+    ![](Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png)
+  
+    ```shell
+    sudo pacman -U jdk-15-15-1-x86_64.pkg.tar.zst
+    ```
 
 ##### 1.2.2 Boot JDK
 
@@ -52,24 +79,32 @@ categories:
 
 ![](Java源码-编译openjdk/image-20230810163733538.png)
 
-###### 1.2.2.2 download
-
-```shell
-apt-cache search openjdk-15
-```
-
 https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
 
-###### 1.2.2.3 install
+###### 1.2.2.2 install
 
-```shell
-mkdir -p /home/rui/Documents/softWare/java
-cd /home/rui/Documents/softWare/java
-cp ~/Downloads/jdk-15_linux-x64_bin.tar.gz ./
-tar -zxvf jdk-15_linux-x64_bin.tar.gz
-```
+* Ubuntu
 
-the Boot JDK home is /home/rui/Documents/softWare/java/jdk-15
+  ```shell
+  mkdir -p /home/rui/Documents/softWare/java
+  cd /home/rui/Documents/softWare/java
+  cp ~/Downloads/jdk-15_linux-x64_bin.tar.gz ./
+  tar -zxvf jdk-15_linux-x64_bin.tar.gz
+  ```
+
+  the Boot JDK home is /home/rui/Documents/softWare/java/jdk-15
+
+* ArchLinux
+
+  ```shell
+  cd /home/dingrui/Documents/software/jdk
+  cp ~/Downloads/jdk-15_linux-x64_bin.deb ./
+  sudo debtap -u
+  sudo debtap jdk-15_linux-x64_bin.deb
+  sudo pacman -U jdk-15-15-1-x86_64.pkg.tar.zst
+  ```
+
+  the Boot JDK home is /usr/lib/jvm/jdk-15
 
 #### 1.3 编译
 
@@ -108,6 +143,27 @@ bash ./configure \
 --disable-warnings-as-errors
 ```
 
+###### 1.3.2.3 ArchLinux
+
+```shell
+bash ./configure \
+--with-debug-level=slowdebug \
+--with-jvm-variants=server \
+--with-freetype=bundled \
+--with-boot-jdk=/usr/lib/jvm/jdk-15 \
+--with-target-bits=64 \
+--disable-warnings-as-errors
+```
+
+error or warning
+
+* Could not find required tool for ZIPEXE
+
+  ```shell
+  sudo pacman -Ss zip
+  sudo pacman -S zip
+  ```
+
 ##### 1.3.3 编译
 
 ###### 1.3.3.1 macos
@@ -119,6 +175,13 @@ make CONF=macosx-x86_64-server-slowdebug
 ```
 
 ###### 1.3.3.2 ubuntu
+
+```shell
+make CONF=linux-x86_64-server-slowdebug compile-commands
+make CONF=linux-x86_64-server-slowdebug
+```
+
+###### 1.3.3.3 ArchLinux
 
 ```shell
 make CONF=linux-x86_64-server-slowdebug compile-commands
@@ -143,6 +206,14 @@ make CONF=linux-x86_64-server-slowdebug
 
 ![](Java源码-编译openjdk/image-20230810173014328.png)
 
+###### 1.3.4.3 ArchLinux
+
+```shell
+./build/linux-x86_64-server-slowdebug/jdk/bin/java --version
+```
+
+![](Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821165651446.png)
+
 ##### 1.3.5 重新编译
 
 比如在jdk源码中进行了注释，调试断点错行了，就需要重新编译。
@@ -154,6 +225,12 @@ make CONF=macosx-x86_64-server-slowdebug
 ```
 
 ###### 1.3.5.2 ubuntu
+
+```shell
+make CONF=linux-x86_64-server-slowdebug
+```
+
+###### 1.3.5.3 ArchLinux
 
 ```shell
 make CONF=linux-x86_64-server-slowdebug
