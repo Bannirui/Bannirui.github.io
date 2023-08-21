@@ -521,3 +521,13 @@ makepkg -si
 
 yay --version
 ```
+
+### 4 百度网盘
+
+```shell
+cd  /home/dingrui/Documents/software/baidu-disk
+cp ~/Downloads/baidunetdisk_4.17.7_amd64.deb ./
+sudo debtap baidunetdisk_4.17.7_amd64.deb
+sudo pacman -U baidunetdisk-4.17.7-1-x86_64.pkg.tar.zst
+```
+
