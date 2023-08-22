@@ -531,3 +531,10 @@ sudo debtap baidunetdisk_4.17.7_amd64.deb
 sudo pacman -U baidunetdisk-4.17.7-1-x86_64.pkg.tar.zst
 ```
 
+### 5 chrome
+
+```shell
+yay -Ss google-chrome
+yay -S google-chrome
+```
+
