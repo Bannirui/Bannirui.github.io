@@ -456,6 +456,19 @@ archinstall
 
 ## Archlinux Software
 
+### 0 Dev Env Settings
+
+根据git repo的脚本和配置安装
+
+包括
+
+* Java code style
+* git(ssh config)
+* ideavimrc
+* vim(vimrc+keymap+plugin)
+* zsh(zshrc+plugin)
+* maven(settings)
+
 ### 1 中文输入法
 
 #### 1.1 install
