@@ -538,3 +538,10 @@ yay -Ss google-chrome
 yay -S google-chrome
 ```
 
+### 6 kicad
+
+```shell
+pacman -Ss kicad
+sudo pacman -S kicad
+```
+
