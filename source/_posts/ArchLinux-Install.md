@@ -454,6 +454,10 @@ archinstall
 
 ![](ArchLinux-Install/image-20230815134358605.png)
 
+## 系统美化
+
+[参考博客](https://arch.icekylin.online/guide/advanced/beauty-1.html)
+
 ## Archlinux Software
 
 ### 0 Dev Env Settings
