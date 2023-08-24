@@ -562,3 +562,10 @@ pacman -Ss kicad
 sudo pacman -S kicad
 ```
 
+### 7 office
+
+```shell
+yay -Ss openoffice
+yay -S openoffice-bin
+```
+
