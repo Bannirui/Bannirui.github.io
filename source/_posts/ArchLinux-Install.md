@@ -458,18 +458,6 @@ archinstall
 
 [参考博客](https://arch.icekylin.online/guide/advanced/beauty-1.html)
 
-## 系统设置
-
-使用yt-dlp下载的时候发现网速比较低，明显是没有走代理的，先排查了全局环境变量
-
-命令行`env`查看proxy的环境变量
-
-![](ArchLinux-Install/image-20230824123058978.png)
-
-继而想到可能是系统设置部分，之前是勾选的`use this proxy server for all protocols`，比如因为协议不同导致socks5的没有使用上代理，将每种协议的代理分别指定
-
-![](ArchLinux-Install/image-20230824123006294.png)
-
 ## Archlinux Software
 
 ### 0 Dev Env Settings
