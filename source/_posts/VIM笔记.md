@@ -12,7 +12,8 @@ tags: [ VIM ]
 * Recording Mode
 * Command Mode
 
-### 1 Recording mode
+1 Recording mode
+---
 
 <mark>录制宏指令</mark>
 
@@ -24,7 +25,12 @@ tags: [ VIM ]
 
 - `{n}`+@a即可执行n次
 
-### 2 Insert mode
+以下为实际使用场景
+
+![](VIM笔记/2023-11-02_00.53.50.gif)
+
+2 Insert mode
+---
 
 - i - Insert
 - I - Insert(Before Line)
@@ -33,7 +39,8 @@ tags: [ VIM ]
 - o - New Line Below
 - O - New Line Above
 
-### 3 Normal mode
+3 Normal mode
+---
 
 - r - Replace
 
@@ -152,7 +159,8 @@ tags: [ VIM ]
 
 - c+t+字符 - 变更当前光标到字符前一个位置
 
-### 4 Command mode
+4 Command mode
+---
 
 - /word - Search For Word
   n - Next Occurrence
