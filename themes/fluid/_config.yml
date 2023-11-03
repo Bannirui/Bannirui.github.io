@@ -196,23 +196,20 @@ custom_css:
 # 网页访问统计
 # todo fluid该插件不支持从环境变量读取参数 但是该配置文件又托管在git上 先不配置访问统计通能
 web_analytics:  # 网页访问统计
-  enable: false
+  enable: true
 
   # 遵循访客浏览器"请勿追踪"的设置，如果开启则不统计其访问
   # See: https://www.w3.org/TR/tracking-dnt/
   follow_dnt: true
 
-  # 百度统计的 Key，值需要获取下方链接中 `hm.js?` 后边的字符串
+  # 百度统计的Key，值需要获取下方链接中 `hm.js?` 后边的字符串
   # See: https://tongji.baidu.com/sc-web/10000033910/home/site/getjs?siteId=13751376
   baidu:
 
-  # Google 统计的 Tracking ID
-  # See: https://developers.google.com/analytics/devguides/collection/analyticsjs
-  google:
-
-  # Google gtag.js 的媒体资源 ID
-  # See: https://developers.google.com/analytics/devguides/collection/gtagjs/
-  gtag:
+  # GA的Tracking ID
+  google: G-N6M7VZCQMD
+  # GA的媒体资源ID
+  gtag: 6344341407
 
   # 腾讯统计的 H5 App ID，开启高级功能才有cid
   # See: https://mta.qq.com/h5/manage/ctr_app_manage
@@ -354,13 +351,14 @@ footer:
      </div>
   '
 
-  # 展示网站的 PV、UV 统计数
+  # 展示网站的访问统计数
   statistics:
-    enable: false
+    enable: true
 
-    # 统计数据来源，使用 leancloud 需要设置 `web_analytics: leancloud` 中的参数；使用 busuanzi 不需要额外设置，但是有时不稳定，另外本地运行时 busuanzi 显示统计数据很大属于正常现象，部署后会正常
     # Options: busuanzi | leancloud
-    source: "leancloud"
+    # busuanzi不需要申请账号 直接开启即可 但是可能会响应缓慢拖慢页面加载
+    # leancloud需要申请账号 并且需要配置到web_analytics中
+    source: "busuanzi"
     pv_foramt: "总访问量 {} 次"
     uv_format: "总访客数 {} 人"
 
@@ -476,13 +474,11 @@ post:
       # 每分钟阅读字数，如果大部分是技术文章可适度调低
       wpm: 60
 
-    # 浏览量计数
-    # todo 该插件不支持读取环境变量 需要明文配置参数 先不开启访问统计功能
+    # 同footer的配置
     views:
-      enable: false
-      # 统计数据来源
+      enable: true
       # Options: busuanzi | leancloud
-      source: "leancloud"
+      source: "busuanzi"
       format: "{} 次"
 
   # 在文章开头显示文章更新时间，该时间默认是 md 文件更新时间，可通过 front-matter 中 `updated` 手动指定（和 date 一样格式）
