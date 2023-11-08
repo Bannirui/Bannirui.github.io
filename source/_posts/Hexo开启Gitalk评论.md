@@ -55,5 +55,9 @@ hexo clean
 hexo g -d
 ```
 
+之后等待发布完成之后就可以使用评论区功能，并且评论的内容会被托管在github的issue中。
 
+![](Hexo开启Gitalk评论/2023-11-08_23-47-35.png)
+
+![](Hexo开启Gitalk评论/2023-11-08_23-47-49.png)
 
