@@ -1,8 +1,8 @@
 ---
 title: VIM笔记
 date: 2023-10-18 09:40:49
-categories: [ 读书笔记 ]
-tags: [ VIM ]
+categories: [ vim ]
+tags: [ 笔记 ]
 ---
 
 私以为，VIM的强大在于模式的多样，其灵魂在于递归，从指令操作角度来看就是终端用户告诉VIM程序一个动作执行几次。
