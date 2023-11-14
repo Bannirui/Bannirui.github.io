@@ -380,140 +380,11 @@ RSS=Resident Set Size
 
 ![](Redis-2刷-0x03-zmalloc实现细节解读/8836931699585757.png)
 
-#### 9.1.4 RSS内存
+#### 9.1.4 RSS
 
-##### 9.1.4.1 top命令
+{% post_link Redis-2刷-0x04-linux系统proc虚拟文件系统 %}
 
-top可以在终端获取到所有进程的内存占用信息，如图的RES就是某个进程的内存驻留大小，单位是kb，即1号进程驻留的物理地址空间大小为13000kb。
-
-![](Redis-2刷-0x03-zmalloc实现细节解读/6750761699585414.png)
-
-##### 9.1.4.2 /proc虚拟文件系统
-
-上述top命令采集的指标信息就来自/proc虚拟文件系统，比如我们想要知道1号进程的信息，`cat /proc/1/stat`即可：
-
-![](Redis-2刷-0x03-zmalloc实现细节解读/4356911699585435.png)
-
-
-##### 9.1.4.3 stat指标
-
-`cat /proc/1/stat >> ~/Desktop/pid_1_stat.txt`将stat信息写到文件中方便处理，`:%s/ /\r/g`将空格替换成换行，如下内容：
-
-```txt
-1
-(systemd)
-S
-0
-1
-1
-0
--1
-4194560
-15516
-49665
-196
-259
-19
-63
-39
-79
-20
-0
-1
-0
-12
-22364160
-3250
-18446744073709551615
-1
-1
-0
-0
-0
-0
-671173123
-4096
-1260
-0
-0
-0
-17
-6
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-```
-
-合计52项，下表为每个参数的说明：
-
-| /proc/{pid}/stat参数 | property      | 解释                                                                                   | value                |
-|----------------------|---------------|----------------------------------------------------------------------------------------|----------------------|
-| 第1项                | pid           | 进程(包括线程)号                                                                       | 1                    |
-| 第2项                | comm          | 程序(命令)名字                                                                         | systemd              |
-| 第3项                | task_state    | 任务的状态(R=running S=sleeping D=disk sleep T=stopped T=tracing stop Z=zombie X=dead) | S                    |
-| 第4项                | ppid          | 父进程id                                                                               | 0                    |
-| 第5项                | pgid          | 线程组号                                                                               | 1                    |
-| 第6项                | sid           | 该任务所在的会话组id                                                                   | 1                    |
-| 第7项                | tty_nr        | 该任务的tty终端的设备号                                                                | 0                    |
-| 第8项                | tty_gprp      | 终端的进程组号                                                                         | -1                   |
-| 第9项                | task->flags   | 进程标志位                                                                             | 4194560              |
-| 第10项               | min_flt       | 该任务不需要从硬盘拷数据而发生的缺页次数                                               | 15516                |
-| 第11项               | cmin_flt      | 累计的该任务的所有的waited-for进程曾经发生的次缺页的次数目                             | 49665                |
-| 第12项               | maj_flt       | 该任务需要从硬盘拷数据而发生的缺页(次缺页)的次数                                       | 196                  |
-| 第13项               | cmaj_flt      | 累计的该任务的所有的waited-for进程曾经发生的主缺页的次数目                             | 259                  |
-| 第14项               | utime         | 该任务在用户态运行的时间 单位为jiffies                                                 | 19                   |
-| 第15项               | stime         | 该任务在内核态运行的时间 单位为jiffies                                                 | 63                   |
-| 第16项               | cutime        | 累计的该任务的所有waited-for进程曾经在用户态运行的时间 单位为jiffies                   | 39                   |
-| 第17项               | cstime        | 累计的该任务的所有的waited-for进程曾经在内核态运行的时间 单位为jiffies                 | 79                   |
-| 第18项               | priority      | 任务的动态优先级                                                                       | 20                   |
-| 第19项               | nice          | 任务的静态优先级                                                                       | 0                    |
-| 第20项               | num_threads   | 该任务所在的线程组里面的线程数量                                                       | 1                    |
-| 第21项               | it_real_value | 由于计时间隔导致的下一个SIGALRM发送进程的时延 单位为jiffy                              | 0                    |
-| 第22项               | start_time    | 该任务启动的时间 单位为jiffies                                                         | 12                   |
-| 第23项               | vsize         | 该任务的虚拟地址空间的大小 单位page                                                    | 22364160             |
-| 第24项               | rss           | 该任务当前驻留物理地址空间的大小 单位page                                              | 3250                 |
-| 第25项               |               |                                                                                        | 18446744073709551615 |
-| 第26项               |               |                                                                                        | 1                    |
-| 第27项               |               |                                                                                        | 1                    |
-| 第28项               |               |                                                                                        | 0                    |
-| 第29项               |               |                                                                                        | 0                    |
-| 第30项               |               |                                                                                        | 0                    |
-| 第31项               |               |                                                                                        | 0                    |
-| 第32项               |               |                                                                                        | 671173123            |
-| 第33项               |               |                                                                                        | 4096                 |
-| 第34项               |               |                                                                                        | 1260                 |
-| 第35项               |               |                                                                                        | 0                    |
-| 第36项               |               |                                                                                        | 0                    |
-| 第37项               |               |                                                                                        | 0                    |
-| 第38项               |               |                                                                                        | 17                   |
-| 第39项               |               |                                                                                        | 6                    |
-| 第40项               |               |                                                                                        | 0                    |
-| 第41项               |               |                                                                                        | 0                    |
-| 第42项               |               |                                                                                        | 0                    |
-| 第43项               |               |                                                                                        | 0                    |
-| 第44项               |               |                                                                                        | 0                    |
-| 第45项               |               |                                                                                        | 0                    |
-| 第46项               |               |                                                                                        | 0                    |
-| 第47项               |               |                                                                                        | 0                    |
-| 第48项               |               |                                                                                        | 0                    |
-| 第49项               |               |                                                                                        | 0                    |
-| 第50项               |               |                                                                                        | 0                    |
-| 第51项               |               |                                                                                        | 0                    |
-| 第52项               |               |                                                                                        | 0                    |
-
-说明1号进程驻留的物理内存大小为3250个page，而1个page大小为4kb(4096 byte)，则rss=13000kb。
-
-##### 9.1.4.4 zmalloc_get_rss实现
+#### 9.1.5 zmalloc_get_rss实现
 
 至此，我们再来看redis中如何获取rss的，就会十分轻松。
 
@@ -579,4 +450,90 @@ size_t zmalloc_get_rss(void) {
 
 ### 9.2 mac
 
-### 9.3
+```c
+/* 苹果系统依赖的是微内核mach的实现 但是我没有找到对应的手册说明 也就无从谈起解读 只能说如果可以学习redis 如果有一天自己要在mac上获取进程的RSS信息 可以用它的方式 */
+#elif defined(HAVE_TASKINFO)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <mach/task.h>
+#include <mach/mach_init.h>
+
+size_t zmalloc_get_rss(void) {
+    task_t task = MACH_PORT_NULL;
+    struct task_basic_info t_info;
+    mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
+
+    if (task_for_pid(current_task(), getpid(), &task) != KERN_SUCCESS)
+        return 0;
+    task_info(task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count);
+
+    return t_info.resident_size;
+}
+```
+
+10 zmalloc_get_allocator_info
+---
+
+这个函数特定的功能相当于是jemalloc提供的特定场景支持，因此当内存分配器不是指定的jemalloc时候，这个功能会被阉割掉。
+
+- 有jemalloc支持，linux默认会指定jemalloc作为内存分配器
+- 没有jemalloc支持
+
+### 10.1 有jemalloc的环境
+
+涉及到jemalloc系列函数，先看一下redis是如何整合jemalloc到项目中的，{% post_link Redis-2刷-0x05-如何将jemalloc编译到项目中 %}。
+
+```c
+/**
+ * 通过Makefile的跟踪和https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md
+ * 知道的是jemalloc提供的系列函数都指定了je_作为前缀
+ * 那么反推这里的je_mallctl就是mallctl的实现
+ * 所以只要搞明白mallctl的作用即可
+ * mallctl(name, oldp, oldlenp, newp, newlen)
+ * 即mallctl会将要查询的name的结果放到oldp指针变量
+ */
+int zmalloc_get_allocator_info(size_t *allocated,
+                               size_t *active,
+                               size_t *resident) {
+    uint64_t epoch = 1;
+    size_t sz;
+    *allocated = *resident = *active = 0;
+    /* Update the statistics cached by mallctl. */
+    sz = sizeof(epoch);
+    je_mallctl("epoch", &epoch, &sz, &epoch, sz);
+    sz = sizeof(size_t);
+    /* Unlike RSS, this does not include RSS from shared libraries and other non
+     * heap mappings. */
+    je_mallctl("stats.resident", resident, &sz, NULL, 0);
+    /* Unlike resident, this doesn't not include the pages jemalloc reserves
+     * for re-use (purge will clean that). */
+    je_mallctl("stats.active", active, &sz, NULL, 0);
+    /* Unlike zmalloc_used_memory, this matches the stats.resident by taking
+     * into account all allocations done by this process (not only zmalloc). */
+    je_mallctl("stats.allocated", allocated, &sz, NULL, 0);
+    return 1;
+}
+```
+
+### 10.2 没有jemalloc的环境
+
+```c
+/**
+ * 内存分配器不是jemalloc 没有查询接口支持
+ * <li>allocated</li>
+ * <li>active</li>
+ * <li>resident</li>
+ * 这3个值给定0 在使用的时候以0为判定分支
+ */
+#else
+
+int zmalloc_get_allocator_info(size_t *allocated,
+                               size_t *active,
+                               size_t *resident) {
+    *allocated = *resident = *active = 0;
+    return 1;
+}
+```
+
+11
+---
