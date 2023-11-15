@@ -535,5 +535,182 @@ int zmalloc_get_allocator_info(size_t *allocated,
 }
 ```
 
-11
+11 set_jemalloc_bg_thread
 ---
+
+这个函数同样依赖jemalloc的`mallctl`支持。
+
+### 11.1 有jemalloc的环境
+
+```c
+void set_jemalloc_bg_thread(int enable) {
+    /* let jemalloc do purging asynchronously, required when there's no traffic
+     * after flushdb */
+    char val = !!enable;
+    je_mallctl("background_thread", NULL, 0, &val, 1);
+}
+```
+
+### 11.2 没有jemalloc的环境
+
+```c
+// 没有使用jemalloc 函数相当于空实现
+void set_jemalloc_bg_thread(int enable) {
+    ((void)(enable));
+}
+```
+
+12 jemalloc_purge
+---
+
+这个函数同样依赖jemalloc的`mallctl`支持。
+
+### 11.1 有jemalloc的环境
+
+```c
+int jemalloc_purge() {
+    /* return all unused (reserved) pages to the OS */
+    char tmp[32];
+    unsigned narenas = 0;
+    size_t sz = sizeof(unsigned);
+	// mallctl
+    if (!je_mallctl("arenas.narenas", &narenas, &sz, NULL, 0)) {
+        sprintf(tmp, "arena.%d.purge", narenas);
+        if (!je_mallctl(tmp, NULL, 0, NULL, 0))
+            return 0;
+    }
+    return -1;
+}
+```
+
+### 11.2 没有jemalloc的环境
+
+```c
+// 没有使用jemalloc 函数相当于空实现
+int jemalloc_purge() {
+    return 0;
+}
+```
+
+13 zmalloc_get_private_dirty
+---
+
+本质是对`zmalloc_get_smap_bytes_by_field`的调用，而`zmalloc_get_smap_bytes_by_field`需要依赖OS的系统调用，这个地方redis并没有对全平台做兼容实现，只关注了linux和mac。
+
+同之前的RSS指标采集一样：
+
+- linux系统的指标从proc虚拟文件系统采集
+- mac系统的指标依赖mach微内核的系统调用
+
+### 13.1 mac系统
+
+```c
+/**
+ *
+ * @param field 字符串 要查询的指标项
+ * 	            <ul>
+ * 	              <li>Private_Dirty:</li>
+ * 	              <li>Rss:</li>
+ * 	              <li>AnonHugePages:</li>
+ * 	            </ul>
+ * @param pid
+ * @return 空间大小(byte)
+ */
+size_t zmalloc_get_smap_bytes_by_field(char *field, long pid) {
+    // mac系统
+#if defined(__APPLE__)
+    struct proc_regioninfo pri;
+    if (pid == -1) pid = getpid();
+	// 跟RSS一样 mac的指标获取依赖的是mach微内核的系统调用
+	// proc_pidinfo函数结果pri中的空间大小计量单位 跟linux系统的proc虚拟文件系统指标一样都是以page为计量单位
+    if (proc_pidinfo(pid, PROC_PIDREGIONINFO, 0, &pri,
+                     PROC_PIDREGIONINFO_SIZE) == PROC_PIDREGIONINFO_SIZE)
+    {
+	  	// 页大小 1页=4k=4096byte
+        int pagesize = getpagesize();
+        if (!strcmp(field, "Private_Dirty:")) {
+            return (size_t)pri.pri_pages_dirtied * pagesize;
+        } else if (!strcmp(field, "Rss:")) {
+            return (size_t)pri.pri_pages_resident * pagesize;
+        } else if (!strcmp(field, "AnonHugePages:")) {
+            return 0;
+        }
+    }
+    return 0;
+#endif
+    // 不是linux系统也不是mac系统
+    ((void) field);
+    ((void) pid);
+    return 0;
+}
+#endif
+```
+
+### 13.2 linux系统
+
+跟RSS一样，`cat /proc/4649/smaps >> Desktop/smap.txt`，看一下文件的内容就可以非常简易地了解代码的实现。
+
+![](Redis-2刷-0x03-zmalloc实现细节解读/2023-11-15_10-59-05.png)
+
+```c
+/*
+ * linux系统通过proc虚拟文件系统获取smaps
+ */
+#if defined(HAVE_PROC_SMAPS)
+/**
+ *
+ * @param field 字符串 要查询的指标项
+ * 	            <ul>
+ * 	              <li>Private_Dirty:</li>
+ * 	              <li>Rss:</li>
+ * 	              <li>AnonHugePages:</li>
+ * 	            </ul>
+ * @param pid 进程(线程)
+ * @return 空间大小(byte)
+ */
+size_t zmalloc_get_smap_bytes_by_field(char *field, long pid) {
+    // 缓存文件中每一行的读取信息
+    char line[1024];
+    size_t bytes = 0;
+    int flen = strlen(field);
+    FILE *fp;
+
+	// /proc/{pid}/smaps文件
+    if (pid == -1) {
+        fp = fopen("/proc/self/smaps","r");
+    } else {
+        char filename[128];
+        snprintf(filename,sizeof(filename),"/proc/%ld/smaps",pid);
+        fp = fopen(filename,"r");
+    }
+	// 文件打开失败
+    if (!fp) return 0;
+	// 逐行读取文件 截取文件中要找的几行如下
+	// Private_Dirty:         0 kB
+	// Rss:                  16 kB
+	// AnonHugePages:         0 kB
+    while(fgets(line,sizeof(line),fp) != NULL) {
+	    /**
+	     * 指标项有3中可能性
+	     * <ul>
+	     *   <li>Private_Dirty:</li>
+	     *   <li>Rss:</li>
+	     *   <li>AnonHugePages:</li>
+	     * </ul>
+	     */
+        if (strncmp(line,field,flen) == 0) {
+		    // 找到了对应要找的指标那一行 找到kb的k所在位置 人为改成字符串结束符
+			// 然后将计量单位前面的数字从字符串转整型
+			// 截取的范围是冒号(:)之后到k(kb的k)之前这一段包含空格和数字的内容
+            char *p = strchr(line,'k');
+            if (p) {
+                *p = '\0';
+				// 多少个byte
+                bytes += strtol(line+flen,NULL,10) * 1024;
+            }
+        }
+    }
+    fclose(fp);
+    return bytes;
+}
+```
