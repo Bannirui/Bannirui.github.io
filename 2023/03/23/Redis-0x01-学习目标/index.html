@@ -1,0 +1,1162 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Bannirui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。 1 编码方式   status struct 文件 说明    1 redisObject\sds object.c OBJ_ENCODING_RAW   1 redisObject\sds object.c OBJ_ENCODING_INT   1 dict dict.c OBJ_ENCODING">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x01-学习目标">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/index.html">
+<meta property="og:site_name" content="毛茸茸猫子">
+<meta property="og:description" content="Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。 1 编码方式   status struct 文件 说明    1 redisObject\sds object.c OBJ_ENCODING_RAW   1 redisObject\sds object.c OBJ_ENCODING_INT   1 dict dict.c OBJ_ENCODING">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/img/Redis-default.png">
+<meta property="article:published_time" content="2023-03-23T15:40:55.000Z">
+<meta property="article:modified_time" content="2023-12-04T09:28:06.619Z">
+<meta property="article:author" content="Bannirui">
+<meta property="article:tag" content="Redis@6.2">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/img/Redis-default.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x01-学习目标 - 毛茸茸猫子</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>毛茸茸猫子</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x01-学习目标"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-23 23:40" pubdate>
+          2023年3月23日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x01-学习目标</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。</p>
+<h2 id="1-编码方式"><a href="#1-编码方式" class="headerlink" title="1 编码方式"></a>1 编码方式</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th>struct</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td>redisObject\sds</td>
+<td align="left">object.c</td>
+<td align="left"><a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject">OBJ_ENCODING_RAW</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>redisObject\sds</td>
+<td align="left">object.c</td>
+<td align="left">OBJ_ENCODING_INT</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>dict</td>
+<td align="left">dict.c</td>
+<td align="left"><a href="/2023/03/29/Redis-0x03-dict/" title="Redis-0x03-dict">OBJ_ENCODING_HT</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>zipmap</td>
+<td align="left">zipmap.c</td>
+<td align="left"><a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap">OBJ_ENCODING_ZIPMAP</a> 可能已经弃用了。</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>list</td>
+<td align="left">adlist.c</td>
+<td align="left"><a href="/2023/03/24/Redis-0x02-list/" title="Redis-0x02-list">OBJ_ENCODING_LINKEDLIST</a> 双链表，作为数据类型编码已经切换成quicklist，现在主要用在redisServer实例里面的双链表数据结构。</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>ziplist</td>
+<td align="left">ziplist.c</td>
+<td align="left"><a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist">OBJ_ENCODING_ZIPLIST</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>intset</td>
+<td align="left">intset.c</td>
+<td align="left"><a href="/2023/04/06/Redis-0x0e-intset/" title="Redis-0x0e-intset">OBJ_ENCODING_INTSET</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>zskiplist</td>
+<td align="left">t_zset.c</td>
+<td align="left"><a href="/2023/04/06/Redis-0x0f-zskiplist/" title="Redis-0x0f-zskiplist">OBJ_ENCODING_SKIPLIST</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>redisObject\sds</td>
+<td align="left">object.c</td>
+<td align="left"><a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject">OBJ_ENCODING_EMBSTR</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>quicklist</td>
+<td align="left">quicklist.c</td>
+<td align="left"><a href="/2023/04/03/Redis-0x0d-quicklist/" title="Redis-0x0d-quicklist">OBJ_ENCODING_QUICKLIST</a> 使用ziplist存储数据的双端链表。</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>sds</td>
+<td align="left">sds.c</td>
+<td align="left"><a href="/2023/03/29/Redis-0x04-sds/" title="Redis-0x04-sds">字符串。</a></td>
+</tr>
+</tbody></table>
+<h2 id="2-数据类型"><a href="#2-数据类型" class="headerlink" title="2 数据类型"></a>2 数据类型</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="left">t_string.c</td>
+<td align="left"><a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string">OBJ_STRING 字符串。</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">t_list.c</td>
+<td align="left"><a href="/2023/04/03/Redis-0x0a-t-list/" title="Redis-0x0a-t_list">OBJ_LIST 列表。</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">t_set.c</td>
+<td align="left"><a href="/2023/04/03/Redis-0x0b-t-set/" title="Redis-0x0b-t_set">OBJ_SET 集合。</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">t_zset.c</td>
+<td align="left"><a href="/2023/04/03/Redis-0x0c-t-zset/" title="Redis-0x0c-t_zset">OBJ_ZSET 有序集合。</a></td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">t_hash.c</td>
+<td align="left"><a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash">OBJ_HASH 哈希。</a></td>
+</tr>
+</tbody></table>
+<h2 id="3-数据结构"><a href="#3-数据结构" class="headerlink" title="3 数据结构"></a>3 数据结构</h2><table>
+<thead>
+<tr>
+<th>status</th>
+<th>struct</th>
+<th>文件</th>
+<th>mark</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>redisObject</td>
+<td>server.h\object.c</td>
+<td><a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject">redis中数据的统一封装。</a></td>
+</tr>
+</tbody></table>
+<h2 id="1-main主程序"><a href="#1-main主程序" class="headerlink" title="1 main主程序"></a>1 main主程序</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="left">server.c</td>
+<td align="left"><a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Redis-0x12-服务端启动流程">redis服务端。</a></td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">redis_cli.c</td>
+<td align="left">redis客户端。</td>
+</tr>
+</tbody></table>
+<h2 id="2-net网络"><a href="#2-net网络" class="headerlink" title="2 net网络"></a>2 net网络</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="left">anet.c</td>
+<td align="left">Server&#x2F;Client通信的基础封装。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">networking.c</td>
+<td align="left">网络协议传输方法定义。</td>
+</tr>
+</tbody></table>
+<h2 id="4-event事件"><a href="#4-event事件" class="headerlink" title="4 event事件"></a>4 event事件</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="left">ae.c</td>
+<td align="left">用于Redis的事件处理，包括句柄和超时事件。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">ae_epoll.c</td>
+<td align="left">实现了epoll系统调用的接口。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">ae_evport.c</td>
+<td align="left">实现了evport系统调用的接口。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">ae_kqueue.c</td>
+<td align="left">实现了kqueue系统调用的接口。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">ae_select.c</td>
+<td align="left">实现了select系统调用的接口。</td>
+</tr>
+</tbody></table>
+<h2 id="5-data数据操作"><a href="#5-data数据操作" class="headerlink" title="5 data数据操作"></a>5 data数据操作</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="left">aof.c</td>
+<td align="left">AOF的实现。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">config.c</td>
+<td align="left">将配置文件redis.conf文件中的配置读取出来。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">db.c</td>
+<td align="left">对于Redis内存数据库的相关操作。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">multi.c</td>
+<td align="left">事务处理操作。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">rdb.c</td>
+<td align="left">对于Redis本地数据库相关操作。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">replication.c</td>
+<td align="left">主从复制操作的实现。</td>
+</tr>
+</tbody></table>
+<h2 id="6-tool工具"><a href="#6-tool工具" class="headerlink" title="6 tool工具"></a>6 tool工具</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="left">bitops.c</td>
+<td align="left">位操作。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">debug.c</td>
+<td align="left">调试使用。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">endianconv.c</td>
+<td align="left">高低位转换，不通系统，高低位顺序不同。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">help.h</td>
+<td align="left">辅助命令行的提示。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">lzf_c.c</td>
+<td align="left">压缩算法。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">lzf_d.c</td>
+<td align="left">压缩算法。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">rand.c</td>
+<td align="left">随机数。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">release.c</td>
+<td align="left">发布时使用。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">sha1.c</td>
+<td align="left">sha加密算法。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">util.c</td>
+<td align="left">通用工具方法。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">crc64.c</td>
+<td align="left">循环冗余校验。</td>
+</tr>
+</tbody></table>
+<h2 id="7-baseinfo基本信息"><a href="#7-baseinfo基本信息" class="headerlink" title="7 baseinfo基本信息"></a>7 baseinfo基本信息</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="left">asciilogo.c</td>
+<td align="left">Redis的logo显示。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">version.h</td>
+<td align="left">Redis的版本号。</td>
+</tr>
+</tbody></table>
+<h2 id="8-compatible兼容"><a href="#8-compatible兼容" class="headerlink" title="8 compatible兼容"></a>8 compatible兼容</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="left">fmacros.h</td>
+<td align="left">兼容Mac系统。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">solarisfixes.h</td>
+<td align="left">兼容solary。</td>
+</tr>
+</tbody></table>
+<h2 id="9-wrapper封装类"><a href="#9-wrapper封装类" class="headerlink" title="9 wrapper封装类"></a>9 wrapper封装类</h2><table>
+<thead>
+<tr>
+<th align="center">status</th>
+<th align="left">文件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="left">bio.c</td>
+<td align="left">background I&#x2F;O，开启后台线程使用。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">hyperloglog.c</td>
+<td align="left">高级数据结构。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">intset.c</td>
+<td align="left">整数范围内的使用set。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">latency.c</td>
+<td align="left">延迟类。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">migrate.c</td>
+<td align="left">命令迁移。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">notify.c</td>
+<td align="left">通知。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">object.c</td>
+<td align="left">创建和释放redisObject对象。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">pqsort.c</td>
+<td align="left">排序算法。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">pubsub.c</td>
+<td align="left">订阅模式实现。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">rio.c</td>
+<td align="left">Redis定义的一个I&#x2F;O类。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">slowlog.c</td>
+<td align="left">日志类型。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">sort.c</td>
+<td align="left">排序算法</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">syncio.c</td>
+<td align="left">同步Socket和I&#x2F;O操作。</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="left">zmalloc.c</td>
+<td align="left">关于Redis的内存分配的封装实现。</td>
+</tr>
+</tbody></table>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Redis-6-2/" class="print-no-link">#Redis@6.2</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x01-学习目标</div>
+      <div>https://bannirui.github.io/2023/03/23/Redis-0x01-学习目标/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Bannirui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/24/Redis-0x02-list/" title="Redis-0x02-list">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x02-list</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" title="Redis-0x00-编译">
+                        <span class="hidden-mobile">Redis-0x00-编译</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '0fb9ca69287eaa9d3ae75a9dcbdabef0'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/vvd_js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
