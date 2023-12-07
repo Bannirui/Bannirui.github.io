@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>cmake教程记录</title>
+    <link href="/2023/12/07/cmake%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/12/07/cmake%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<p>为什么要学cmake，先说一个我的使用场景。</p><p>我常用电脑有2台，mac和linux的，但是我常用工具链就那么几个，在两台电脑上的配置统一化就存在必要性了。再者以后再添置一台电脑，又得吭哧吭哧配置一遍工具链。其次，我曾经在mac上误删了<code>rm -rf</code>某个目录导致需要重新配置一遍。</p><p>凡此种种，都是实际的需求场景，所以我需要为自己做一个脚本工具，统一管理我使用的工具链，换电脑了只要执行一下脚本就行。</p><p>此前我的方式是手写Makefile的方式，但是有几个问题</p><ul><li>不方便层级式管理</li><li>充斥大量的<code>if...else...</code>语句判断系统平台类型</li></ul><p>主要因为跨平台性的考虑，因此现在使用了cmake作为生成器，用来生成构建文件Makefile。</p><p>毕竟<a href="https://github.com/Bannirui/os_script.git">git仓库项目</a>中包含了所有的配置和隐私信息，就设置为了private。</p><img src="/2023/12/07/cmake%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/1701928361.png" class=""><p>cmake的用途远不为此，跨平台性让我们从构建管理工具的平台限制脱离出来，聚焦于CMakeLists文件的编写即可，可以灵活选择平台和构建工具。</p><p>因此用<a href="https://github.com/Bannirui/tutorial.git">tutorial</a>这个项目记录了一下cmake的学习，基本囊括了日常使用的指令。</p><img src="/2023/12/07/cmake%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/1701929890.png" class=""><div id="gitalk-container"></div><script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><script>var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};    gitalkConfig.id = md5(location.pathname);var gitalk = new Gitalk(gitalkConfig);    gitalk.render("gitalk-container");    </script>]]></content>
+    
+    
+    <categories>
+      
+      <category>cmake</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Redis-2刷-0x0A-initConfigValues赋值redisServer初始值</title>
     <link href="/2023/11/24/Redis-2%E5%88%B7-0x0A-initConfigValues%E8%B5%8B%E5%80%BCredisServer%E5%88%9D%E5%A7%8B%E5%80%BC/"/>
     <url>/2023/11/24/Redis-2%E5%88%B7-0x0A-initConfigValues%E8%B5%8B%E5%80%BCredisServer%E5%88%9D%E5%A7%8B%E5%80%BC/</url>
