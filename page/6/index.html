@@ -252,67 +252,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/04/12/Redis-0x19-%E6%8C%81%E4%B9%85%E5%8C%96%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93/" target="_self">
-          Redis-0x19-持久化文件加载内存数据库
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/12/Redis-0x19-%E6%8C%81%E4%B9%85%E5%8C%96%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93/" target="_self">
-        <div>
-          123456789101112131415161718192021222324252627282930313233343536373839404142/** * @brief 将持久化的数据加载恢复到内存数据库 *          - 优先使用aof文件恢复 *          - 次级使用rdb的dump文件恢复 */void loadDataFromDisk(void) &#123;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-12 16:22" pubdate>
-              2023-04-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
         <a href="/2023/04/12/Redis-0x18-%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%8D%E5%8A%A1%E7%AB%AF/" target="_self">
           Redis-0x18-初始化服务端
         </a>
@@ -825,6 +764,73 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-04-10 10:33" pubdate>
               2023-04-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/04/06/Redis-0x0f-zskiplist/" target="_self">
+          <img src="/img/Redis-0x0f-zskiplist.png" srcset="/img/loading.gif" lazyload alt="Redis-0x0f-zskiplist">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/04/06/Redis-0x0f-zskiplist/" target="_self">
+          Redis-0x0f-zskiplist
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/04/06/Redis-0x0f-zskiplist/" target="_self">
+        <div>
+          数据类型的编码方式。 1 数据结构1.1 跳表节点12345678910111213// 跳表节点typedef struct zskiplistNode &#123;    // 保存节点信息    sds ele;    // 节点分数 按照分数排序    double score;    // 后退指针 只有第1层有效    struct zskiplistNode *backward;
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-06 22:30" pubdate>
+              2023-04-06
             </time>
           </div>
         
