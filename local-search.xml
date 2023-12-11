@@ -4,6 +4,44 @@
   
   
   <entry>
+    <title>yay常用命令</title>
+    <link href="/2023/12/11/yay%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <url>/2023/12/11/yay%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    
+    <content type="html"><![CDATA[<p>在archlinux常常依赖yay管理软件。</p><ul><li><p>yay &lt;包名&gt;</p><p>  在终端交互式进行软件搜索和下载</p></li><li><p>yay</p><p>  同步并更新所有来自仓库和 AUR 的软件包</p></li><li><p>yay -Sua</p><p>  只同步和更新AUR软件包</p></li><li><p>yay -S &lt;软件包&gt;</p><p>  从仓库和AUR中安装一个新的软件包</p></li><li><p>yay -Ss &lt;包名&gt;</p><p>  从仓库和 AUR 中搜索软件包数据库中的关键词</p></li><li><p>yay -Ps</p><p>  显示已安装软件包和系统健康状况的统计数据</p></li><li><p>yay -Syy {包名}</p><p>  强制更新，安装软件包</p></li><li><p>yay -R {包名}</p><p>  删除包名</p></li><li><p>yay -Rns {包名}</p><p>  删除包，并且删除不需要的依赖项</p></li></ul><div id="gitalk-container"></div><script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><script>var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};    gitalkConfig.id = md5(location.pathname);var gitalk = new Gitalk(gitalkConfig);    gitalk.render("gitalk-container");    </script>]]></content>
+    
+    
+    <categories>
+      
+      <category>工具</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Linux安装FreeCAD</title>
+    <link href="/2023/12/11/Linux%E5%AE%89%E8%A3%85FreeCAD/"/>
+    <url>/2023/12/11/Linux%E5%AE%89%E8%A3%85FreeCAD/</url>
+    
+    <content type="html"><![CDATA[<h2 id="1-下载"><a href="#1-下载" class="headerlink" title="1 下载"></a>1 下载</h2><p>我蛮熟悉UG的，但是没有找到linux的破解版本。其实3D软件大体是相似的，只是各家软件在细分领域有着不同的优势和特性。因此在linux上安装<a href="https://www.freecad.org/downloads.php">FreeCAD</a>。</p><h2 id="2-安装"><a href="#2-安装" class="headerlink" title="2 安装"></a>2 安装</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss freecad<br><br>yay -Syy freecad<br></code></pre></td></tr></table></figure><p>通过yay方式安装后运行<code>freecad</code>会报错链接不到动态库<code>libboost_filesystem.so.1.83.0</code>。因此换用官网下载安装包的方式</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p ~/documents/freecad<br>cp ~/downloads/FreeCAD_0.21.1-Linux-x86_64.AppImage ~/documents/freecad/<br><br>cd ~/documents/freecad/<br>chmod +x ./FreeCAD_0.21.1-Linux-x86_64.AppImage<br>./FreeCAD_0.21.1-Linux-x86_64.AppImage<br></code></pre></td></tr></table></figure><p>可以看到能运行起来，下面就是制作一个桌面入口。</p><h2 id="3-快捷方式"><a href="#3-快捷方式" class="headerlink" title="3 快捷方式"></a>3 快捷方式</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd ~/.local/share/applications<br><br>cp clash.desktop freecad.desktop<br></code></pre></td></tr></table></figure><p>然后修改对应的信息即可。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">chmod +x ./freecad.desktop<br></code></pre></td></tr></table></figure><p>按键<code>option</code>唤出搜索窗口输入<code>freecad</code>运行，然后右键<code>freecad</code>选择<code>Pin Launcher</code>固定到底部dock。</p><div id="gitalk-container"></div><script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><script>var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};    gitalkConfig.id = md5(location.pathname);var gitalk = new Gitalk(gitalkConfig);    gitalk.render("gitalk-container");    </script>]]></content>
+    
+    
+    <categories>
+      
+      <category>工具</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>vscode终端zsh显示图标乱码</title>
     <link href="/2023/12/08/vscode%E7%BB%88%E7%AB%AFzsh%E6%98%BE%E7%A4%BA%E5%9B%BE%E6%A0%87%E4%B9%B1%E7%A0%81/"/>
     <url>/2023/12/08/vscode%E7%BB%88%E7%AB%AFzsh%E6%98%BE%E7%A4%BA%E5%9B%BE%E6%A0%87%E4%B9%B1%E7%A0%81/</url>
