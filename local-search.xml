@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>pyocd使用</title>
+    <link href="/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/"/>
+    <url>/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/</url>
+    
+    <content type="html"><![CDATA[<p>我使用的调试器是<code>openocd</code>，但是查看了帮助信息好像没有找到关于<code>list</code>列表信息功能，这着实是有点不太科学的。我现在的需求就是需要查看电脑端口的占用情况已经设备详情信息。因此找到了<code>pyocd</code>这款调试器，目前这个调试器仅仅为了满足<code>list</code>的需求，如果使用体验很好的话，程序的烧录可能也会切到这个调试器。</p><p>我的设备是Arch Linux x86_64。</p><h2 id="1-安装"><a href="#1-安装" class="headerlink" title="1 安装"></a>1 安装</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip --version<br>pip install pyocd<br></code></pre></td></tr></table></figure><p>然后就提示<code>error: externally-managed-environment</code>，并给出友善建议使用<code>pacman -S python-xzy</code>，于是乎</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss pyocd<br>yay -Syy python-pyocd<br></code></pre></td></tr></table></figure><h2 id="2-list"><a href="#2-list" class="headerlink" title="2 list"></a>2 list</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">pyocd --version<br>pyocd --help<br>pyocd list --help<br></code></pre></td></tr></table></figure><p>可以看到<code>pyocd</code>的子功能<code>list</code>提供了很多的option。</p><img src="/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/1702344978.png" class=""><h3 id="2-1-pyocd-list"><a href="#2-1-pyocd-list" class="headerlink" title="2.1 pyocd list"></a>2.1 pyocd list</h3><img src="/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/1702345077.png" class=""><h3 id="2-2-pyocd-list-p"><a href="#2-2-pyocd-list-p" class="headerlink" title="2.2 pyocd list -p"></a>2.2 pyocd list -p</h3><img src="/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/1702345309.png" class=""><div id="gitalk-container"></div><script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script><script>var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};    gitalkConfig.id = md5(location.pathname);var gitalk = new Gitalk(gitalkConfig);    gitalk.render("gitalk-container");    </script>]]></content>
+    
+    
+    <categories>
+      
+      <category>单片机</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>yay常用命令</title>
     <link href="/2023/12/11/yay%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
     <url>/2023/12/11/yay%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
