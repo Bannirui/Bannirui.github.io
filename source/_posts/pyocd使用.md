@@ -34,3 +34,14 @@ pyocd list --help
 ```
 
 可以看到`pyocd`的子功能`list`提供了很多的option。
+
+![](pyocd使用/1702344978.png)
+
+### 2.1 pyocd list
+
+![](pyocd使用/1702345077.png)
+
+### 2.2 pyocd list -p
+
+
+![](pyocd使用/1702345309.png)
