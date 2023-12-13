@@ -249,6 +249,67 @@
   <div class="row mx-auto index-card">
     
     
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" target="_self">
+          Redis-0x13-注册OOM处理器
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" target="_self">
+        <div>
+          在全局注册一个接口，发生内存OOM时用于回调，具体实现由业务测关注。 1 处理器接口12// 内存OOM处理器static void (*zmalloc_oom_handler)(size_t) = zmalloc_default_oom;  2 默认处理器1234567// 内存OOM处理器-默认处理器static void zmalloc_default_oom(size_t size) &#
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-11 21:46" pubdate>
+              2023-04-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" target="_self">
           <img src="/img/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png" srcset="/img/loading.gif" lazyload alt="Redis-0x12-服务端启动流程">
@@ -773,67 +834,6 @@
       <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x0a-t-list/" target="_self">
         <div>
           数据类型List列表。 1 list列表 数据结构关系   数据类型 实现 编码方式 数据结构    列表OBJ_LIST t_list OBJ_ENCODING_QUICKLIST quicklist     OBJ_ENCODING_ZIPLIST ziplist     2 列表长度1234567891011121314/** * @brief 列表长度 语义是列表中元素的数量 *
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:10" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x09-t-string/" target="_self">
-          Redis-0x09-t_string
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x09-t-string/" target="_self">
-        <div>
-          数据类型String字符串。 1 string字符串 数据结构关系   数据类型 实现 编码方式 数据结构    字符串OBJ_STRING t_string OBJ_ENCODING_INT sds     OBJ_ENCODING_EMBSTR sds     OBJ_ENCODING_RAW sds   2 增2.1 set1234567891011121314151617181920212
         </div>
       </a>
 
