@@ -90,7 +90,7 @@ sudo unetbootin
 
 每个人进BIOS不尽相同，选择U盘启动即可。
 
-我的零克迷你机的方式在另一篇{% post_link 多桌面系统环境}中讲过。
+我的零克迷你机的方式在另一篇{% post_link 多桌面系统环境 %}中讲过。
 
 #### 3.2.1 gparted live模式
 
