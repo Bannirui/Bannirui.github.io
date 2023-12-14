@@ -1,7 +1,7 @@
 ---
 title: yay常用命令
 date: 2023-12-11 16:34:29
-categories: 工具
+categories: 系统
 ---
 
 在archlinux常常依赖yay管理软件。
