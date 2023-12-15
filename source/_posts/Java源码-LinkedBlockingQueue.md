@@ -1,10 +1,10 @@
 ---
 title: Java源码-LinkedBlockingQueue
 date: 2023-03-11 13:48:19
+categories:
+- Java
 tags:
 - Java@15
-categories:
-- Java源码
 ---
 
 ## 1 类图

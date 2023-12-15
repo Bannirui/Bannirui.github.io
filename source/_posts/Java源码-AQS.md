@@ -1,10 +1,10 @@
 ---
 title: Java源码-AQS
 date: 2023-03-11 13:49:20
+categories:
+- Java
 tags:
 - Java@15
-categories:
-- Java源码
 ---
 
 摘要

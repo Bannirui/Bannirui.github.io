@@ -1,10 +1,10 @@
 ---
 title: Java源码-Selector
 date: 2023-03-06 22:49:17
+categories:
+- Java
 tags:
 - Java@15
-categories:
-- Java源码
 ---
 
 对操作系统而言：

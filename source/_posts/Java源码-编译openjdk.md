@@ -1,10 +1,10 @@
 ---
 title: Java源码-编译openjdk
 date: 2023-03-10 23:18:14
+categories:
+- Java
 tags:
 - Java@15
-categories:
-- Java源码
 ---
 
 ### 1 Sdk编译

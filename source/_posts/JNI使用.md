@@ -1,8 +1,7 @@
 ---
 title: JNI使用
 date: 2023-05-14 10:44:19
-tags: [ JNI ]
-categories: [ 工具 ]
+categories: Java
 ---
 
 ### 1 项目结构

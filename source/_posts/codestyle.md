@@ -1,10 +1,10 @@
 ---
 title: codestyle
 date: 2023-02-28 09:32:26
+categories:
+- IDE
 tags:
 - 代码规范
-categories:
-- 工具
 ---
 
 IDEA设置code style，通过format方式格式化代码，并设置配套的check style进行规范检查。

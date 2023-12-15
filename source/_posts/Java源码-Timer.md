@@ -1,10 +1,10 @@
 ---
 title: Java源码-Timer
 date: 2023-03-04 11:15:39
+categories:
+- Java
 tags:
 - Java@15
-categories:
-- Java源码
 ---
 
 定时器，调度执行延时任务。
