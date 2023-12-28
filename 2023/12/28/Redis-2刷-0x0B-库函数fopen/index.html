@@ -16,27 +16,24 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="设计类软件基本都是收费的，找到好用的开源软件是件幸事，EDA找到了KiCad，3D建模找到了FreeCAD。 1 安装官网贴心地准备了各操作系统的安装方式，非常全乎。   2 库文件路径问题应该是linux的上的问题，全局和用户的目录识别有问题。   在设置的路径管理中的路径，与符号库和元件库的扫描的路径不一致，导致符号库和元件库里面是空的。    kicad默认配置的路径管理是系统的，也就是&#x2F;u">
+    <meta name="description" content="1 查询系统手册1man 3 fopen  2 库函数2.1 原型1234#include &lt;stdio.h&gt;FILE *fopen(const char * restrict path, const char * restrict mode);  12345678910The fopen() function opens the file whose name is the stri">
 <meta property="og:type" content="article">
-<meta property="og:title" content="安装KiCad">
-<meta property="og:url" content="https://bannirui.github.io/2023/12/13/%E5%AE%89%E8%A3%85KiCad/index.html">
+<meta property="og:title" content="Redis-2刷-0x0B-库函数fopen">
+<meta property="og:url" content="https://bannirui.github.io/2023/12/28/Redis-2%E5%88%B7-0x0B-%E5%BA%93%E5%87%BD%E6%95%B0fopen/index.html">
 <meta property="og:site_name" content="毛茸茸猫子">
-<meta property="og:description" content="设计类软件基本都是收费的，找到好用的开源软件是件幸事，EDA找到了KiCad，3D建模找到了FreeCAD。 1 安装官网贴心地准备了各操作系统的安装方式，非常全乎。   2 库文件路径问题应该是linux的上的问题，全局和用户的目录识别有问题。   在设置的路径管理中的路径，与符号库和元件库的扫描的路径不一致，导致符号库和元件库里面是空的。    kicad默认配置的路径管理是系统的，也就是&#x2F;u">
+<meta property="og:description" content="1 查询系统手册1man 3 fopen  2 库函数2.1 原型1234#include &lt;stdio.h&gt;FILE *fopen(const char * restrict path, const char * restrict mode);  12345678910The fopen() function opens the file whose name is the stri">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/12/13/%E5%AE%89%E8%A3%85KiCad/1702478525.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/12/13/%E5%AE%89%E8%A3%85KiCad/1702478766.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/12/13/%E5%AE%89%E8%A3%85KiCad/1702479017.png">
-<meta property="article:published_time" content="2023-12-13T14:38:46.000Z">
-<meta property="article:modified_time" content="2023-12-13T14:52:00.138Z">
+<meta property="article:published_time" content="2023-12-28T06:58:32.000Z">
+<meta property="article:modified_time" content="2023-12-28T07:42:17.873Z">
 <meta property="article:author" content="Bannirui">
+<meta property="article:tag" content="2刷Redis">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/12/13/%E5%AE%89%E8%A3%85KiCad/1702478525.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>安装KiCad - 毛茸茸猫子</title>
+  <title>Redis-2刷-0x0B-库函数fopen - 毛茸茸猫子</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -226,7 +223,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="安装KiCad"></span>
+            <span id="subtitle" data-typed-text="Redis-2刷-0x0B-库函数fopen"></span>
           
         </div>
 
@@ -237,8 +234,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-13 22:38" pubdate>
-          2023年12月13日 晚上
+        <time datetime="2023-12-28 14:58" pubdate>
+          2023年12月28日 下午
         </time>
       </span>
     
@@ -249,7 +246,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          606 字
+          1k 字
         
       </span>
     
@@ -260,7 +257,7 @@
         
         
         
-          6 分钟
+          9 分钟
         
       </span>
     
@@ -305,26 +302,33 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">安装KiCad</h1>
+            <h1 id="seo-header">Redis-2刷-0x0B-库函数fopen</h1>
             
             
               <div class="markdown-body">
                 
-                <p>设计类软件基本都是收费的，找到好用的开源软件是件幸事，EDA找到了<a target="_blank" rel="noopener" href="https://www.kicad.org/">KiCad</a>，3D建模找到了<a target="_blank" rel="noopener" href="https://www.freecad.org/">FreeCAD</a>。</p>
-<h2 id="1-安装"><a href="#1-安装" class="headerlink" title="1 安装"></a>1 安装</h2><p>官网贴心地准备了各操作系统的安装方式，非常全乎。</p>
-<img src="/2023/12/13/%E5%AE%89%E8%A3%85KiCad/1702478525.png" srcset="/img/loading.gif" lazyload class="">
+                <h2 id="1-查询系统手册"><a href="#1-查询系统手册" class="headerlink" title="1 查询系统手册"></a>1 查询系统手册</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">man 3 fopen<br></code></pre></td></tr></table></figure>
 
-<h2 id="2-库文件路径问题"><a href="#2-库文件路径问题" class="headerlink" title="2 库文件路径问题"></a>2 库文件路径问题</h2><p>应该是linux的上的问题，全局和用户的目录识别有问题。</p>
-<img src="/2023/12/13/%E5%AE%89%E8%A3%85KiCad/1702478766.png" srcset="/img/loading.gif" lazyload class="">
+<h2 id="2-库函数"><a href="#2-库函数" class="headerlink" title="2 库函数"></a>2 库函数</h2><h3 id="2-1-原型"><a href="#2-1-原型" class="headerlink" title="2.1 原型"></a>2.1 原型</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">include &lt;stdio.h&gt;</span><br><br>FILE *<br>fopen(const char * restrict path, const char * restrict mode);<br></code></pre></td></tr></table></figure>
 
-<p>在设置的路径管理中的路径，与符号库和元件库的扫描的路径不一致，导致符号库和元件库里面是空的。</p>
-<img src="/2023/12/13/%E5%AE%89%E8%A3%85KiCad/1702479017.png" srcset="/img/loading.gif" lazyload class="">
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">The fopen() function opens the file whose name is the string pointed to by path and associates a stream with it.<br><br>The argument mode points to a string beginning with one of the following letters:<br><br>“r”     Open for reading.  The stream is positioned at the beginning of the file.  Fail if the file does not exist.<br><br>“w”     Open for writing.  The stream is positioned at the beginning of the file.  Create the file if it does not exist.<br><br>“a”     Open for writing.  The stream is positioned at the end of the file.  Subsequent writes to the file will always end up at the<br>        then current end of file, irrespective of any intervening fseek(3) or similar.  Create the file if it does not exist.<br></code></pre></td></tr></table></figure>
 
+<h3 id="2-2-入参"><a href="#2-2-入参" class="headerlink" title="2.2 入参"></a>2.2 入参</h3><p>2个参数都是必填</p>
 <ul>
-<li>kicad默认配置的路径管理是系统的，也就是<code>/usr/share/kicad</code>里面的路径</li>
-<li>而库管理器默认扫描的是用户的，即<code>~/.loacal/share/kicad</code>里面的</li>
+<li><p>path是文件的绝对路径</p>
+</li>
+<li><p>mode以什么模式打开文件</p>
+<ul>
+<li><p>r读</p>
+</li>
+<li><p>w写</p>
+</li>
+<li><p>a追加写</p>
+</li>
 </ul>
-<p>因此要想使用kicad自带的库文件，就手动到库管理器里面，加载全局库路径的文件即可，全选一次导入。</p>
+</li>
+</ul>
+<h3 id="2-3-出参"><a href="#2-3-出参" class="headerlink" title="2.3 出参"></a>2.3 出参</h3><p>返回值是文件描述符</p>
 
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
@@ -352,7 +356,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/KiCad/" class="category-chain-item">KiCad</a>
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
   
   
 
@@ -364,6 +368,13 @@
     </div>
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/2%E5%88%B7Redis/" class="print-no-link">#2刷Redis</a>
+      
+    </div>
+  
 </div>
 
 
@@ -372,8 +383,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>安装KiCad</div>
-      <div>https://bannirui.github.io/2023/12/13/安装KiCad/</div>
+      <div>Redis-2刷-0x0B-库函数fopen</div>
+      <div>https://bannirui.github.io/2023/12/28/Redis-2刷-0x0B-库函数fopen/</div>
     </div>
     <div class="license-meta">
       
@@ -385,7 +396,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月13日</div>
+          <div>2023年12月28日</div>
         </div>
       
       
@@ -417,9 +428,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/12/28/Redis-2%E5%88%B7-0x0A-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/" title="Redis-2刷-0x0A-数据结构sds">
+                      <a href="/2023/12/28/Redis-2%E5%88%B7-0x0C-%E5%BA%93%E5%87%BD%E6%95%B0fgets/" title="Redis-2刷-0x0C-库函数fgets">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Redis-2刷-0x0A-数据结构sds</span>
+                        <span class="hidden-mobile">Redis-2刷-0x0C-库函数fgets</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -427,8 +438,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/" title="GParted重分区">
-                        <span class="hidden-mobile">GParted重分区</span>
+                      <a href="/2023/12/28/Redis-2%E5%88%B7-0x0A-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/" title="Redis-2刷-0x0A-数据结构sds">
+                        <span class="hidden-mobile">Redis-2刷-0x0A-数据结构sds</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -451,7 +462,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'df9fb32e35a8c00ff56a97df8254d563'
+            id: '11494b1ea933cf73a2f74cafe49e6426'
           }
         )
         var gitalk = new Gitalk(options);

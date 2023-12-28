@@ -24,7 +24,7 @@
 <meta property="og:description" content="redisServer是一个定义在server.h中的UDT，是一个超级大的结构体，大的原因是描述了整个服务端实例的信息。 1 外部全局变量server.c文件中定义全局变量 123456&#x2F;** * 全局变量定义 * 这个变量是未初始化全局变量 定义在了静态内存BSS段 * 为了能让其他文件访问到这个变量 在头文件中用extern将这个变量声明为了外部变量 *&#x2F;struct redisServer">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-22T06:08:39.000Z">
-<meta property="article:modified_time" content="2023-12-04T09:28:06.837Z">
+<meta property="article:modified_time" content="2023-12-28T03:23:03.425Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="2刷Redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -257,7 +257,7 @@
         
         
         
-          192 分钟
+          193 分钟
         
       </span>
     
@@ -345,25 +345,25 @@
 <td>3</td>
 <td>configfile</td>
 <td>char*</td>
-<td></td>
-<td>server.c::main-&gt;initServerConfig</td>
-<td>NULL</td>
+<td>配置文件绝对路径</td>
+<td>server.c::main</td>
+<td>在启动车程序的时候通过命令行指定的运行参数，第1个参数就得指定配置文件的绝对路径</td>
 </tr>
 <tr>
 <td>4</td>
 <td>executable</td>
 <td>char*</td>
-<td></td>
-<td>server.c::main-&gt;initServerConfig</td>
-<td>NULL</td>
+<td>可执行程程序绝对路径</td>
+<td>server.c::main</td>
+<td>启动程序，可执行程序的的绝对路径</td>
 </tr>
 <tr>
 <td>5</td>
 <td>exec_argv</td>
 <td>char**</td>
-<td></td>
-<td></td>
-<td></td>
+<td>运行参数</td>
+<td>server.c::main</td>
+<td>数组里面存放字符串，每个字符串就是启动程序时候的运行参数</td>
 </tr>
 <tr>
 <td>6</td>
