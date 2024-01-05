@@ -252,6 +252,128 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/11/02/Clion%E9%85%8D%E7%BD%AEMakefile%E9%A1%B9%E7%9B%AE%E8%B7%B3%E8%BD%AC%E5%8A%9F%E8%83%BD/" target="_self">
+          Clion配置Makefile项目跳转功能
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/02/Clion%E9%85%8D%E7%BD%AEMakefile%E9%A1%B9%E7%9B%AE%E8%B7%B3%E8%BD%AC%E5%8A%9F%E8%83%BD/" target="_self">
+        <div>
+          习惯了在Jetbrains系列上进行开发，自然而然也就用Clion阅读和开发C语言项目。但是该IDE对Makefile的支持远不如对Cmake的支持，比如用Clion打开Redis源码，无法进行函数跳转。 1 安装compiledb123brew search compiledbbrew info compiledbbrew install compiledb  2 创建compile_comma
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-11-02 14:44" pubdate>
+              2023-11-02
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/IDE/" class="category-chain-item">IDE</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Clion/">#Clion</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/11/01/Redis-2%E5%88%B7-0x01-Makefile/" target="_self">
+          Redis-2刷-0x01-Makefile
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/01/Redis-2%E5%88%B7-0x01-Makefile/" target="_self">
+        <div>
+          Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过成了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。 1 项目编译首先，在Readme中作者描述了如何编译项目，即在项目根目录执行make。   2 根目录Makefile根据编译命令可知，我们只要关注当前文件的第一条rule即可，如下： 123456789101112#
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-11-01 21:58" pubdate>
+              2023-11-01
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/2%E5%88%B7Redis/">#2刷Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/11/01/Redis-2%E5%88%B7-0x00-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" target="_self">
           Redis-2刷-0x00-从Readme开始
         </a>
@@ -726,121 +848,6 @@
               <a href="/tags/2%E5%88%B7Netty/">#2刷Netty</a>
             
           </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/05/15/Netty-0x04-NioEventLoopGroup%E5%92%8CNioEventLoop%E8%AF%A6%E7%BB%86%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" target="_self">
-          Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/15/Netty-0x04-NioEventLoopGroup%E5%92%8CNioEventLoop%E8%AF%A6%E7%BB%86%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" target="_self">
-        <div>
-          1 NioEventLoopGroup12345678910/** * @param nThreads *   - server端 *     - bossGroup-&gt;1 *     - workerGroup *   - client端 */public NioEventLoopGroup(int nThreads) &#123;    this(nThreads, (Executor)
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-05-15 23:09" pubdate>
-              2023-05-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty/" class="category-chain-item">Netty</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/2%E5%88%B7Netty/">#2刷Netty</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/05/14/JNI%E4%BD%BF%E7%94%A8/" target="_self">
-          JNI使用
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/14/JNI%E4%BD%BF%E7%94%A8/" target="_self">
-        <div>
-          1 项目结构在maven项目中新建2个模块  jni native  123- parent  - jni  - native  1.1 parent pom1234&lt;modules&gt;            &lt;module&gt;native&lt;/module&gt;    &lt;module&gt;jni&lt;/module&gt;&lt;/modules&gt;  1
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-05-14 10:44" pubdate>
-              2023-05-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
         
       </div>
     </article>
