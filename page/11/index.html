@@ -252,6 +252,372 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" target="_self">
+          Java源码-AQS
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" target="_self">
+        <div>
+          摘要  AQS是什么 使用方式 源码原理  1 AQS是什么摘自java doc，简而言之就是该类基于阻塞队列为同步锁的实现提供了框架功能 1Provides a framework for implementing blocking locks and related synchronizers (semaphores, events, etc) that rely on first-in-fi
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:49" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" target="_self">
+          Java源码-ThreadPoolExecutor
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" target="_self">
+        <div>
+          1 Executors工具类创建ThreadPoolExecutor    SingleThreadExecutor newFixedThreadPool newCachedThreadPool newScheduledThreadPool newSingleThreadScheduledExecutor    corePoolSize 1 n 0 n 1   maximumPoolSize 1
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:49" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" target="_self">
+          Java源码-SynchronousQueue
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" target="_self">
+        <div>
+          1 类图  2 构造方法12345678910111213public SynchronousQueue() &#123;        this(false);    &#125;    /**     * Creates a &#123;@code SynchronousQueue&#125; with the specified fairness policy.     *     * @p
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:48" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" target="_self">
+          Java源码-LinkedBlockingQueue
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" target="_self">
+        <div>
+          1 类图  2 构造方法123456789101112131415161718192021222324// LinkedBlockingQueue.java// take锁    private final ReentrantLock takeLock = new ReentrantLock();    // put锁    private final ReentrantLock putLock
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:48" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" target="_self">
+          Java源码-ArrayBlockingQueue
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" target="_self">
+        <div>
+          1 阻塞队列API    Throws exception Special value Blocks Times out    Insert add(e) offer(e) put(e) offer(e, time, unit)   Remove remove() poll() take() poll(time, uint)   Examine element() peek()     2 类图
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:47" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
+          Spring源码-10-容器refresh之registerBeanPostProcessors方法
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
+        <div>
+          12345678910111213// AbstractApplicationContext.java/**				 * 5 Bean实例化初始化之前将后置处理器注册到容器中				 * 后置处理器的职责				 *     - BeanDefinition都已经注册到了Bean工厂中(DefaultListableBeanFactory的beanDefinitionMap)				 *
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 00:34" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" target="_self">
           Spring源码-09-配置类解析器ConfigurationClassParser
         </a>
@@ -490,377 +856,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
-          Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
-        <div>
-          ConfigurationClassPostProcessor作用的时机 扫描注册用户BeanDefinition到Bean工厂。 1 Bean工厂后置处理器1234567891011121314// AbstractApplicationContext.javaprotected void invokeBeanFactoryPostProcessors(ConfigurableListableB
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:20" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" target="_self">
-          Spring源码-04-Bean工厂BeanFactory
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" target="_self">
-        <div>
-          实现在DefaultListableRegistry。 1 类图  2 BeanDefinition注册Bean工厂2.1 源码1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:16" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" target="_self">
-          Spring源码-03-容器refresh
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" target="_self">
-        <div>
-          1 refresh12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:13" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" target="_self">
-          Spring源码-02-AnnotatedBeanDefinitionReader
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" target="_self">
-        <div>
-          AnnotatedBeanDefinitionReader，注解Bean读取器。 1 构造方法12345678910111213141516171819202122public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) &#123;    Assert.notNul
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:10" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" target="_self">
-          Spring源码-01-Bean容器
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" target="_self">
-        <div>
-          1 类关系  2 宏观视角  3 容器创建注解Bean方式 123456public class AnnotationCtxMain02 &#123;    public static void main(String[] args) &#123;        new AnnotationConfigApplicationContext(MyCfg02.class);    &#125;&#12
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:04" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/10/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" target="_self">
-          Spring源码-00-环境搭建
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/10/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" target="_self">
-        <div>
-          1 源码Git地址，分支my-study-6.0.3。 2 编译环境    版本    Spring 6.0.3-SNAPSHOT   OS macOS 11.5.2   Java 17.0.1   Gradle 7.4.2   IDEA 2022.2.1   3 文件修改修改源码路径下gradle.properties，增加两行 12org.gradle.configureondemand=tr
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-10 23:57" pubdate>
-              2023-03-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/10/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/#board">12</a><a class="page-number" href="/page/13/#board">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/#board">15</a><a class="extend next" rel="next" href="/page/12/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/10/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/#board">12</a><a class="page-number" href="/page/13/#board">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/12/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

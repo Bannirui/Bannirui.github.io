@@ -249,6 +249,396 @@
   <div class="row mx-auto index-card">
     
     
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/03/29/Redis-0x03-dict/" target="_self">
+          <img src="/img/Redis-0x03-dict.png" srcset="/img/loading.gif" lazyload alt="Redis-0x03-dict">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/29/Redis-0x03-dict/" target="_self">
+          Redis-0x03-dict
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/03/29/Redis-0x03-dict/" target="_self">
+        <div>
+          数据类型的编码方式。 1 数据结构  1.1 dictEntry12345678910111213// 哈希表的节点 存储k-v键值对// hash表的节点会组成一个单链表// key可以是void*指针类型 相当于Java的Objecttypedef struct dictEntry &#123;    void *key; // 节点的key    union &#123;        vo
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-29 11:35" pubdate>
+              2023-03-29
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/03/24/Redis-0x02-list/" target="_self">
+          <img src="/img/Redis-0x02-list.png" srcset="/img/loading.gif" lazyload alt="Redis-0x02-list">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/24/Redis-0x02-list/" target="_self">
+          Redis-0x02-list
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/03/24/Redis-0x02-list/" target="_self">
+        <div>
+          不作为数据类型的编码方式使用，使用在redisServer字段上，单纯作为双链表数据结构使用。 1 数据结构1.1 链表节点123456789// 链表节点typedef struct listNode &#123;    // 前驱节点    struct listNode *prev;    // 后继节点    struct listNode *next;    // 节点存储的值    v
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-24 09:45" pubdate>
+              2023-03-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" target="_self">
+          <img src="/img/Redis-default.png" srcset="/img/loading.gif" lazyload alt="Redis-0x01-学习目标">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" target="_self">
+          Redis-0x01-学习目标
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" target="_self">
+        <div>
+          Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。 1 编码方式   status struct 文件 说明    1 redisObject\sds object.c OBJ_ENCODING_RAW   1 redisObject\sds object.c OBJ_ENCODING_INT   1 dict dict.c OBJ_ENCODING
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-23 23:40" pubdate>
+              2023-03-23
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" target="_self">
+          <img src="/img/Redis-default.png" srcset="/img/loading.gif" lazyload alt="Redis-0x00-编译">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" target="_self">
+          Redis-0x00-编译
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" target="_self">
+        <div>
+          1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码https://github.com/redis/redis 123456781 fork2 git clone git@github.com:Bannirui/redis.git3 git remote add upstream
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-23 10:21" pubdate>
+              2023-03-23
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Reactor/" target="_self">
+          Reactor
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Reactor/" target="_self">
+        <div>
+          reactor&#x3D;多路复用+线程池 抽象出组件，符合单一职责设计模式 reactor组件负责亲请求接收和分发 1 单reactor单线程模型特点  一个reactor负责接收连接和读写请求，分发他们 一个handler线程负责所有读写请求的处理  1.1 reactor组件12345678910111213141516171819202122232425262728293031323334
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 14:24" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BD%91%E7%BB%9CIO/" class="category-chain-item">网络IO</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">#线程模型</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" target="_self">
+          网络模型
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" target="_self">
+        <div>
+          同步IO-应用程序自己去解决数据读取的过程，应用过程既关注过程，也关注结果 异步IO-应用程序向内核发送数据读取的需求，过程由os操作，应用程序只关注结果，数据由其他线程负责投递 因此IO是同步还是异步，一定是由内核开放的api决定的，最终应用程序通过系统调用决定使用哪种方式，如果内核不支持异步，应用代码写出花来也没办法异步 阻塞IO-应用程序操作socket的accept、read、write这
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 14:24" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BD%91%E7%BB%9CIO/" class="category-chain-item">网络IO</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">#线程模型</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
@@ -490,377 +880,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" target="_self">
-          Java源码-AQS
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" target="_self">
-        <div>
-          摘要  AQS是什么 使用方式 源码原理  1 AQS是什么摘自java doc，简而言之就是该类基于阻塞队列为同步锁的实现提供了框架功能 1Provides a framework for implementing blocking locks and related synchronizers (semaphores, events, etc) that rely on first-in-fi
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 13:49" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java-15/">#Java@15</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" target="_self">
-          Java源码-ThreadPoolExecutor
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" target="_self">
-        <div>
-          1 Executors工具类创建ThreadPoolExecutor    SingleThreadExecutor newFixedThreadPool newCachedThreadPool newScheduledThreadPool newSingleThreadScheduledExecutor    corePoolSize 1 n 0 n 1   maximumPoolSize 1
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 13:49" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java-15/">#Java@15</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" target="_self">
-          Java源码-SynchronousQueue
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" target="_self">
-        <div>
-          1 类图  2 构造方法12345678910111213public SynchronousQueue() &#123;        this(false);    &#125;    /**     * Creates a &#123;@code SynchronousQueue&#125; with the specified fairness policy.     *     * @p
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 13:48" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java-15/">#Java@15</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" target="_self">
-          Java源码-LinkedBlockingQueue
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" target="_self">
-        <div>
-          1 类图  2 构造方法123456789101112131415161718192021222324// LinkedBlockingQueue.java// take锁    private final ReentrantLock takeLock = new ReentrantLock();    // put锁    private final ReentrantLock putLock
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 13:48" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java-15/">#Java@15</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" target="_self">
-          Java源码-ArrayBlockingQueue
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" target="_self">
-        <div>
-          1 阻塞队列API    Throws exception Special value Blocks Times out    Insert add(e) offer(e) put(e) offer(e, time, unit)   Remove remove() poll() take() poll(time, uint)   Examine element() peek()     2 类图
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 13:47" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java-15/">#Java@15</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
-          Spring源码-10-容器refresh之registerBeanPostProcessors方法
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
-        <div>
-          12345678910111213// AbstractApplicationContext.java/**				 * 5 Bean实例化初始化之前将后置处理器注册到容器中				 * 后置处理器的职责				 *     - BeanDefinition都已经注册到了Bean工厂中(DefaultListableBeanFactory的beanDefinitionMap)				 *
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:34" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/9/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/#board">11</a><a class="page-number" href="/page/12/#board">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/#board">15</a><a class="extend next" rel="next" href="/page/11/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/9/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/#board">11</a><a class="page-number" href="/page/12/#board">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/11/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

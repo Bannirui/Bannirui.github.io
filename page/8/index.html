@@ -252,6 +252,378 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/04/12/Redis-0x17-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" target="_self">
+          Redis-0x17-守护进程
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/12/Redis-0x17-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" target="_self">
+        <div>
+          1 开启后台进程12345678910111213141516171819202122232425262728293031323334353637/** * @brief 以后台进程方式运行服务 */void daemonize(void) &#123;    int fd;    /**     * 系统调用 fork当前进程     *   - 系统调用成功了返回值为0     *   - f
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-12 10:29" pubdate>
+              2023-04-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/04/12/Redis-0x16-%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" target="_self">
+          Redis-0x16-加载配置文件
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/12/Redis-0x16-%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" target="_self">
+        <div>
+          将配置项赋值给redisServer实例的字段，用于后面的服务端启动。配置无非就来自2个地方：  服务启动参数指定的配置文件redis.conf 服务启动参数指定的配置项  1 汇总配置内容1234567891011121314151617181920212223242526272829303132333435363738394041424344/** * @brief 将指定配置地方的配置内容都
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-12 09:45" pubdate>
+              2023-04-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/04/11/Redis-0x15-%E5%88%9D%E5%A7%8B%E5%8C%96server%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE/" target="_self">
+          Redis-0x15-初始化server服务配置
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/11/Redis-0x15-%E5%88%9D%E5%A7%8B%E5%8C%96server%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE/" target="_self">
+        <div>
+          预先填充redisServer实例中的一部分字段的值。 1 显式设值1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-11 22:11" pubdate>
+              2023-04-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/04/11/Redis-0x14-%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F%E6%A3%80%E6%9F%A5/" target="_self">
+          Redis-0x14-哨兵模式检查
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/11/Redis-0x14-%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F%E6%A3%80%E6%9F%A5/" target="_self">
+        <div>
+          检查当前进程，即服务启动是否以哨兵模式进行，在redisServer实例中用sentinel_mode字段进行标识。 1234567891011121314151617/** * @brief 判定redis启动模式是哨兵模式 *          - 要么启动的直接就是redis-sentinel可执行文件 *          - 要么在启动参数中指定了--sentinel可选项 * @par
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-11 21:59" pubdate>
+              2023-04-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" target="_self">
+          Redis-0x13-注册OOM处理器
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" target="_self">
+        <div>
+          在全局注册一个接口，发生内存OOM时用于回调，具体实现由业务测关注。 1 处理器接口12// 内存OOM处理器static void (*zmalloc_oom_handler)(size_t) = zmalloc_default_oom;  2 默认处理器1234567// 内存OOM处理器-默认处理器static void zmalloc_default_oom(size_t size) &#
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-11 21:46" pubdate>
+              2023-04-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" target="_self">
+          <img src="/img/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png" srcset="/img/loading.gif" lazyload alt="Redis-0x12-服务端启动流程">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" target="_self">
+          Redis-0x12-服务端启动流程
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" target="_self">
+        <div>
+          流程图   1 内存OOM处理器12// 内存oom的处理器 注册了一个回调函数zmalloc_set_oom_handler(redisOutOfMemoryHandler);  2 哨兵模式检查123456/**  * 是否启动哨兵模式  *   - 执行的redis-sentinel可执行文件  *   - 启动参数配置了可选项--sentinel  */server.sentinel_mo
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-11 12:46" pubdate>
+              2023-04-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/04/10/Redis-0x11-object/" target="_self">
           Redis-0x11-object
         </a>
@@ -502,389 +874,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/03/Redis-0x0d-quicklist/" target="_self">
-          <img src="/img/Redis-0x0d-quicklist.png" srcset="/img/loading.gif" lazyload alt="Redis-0x0d-quicklist">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x0d-quicklist/" target="_self">
-          Redis-0x0d-quicklist
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/04/03/Redis-0x0d-quicklist/" target="_self">
-        <div>
-          数据类型的编码方式。 1 数据结构1.1 链表节点quicklistNode12345678910111213141516171819202122232425// 32 bytetypedef struct quicklistNode &#123;    // 前驱节点    struct quicklistNode *prev;    // 后继节点    struct quicklistNod
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:23" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x0c-t-zset/" target="_self">
-          Redis-0x0c-t_zset
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x0c-t-zset/" target="_self">
-        <div>
-          数据类型zset有序集合。 1 数据结构关系   数据类型 实现 编码方式 数据结构    列表OBJ_ZSET t_zset OBJ_ENCODING_SKIPLIST zskiplist     OBJ_ENCODING_ZIPLIST ziplist   在使用ziplist进行编码时，ziplist中两两挨着的entry用来表达zset中的一个元素，entry1用来存储zset元素的值，e
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:11" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x0b-t-set/" target="_self">
-          Redis-0x0b-t_set
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x0b-t-set/" target="_self">
-        <div>
-          数据类型Set集合。 1 数据结构关系   数据类型 实现 编码方式 数据结构    列表OBJ_SET t_set OBJ_ENCODING_INTSET intset     OBJ_ENCODING_HT dict     2 迭代器2.1 数据结构1234567891011// set集合迭代器typedef struct &#123;    // 维护redisObject实例    r
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:11" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x0a-t-list/" target="_self">
-          Redis-0x0a-t_list
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x0a-t-list/" target="_self">
-        <div>
-          数据类型List列表。 1 list列表 数据结构关系   数据类型 实现 编码方式 数据结构    列表OBJ_LIST t_list OBJ_ENCODING_QUICKLIST quicklist     OBJ_ENCODING_ZIPLIST ziplist     2 列表长度1234567891011121314/** * @brief 列表长度 语义是列表中元素的数量 *
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:10" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x09-t-string/" target="_self">
-          Redis-0x09-t_string
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x09-t-string/" target="_self">
-        <div>
-          数据类型String字符串。 1 string字符串 数据结构关系   数据类型 实现 编码方式 数据结构    字符串OBJ_STRING t_string OBJ_ENCODING_INT sds     OBJ_ENCODING_EMBSTR sds     OBJ_ENCODING_RAW sds   2 增2.1 set1234567891011121314151617181920212
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:10" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/03/Redis-0x08-redisObject/" target="_self">
-          <img src="/img/Redis-0x08-redisObject.png" srcset="/img/loading.gif" lazyload alt="Redis-0x08-redisObject">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x08-redisObject/" target="_self">
-          Redis-0x08-redisObject
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/04/03/Redis-0x08-redisObject/" target="_self">
-        <div>
-          数据类型和编码   1 数据结构1.1 数据结构图  1.2 type字段   数据类型 宏定义 值    字符串 OBJ_STRING 0   列表 OBJ_LIST 1   集合 OBJ_SET 2   有序集合 OBJ_ZSET 3   哈希表 OBJ_HASH 4   1.3 encoding字段   编码方式 宏定义 值     OBJ_ENCODING_RAW 0    OBJ_ENC
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 13:16" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/7/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/#board">15</a><a class="extend next" rel="next" href="/page/9/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/7/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/9/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
