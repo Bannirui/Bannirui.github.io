@@ -7,7 +7,7 @@ categories: Git
 1 遇到的问题
 ---
 
-linux是专门用来干重活的一条mini机，最近天气太冷，不想下床，就用mac走ssh连接局域网的linux，但是用git的时候发现网络不通。
+linux是专门用来干重活的一台mini机，最近天气太冷，不想下床，就用mac走ssh连接局域网的linux，但是用git的时候发现网络不通。
 
 印象中记得当时配置的ssh的代理有点问题，为此还特地在github的社区留了言
 

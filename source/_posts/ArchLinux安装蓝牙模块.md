@@ -1,8 +1,7 @@
 ---
 title: ArchLinux安装蓝牙模块
 date: 2023-12-31 10:16:07
-categories: 系统
-tags:
+categories: Linux
 ---
 
 1 安装

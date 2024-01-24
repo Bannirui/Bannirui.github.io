@@ -1,7 +1,7 @@
 ---
 title: Linux安装FreeCAD
 date: 2023-12-11 16:21:54
-categories: 系统
+categories: Linux
 ---
 
 1 下载
