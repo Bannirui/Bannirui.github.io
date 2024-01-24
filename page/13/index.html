@@ -252,6 +252,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" target="_self">
+          ZK@3.8源码-12-FastLeaderElection组件
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" target="_self">
+        <div>
+          前文已经分析过QuorumCnxManger组件关注的是选主投票的网络通信，现在FastLeaderElection组件关注的投票数据。 1 组件示意图该图仅仅是在集群模式启动之初，组件初始化后的实例，还不涉及工作状态和工作流程。 下面跟着源码进行分析组件如何工作的以及数据交互流程是什么。   2 线程启动入口调度起来Messenger中WorkerSender和WorkerReceiver开始工
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-09 10:53" pubdate>
+              2023-03-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" target="_self">
           ZK@3.8源码-11-QuorumCnxManager组件
         </a>
@@ -749,67 +810,6 @@
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" target="_self">
         <div>
           在Channel的初始化过程中会给每个Channel实例构造一个Pipeline，因此研究pipeline的入口就是构造方法。 一 类图是继承关系上看，pipeline的实现比较简单。   二 JavaDoc  Netty采用Reactor的线程模型，一个IO线程负责读写，至于怎么操作读写的逻辑则定义在不同的handler中，pipline就是handler的栖身之所，pipeline负责组织和管
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 21:48" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty%E6%BA%90%E7%A0%81/" class="category-chain-item">Netty源码</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Netty-4-1-169/">#Netty@4.1.169</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" target="_self">
-          Netty源码-10-ChannelFuture
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" target="_self">
-        <div>
-          Netty为了提高系统的吞吐，大量使用异步线程模型。 一 Demo12345678910111213141516171819202122232425262728293031323334353637383940414243444546public class FutureTest00 &#123;    public static void main(String[] args) throws In
         </div>
       </a>
 
