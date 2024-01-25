@@ -1,7 +1,7 @@
 ---
 title: vscode终端zsh显示图标乱码
 date: 2023-12-08 09:21:43
-categories: 系统
+categories: Linux
 ---
 
 今天留意到3个问题
