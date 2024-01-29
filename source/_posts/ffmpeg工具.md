@@ -15,6 +15,10 @@ categories: Linux
 1 转换视频格式
 ---
 
+```shell
+ffmpeg -i input.webm output.mp4
+```
+
 2 视频合并字幕
 ---
 
