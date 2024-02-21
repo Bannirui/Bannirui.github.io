@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/vim%E4%B8%8E%E7%B3%BB%E7%BB%9F%E5%89%AA%E8%B4%B4%E6%9D%BF%E7%9B%B4%E6%8E%A5%E7%9A%84%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4/1706192719.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/vim%E4%B8%8E%E7%B3%BB%E7%BB%9F%E5%89%AA%E8%B4%B4%E6%9D%BF%E7%9B%B4%E6%8E%A5%E7%9A%84%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4/1706193086.png">
 <meta property="article:published_time" content="2024-01-25T08:06:59.000Z">
-<meta property="article:modified_time" content="2024-01-25T14:58:33.421Z">
+<meta property="article:modified_time" content="2024-02-21T13:51:41.642Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2024/01/25/vim%E4%B8%8E%E7%B3%BB%E7%BB%9F%E5%89%AA%E8%B4%B4%E6%9D%BF%E7%9B%B4%E6%8E%A5%E7%9A%84%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4/1706191428.png">
@@ -250,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.1k 字
+          2.4k 字
         
       </span>
     
@@ -261,7 +261,7 @@
         
         
         
-          18 分钟
+          20 分钟
         
       </span>
     
@@ -352,15 +352,32 @@
 
 <h3 id="2-5-测试"><a href="#2-5-测试" class="headerlink" title="2.5 测试"></a>2.5 测试</h3><p>至此，远程端和本机端都已经配置好了</p>
 <ul>
-<li><p>在远程任意文件(除了<code>~/.vimrc</code>)的vim中</p>
+<li><p>在远程任意文件的vim中复制删除修改内容</p>
 <ul>
-<li><p>normal模式下yy复制</p>
+<li><p>nornal模式下的y d c x s的内容</p>
 </li>
-<li><p>visual模式下y复制</p>
+<li><p>normal模式下yy复制的行内容</p>
+</li>
+<li><p>visual模式下y复制的块内容</p>
 </li>
 </ul>
 </li>
 <li><p>切换到本地机任意应用<code>command+v</code>即可粘贴</p>
+</li>
+</ul>
+<blockquote>
+<p>但是现在遇到一个问题是中文无法从远程vim的寄存器发送到本机的系统剪贴板上</p>
+</blockquote>
+<ul>
+<li><p>首先我远程vim的默认复制的内容都会放在unnamed寄存器上</p>
+</li>
+<li><p>其次我远程vim用的通道ch_open内置函数指定的消息mode是raw</p>
+</li>
+<li><p>再者远程vim内置函数ch_sendraw发送的内容是获取的unnamed寄存器</p>
+</li>
+<li><p>我给远程机器系统剪贴板配置了从unnamed寄存器<code>set clipboard=unnamed</code>读取内容，中文的复制粘贴是没有问题的</p>
+</li>
+<li><p>因此问题很可能是出现在了接收端 不知道是不是在mac端编解码出现了问题</p>
 </li>
 </ul>
 <h2 id="3-本机vim交互远程机剪贴板"><a href="#3-本机vim交互远程机剪贴板" class="headerlink" title="3 本机vim交互远程机剪贴板"></a>3 本机vim交互远程机剪贴板</h2><p>本质跟2是一样的，这种场景我用不到，不作赘述。</p>
@@ -455,6 +472,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2024/02/21/Redis-2%E5%88%B7-0x14-cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-2刷-0x14-cmake构建项目">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-2刷-0x14-cmake构建项目</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

@@ -24,8 +24,9 @@
 <meta property="og:description" content="Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过成了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。 1 项目编译首先，在Readme中作者描述了如何编译项目，即在项目根目录执行make。   2 根目录Makefile根据编译命令可知，我们只要关注当前文件的第一条rule即可，如下： 123456789101112#">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/11/01/Redis-2%E5%88%B7-0x01-Makefile/2023-11-01_22-19-29.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/11/01/Redis-2%E5%88%B7-0x01-Makefile/1708524360.png">
 <meta property="article:published_time" content="2023-11-01T13:58:21.000Z">
-<meta property="article:modified_time" content="2023-12-04T09:28:06.786Z">
+<meta property="article:modified_time" content="2024-02-21T14:09:04.589Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="2刷Redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -248,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          2.3k 字
         
       </span>
     
@@ -259,7 +260,7 @@
         
         
         
-          10 分钟
+          19 分钟
         
       </span>
     
@@ -319,8 +320,39 @@
 <p>关于make的规则，可以参考<a target="_blank" rel="noopener" href="https://www.gnu.org/savannah-checkouts/gnu/make/manual/make.html">官网的文档</a>。</p>
 <h2 id="3-src目录下Makefile"><a href="#3-src目录下Makefile" class="headerlink" title="3 src目录下Makefile"></a>3 src目录下Makefile</h2><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-comment"># redis源码根目录下makefile中的cd src &amp;&amp; make all</span><br><span class="hljs-comment"># MakeFile真正工作的地方</span><br><span class="hljs-section">all: <span class="hljs-variable">$(REDIS_SERVER_NAME)</span> <span class="hljs-variable">$(REDIS_SENTINEL_NAME)</span> <span class="hljs-variable">$(REDIS_CLI_NAME)</span> <span class="hljs-variable">$(REDIS_BENCHMARK_NAME)</span> <span class="hljs-variable">$(REDIS_CHECK_RDB_NAME)</span> <span class="hljs-variable">$(REDIS_CHECK_AOF_NAME)</span></span><br>	@echo <span class="hljs-string">&quot;&quot;</span><br>	@echo <span class="hljs-string">&quot;Hint: It&#x27;s a good idea to run &#x27;make test&#x27; ;)&quot;</span><br>	@echo <span class="hljs-string">&quot;&quot;</span><br></code></pre></td></tr></table></figure>
 
+<p>从MakeFile中可以看出来redis工程共提供了如下6个可执行程序的编译</p>
+<ul>
+<li><p>redis-server</p>
+</li>
+<li><p>redis-sentinel</p>
+</li>
+<li><p>redis-check-rdb</p>
+</li>
+<li><p>redis-check-aof</p>
+</li>
+<li><p>redis-cli</p>
+</li>
+<li><p>redis-benchmark</p>
+</li>
+</ul>
+<p>以redis-server可执行程序的编译为例</p>
+<h4 id="3-1-源码文件"><a href="#3-1-源码文件" class="headerlink" title="3.1 源码文件"></a>3.1 源码文件</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-section">%.o: %.c .make-prerequisites</span><br>	<span class="hljs-variable">$(REDIS_CC)</span> -MMD -o <span class="hljs-variable">$@</span> -c <span class="hljs-variable">$&lt;</span><br></code></pre></td></tr></table></figure>
 
+<h4 id="3-2-o文件"><a href="#3-2-o文件" class="headerlink" title="3.2 .o文件"></a>3.2 .o文件</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Makefile">REDIS_SERVER_OBJ=adlist.o quicklist.o ae.o anet.o dict.o server.o sds.o zmalloc.o lzf_c.o lzf_d.o pqsort.o zipmap.o sha1.o ziplist.o release.o networking.o util.o object.o db.o replication.o rdb.o t_string.o t_list.o t_set.o t_zset.o t_hash.o config.o aof.o pubsub.o multi.o debug.o sort.o intset.o syncio.o cluster.o crc16.o endianconv.o slowlog.o scripting.o bio.o rio.o rand.o memtest.o crcspeed.o crc64.o bitops.o sentinel.o notify.o setproctitle.o blocked.o hyperloglog.o latency.o sparkline.o redis-check-rdb.o redis-check-aof.o geo.o lazyfree.o module.o evict.o expire.o geohash.o geohash_helper.o childinfo.o defrag.o siphash.o rax.o t_stream.o listpack.o localtime.o lolwut.o lolwut5.o lolwut6.o acl.o gopher.o tracking.o connection.o tls.o sha256.o timeout.o setcpuaffinity.o monotonic.o mt19937-64.o<br></code></pre></td></tr></table></figure>
 
+<p>上面的源码文件gcc编译为.o中间文件</p>
+<h4 id="3-3-链接"><a href="#3-3-链接" class="headerlink" title="3.3 链接"></a>3.3 链接</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-variable">$(REDIS_SERVER_NAME)</span>: <span class="hljs-variable">$(REDIS_SERVER_OBJ)</span><br>	<span class="hljs-variable">$(REDIS_LD)</span> -o <span class="hljs-variable">$@</span> <span class="hljs-variable">$^</span> ../deps/hiredis/libhiredis.a ../deps/lua/src/liblua.a <span class="hljs-variable">$(FINAL_LIBS)</span><br></code></pre></td></tr></table></figure>
+
+<p>链接.o中间文件和链接库文件，编译为可执行文件</p>
+<ul>
+<li><p>系统依赖</p>
+</li>
+<li><p>静态库</p>
+</li>
+<li><p>动态库</p>
+</li>
+</ul>
+<h4 id="3-4-系统依赖"><a href="#3-4-系统依赖" class="headerlink" title="3.4 系统依赖"></a>3.4 系统依赖</h4><img src="/2023/11/01/Redis-2%E5%88%B7-0x01-Makefile/1708524360.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
