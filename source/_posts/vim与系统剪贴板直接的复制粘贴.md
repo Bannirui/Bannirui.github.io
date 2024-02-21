@@ -109,13 +109,27 @@ vim的visual模式下检测到TextYankPost指令就将选中内容发送到socke
 
 至此，远程端和本机端都已经配置好了
 
-- 在远程任意文件(除了`~/.vimrc`)的vim中
+- 在远程任意文件的vim中复制删除修改内容
 
-  - normal模式下yy复制
+  - nornal模式下的y d c x s的内容
 
-  - visual模式下y复制
+  - normal模式下yy复制的行内容
+
+  - visual模式下y复制的块内容
 
 - 切换到本地机任意应用`command+v`即可粘贴
+
+> 但是现在遇到一个问题是中文无法从远程vim的寄存器发送到本机的系统剪贴板上
+
+- 首先我远程vim的默认复制的内容都会放在unnamed寄存器上
+
+- 其次我远程vim用的通道ch_open内置函数指定的消息mode是raw
+
+- 再者远程vim内置函数ch_sendraw发送的内容是获取的unnamed寄存器
+
+- 我给远程机器系统剪贴板配置了从unnamed寄存器`set clipboard=unnamed`读取内容，中文的复制粘贴是没有问题的
+
+- 因此问题很可能是出现在了接收端 不知道是不是在mac端编解码出现了问题
 
 3 本机vim交互远程机剪贴板
 ---

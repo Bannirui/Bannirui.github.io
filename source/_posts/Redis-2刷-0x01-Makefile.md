@@ -38,6 +38,7 @@ default: all
 
 3 src目录下Makefile
 ---
+
 ```Makefile
 # redis源码根目录下makefile中的cd src && make all
 # MakeFile真正工作的地方
@@ -47,4 +48,52 @@ all: $(REDIS_SERVER_NAME) $(REDIS_SENTINEL_NAME) $(REDIS_CLI_NAME) $(REDIS_BENCH
 	@echo ""
 ```
 
+从MakeFile中可以看出来redis工程共提供了如下6个可执行程序的编译
 
+- redis-server
+
+- redis-sentinel
+
+- redis-check-rdb
+
+- redis-check-aof
+
+- redis-cli
+
+- redis-benchmark
+
+以redis-server可执行程序的编译为例
+
+#### 3.1 源码文件
+
+```Makefile
+%.o: %.c .make-prerequisites
+	$(REDIS_CC) -MMD -o $@ -c $<
+```
+
+#### 3.2 .o文件
+
+```Makefile
+REDIS_SERVER_OBJ=adlist.o quicklist.o ae.o anet.o dict.o server.o sds.o zmalloc.o lzf_c.o lzf_d.o pqsort.o zipmap.o sha1.o ziplist.o release.o networking.o util.o object.o db.o replication.o rdb.o t_string.o t_list.o t_set.o t_zset.o t_hash.o config.o aof.o pubsub.o multi.o debug.o sort.o intset.o syncio.o cluster.o crc16.o endianconv.o slowlog.o scripting.o bio.o rio.o rand.o memtest.o crcspeed.o crc64.o bitops.o sentinel.o notify.o setproctitle.o blocked.o hyperloglog.o latency.o sparkline.o redis-check-rdb.o redis-check-aof.o geo.o lazyfree.o module.o evict.o expire.o geohash.o geohash_helper.o childinfo.o defrag.o siphash.o rax.o t_stream.o listpack.o localtime.o lolwut.o lolwut5.o lolwut6.o acl.o gopher.o tracking.o connection.o tls.o sha256.o timeout.o setcpuaffinity.o monotonic.o mt19937-64.o
+```
+
+上面的源码文件gcc编译为.o中间文件
+
+#### 3.3 链接
+
+```Makefile
+$(REDIS_SERVER_NAME): $(REDIS_SERVER_OBJ)
+	$(REDIS_LD) -o $@ $^ ../deps/hiredis/libhiredis.a ../deps/lua/src/liblua.a $(FINAL_LIBS)
+```
+
+链接.o中间文件和链接库文件，编译为可执行文件
+
+- 系统依赖
+
+- 静态库
+
+- 动态库
+
+#### 3.4 系统依赖
+
+![](./Redis-2刷-0x01-Makefile/1708524360.png)
