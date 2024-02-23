@@ -252,6 +252,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/" target="_self">
+          ZK@3.8源码-03-SessionTrackerImpl
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/" target="_self">
+        <div>
+          在ZooKeeperServe中维护这一个sessionTracker，负责对session会话的管理，主要是针对过期的会话进行关闭。SessionTrackerImpl就是这个会话管理器的实现。 1 类图关系通过继承关系，可以明确知道两点：  SessionTracker定义了一个会话跟踪器。 ZK初始化中使用的线程跟踪器SessionTrackerImpl其本质是线程。因此启动线程跟踪器的核心
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-06 17:38" pubdate>
+              2023-03-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZK%E6%BA%90%E7%A0%81/" class="category-chain-item">ZK源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-02-CnxnChannelHandler/" target="_self">
           ZK@3.8源码-02-CnxnChannelHandler
         </a>
@@ -757,67 +818,6 @@
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
             <time datetime="2023-02-28 00:20" pubdate>
-              2023-02-28
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="category-chain-item">读书笔记</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">#分布式</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/02/28/%E5%A4%A7%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%AB%99%E6%9E%B6%E6%9E%84-%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" target="_self">
-          大型分布式网站架构-设计与实现
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/28/%E5%A4%A7%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%AB%99%E6%9E%B6%E6%9E%84-%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" target="_self">
-        <div>
-          1 分库分表分表访问极为频繁且数据量巨大的单表，减少单表的记录条数，以便减少数据查询所需时间，提高数据库的吞吐 分库分表能够解决单表数据量过大带来的查询效率下降问题，却无法处理数据库的兵法处理能力，对数据库进行拆分，从而提高数据库的写入能力 路由策略temp&#x3D;user_id%(库数量*每个库的表数量) 库&#x3D;取整(temp&#x2F;每个库的表数量) 表&#x3D;temp%每个
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-28 00:18" pubdate>
               2023-02-28
             </time>
           </div>
