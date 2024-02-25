@@ -252,6 +252,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/11/22/Redis-2%E5%88%B7-0x07-redisServer%E5%88%9D%E5%A7%8B%E5%8C%96/" target="_self">
+          Redis-2刷-0x07-redisServer初始化
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/22/Redis-2%E5%88%B7-0x07-redisServer%E5%88%9D%E5%A7%8B%E5%8C%96/" target="_self">
+        <div>
+          redisServer是一个定义在server.h中的UDT，是一个超级大的结构体，大的原因是描述了整个服务端实例的信息。 1 外部全局变量server.c文件中定义全局变量 123456/** * 全局变量定义 * 这个变量是未初始化全局变量 定义在了静态内存BSS段 * 为了能让其他文件访问到这个变量 在头文件中用extern将这个变量声明为了外部变量 */struct redisServer
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-11-22 14:08" pubdate>
+              2023-11-22
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/2%E5%88%B7Redis/">#2刷Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/11/21/%E9%9D%99%E6%80%81%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/" target="_self">
           静态内存布局
         </a>
@@ -767,67 +828,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/Gitalk%E8%AF%84%E8%AE%BA/">#Gitalk评论</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/11/08/Hexo%E5%8D%87%E7%BA%A7Fluid%E4%B8%BB%E9%A2%98/" target="_self">
-          Hexo升级Fluid主题
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/08/Hexo%E5%8D%87%E7%BA%A7Fluid%E4%B8%BB%E9%A2%98/" target="_self">
-        <div>
-          我之前的Fluid主题是通过git将Fluid源码克隆在博客根目录/themes/下的，这样的方式通过根源码绑定，对升级不友好。 先将Hexo和Fluid的配置文件托管在github，然后在项目下通过ln -s软链接方式使用配置文件。 1 删除项目下Fluid源码将博客根目录/themes/fluid删除。 2 安装Fluid主题在博客根目录下执行npm install --save hexo-t
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-08 21:42" pubdate>
-              2023-11-08
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Hexo/" class="category-chain-item">Hexo</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Fluid%E4%B8%BB%E9%A2%98%E5%8D%87%E7%BA%A7/">#Fluid主题升级</a>
             
           </div>
         
