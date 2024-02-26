@@ -1013,11 +1013,12 @@ IDEA设置code style，通过format方式格式化代码，并设置配套的che
 </module>
 ```
 
+配置文件的配置项可以根据自己的风格及喜好进行单独设置
 
 
-## 2 根据自己风格修改对应配置项
+## 2 配置本地IDE
 
-## 3 配置code style
+### 2.1 配置code style
 
 ![](codestyle/20230228094509570.png)
 
@@ -1025,13 +1026,13 @@ IDEA设置code style，通过format方式格式化代码，并设置配套的che
 
 `Checkstyle configuration`选项卡导入google-checks.xml
 
-## 4 配置check style
+### 2.2 配置check style
 
-### 4.1 插件下载
+#### 2.2.1 插件下载
 
 下载插件CheckStyle-IDEA
 
-### 4.2 配置插件
+#### 2.2.2 配置插件
 
 如下配置项：
 
@@ -1041,6 +1042,120 @@ org.checkstyle.google.suppressionxpathfilter.config = checkstyle-xpath-suppressi
 
 ![](codestyle/20230228095201528.png )
 
-### 4.3 使用插件
+#### 2.2.3 使用插件
 
 ![](codestyle/20230228095406830.png)
+
+## 3 项目配置
+
+目前为止，都只能将代码风格通过IDE限制在自己身上，也就是说协作开发或者更换开发环境的时候，并不能起到强制规范的作用。
+
+因此，要把规范定义到项目中，以maven项目为例
+
+### 3.1 项目结构
+
+![](./codestyle/1708933007.png)
+
+项目根目录下新建文件如下
+
+- config目录
+
+  - checkstyle目录下存放两个文件
+
+    - checkstyle.xml 将来让maven插件按照这个文件规则对源码文件进行规范检查
+
+    - checksupression.xml 项目中可能存在文件是不需要规范检查的，比如单元测试，就写在这个文件中，将来让maven插件忽略对应的文件
+
+  - git目录
+
+    - pre-commit git的pre-commit脚本内容，将来执行`git commit`的前置回调，也就是在commit代码之前会执行一段脚本，这段脚本内容就是文件中的内容
+
+- init.sh 用于初始化git，上面的pre-commit脚本内容要按照git的要求放置到`.git/hooks/pre-commit`中
+
+- pom.xml maven项目的文件，依赖maven插件进行代码检查
+
+各个文件内容从截图中可以看出来，下面将pom文件中跟codestyle有关的贴出来
+
+```xml
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>9.3</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                        <suppressionsLocation>config/checkstyle/checksupression.xml</suppressionsLocation>
+                        <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                        <consoleOutput>true</consoleOutput>
+                        <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                        <outputEncoding>${project.build.sourceEncoding}</outputEncoding>
+                        <skip>false</skip>
+                        <violationSeverity>error</violationSeverity>
+                        <failsOnError>false</failsOnError>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>validate</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>checkstyle</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.12.1</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.0</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
+```
+
+### 3.2 初始化项目
+
+如此，比如新clone了项目
+
+```shell
+chmod +x ./init.sh
+./init.sh
+```
+
+之后，`git commit`的时候便会触发对代码风格的检查
