@@ -1,10 +1,10 @@
 ---
 title: Netty源码-13-connect流程
 date: 2023-03-06 21:49:08
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 有过之前对服务端{% post_link Netty源码-12-bind流程 bind流程 %}的分析之后，客户端的connect流程就显得简单了。

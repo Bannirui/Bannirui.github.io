@@ -1,10 +1,10 @@
 ---
 title: Netty源码-08-ChannelInitializer
 date: 2023-03-06 21:48:06
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 ## 一 回顾几个时机点

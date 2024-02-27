@@ -1,10 +1,10 @@
 ---
 title: Netty源码-11-Pipeline
 date: 2023-03-06 21:48:43
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 在{% post_link Netty源码-07-Channel Channel %}的初始化过程中会给每个Channel实例构造一个Pipeline，因此研究pipeline的入口就是构造方法。

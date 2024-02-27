@@ -1,10 +1,10 @@
 ---
 title: Netty源码-06-MpscQueue
 date: 2023-03-06 21:44:45
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 在IO线程NioEventLoop中维护了一个队列实现，用于存放非IO任务，一个IO线程负责N个Channel，为了保证一个线程贯穿始终负责一个Channel的所有任务(任务执行次序有先后区分需要)，因此可能IO线程自己将待执行的内容封装成异步任务，也有可能其他线程提交任务(立即执行或者定时任务)。

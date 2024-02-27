@@ -1,10 +1,10 @@
 ---
 title: Netty源码-05-EventLoop
 date: 2023-03-06 21:37:01
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 前文已经了解过了{% post_link Netty源码-01-NioEventLoopGroup NioEventLoopGroup %}和{% post_link Netty源码-03-NioEventLoop NioEventLoop %}。

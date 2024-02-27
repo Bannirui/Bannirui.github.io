@@ -1,10 +1,10 @@
 ---
 title: Netty源码-03-NioEventLoop
 date: 2023-03-06 21:11:02
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 Netty没有简单地使用线程池复用线程的方式，而是自己实现了一套EventLoopGroup管理器，管理着EventLoop。

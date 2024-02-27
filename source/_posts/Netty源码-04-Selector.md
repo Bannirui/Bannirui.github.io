@@ -1,10 +1,10 @@
 ---
 title: Netty源码-04-Selector
 date: 2023-03-06 21:30:38
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 Netty对Selector的优化体现在两个方面：

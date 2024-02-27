@@ -1,10 +1,10 @@
 ---
 title: Netty源码-12-bind流程
 date: 2023-03-06 21:48:59
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 研究服务端的启动流程。

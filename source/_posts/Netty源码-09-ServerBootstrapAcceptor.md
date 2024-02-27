@@ -1,10 +1,10 @@
 ---
 title: Netty源码-09-ServerBootstrapAcceptor
 date: 2023-03-06 21:48:21
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 在ServerBootstrapAcceptor启用之前，此刻Reactor状态应该是：

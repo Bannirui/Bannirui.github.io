@@ -1,10 +1,10 @@
 ---
 title: Netty源码-10-ChannelFuture
 date: 2023-03-06 21:48:32
-tags:
-- Netty@4.1.169
 categories:
-- Netty源码
+- Netty
+tags:
+- 1刷Netty
 ---
 
 Netty为了提高系统的吞吐，大量使用异步线程模型。
