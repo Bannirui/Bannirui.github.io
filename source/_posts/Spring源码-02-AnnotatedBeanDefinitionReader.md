@@ -4,7 +4,7 @@ date: 2023-03-11 00:10:13
 tags:
 - Spring@6.0.3
 categories:
-- Spring源码
+- Spring
 ---
 
 AnnotatedBeanDefinitionReader，注解Bean读取器。

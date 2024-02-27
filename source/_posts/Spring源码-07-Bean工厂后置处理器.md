@@ -4,7 +4,7 @@ date: 2023-03-11 00:26:49
 tags:
 - Spring@6.0.3
 categories:
-- Spring源码
+- Spring
 ---
 
 提供了对Bean工厂中BeanDefinition的修改能力。

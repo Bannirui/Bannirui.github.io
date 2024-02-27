@@ -4,7 +4,7 @@ date: 2023-03-11 00:20:59
 tags:
 - Spring@6.0.3
 categories:
-- Spring源码
+- Spring
 ---
 
 ConfigurationClassPostProcessor作用的时机 扫描注册用户BeanDefinition到Bean工厂。
