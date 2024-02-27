@@ -4,7 +4,7 @@ date: 2023-03-09 10:53:41
 tags:
 - ZK@3.8
 categories:
-- ZK源码
+- ZooKeeper
 ---
 
 前文已经分析过{% post_link ZK-3-8源码-11-QuorumCnxManager组件 QuorumCnxManger %}组件关注的是选主投票的网络通信，现在FastLeaderElection组件关注的投票数据。

@@ -4,7 +4,7 @@ date: 2023-03-06 17:46:17
 tags:
 - ZK@3.8
 categories:
-- ZK源码
+- ZooKeeper
 ---
 
 回顾一下创建时机，在ZK单机服务启动流程中启动节流器。

@@ -4,7 +4,7 @@ date: 2023-03-07 14:18:33
 tags:
 - ZK@3.8
 categories:
-- ZK源码
+- ZooKeeper
 ---
 
 `ZKDatabase`是ZK实现的内存数据库，DataTree是内存数据结构模型，对数据库的CURD最终都会通过dataTree进行操作节点。

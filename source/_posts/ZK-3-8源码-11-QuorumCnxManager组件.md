@@ -4,7 +4,7 @@ date: 2023-03-09 10:52:30
 tags:
 - ZK@3.8
 categories:
-- ZK源码
+- ZooKeeper
 ---
 
 ## 1 QuorumCnxManager实例化

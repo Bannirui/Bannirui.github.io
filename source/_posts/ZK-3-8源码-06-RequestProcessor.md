@@ -4,7 +4,7 @@ date: 2023-03-06 17:59:59
 tags:
 - ZK@3.8
 categories:
-- ZK源码
+- ZooKeeper
 ---
 
 ZK请求处理责任链，ZK服务器要处理的请求都要经过这个职责链，该链表通过ZK实例中的`firstProcessor`维护着。

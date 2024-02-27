@@ -4,7 +4,7 @@ date: 2023-03-07 10:45:40
 tags:
 - ZK@3.8
 categories:
-- ZK源码
+- ZooKeeper
 ---
 
 经过{% post_link ZK-3-8源码-02-CnxnChannelHandler CnxnChannelHandler %}处理器的关联，目前Netty和ZK之间的关系如下：
