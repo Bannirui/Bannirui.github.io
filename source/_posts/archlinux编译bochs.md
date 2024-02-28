@@ -8,185 +8,105 @@ categories: Linux
 
 ![](./archlinux编译bochs/1709092123.png)
 
-### 1 aur helper
+[bochs官网](https://bochs.sourceforge.io/)
 
-archlinux的yay包管理工具安装bochs
+从官网信息可以看到现在代码也迁移到了github上
+
+1 包管理器安装
+---
+
+### 1.1 安装
 
 ```shell
 yay -Ss bochs
-yay -S bochs
 ```
 
-但是仍然需要下载bochs的源码包，因为在启动的时候需要在配置文件中指定romimage和vgaromimage的路径。
+![](./archlinux编译bochs/1709126115.png)
 
-### 2 手动下载bochs源码编译
+我们肯定是想要gui的，方便看调试输出信息
 
-#### 2.1 源码下载
-
-https://sourceforge.net/projects/bochs/files/bochs/2.7/
+以sdl库支持的版本为例
 
 ```shell
-cd Documents/software/bochs
-cp ~/Downloads/bochs-2.7.tar.gz ./
-tar -zxvf bochs-2.7.tar.gz
-mv bochs-2.7 bochs
-
-make dist-clean
+yay -Syy bochs-sdl
+whereis bochs
 ```
 
-#### 2.2 编译
+### 1.2 使用
 
-##### 2.2.1 生成make脚本 
+![](./archlinux编译bochs/1709121586.png)
+
+`bochs`选项4生成配置文件，并将`floppya`配置项内容指定上软盘镜像，修改为`floppya: type=1_44, image=/home/dingrui/MyDev/doc/tutorial/os/64bit_os/01/build/my_os_floppy.img, status=inserted, write_protected=0`
+
+随后启动`bochs -q -f ./my_bochs_cfg`，启动报错找不到gui的库
+
+![](./archlinux编译bochs/1709104098.png)
+
+修改配置文件中`display_library: sdl2`配置项再次启动还是报错
+
+从官网上看到，不同平台都会有推荐的选择以及默认的库
+
+![](./archlinux编译bochs/1709127249.png)
+
+所以我的猜想是上传在aur上的包，可能在编译的时候没有指定`display lib`所以用的是默认的x，但是我当前的linux不支持这个gui。
+
+所以稳妥的办法是，自己下载源码进行编译，在编译的时候指定编译选项。
+
+2 手动编译
+---
+
+### 2.1 安装bochs
+
+![跟着官方文档操作即可](https://bochs.sourceforge.io/doc/docbook/user/compiling.html)
 
 ```shell
-./configure \
---with-x11 \
---with-wx \
---enable-plugins \
---enable-debugger \
---enable-debugger-gui \
---enable-readline \
---enable-xpm \
---enable-show-ips \
---enable-logging \
---enable-assert-checks \
---enable-cpp \
---enable-idle-hack \
---enable-cpu-level=6 \
---enable-smp \
---enable-fpu \
---enable-3dnow \
---enable-x86-64 \
---enable-vmx \
---enable-svm \
---enable-avx \
---enable-x86-debugger \
---enable-monitor-mwait \
---enable-alignment-check \
---enable-configurable-msrs \
---enable-long-phy-address \
---enable-a20-pin \
---enable-large-ramfile \
---enable-repeat-speedups \
---enable-fast-function-calls \
---enable-handlers-chaining \
---enable-all-optimizations \
---enable-cdrom \
---enable-voodoo \
---enable-iodebug \
---enable-pci \
---enable-usb \
---enable-disasm \
---enable-ltdl-install \
---enable-trace-linking \
---enable-evex
+wget -P ~/MyDev/env https://sourceforge.net/projects/bochs/files/bochs/2.7/bochs-2.7.tar.gz
+mkdir bochs
+tar -zxvf ./bochs-2.7.tar.gz -C ./bochs --strip-components 1
+
+yay -Ss sdl
+yay -Syy aur/sdl
+
+yay -Ss sdl2
+yay -Syy sdl2
 ```
 
-##### 2.2.2 执行make脚本构建
+修改一下configure命令
+
+![](./archlinux编译bochs/1709128674.png)
+
+至于使用哪个lib，根据自己的情况耳钉
+
+- --with-sdl
+
+- --with-sdl2
 
 ```shell
+sh -x .conf.linux
 make
-```
-
-#### 2.3 编译报错
-
-- make[1]: *** No rule to make target 'parser.cc', needed by 'parser.o'.  Stop.
-
-    ```shell
-    cp ./bx_debug/parser.cpp ./bx_debug/parser.cc
-    ```
-
-- debug.h:25:10: fatal error: config.h: No such file or directory
-
-    ```shell
-    vim ./bx_debug/debug.h
-
-
-    #include "config.h" -> #include "../config.h"
-    ```
-
-
-- debug.h:26:10: fatal error: osdep.h: No such file or directory
-
-    ```shell
-    vim ./bx_debug/debug.h
-
-    #include "osdep.h" -> #include "../osdep.h"
-    ```
-
-
-- debug.h:34:10: fatal error: cpu/decoder/decoder.h: No such file or directory
-
-    ```shell
-    vim ./bx_debug/debug.h
-
-    #include "cpu/decoder/decoder.h" ->  #include "../cpu/decoder/decoder.h"
-    ```
-
-
-- make: *** No rule to make target 'misc/bximage.cc', needed by 'misc/bximage.o'.  Stop.
-
-    ```shell
-    cp misc/bximage.cpp misc/bximage.cc  
-    ```
-
-- make: *** No rule to make target 'iodev/hdimage/hdimage.cc', needed by 'misc/hdimage.o'.  Stop.
-
-    ```shell
-    cp iodev/hdimage/hdimage.cpp iodev/hdimage/hdimage.cc  
-    ```
-
-- make: *** No rule to make target 'iodev/hdimage/vmware3.cc', needed by 'misc/vmware3.o'.  Stop.
-
-    ```shell
-    cp iodev/hdimage/vmware3.cpp iodev/hdimage/vmware3.cc
-    ```
-
-- make: *** No rule to make target 'iodev/hdimage/vmware4.cc', needed by 'misc/vmware4.o'.  Stop.
-
-
-    ```shell
-    cp iodev/hdimage/vmware4.cpp iodev/hdimage/vmware4.cc
-    ```
-
-- make: *** No rule to make target 'iodev/hdimage/vpc.cc', needed by 'misc/vpc.o'.  Stop.
-
-    ```shell
-    cp iodev/hdimage/vpc.cpp iodev/hdimage/vpc.cc
-    ```
-
-- make: *** No rule to make target 'iodev/hdimage/vbox.cc', needed by 'misc/vbox.o'.  Stop.
-
-    ```shell
-    cp iodev/hdimage/vbox.cpp iodev/hdimage/vbox.cc
-    ```
-
-#### 2.4 install
-
-```shell
-cd Documents/software/bochs
-
 sudo make install
 ```
 
-将来想要删除就执行`sudo make uninstall`
-
-#### 2.5 验证
+以后卸载也很简单
 
 ```shell
-whereis bochs
-whereis bximage
-
-bochs --help cpu
+cd ~/MyDev/env/bochs
+sudo make uninstall
+make clean
+make dist-clean
+cd ..
+rm -rf bochs
 ```
 
-### 3 lib缺失
+### 2.2 使用
 
-在调试的时候可能会报错，缺少lib
+```shell
+bximage --help
+bochs --help cpu
 
-- display_library
+bochs -q -f ./my_bochs_cfg
+```
 
-    ```shell
-    yay -Ss sdl2
-    yay -S sdl2
-    ```
+![](./archlinux编译bochs/1709132366.png)
+
+怎么配置ssh的远程gui，{% post_link mac远程linux的gui %}
