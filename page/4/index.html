@@ -252,6 +252,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/11/24/Redis-2%E5%88%B7-0x09-initServerConfig%E5%88%9D%E5%A7%8B%E5%8C%96redisServer/" target="_self">
+          Redis-2刷-0x09-initServerConfig初始化redisServer
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/24/Redis-2%E5%88%B7-0x09-initServerConfig%E5%88%9D%E5%A7%8B%E5%8C%96redisServer/" target="_self">
+        <div>
+          这个方法的体量很大，作用是对redisServer结构体成员进行初始化赋值，通篇大部分都是重复性劳动，比较有意思的是initConfigValues()这个函数。这个函数体现了C语言的封装和多态的实现方式，在正式看源码之前先做一些前置性铺垫。 1 结构体成员赋值结构体中的成员可以在实例化的时候指定要初始化的值，也可以只实例化不做初始化动作。指定初始化的时候可以指定要进行初始化的成员，一个或者多个成
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-11-24 10:56" pubdate>
+              2023-11-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/2%E5%88%B7Redis/">#2刷Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/11/22/Redis-2%E5%88%B7-0x08-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" target="_self">
           Redis-2刷-0x08-数据结构dict
         </a>
@@ -776,60 +837,6 @@
               <a href="/tags/Google-Analytics/">#Google Analytics</a>
             
           </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/11/09/Hexo%E9%A1%B5%E8%84%9A%E6%98%BE%E7%A4%BA%E7%AB%99%E7%82%B9%E8%BF%90%E8%A1%8C%E6%97%B6%E9%95%BF/" target="_self">
-          Hexo页脚显示站点运行时长
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/09/Hexo%E9%A1%B5%E8%84%9A%E6%98%BE%E7%A4%BA%E7%AB%99%E7%82%B9%E8%BF%90%E8%A1%8C%E6%97%B6%E9%95%BF/" target="_self">
-        <div>
-          在网站页脚上显示该站运行时长。  1 js函数在根目录\source\vvd_js\路径下新建一个js文件duration.js，内容如下： 12345678910111213141516171819202122232425262728293031!(function() &#123;    /* 建站时间 */  var start = new Date(&quot;2023/02/27 24
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-09 08:35" pubdate>
-              2023-11-09
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Hexo/" class="category-chain-item">Hexo</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
         
       </div>
     </article>

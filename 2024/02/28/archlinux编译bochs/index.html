@@ -16,16 +16,23 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="系统信息   1 aur helperarchlinux的yay包管理工具安装bochs 12yay -Ss bochsyay -S bochs  但是仍然需要下载bochs的源码包，因为在启动的时候需要在配置文件中指定romimage和vgaromimage的路径。 2 手动下载bochs源码编译2.1 源码下载https:&#x2F;&#x2F;sourceforge.net&#x2F;projects&#x2F;bochs&#x2F;fil">
+    <meta name="description" content="系统信息   bochs官网 从官网信息可以看到现在代码也迁移到了github上 1 包管理器安装1.1 安装1yay -Ss bochs    我们肯定是想要gui的，方便看调试输出信息 以sdl库支持的版本为例 12yay -Syy bochs-sdlwhereis bochs  1.2 使用  bochs选项4生成配置文件，并将floppya配置项内容指定上软盘镜像，修改为floppya:">
 <meta property="og:type" content="article">
 <meta property="og:title" content="archlinux编译bochs">
 <meta property="og:url" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/index.html">
 <meta property="og:site_name" content="毛茸茸猫子">
-<meta property="og:description" content="系统信息   1 aur helperarchlinux的yay包管理工具安装bochs 12yay -Ss bochsyay -S bochs  但是仍然需要下载bochs的源码包，因为在启动的时候需要在配置文件中指定romimage和vgaromimage的路径。 2 手动下载bochs源码编译2.1 源码下载https:&#x2F;&#x2F;sourceforge.net&#x2F;projects&#x2F;bochs&#x2F;fil">
+<meta property="og:description" content="系统信息   bochs官网 从官网信息可以看到现在代码也迁移到了github上 1 包管理器安装1.1 安装1yay -Ss bochs    我们肯定是想要gui的，方便看调试输出信息 以sdl库支持的版本为例 12yay -Syy bochs-sdlwhereis bochs  1.2 使用  bochs选项4生成配置文件，并将floppya配置项内容指定上软盘镜像，修改为floppya:">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709092123.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709126115.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709121586.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709104098.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709127249.png">
+<meta property="og:image" content="https://bochs.sourceforge.io/doc/docbook/user/compiling.html">
+<meta property="og:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709128674.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709132366.png">
 <meta property="article:published_time" content="2024-02-28T03:47:14.000Z">
-<meta property="article:modified_time" content="2024-02-28T04:05:30.231Z">
+<meta property="article:modified_time" content="2024-02-28T15:12:41.788Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709092123.png">
@@ -247,7 +254,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.1k 字
+          1.3k 字
         
       </span>
     
@@ -258,7 +265,7 @@
         
         
         
-          26 分钟
+          11 分钟
         
       </span>
     
@@ -311,61 +318,51 @@
                 <p>系统信息</p>
 <img src="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709092123.png" srcset="/img/loading.gif" lazyload class="">
 
-<h3 id="1-aur-helper"><a href="#1-aur-helper" class="headerlink" title="1 aur helper"></a>1 aur helper</h3><p>archlinux的yay包管理工具安装bochs</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss bochs<br>yay -S bochs<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://bochs.sourceforge.io/">bochs官网</a></p>
+<p>从官网信息可以看到现在代码也迁移到了github上</p>
+<h2 id="1-包管理器安装"><a href="#1-包管理器安装" class="headerlink" title="1 包管理器安装"></a>1 包管理器安装</h2><h3 id="1-1-安装"><a href="#1-1-安装" class="headerlink" title="1.1 安装"></a>1.1 安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss bochs<br></code></pre></td></tr></table></figure>
 
-<p>但是仍然需要下载bochs的源码包，因为在启动的时候需要在配置文件中指定romimage和vgaromimage的路径。</p>
-<h3 id="2-手动下载bochs源码编译"><a href="#2-手动下载bochs源码编译" class="headerlink" title="2 手动下载bochs源码编译"></a>2 手动下载bochs源码编译</h3><h4 id="2-1-源码下载"><a href="#2-1-源码下载" class="headerlink" title="2.1 源码下载"></a>2.1 源码下载</h4><p><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/bochs/files/bochs/2.7/">https://sourceforge.net/projects/bochs/files/bochs/2.7/</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd Documents/software/bochs<br>cp ~/Downloads/bochs-2.7.tar.gz ./<br>tar -zxvf bochs-2.7.tar.gz<br>mv bochs-2.7 bochs<br><br>make dist-clean<br></code></pre></td></tr></table></figure>
+<img src="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709126115.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="2-2-编译"><a href="#2-2-编译" class="headerlink" title="2.2 编译"></a>2.2 编译</h4><h5 id="2-2-1-生成make脚本"><a href="#2-2-1-生成make脚本" class="headerlink" title="2.2.1 生成make脚本"></a>2.2.1 生成make脚本</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs shell">./configure \<br>--with-x11 \<br>--with-wx \<br>--enable-plugins \<br>--enable-debugger \<br>--enable-debugger-gui \<br>--enable-readline \<br>--enable-xpm \<br>--enable-show-ips \<br>--enable-logging \<br>--enable-assert-checks \<br>--enable-cpp \<br>--enable-idle-hack \<br>--enable-cpu-level=6 \<br>--enable-smp \<br>--enable-fpu \<br>--enable-3dnow \<br>--enable-x86-64 \<br>--enable-vmx \<br>--enable-svm \<br>--enable-avx \<br>--enable-x86-debugger \<br>--enable-monitor-mwait \<br>--enable-alignment-check \<br>--enable-configurable-msrs \<br>--enable-long-phy-address \<br>--enable-a20-pin \<br>--enable-large-ramfile \<br>--enable-repeat-speedups \<br>--enable-fast-function-calls \<br>--enable-handlers-chaining \<br>--enable-all-optimizations \<br>--enable-cdrom \<br>--enable-voodoo \<br>--enable-iodebug \<br>--enable-pci \<br>--enable-usb \<br>--enable-disasm \<br>--enable-ltdl-install \<br>--enable-trace-linking \<br>--enable-evex<br></code></pre></td></tr></table></figure>
+<p>我们肯定是想要gui的，方便看调试输出信息</p>
+<p>以sdl库支持的版本为例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Syy bochs-sdl<br>whereis bochs<br></code></pre></td></tr></table></figure>
 
-<h5 id="2-2-2-执行make脚本构建"><a href="#2-2-2-执行make脚本构建" class="headerlink" title="2.2.2 执行make脚本构建"></a>2.2.2 执行make脚本构建</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">make<br></code></pre></td></tr></table></figure>
+<h3 id="1-2-使用"><a href="#1-2-使用" class="headerlink" title="1.2 使用"></a>1.2 使用</h3><img src="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709121586.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="2-3-编译报错"><a href="#2-3-编译报错" class="headerlink" title="2.3 编译报错"></a>2.3 编译报错</h4><ul>
-<li><p>make[1]: *** No rule to make target ‘parser.cc’, needed by ‘parser.o’.  Stop.</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cp ./bx_debug/parser.cpp ./bx_debug/parser.cc<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>debug.h:25:10: fatal error: config.h: No such file or directory</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim ./bx_debug/debug.h<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">include <span class="hljs-string">&quot;config.h&quot;</span> -&gt; <span class="hljs-comment">#include &quot;../config.h&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p><code>bochs</code>选项4生成配置文件，并将<code>floppya</code>配置项内容指定上软盘镜像，修改为<code>floppya: type=1_44, image=/home/dingrui/MyDev/doc/tutorial/os/64bit_os/01/build/my_os_floppy.img, status=inserted, write_protected=0</code></p>
+<p>随后启动<code>bochs -q -f ./my_bochs_cfg</code>，启动报错找不到gui的库</p>
+<img src="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709104098.png" srcset="/img/loading.gif" lazyload class="">
 
-</li>
-<li><p>debug.h:26:10: fatal error: osdep.h: No such file or directory</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim ./bx_debug/debug.h<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">include <span class="hljs-string">&quot;osdep.h&quot;</span> -&gt; <span class="hljs-comment">#include &quot;../osdep.h&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p>修改配置文件中<code>display_library: sdl2</code>配置项再次启动还是报错</p>
+<p>从官网上看到，不同平台都会有推荐的选择以及默认的库</p>
+<img src="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709127249.png" srcset="/img/loading.gif" lazyload class="">
 
-</li>
-<li><p>debug.h:34:10: fatal error: cpu&#x2F;decoder&#x2F;decoder.h: No such file or directory</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim ./bx_debug/debug.h<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">include <span class="hljs-string">&quot;cpu/decoder/decoder.h&quot;</span> -&gt;  <span class="hljs-comment">#include &quot;../cpu/decoder/decoder.h&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p>所以我的猜想是上传在aur上的包，可能在编译的时候没有指定<code>display lib</code>所以用的是默认的x，但是我当前的linux不支持这个gui。</p>
+<p>所以稳妥的办法是，自己下载源码进行编译，在编译的时候指定编译选项。</p>
+<h2 id="2-手动编译"><a href="#2-手动编译" class="headerlink" title="2 手动编译"></a>2 手动编译</h2><h3 id="2-1-安装bochs"><a href="#2-1-安装bochs" class="headerlink" title="2.1 安装bochs"></a>2.1 安装bochs</h3><p><img src="https://bochs.sourceforge.io/doc/docbook/user/compiling.html" srcset="/img/loading.gif" lazyload alt="跟着官方文档操作即可"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell">wget -P ~/MyDev/env https://sourceforge.net/projects/bochs/files/bochs/2.7/bochs-2.7.tar.gz<br>mkdir bochs<br>tar -zxvf ./bochs-2.7.tar.gz -C ./bochs --strip-components 1<br><br>yay -Ss sdl<br>yay -Syy aur/sdl<br><br>yay -Ss sdl2<br>yay -Syy sdl2<br></code></pre></td></tr></table></figure>
 
-</li>
-<li><p>make: *** No rule to make target ‘misc&#x2F;bximage.cc’, needed by ‘misc&#x2F;bximage.o’.  Stop.</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cp misc/bximage.cpp misc/bximage.cc  <br></code></pre></td></tr></table></figure>
-</li>
-<li><p>make: *** No rule to make target ‘iodev&#x2F;hdimage&#x2F;hdimage.cc’, needed by ‘misc&#x2F;hdimage.o’.  Stop.</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cp iodev/hdimage/hdimage.cpp iodev/hdimage/hdimage.cc  <br></code></pre></td></tr></table></figure>
-</li>
-<li><p>make: *** No rule to make target ‘iodev&#x2F;hdimage&#x2F;vmware3.cc’, needed by ‘misc&#x2F;vmware3.o’.  Stop.</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cp iodev/hdimage/vmware3.cpp iodev/hdimage/vmware3.cc<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>make: *** No rule to make target ‘iodev&#x2F;hdimage&#x2F;vmware4.cc’, needed by ‘misc&#x2F;vmware4.o’.  Stop.</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cp iodev/hdimage/vmware4.cpp iodev/hdimage/vmware4.cc<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>make: *** No rule to make target ‘iodev&#x2F;hdimage&#x2F;vpc.cc’, needed by ‘misc&#x2F;vpc.o’.  Stop.</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cp iodev/hdimage/vpc.cpp iodev/hdimage/vpc.cc<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>make: *** No rule to make target ‘iodev&#x2F;hdimage&#x2F;vbox.cc’, needed by ‘misc&#x2F;vbox.o’.  Stop.</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cp iodev/hdimage/vbox.cpp iodev/hdimage/vbox.cc<br></code></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="2-4-install"><a href="#2-4-install" class="headerlink" title="2.4 install"></a>2.4 install</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd Documents/software/bochs<br><br>sudo make install<br></code></pre></td></tr></table></figure>
+<p>修改一下configure命令</p>
+<img src="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709128674.png" srcset="/img/loading.gif" lazyload class="">
 
-<p>将来想要删除就执行<code>sudo make uninstall</code></p>
-<h4 id="2-5-验证"><a href="#2-5-验证" class="headerlink" title="2.5 验证"></a>2.5 验证</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">whereis bochs<br>whereis bximage<br><br>bochs --help cpu<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-lib缺失"><a href="#3-lib缺失" class="headerlink" title="3 lib缺失"></a>3 lib缺失</h3><p>在调试的时候可能会报错，缺少lib</p>
+<p>至于使用哪个lib，根据自己的情况耳钉</p>
 <ul>
-<li><p>display_library</p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss sdl2<br>yay -S sdl2<br></code></pre></td></tr></table></figure></li>
+<li><p>–with-sdl</p>
+</li>
+<li><p>–with-sdl2</p>
+</li>
 </ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">sh -x .conf.linux<br>make<br>sudo make install<br></code></pre></td></tr></table></figure>
+
+<p>以后卸载也很简单</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd ~/MyDev/env/bochs<br>sudo make uninstall<br>make clean<br>make dist-clean<br>cd ..<br>rm -rf bochs<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-使用"><a href="#2-2-使用" class="headerlink" title="2.2 使用"></a>2.2 使用</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">bximage --help<br>bochs --help cpu<br><br>bochs -q -f ./my_bochs_cfg<br></code></pre></td></tr></table></figure>
+
+<img src="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/1709132366.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>怎么配置ssh的远程gui，<a href="/2024/02/28/mac%E8%BF%9C%E7%A8%8Blinux%E7%9A%84gui/" title="mac远程linux的gui">mac远程linux的gui</a></p>
 
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
@@ -457,6 +454,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2024/02/28/mac%E8%BF%9C%E7%A8%8Blinux%E7%9A%84gui/" title="mac远程linux的gui">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">mac远程linux的gui</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

@@ -252,6 +252,60 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2024/02/28/mac%E8%BF%9C%E7%A8%8Blinux%E7%9A%84gui/" target="_self">
+          mac远程linux的gui
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/02/28/mac%E8%BF%9C%E7%A8%8Blinux%E7%9A%84gui/" target="_self">
+        <div>
+          1 archlinux服务端配置1.1 配置文件文件/etc/ssh/ssh_config放开如下两行注释   1.2 重启ssh1sudo systemctl restart ssh  2 mac客户端配置2.1 配置文件文件/private/etc/ssh/ssh_config放开如下注释   2.2 安装XQuartzXQuartz官网 下载安装即可，安装好后会进行重启 1ssh -X di
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-02-28 23:00" pubdate>
+              2024-02-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/" target="_self">
           archlinux编译bochs
         </a>
@@ -260,7 +314,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/" target="_self">
         <div>
-          系统信息   1 aur helperarchlinux的yay包管理工具安装bochs 12yay -Ss bochsyay -S bochs  但是仍然需要下载bochs的源码包，因为在启动的时候需要在配置文件中指定romimage和vgaromimage的路径。 2 手动下载bochs源码编译2.1 源码下载https://sourceforge.net/projects/bochs/fil
+          系统信息   bochs官网 从官网信息可以看到现在代码也迁移到了github上 1 包管理器安装1.1 安装1yay -Ss bochs    我们肯定是想要gui的，方便看调试输出信息 以sdl库支持的版本为例 12yay -Syy bochs-sdlwhereis bochs  1.2 使用  bochs选项4生成配置文件，并将floppya配置项内容指定上软盘镜像，修改为floppya:
         </div>
       </a>
 
@@ -724,60 +778,6 @@
       <span class="category-chain">
         
   <a href="/categories/Git/" class="category-chain-item">Git</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/01/22/%E6%97%B6%E9%97%B4%E6%88%B3%E9%87%8D%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6/" target="_self">
-          时间戳重命名文件
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/01/22/%E6%97%B6%E9%97%B4%E6%88%B3%E9%87%8D%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6/" target="_self">
-        <div>
-          在写博客的时候避免不了使用图片，我习惯在一个主题对应的文件中存放所有关联的图片。解决图片命名问题的苦恼就是用时间戳。 比如 1mv ~/Desktop/截屏2024-01-22\ 21.49.58.png ./source/_posts/ctags函数跳转/$(date +%s).png    		 		var gitalkConfig = {"clientID":"7045d14418805a2
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-01-22 21:57" pubdate>
-              2024-01-22
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/vim/" class="category-chain-item">vim</a>
   
   
 
