@@ -16,12 +16,12 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 linux主机ssh服务端 查看sshd状态systemctl status sshd     如果没有ssh服务端就进行安装和配置  是否安装过yay -Q |grep openssh  安装yay -Syy openssh  启动systemctl start sshd  开机自启动systemctl enable ssh     2 ssh服务端因为我不打算登陆root用户，所以没有修改">
+    <meta name="description" content="1 linux主机服务端1.1 sshd安装 查看sshd状态systemctl status sshd     如果没有ssh服务端就进行安装和配置  是否安装过yay -Q |grep openssh  安装yay -Syy openssh  启动systemctl start sshd  开机自启动systemctl enable ssh     1.2 sshd配置因为我不打算登陆root">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ssh远程主机">
 <meta property="og:url" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/index.html">
 <meta property="og:site_name" content="毛茸茸猫子">
-<meta property="og:description" content="1 linux主机ssh服务端 查看sshd状态systemctl status sshd     如果没有ssh服务端就进行安装和配置  是否安装过yay -Q |grep openssh  安装yay -Syy openssh  启动systemctl start sshd  开机自启动systemctl enable ssh     2 ssh服务端因为我不打算登陆root用户，所以没有修改">
+<meta property="og:description" content="1 linux主机服务端1.1 sshd安装 查看sshd状态systemctl status sshd     如果没有ssh服务端就进行安装和配置  是否安装过yay -Q |grep openssh  安装yay -Syy openssh  启动systemctl start sshd  开机自启动systemctl enable ssh     1.2 sshd配置因为我不打算登陆root">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706148360.png">
@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150579.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150869.png">
 <meta property="article:published_time" content="2024-01-25T01:26:27.000Z">
-<meta property="article:modified_time" content="2024-01-25T02:54:22.140Z">
+<meta property="article:modified_time" content="2024-03-01T03:08:58.051Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png">
@@ -313,7 +313,7 @@
             
               <div class="markdown-body">
                 
-                <h2 id="1-linux主机ssh服务端"><a href="#1-linux主机ssh服务端" class="headerlink" title="1 linux主机ssh服务端"></a>1 linux主机ssh服务端</h2><ul>
+                <h2 id="1-linux主机服务端"><a href="#1-linux主机服务端" class="headerlink" title="1 linux主机服务端"></a>1 linux主机服务端</h2><h3 id="1-1-sshd安装"><a href="#1-1-sshd安装" class="headerlink" title="1.1 sshd安装"></a>1.1 sshd安装</h3><ul>
 <li>查看sshd状态<code>systemctl status sshd</code></li>
 </ul>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png" srcset="/img/loading.gif" lazyload class="">
@@ -332,11 +332,11 @@
 </ul>
 </li>
 </ul>
-<h2 id="2-ssh服务端"><a href="#2-ssh服务端" class="headerlink" title="2 ssh服务端"></a>2 ssh服务端</h2><p>因为我不打算登陆root用户，所以没有修改配置文件<code>/etc/ssh/sshd-config</code></p>
+<h3 id="1-2-sshd配置"><a href="#1-2-sshd配置" class="headerlink" title="1.2 sshd配置"></a>1.2 sshd配置</h3><p>因为我不打算登陆root用户，所以没有修改配置文件<code>/etc/ssh/sshd-config</code></p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706148360.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>查看当前ssh服务器的ip地址<code>ip addr</code></p>
-<h2 id="3-连接"><a href="#3-连接" class="headerlink" title="3 连接"></a>3 连接</h2><h3 id="3-1-手动连接"><a href="#3-1-手动连接" class="headerlink" title="3.1 手动连接"></a>3.1 手动连接</h3><p>在终端输入<code>ssh 用户名@远程ip -p 22</code>即可，随后按照提示键入远程主机用户密码。</p>
+<h2 id="2-本地连接远程"><a href="#2-本地连接远程" class="headerlink" title="2 本地连接远程"></a>2 本地连接远程</h2><h3 id="2-1-手动连接"><a href="#2-1-手动连接" class="headerlink" title="2.1 手动连接"></a>2.1 手动连接</h3><p>在终端输入<code>ssh 用户名@远程ip -p 22</code>即可，随后按照提示键入远程主机用户密码。</p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706149922.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>首先每次输入ip地址是比较繁琐的</p>
@@ -346,7 +346,7 @@
 <li><p>ssh客户端修改<code>/etc/hosts</code>增加上ip映射，那么之后就可以用易于记忆的<code>ssh 用户名@主机名 -p 22</code>来替代上面的ip地址了</p>
 </li>
 </ul>
-<h3 id="3-2-自动连接"><a href="#3-2-自动连接" class="headerlink" title="3.2 自动连接"></a>3.2 自动连接</h3><p>我没有使用上面的ip映射方案，因为用iterm2终端更省事。</p>
+<h3 id="2-2-自动连接"><a href="#2-2-自动连接" class="headerlink" title="2.2 自动连接"></a>2.2 自动连接</h3><p>我没有使用上面的ip映射方案，因为用iterm2终端更省事。</p>
 <ul>
 <li><p>区别于本机的终端配置，新建一个</p>
 </li>
@@ -362,7 +362,7 @@
 <p>至此，便可以直接新建一个终端窗口直连远程主机</p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150869.png" srcset="/img/loading.gif" lazyload class="">
 
-<h2 id="4-拷贝文件或文件夹"><a href="#4-拷贝文件或文件夹" class="headerlink" title="4 拷贝文件或文件夹"></a>4 拷贝文件或文件夹</h2><table>
+<h2 id="3-拷贝文件或文件夹"><a href="#3-拷贝文件或文件夹" class="headerlink" title="3 拷贝文件或文件夹"></a>3 拷贝文件或文件夹</h2><table>
 <thead>
 <tr>
 <th></th>
