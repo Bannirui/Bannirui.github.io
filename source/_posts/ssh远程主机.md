@@ -4,8 +4,10 @@ date: 2024-01-25 09:26:27
 categories: Linux
 ---
 
-1 linux主机ssh服务端
+1 linux主机服务端
 ---
+
+### 1.1 sshd安装
 
 - 查看sshd状态`systemctl status sshd`
 
@@ -21,8 +23,7 @@ categories: Linux
 
   - 开机自启动`systemctl enable ssh`
 
-2 ssh服务端
----
+### 1.2 sshd配置
 
 因为我不打算登陆root用户，所以没有修改配置文件`/etc/ssh/sshd-config`
 
@@ -30,10 +31,10 @@ categories: Linux
 
 查看当前ssh服务器的ip地址`ip addr`
 
-3 连接
+2 本地连接远程
 ---
 
-### 3.1 手动连接
+### 2.1 手动连接
 
 在终端输入`ssh 用户名@远程ip -p 22`即可，随后按照提示键入远程主机用户密码。
 
@@ -45,7 +46,7 @@ categories: Linux
 
 - ssh客户端修改`/etc/hosts`增加上ip映射，那么之后就可以用易于记忆的`ssh 用户名@主机名 -p 22`来替代上面的ip地址了
 
-### 3.2 自动连接
+### 2.2 自动连接
 
 我没有使用上面的ip映射方案，因为用iterm2终端更省事。
 
@@ -63,7 +64,7 @@ categories: Linux
 
 ![](./ssh远程主机/1706150869.png)
 
-4 拷贝文件或文件夹
+3 拷贝文件或文件夹
 ---
 
 ||本机->远程|远程->本机|
