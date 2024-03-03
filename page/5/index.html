@@ -260,7 +260,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/09/Hexo%E9%A1%B5%E8%84%9A%E6%98%BE%E7%A4%BA%E7%AB%99%E7%82%B9%E8%BF%90%E8%A1%8C%E6%97%B6%E9%95%BF/" target="_self">
         <div>
-          在网站页脚上显示该站运行时长。  1 js函数在根目录\source\vvd_js\路径下新建一个js文件duration.js，内容如下： 12345678910111213141516171819202122232425262728293031!(function() &#123;    /* 建站时间 */  var start = new Date(&quot;2023/02/27 24
+          在网站页脚上显示该站运行时长。  1 js函数在根目录\source\js\路径下新建一个js文件duration.js，内容如下： 12345678910111213141516171819202122232425262728293031!(function() &#123;    /* 建站时间 */  var start = new Date(&quot;2023/02/27 24:00:
         </div>
       </a>
 
@@ -375,7 +375,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/08/Hexo%E5%8D%87%E7%BA%A7Fluid%E4%B8%BB%E9%A2%98/" target="_self">
         <div>
-          我之前的Fluid主题是通过git将Fluid源码克隆在博客根目录/themes/下的，这样的方式通过根源码绑定，对升级不友好。 先将Hexo和Fluid的配置文件托管在github，然后在项目下通过ln -s软链接方式使用配置文件。 1 删除项目下Fluid源码将博客根目录/themes/fluid删除。 2 安装Fluid主题在博客根目录下执行npm install --save hexo-t
+          我之前的Fluid主题是通过git将Fluid源码克隆在博客根目录/themes/下的，这样的方式跟源码耦合，对升级不友好。 先将Hexo和Fluid的配置文件托管在github，然后在项目下通过ln -s软链接方式使用配置文件。 1 删除项目下Fluid源码将博客根目录/themes/fluid删除。 2 安装Fluid主题在博客根目录下执行npm install --save hexo-the
         </div>
       </a>
 
@@ -903,7 +903,7 @@
     <div class="footer-inner">
   
     <div class="footer-content">
-       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/vvd_js/duration.js"></script> </div> 
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
     </div>
   
   
