@@ -2,7 +2,6 @@
 title: Hexo升级Fluid主题
 date: 2023-11-08 21:42:46
 categories: [ Hexo ]
-tags: [ Fluid主题升级 ]
 ---
 
 我之前的Fluid主题是通过git将[Fluid源码](https://github.com/fluid-dev/hexo-theme-fluid)克隆在`博客根目录/themes/`下的，这样的方式跟源码耦合，对升级不友好。
