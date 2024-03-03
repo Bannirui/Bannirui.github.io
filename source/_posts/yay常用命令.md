@@ -1,6 +1,7 @@
 ---
 title: yay常用命令
 date: 2023-12-11 16:34:29
+category_bar: true
 categories: Linux
 ---
 

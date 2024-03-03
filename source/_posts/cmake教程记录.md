@@ -1,6 +1,7 @@
 ---
 title: cmake教程记录
 date: 2023-12-07 13:46:42
+category_bar: true
 categories: cmake
 ---
 

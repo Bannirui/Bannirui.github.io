@@ -1,6 +1,7 @@
 ---
 title: Redis-0x16-加载配置文件
 date: 2023-04-12 09:45:25
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

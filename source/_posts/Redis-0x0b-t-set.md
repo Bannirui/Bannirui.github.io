@@ -1,6 +1,7 @@
 ---
 title: Redis-0x0b-t_set
 date: 2023-04-03 22:11:05
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

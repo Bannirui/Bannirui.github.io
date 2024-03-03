@@ -1,6 +1,7 @@
 ---
 title: Spring源码-01-Bean容器
 date: 2023-03-11 00:04:52
+category_bar: true
 tags:
 - Spring@6.0.3
 categories:

@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x01-Makefile
 date: 2023-11-01 21:58:21
+category_bar: true
 categories: [ 'Redis' ]
 tags: [ '2刷Redis' ]
 ---

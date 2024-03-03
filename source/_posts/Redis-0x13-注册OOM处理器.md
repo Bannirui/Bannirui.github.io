@@ -1,6 +1,7 @@
 ---
 title: Redis-0x13-注册OOM处理器
 date: 2023-04-11 21:46:14
+category_bar: true
 tags:  [ Redis@6.2 ]
 categories:  [ Redis ]
 ---

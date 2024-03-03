@@ -1,6 +1,7 @@
 ---
 title: archlinux编译bochs
 date: 2024-02-28 11:47:14
+category_bar: true
 categories: Linux
 ---
 

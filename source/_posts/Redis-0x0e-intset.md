@@ -2,6 +2,7 @@
 title: Redis-0x0e-intset
 index_img: /img/Redis-0x0e-intset.png
 date: 2023-04-06 13:37:39
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

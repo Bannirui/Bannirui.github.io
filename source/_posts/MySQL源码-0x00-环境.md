@@ -1,6 +1,7 @@
 ---
 title: MySQL源码-0x00-环境
 date: 2023-04-25 22:56:50
+category_bar: true
 tags: [ MySQL@8.0.32 ]
 categories: [ MySQL ]
 ---

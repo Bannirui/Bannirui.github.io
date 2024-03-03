@@ -1,6 +1,7 @@
 ---
 title: vim与系统剪贴板直接的复制粘贴
 date: 2024-01-25 16:06:59
+category_bar: true
 categories: vim
 ---
 

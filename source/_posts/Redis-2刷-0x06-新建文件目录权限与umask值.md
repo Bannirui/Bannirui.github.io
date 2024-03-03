@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x06-新建文件目录权限与umask值
 date: 2023-11-15 16:22:20
+category_bar: true
 categories: [ Redis ]
 tags: [ 2刷Redis ]
 ---

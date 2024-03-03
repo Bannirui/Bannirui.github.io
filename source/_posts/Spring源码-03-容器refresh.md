@@ -1,6 +1,7 @@
 ---
 title: Spring源码-03-容器refresh
 date: 2023-03-11 00:13:56
+category_bar: true
 tags:
 - Spring@6.0.3
 categories:

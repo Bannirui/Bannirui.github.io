@@ -1,6 +1,7 @@
 ---
 title: ctags函数跳转
 date: 2024-01-22 21:38:35
+category_bar: true
 categories: vim
 ---
 

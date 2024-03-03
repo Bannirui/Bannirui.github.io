@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x02-内存管理的跨平台
 date: 2023-11-08 09:29:41
+category_bar: true
 categories: [ 'Redis' ]
 tags: [ '2刷Redis' ]
 ---

@@ -1,6 +1,7 @@
 ---
 title: Redis-0x10-db
 date: 2023-04-10 10:33:44
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

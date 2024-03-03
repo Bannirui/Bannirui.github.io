@@ -1,6 +1,7 @@
 ---
 title: Redis-0x11-object
 date: 2023-04-10 10:44:59
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

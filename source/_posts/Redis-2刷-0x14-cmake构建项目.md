@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x14-cmake构建项目
 date: 2024-02-21 19:27:13
+category_bar: true
 categories: Redis
 tags: 2刷Redis
 ---

@@ -1,6 +1,7 @@
 ---
 title: 安装KiCad
 date: 2023-12-13 22:38:46
+category_bar: true
 categories: KiCad
 ---
 

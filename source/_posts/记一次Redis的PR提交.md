@@ -1,6 +1,7 @@
 ---
 title: 记一次Redis的PR提交
 date: 2023-11-07 14:40:19
+category_bar: true
 categories: [ 'Git' ]
 tags: [ 'PR提交' ]
 ---

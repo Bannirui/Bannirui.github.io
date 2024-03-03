@@ -1,6 +1,7 @@
 ---
 title: JVM-0x00-启动入口
 date: 2023-04-27 13:08:32
+category_bar: true
 tags:  [ JVM@15 ]
 categories: [ JVM ]
 ---

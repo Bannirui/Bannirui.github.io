@@ -1,12 +1,13 @@
 ---
 title: Hexo主题-Next
 date: 2024-03-03 13:12:58
+category_bar: true
 categories: Hexo
 ---
 
 ### 1 主题安装
 
-在Fluid的主题安装中{% post_link Hexo升级Fluid主题 %}说过并不是很喜欢耦合源码的方式，因此还是选用npm管理包的方式
+选用npm管理包的方式
 
 到项目根目录下
 

@@ -2,6 +2,7 @@
 title: Redis-0x1a-开启事件监听器
 index_img: /img/Redis-0x1a-开启事件监听器.png
 date: 2023-04-12 16:58:05
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

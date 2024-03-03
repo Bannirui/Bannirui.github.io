@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x0F-redis对象redisObject
 date: 2024-01-05 00:05:27
+category_bar: true
 categories: Redis
 tags: 2刷Redis
 ---

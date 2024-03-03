@@ -2,6 +2,7 @@
 title: Redis-0x05-ziplist
 index_img: /img/Reids-0x05-ziplist.png
 date: 2023-03-30 20:50:22
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

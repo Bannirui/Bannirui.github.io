@@ -2,6 +2,7 @@
 title: Redis-0x06-zipmap
 index_img: /img/Redis-0x06-zipmap.png
 date: 2023-04-01 12:10:13
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

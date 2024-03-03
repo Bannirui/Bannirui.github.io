@@ -1,6 +1,7 @@
 ---
 title: Redis-0x15-初始化server服务配置
 date: 2023-04-11 22:11:26
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

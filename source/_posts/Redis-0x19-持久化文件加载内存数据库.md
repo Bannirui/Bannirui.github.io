@@ -1,6 +1,7 @@
 ---
 title: Redis-0x19-持久化文件加载内存数据库
 date: 2023-04-12 16:22:25
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

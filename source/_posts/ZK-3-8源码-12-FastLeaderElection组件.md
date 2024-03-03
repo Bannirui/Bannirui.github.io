@@ -1,6 +1,7 @@
 ---
 title: ZK@3.8源码-12-FastLeaderElection组件
 date: 2023-03-09 10:53:41
+category_bar: true
 tags:
 - ZK@3.8
 categories:

@@ -1,6 +1,7 @@
 ---
 title: Redis-0x07-t_hash
 date: 2023-04-02 13:45:17
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

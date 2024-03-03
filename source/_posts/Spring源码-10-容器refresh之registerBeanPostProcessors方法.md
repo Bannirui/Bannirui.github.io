@@ -1,6 +1,7 @@
 ---
 title: Spring源码-10-容器refresh之registerBeanPostProcessors方法
 date: 2023-03-11 00:34:35
+category_bar: true
 tags:
 - Spring@6.0.3
 categories:

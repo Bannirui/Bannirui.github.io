@@ -1,6 +1,7 @@
 ---
 title: IM聊天系统
 date: 2023-04-26 23:38:28
+category_bar: true
 tags: [ im ]
 categories: [ 实战项目 ]
 ---

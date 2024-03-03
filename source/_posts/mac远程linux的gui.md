@@ -1,6 +1,7 @@
 ---
 title: mac远程linux的gui
 date: 2024-02-28 23:00:04
+category_bar: true
 categories: Linux
 ---
 

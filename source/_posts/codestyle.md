@@ -1,6 +1,7 @@
 ---
 title: codestyle
 date: 2023-02-28 09:32:26
+category_bar: true
 categories:
 - IDE
 tags:

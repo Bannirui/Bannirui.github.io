@@ -1,6 +1,7 @@
 ---
 title: JVM-0x06-JVM启动参数
 date: 2023-05-04 15:38:32
+category_bar: true
 tags:  [ JVM@15 ]
 categories: [ JVM ]
 ---

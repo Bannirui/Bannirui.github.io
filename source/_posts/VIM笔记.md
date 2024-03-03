@@ -1,6 +1,7 @@
 ---
 title: VIM笔记
 date: 2023-10-18 09:40:49
+category_bar: true
 categories: [ vim ]
 tags: [ 笔记 ]
 ---

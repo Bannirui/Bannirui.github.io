@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x04-linux系统proc虚拟文件系统
 date: 2023-11-14 13:57:32
+category_bar: true
 categories: [ Redis ]
 tags: [ 2刷Redis ]
 ---

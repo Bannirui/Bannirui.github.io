@@ -1,6 +1,7 @@
 ---
 title: Spring源码-04-Bean工厂BeanFactory
 date: 2023-03-11 00:16:41
+category_bar: true
 tags:
 - Spring@6.0.3
 categories:

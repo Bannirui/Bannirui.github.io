@@ -1,6 +1,7 @@
 ---
 title: vscode远程开发配置
 date: 2024-02-25 21:07:23
+category_bar: true
 categories: IDE
 ---
 

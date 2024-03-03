@@ -1,6 +1,7 @@
 ---
 title: Linux安装FreeCAD
 date: 2023-12-11 16:21:54
+category_bar: true
 categories: Linux
 ---
 

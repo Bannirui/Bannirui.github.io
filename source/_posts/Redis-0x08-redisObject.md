@@ -2,6 +2,7 @@
 title: Redis-0x08-redisObject
 index_img: /img/Redis-0x08-redisObject.png
 date: 2023-04-03 13:16:28
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

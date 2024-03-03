@@ -1,6 +1,7 @@
 ---
 title: GParted重分区
 date: 2023-12-13 19:08:43
+category_bar: true
 categories: Linux
 ---
 

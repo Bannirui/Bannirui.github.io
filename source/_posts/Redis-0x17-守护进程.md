@@ -1,6 +1,7 @@
 ---
 title: Redis-0x17-守护进程
 date: 2023-04-12 10:29:40
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

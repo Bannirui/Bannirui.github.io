@@ -1,6 +1,7 @@
 ---
 title: Redis-0x1b-Socket编程
 date: 2023-04-14 08:55:50
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

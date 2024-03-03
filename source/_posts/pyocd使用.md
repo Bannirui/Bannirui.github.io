@@ -1,6 +1,7 @@
 ---
 title: pyocd使用
 date: 2023-12-12 09:15:47
+category_bar: true
 categories: 单片机
 ---
 

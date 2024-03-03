@@ -1,6 +1,7 @@
 ---
 title: Redis-0x02-list
 date: 2023-03-24 09:45:28
+category_bar: true
 index_img: /img/Redis-0x02-list.png
 tags: [ Redis@6.2 ]
 categories: [ Redis ]

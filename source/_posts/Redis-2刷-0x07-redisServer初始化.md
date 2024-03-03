@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x07-redisServer初始化
 date: 2023-11-22 14:08:39
+category_bar: true
 categories: Redis
 tags: 2刷Redis
 ---

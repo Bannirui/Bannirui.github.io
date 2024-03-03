@@ -1,6 +1,7 @@
 ---
 title: vim复制行递增递减标号
 date: 2023-11-10 13:15:01
+category_bar: true
 categories: vim
 ---
 

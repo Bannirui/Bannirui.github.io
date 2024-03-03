@@ -1,6 +1,7 @@
 ---
 title: JVM-0x04-加载JVM
 date: 2023-05-04 14:17:45
+category_bar: true
 tags:  [ JVM@15 ]
 categories: [ JVM ]
 ---

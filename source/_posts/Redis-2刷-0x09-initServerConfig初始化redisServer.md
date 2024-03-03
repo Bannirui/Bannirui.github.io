@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x09-initServerConfig初始化redisServer
 date: 2023-11-24 10:56:31
+category_bar: true
 categories: Redis
 tags: 2刷Redis
 ---

@@ -1,6 +1,7 @@
 ---
 title: Clion配置Makefile项目跳转功能
 date: 2023-11-02 14:44:58
+category_bar: true
 categories: [ 'IDE' ]
 tags: [ 'Clion' ]
 ---

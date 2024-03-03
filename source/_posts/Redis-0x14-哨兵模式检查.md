@@ -1,6 +1,7 @@
 ---
 title: Redis-0x14-哨兵模式检查
 date: 2023-04-11 21:59:26
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

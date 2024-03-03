@@ -1,6 +1,7 @@
 ---
 title: Redis-2刷-0x00-从Readme开始
 date: 2023-11-01 20:27:55
+category_bar: true
 categories: [ 'Redis' ]
 tags: [ '2刷Redis' ]
 ---

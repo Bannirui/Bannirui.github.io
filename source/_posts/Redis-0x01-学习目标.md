@@ -2,6 +2,7 @@
 title: Redis-0x01-学习目标
 date: 2023-03-23 23:40:55
 index_img: /img/Redis-default.png
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---

@@ -1,6 +1,7 @@
 ---
 title: ssh远程主机
 date: 2024-01-25 09:26:27
+category_bar: true
 categories: Linux
 ---
 

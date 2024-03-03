@@ -2,6 +2,7 @@
 title: Redis-0x0d-quicklist
 index_img: /img/Redis-0x0d-quicklist.png
 date: 2023-04-03 22:23:06
+category_bar: true
 tags: [ Redis@6.2 ]
 categories: [ Redis ]
 ---
