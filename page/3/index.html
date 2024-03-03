@@ -65,7 +65,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -136,7 +136,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -148,7 +148,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -160,7 +160,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -172,7 +172,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -184,7 +184,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -252,6 +252,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/12/29/Redis-2%E5%88%B7-0x0E-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E9%93%BE%E8%A1%A8-list/" target="_self">
+          Redis-2刷-0x0E-数据结构-链表-list
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/29/Redis-2%E5%88%B7-0x0E-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E9%93%BE%E8%A1%A8-list/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-12-29 13:16" pubdate>
+              2023-12-29
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/2%E5%88%B7Redis/">#2刷Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/12/29/Redis-2%E5%88%B7-0x0D-%E5%BA%93%E5%87%BD%E6%95%B0signal/" target="_self">
           Redis-2刷-0x0D-库函数signal
         </a>
@@ -260,7 +321,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/29/Redis-2%E5%88%B7-0x0D-%E5%BA%93%E5%87%BD%E6%95%B0signal/" target="_self">
         <div>
-          1 手册查询直接输出man手册内容到文件，里面会有很多的控制符，通过col -b来过滤控制符号 12cd Desktopman 3 signal | col -b signal.txt  2 signal函数文档1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515
+          
         </div>
       </a>
 
@@ -321,7 +382,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/28/Redis-2%E5%88%B7-0x0C-%E5%BA%93%E5%87%BD%E6%95%B0fgets/" target="_self">
         <div>
-          1 系统手册1man 3 fgets  2 库函数2.1 原型1234#include &lt;stdio.h&gt;char *fgets(char * restrict str, int size, FILE * restrict stream);  12345678910DESCRIPTION     The fgets() function reads at most one less t
+          
         </div>
       </a>
 
@@ -382,7 +443,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/28/Redis-2%E5%88%B7-0x0B-%E5%BA%93%E5%87%BD%E6%95%B0fopen/" target="_self">
         <div>
-          1 查询系统手册1man 3 fopen  2 库函数2.1 原型1234#include &lt;stdio.h&gt;FILE *fopen(const char * restrict path, const char * restrict mode);  12345678910The fopen() function opens the file whose name is the stri
+          
         </div>
       </a>
 
@@ -443,7 +504,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/28/Redis-2%E5%88%B7-0x0A-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/" target="_self">
         <div>
-          var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionF
+          
         </div>
       </a>
 
@@ -504,7 +565,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/13/%E5%AE%89%E8%A3%85KiCad/" target="_self">
         <div>
-          设计类软件基本都是收费的，找到好用的开源软件是件幸事，EDA找到了KiCad，3D建模找到了FreeCAD。 1 安装官网贴心地准备了各操作系统的安装方式，非常全乎。   2 库文件路径问题应该是linux的上的问题，全局和用户的目录识别有问题。   在设置的路径管理中的路径，与符号库和元件库的扫描的路径不一致，导致符号库和元件库里面是空的。    kicad默认配置的路径管理是系统的，也就是/u
+          
         </div>
       </a>
 
@@ -558,7 +619,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/" target="_self">
         <div>
-          今天安装软件的时候报错提示空间不够，df -h如下   可以看到分区/dev/nvme0n1p2，挂在带你在/下，当初装这个系统是用arch install自动分区的，没注意才分了20G，现在已经快满了，所以要进行重分区。 1 安装GParted12345pacman -Ss gpartedsudo pacman -S gpartedgparted  2 GParted分区扩容  可以看到我总共就
+          
         </div>
       </a>
 
@@ -612,7 +673,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/" target="_self">
         <div>
-          我使用的调试器是openocd，但是查看了帮助信息好像没有找到关于list列表信息功能，这着实是有点不太科学的。我现在的需求就是需要查看电脑端口的占用情况已经设备详情信息。因此找到了pyocd这款调试器，目前这个调试器仅仅为了满足list的需求，如果使用体验很好的话，程序的烧录可能也会切到这个调试器。 我的设备是Arch Linux x86_64。 1 安装12pip --versionpip i
+          
         </div>
       </a>
 
@@ -666,7 +727,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/11/yay%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" target="_self">
         <div>
-          在archlinux常常依赖yay管理软件。  yay &lt;包名&gt;: 在终端交互式进行软件搜索和下载  yay: 同步并更新所有来自仓库和 AUR 的软件包  yay -Sua: 只同步和更新AUR软件包  yay -S &lt;软件包&gt;: 从仓库和AUR中安装一个新的软件包  yay -Ss &lt;包名&gt;: 从仓库和 AUR 中搜索软件包数据库中的关键词  yay -Ps
+          
         </div>
       </a>
 
@@ -720,7 +781,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/11/Linux%E5%AE%89%E8%A3%85FreeCAD/" target="_self">
         <div>
-          1 下载我蛮熟悉UG的，但是没有找到linux的破解版本。其实3D软件大体是相似的，只是各家软件在细分领域有着不同的优势和特性。因此在linux上安装FreeCAD。 2 安装123yay -Ss freecadyay -Syy freecad  通过yay方式安装后运行freecad会报错链接不到动态库libboost_filesystem.so.1.83.0。因此换用官网下载安装包的方式 12
+          
         </div>
       </a>
 
@@ -745,60 +806,6 @@
       <span class="category-chain">
         
   <a href="/categories/Linux/" class="category-chain-item">Linux</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/12/08/vscode%E7%BB%88%E7%AB%AFzsh%E6%98%BE%E7%A4%BA%E5%9B%BE%E6%A0%87%E4%B9%B1%E7%A0%81/" target="_self">
-          vscode终端zsh显示图标乱码
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/08/vscode%E7%BB%88%E7%AB%AFzsh%E6%98%BE%E7%A4%BA%E5%9B%BE%E6%A0%87%E4%B9%B1%E7%A0%81/" target="_self">
-        <div>
-          今天留意到3个问题  mac终端iterm2和vscode终端显示差异，vscode中zsh乱码 mac终端iterm2和linux终端konsole显示差异，konsole中乱码 vscode中执行了neofetch显示了设备信息，要在.zshrc中排除    第一第二个问题的解决方案是统一设备和程序的字体  mac和linux终端使用同一个字体 终端和vscode使用同一个字体  第三个问题的
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-12-08 09:21" pubdate>
-              2023-12-08
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/IDE/" class="category-chain-item">IDE</a>
   
   
 
@@ -908,7 +915,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();

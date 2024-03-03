@@ -65,7 +65,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -136,7 +136,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -148,7 +148,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -160,7 +160,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -172,7 +172,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -184,7 +184,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -252,189 +252,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-06-Bean%E5%B7%A5%E5%8E%82%E4%B9%8BgetBean%E6%96%B9%E6%B3%95/" target="_self">
-          Spring源码-06-Bean工厂之getBean方法
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-06-Bean%E5%B7%A5%E5%8E%82%E4%B9%8BgetBean%E6%96%B9%E6%B3%95/" target="_self">
-        <div>
-          获取Bean实例。 1 getBean方法123456789101112131415// AbstractBeanFactory.java@Overridepublic Object getBean(String name) throws BeansException &#123;    return this.doGetBean(name, null, null, false);&#125;@O
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:23" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring/" class="category-chain-item">Spring</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
-          Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" target="_self">
-        <div>
-          ConfigurationClassPostProcessor作用的时机 扫描注册用户BeanDefinition到Bean工厂。 1 Bean工厂后置处理器1234567891011121314// AbstractApplicationContext.javaprotected void invokeBeanFactoryPostProcessors(ConfigurableListableB
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:20" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring/" class="category-chain-item">Spring</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" target="_self">
-          Spring源码-04-Bean工厂BeanFactory
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" target="_self">
-        <div>
-          实现在DefaultListableRegistry。 1 类图  2 BeanDefinition注册Bean工厂2.1 源码1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-11 00:16" pubdate>
-              2023-03-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Spring/" class="category-chain-item">Spring</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-6-0-3/">#Spring@6.0.3</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
         <a href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" target="_self">
           Spring源码-03-容器refresh
         </a>
@@ -443,7 +260,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" target="_self">
         <div>
-          1 refresh12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910
+          
         </div>
       </a>
 
@@ -504,7 +321,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" target="_self">
         <div>
-          AnnotatedBeanDefinitionReader，注解Bean读取器。 1 构造方法12345678910111213141516171819202122public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) &#123;    Assert.notNul
+          
         </div>
       </a>
 
@@ -565,7 +382,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" target="_self">
         <div>
-          1 类关系  2 宏观视角  3 容器创建注解Bean方式 123456public class AnnotationCtxMain02 &#123;    public static void main(String[] args) &#123;        new AnnotationConfigApplicationContext(MyCfg02.class);    &#125;&#12
+          
         </div>
       </a>
 
@@ -626,7 +443,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/10/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" target="_self">
         <div>
-          1 源码Git地址，分支my-study-6.0.3。 2 编译环境    版本    Spring 6.0.3-SNAPSHOT   OS macOS 11.5.2   Java 17.0.1   Gradle 7.4.2   IDEA 2022.2.1   3 文件修改修改源码路径下gradle.properties，增加两行 12org.gradle.configureondemand=tr
+          
         </div>
       </a>
 
@@ -687,7 +504,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/10/Java%E6%BA%90%E7%A0%81-Thread/" target="_self">
         <div>
-          1 Demo1234567public class ThreadTest00 &#123;    public static void main(String[] args) &#123;        Thread t0 = new Thread(() -&gt; System.out.println(&quot;biz thread...&quot;), &quot;t0&quot;); //
+          
         </div>
       </a>
 
@@ -748,7 +565,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/" target="_self">
         <div>
-          1 Sdk编译前言  大于openjdk11u的源码中都含有CompileCommands.gmk，修改即可解决openjdk在Clion中引入头文件问题。 Java源码换行注释后重新编译一下就行，即可解决class与src对应不上问题。  1.1 源码Git地址，分支是jdk15-study。 1.2 系统工具1.2.1 platform MacOS  macOS Big Sur 11.5.2
+          
         </div>
       </a>
 
@@ -809,7 +626,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/" target="_self">
         <div>
-          我们一贯的套路是先总览框架，然后细看每个组件，最后再梳理整个流程。 1 组件图在选主算法中，涉及到的组件有：  QuorumPeer 负责入口的驱动 QuorumCnxManager 负责网络通信 对接的数据协议是字节和Message ListenerHandler 负责通信连接和验证 RecvWorker 负责网络数据接收的线程 SenderWorker 负责网络数据发送的线程   FastLe
+          
         </div>
       </a>
 
@@ -819,6 +636,189 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-03-10 10:34" pubdate>
               2023-03-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZooKeeper/" class="category-chain-item">ZooKeeper</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" target="_self">
+          ZK@3.8源码-12-FastLeaderElection组件
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-09 10:53" pubdate>
+              2023-03-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZooKeeper/" class="category-chain-item">ZooKeeper</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" target="_self">
+          ZK@3.8源码-11-QuorumCnxManager组件
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-09 10:52" pubdate>
+              2023-03-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZooKeeper/" class="category-chain-item">ZooKeeper</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/" target="_self">
+          ZK@3.8源码-10-集群模式
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-08 20:21" pubdate>
+              2023-03-08
             </time>
           </div>
         
@@ -950,7 +950,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();

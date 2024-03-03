@@ -65,7 +65,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -136,7 +136,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -148,7 +148,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -160,7 +160,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -172,7 +172,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -184,7 +184,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -252,189 +252,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-00-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/" target="_self">
-          Netty源码-00-源码调试环境
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-00-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/" target="_self">
-        <div>
-          一 源码笔记注释的代码地址，分支为study。 二 环境    版本    Netty 4.1.169   Java 8   三 Samples1 服务端1.1 启动类12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 20:35" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Netty/" class="category-chain-item">Netty</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/1%E5%88%B7Netty/">#1刷Netty</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-06-RequestProcessor/" target="_self">
-          ZK@3.8源码-06-RequestProcessor
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-06-RequestProcessor/" target="_self">
-        <div>
-          ZK请求处理责任链，ZK服务器要处理的请求都要经过这个职责链，该链表通过ZK实例中的firstProcessor维护着。 1 职责链创建时机回顾一下ZK启动流程。 12345/**         * zk请求责任链         * PreRP-&gt;SyncRP-&gt;FinalRP         */setupRequestProcessors();    创建了三个处理器，并将这三
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 17:59" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ZooKeeper/" class="category-chain-item">ZooKeeper</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-05-FileTxnSnaplog/" target="_self">
-          ZK@3.8源码-05-FileTxnSnaplog
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-05-FileTxnSnaplog/" target="_self">
-        <div>
-          文件处理器，事务日志和内存数据映射的文件工具类。ZooKeeperServer中持有该实例的引用。 1 内存数据序列化至文件save()方法 12// 将内存数据dataTree和sessions序列化到snapshotFile中snapLog.serialize(dataTree, sessionsWithTimeouts, snapshotFile, syncSnap);  2 磁盘数据反序列
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-06 17:53" pubdate>
-              2023-03-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ZooKeeper/" class="category-chain-item">ZooKeeper</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/ZK-3-8/">#ZK@3.8</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
         <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/" target="_self">
           ZK@3.8源码-04-RequestThrottler
         </a>
@@ -443,7 +260,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/" target="_self">
         <div>
-          回顾一下创建时机，在ZK单机服务启动流程中启动节流器。 1234/**         * 请求节流器         */startRequestThrottler();    启动节流器的时候对节流器进行了实例话和启动，并将节流器指针维护在ZK实例中。 12345protected void startRequestThrottler() &#123;    requestThrottler
+          
         </div>
       </a>
 
@@ -504,7 +321,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/" target="_self">
         <div>
-          在ZooKeeperServe中维护这一个sessionTracker，负责对session会话的管理，主要是针对过期的会话进行关闭。SessionTrackerImpl就是这个会话管理器的实现。 1 类图关系通过继承关系，可以明确知道两点：  SessionTracker定义了一个会话跟踪器。 ZK初始化中使用的线程跟踪器SessionTrackerImpl其本质是线程。因此启动线程跟踪器的核心
+          
         </div>
       </a>
 
@@ -565,7 +382,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-02-CnxnChannelHandler/" target="_self">
         <div>
-          上节梳理了zk单机启动流程，NettyServerCnxnFactory提供了标准的Netty服务端开发模板，ZooKeeperServer定义了请求处理责任链。现在两个独立的线程，如何将Socket的数据映射成zk请求，CnxnChannelHandler成为了将Netty和ZK连接起来的枢纽。 1 类图关系从类图继承可以看出来这个Handler负责读写。 当前为服务端，我们先只关注客户端连接成
+          
         </div>
       </a>
 
@@ -626,7 +443,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/04/ZK-3-8%E6%BA%90%E7%A0%81-01-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%E5%90%AF%E5%8A%A8/" target="_self">
         <div>
-          1 启动流程图      2 配置解析QuorumPeerConfig是配置类，cfg文件里指定的配置项都会解析到该配置类的实例上。 主要流程就是两步：  将文件配置内容加载到Properties 将Properties配置内容拷贝到QuorumPeerConfg  2.1 配置文件加载12345Properties cfg = new Properties();try (FileInputStr
+          
         </div>
       </a>
 
@@ -687,7 +504,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/04/Java%E6%BA%90%E7%A0%81-Timer/" target="_self">
         <div>
-          定时器，调度执行延时任务。 1 使用方式12345678910111213141516171819202122232425262728/** * 定时器. * * @author dingrui * @since 2023/3/4 */public class TimerTest &#123;    private class MyTask extends TimerTask &#123;
+          
         </div>
       </a>
 
@@ -748,7 +565,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/02/28/x86%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80-%E4%BB%8E%E5%AE%9E%E6%A8%A1%E5%BC%8F%E5%88%B0%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/" target="_self">
         <div>
-          地址转换开启分页机制，虚拟地址要经过页部件的转换，才能得到物理地址。 处理器的页部件专门负责线性地址的转换工作，首先将段部件送来的32位线性地址截成3段  高10位-页目录的索引 中间10位-页表索引 低12位-页内偏移  1 示意图  2 步骤2.1 操作系统建立映射当任务加载时，操作系统先创建虚拟的段，并将段地址的高20位决定它要用到哪些页目录项和页表项。然后，寻找空闲的页，将原本应该写入段中
+          
         </div>
       </a>
 
@@ -809,7 +626,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/02/28/ZK-3-8%E6%BA%90%E7%A0%81-00-%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83/" target="_self">
         <div>
-          1 源码可以从官网或者我的笔记上clone，使用的分支是branch-3.8，我的笔记在study-3.8分支上。 2 调试工具   工具 版本    IDE 2022.3.2   JDK 1.8   3 IDE设置3.1 JRE  3.2 Resources  4 文件准备4.1 配置文件拷贝conf&#x2F;zoo_sample.cfg为conf&#x2F;zoo.cfg，内容如下   4.
+          
         </div>
       </a>
 
@@ -849,6 +666,189 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/ZK-3-8/">#ZK@3.8</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/02/28/C51%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" target="_self">
+          C51单片机开发环境
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/28/C51%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-28 12:07" pubdate>
+              2023-02-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%8D%95%E7%89%87%E6%9C%BA/" class="category-chain-item">单片机</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/C51/">#C51</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/02/28/codestyle/" target="_self">
+          codestyle
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/28/codestyle/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-28 09:32" pubdate>
+              2023-02-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/IDE/" class="category-chain-item">IDE</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/">#代码规范</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" target="_self">
+          个人博客搭建
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-28 08:46" pubdate>
+              2023-02-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Hexo/" class="category-chain-item">Hexo</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%8D%9A%E5%AE%A2%E7%8E%AF%E5%A2%83/">#博客环境</a>
             
           </div>
         
@@ -950,7 +950,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();

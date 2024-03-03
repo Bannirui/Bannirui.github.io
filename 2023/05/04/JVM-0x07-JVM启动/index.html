@@ -24,7 +24,7 @@
 <meta property="og:description" content="通过创建线程的方式，将JVM的创建启动控制权转移到新线程被CPU的调度时机。 JVM启动的核心逻辑定义在JavaMain中，即JavaMain函数是JVM虚拟机的启动入口。 1 JVMInit12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-05-04T07:38:45.000Z">
-<meta property="article:modified_time" content="2023-12-04T09:28:06.370Z">
+<meta property="article:modified_time" content="2024-03-03T11:41:03.949Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="JVM@15">
 <meta name="twitter:card" content="summary_large_image">
@@ -74,7 +74,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -145,7 +145,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -157,7 +157,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -169,7 +169,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -181,7 +181,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -193,7 +193,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -246,7 +246,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.4k 字
+          789 字
         
       </span>
     
@@ -257,7 +257,7 @@
         
         
         
-          37 分钟
+          7 分钟
         
       </span>
     
@@ -295,6 +295,121 @@
   <div class="row nomargin-x">
     <div class="side-col d-none d-lg-block col-lg-2">
       
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="JVM"
+        id="heading-18b5a217c4dad25662d3a05edb0e39d7" role="tab" data-toggle="collapse" href="#collapse-18b5a217c4dad25662d3a05edb0e39d7"
+        aria-expanded="true"
+      >
+        JVM
+        <span class="list-group-count">(8)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-18b5a217c4dad25662d3a05edb0e39d7"
+           role="tabpanel" aria-labelledby="heading-18b5a217c4dad25662d3a05edb0e39d7">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/04/27/JVM-0x00-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="JVM-0x00-启动入口"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JVM-0x00-启动入口</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/JVM-0x01-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="JVM-0x01-Java入口函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JVM-0x01-Java入口函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/JVM-0x02-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="JVM-0x02-设置运行环境参数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JVM-0x02-设置运行环境参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/JVM-0x03-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="JVM-0x03-pthread系统调用"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JVM-0x03-pthread系统调用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/JVM-0x04-%E5%8A%A0%E8%BD%BDJVM/" title="JVM-0x04-加载JVM"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JVM-0x04-加载JVM</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/JVM-0x05-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="JVM-0x05-加载动态链接库"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JVM-0x05-加载动态链接库</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/JVM-0x06-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="JVM-0x06-JVM启动参数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JVM-0x06-JVM启动参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/JVM-0x07-JVM%E5%90%AF%E5%8A%A8/" title="JVM-0x07-JVM启动"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">JVM-0x07-JVM启动</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
 
     </div>
 
@@ -595,7 +710,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();

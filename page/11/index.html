@@ -65,7 +65,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -136,7 +136,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -148,7 +148,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -160,7 +160,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -172,7 +172,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -184,7 +184,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -250,207 +250,6 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/03/29/Redis-0x04-sds/" target="_self">
-          <img src="/img/Redis-0x04-sds.png" srcset="/img/loading.gif" lazyload alt="Redis-0x04-sds">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/29/Redis-0x04-sds/" target="_self">
-          Redis-0x04-sds
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/03/29/Redis-0x04-sds/" target="_self">
-        <div>
-          数据类型的编码方式。 1 数据结构  根据字符串长度细分了5种sds类型。 1.1 sdshdr5123456789// 最长(2^5 - 1)长度的sdshdr// 结构体size 1Bytestruct __attribute__ ((__packed__)) sdshdr5 &#123;    // 1个Byte 8位    // 高5位 保存字符串长度    // 低3位 保存类型标志
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-29 23:14" pubdate>
-              2023-03-29
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/03/29/Redis-0x03-dict/" target="_self">
-          <img src="/img/Redis-0x03-dict.png" srcset="/img/loading.gif" lazyload alt="Redis-0x03-dict">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/29/Redis-0x03-dict/" target="_self">
-          Redis-0x03-dict
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/03/29/Redis-0x03-dict/" target="_self">
-        <div>
-          数据类型的编码方式。 1 数据结构  1.1 dictEntry12345678910111213// 哈希表的节点 存储k-v键值对// hash表的节点会组成一个单链表// key可以是void*指针类型 相当于Java的Objecttypedef struct dictEntry &#123;    void *key; // 节点的key    union &#123;        vo
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-29 11:35" pubdate>
-              2023-03-29
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/03/24/Redis-0x02-list/" target="_self">
-          <img src="/img/Redis-0x02-list.png" srcset="/img/loading.gif" lazyload alt="Redis-0x02-list">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/03/24/Redis-0x02-list/" target="_self">
-          Redis-0x02-list
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/03/24/Redis-0x02-list/" target="_self">
-        <div>
-          不作为数据类型的编码方式使用，使用在redisServer字段上，单纯作为双链表数据结构使用。 1 数据结构1.1 链表节点123456789// 链表节点typedef struct listNode &#123;    // 前驱节点    struct listNode *prev;    // 后继节点    struct listNode *next;    // 节点存储的值    v
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-24 09:45" pubdate>
-              2023-03-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" target="_self">
           <img src="/img/Redis-default.png" srcset="/img/loading.gif" lazyload alt="Redis-0x01-学习目标">
         </a>
@@ -467,7 +266,7 @@
       
       <a class="index-excerpt " href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" target="_self">
         <div>
-          Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。 1 编码方式   status struct 文件 说明    1 redisObject\sds object.c OBJ_ENCODING_RAW   1 redisObject\sds object.c OBJ_ENCODING_INT   1 dict dict.c OBJ_ENCODING
+          
         </div>
       </a>
 
@@ -534,7 +333,7 @@
       
       <a class="index-excerpt " href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" target="_self">
         <div>
-          1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码https://github.com/redis/redis 123456781 fork2 git clone git@github.com:Bannirui/redis.git3 git remote add upstream
+          
         </div>
       </a>
 
@@ -595,7 +394,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Reactor/" target="_self">
         <div>
-          reactor&#x3D;多路复用+线程池 抽象出组件，符合单一职责设计模式 reactor组件负责亲请求接收和分发 1 单reactor单线程模型特点  一个reactor负责接收连接和读写请求，分发他们 一个handler线程负责所有读写请求的处理  1.1 reactor组件12345678910111213141516171819202122232425262728293031323334
+          
         </div>
       </a>
 
@@ -656,7 +455,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" target="_self">
         <div>
-          同步IO-应用程序自己去解决数据读取的过程，应用过程既关注过程，也关注结果 异步IO-应用程序向内核发送数据读取的需求，过程由os操作，应用程序只关注结果，数据由其他线程负责投递 因此IO是同步还是异步，一定是由内核开放的api决定的，最终应用程序通过系统调用决定使用哪种方式，如果内核不支持异步，应用代码写出花来也没办法异步 阻塞IO-应用程序操作socket的accept、read、write这
+          
         </div>
       </a>
 
@@ -717,7 +516,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/KQueue/" target="_self">
         <div>
-          1 不使用KQueue12345678910111213141516171819202122232425262728293031323334353637383940414243#include &lt;iostream&gt;#include &lt;sys/socket.h&gt;#include &lt;sys/types.h&gt;#include &lt;netinet/in.h&gt;#
+          
         </div>
       </a>
 
@@ -778,7 +577,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/TCP/" target="_self">
         <div>
-          1 TCP握手&#x2F;挥手1.1 服务端代码123456789101112131415161718192021222324252627282930313233343536373839404142434445package debug.io.bio.server;import java.io.BufferedReader;import java.io.IOException;import jav
+          
         </div>
       </a>
 
@@ -839,7 +638,190 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-synchronized/" target="_self">
         <div>
-          1 MarkWord直接引用openjdk的cpp源码注释 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869// The markOop describes the header of an
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:49" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-COW/" target="_self">
+          Java源码-COW
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-COW/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:49" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" target="_self">
+          Java源码-AQS
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-11 13:49" pubdate>
+              2023-03-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-15/">#Java@15</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" target="_self">
+          Java源码-ThreadPoolExecutor
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" target="_self">
+        <div>
+          
         </div>
       </a>
 
@@ -980,7 +962,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();

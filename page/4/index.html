@@ -65,7 +65,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -136,7 +136,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -148,7 +148,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -160,7 +160,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -172,7 +172,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -184,7 +184,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -252,6 +252,60 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2023/12/08/vscode%E7%BB%88%E7%AB%AFzsh%E6%98%BE%E7%A4%BA%E5%9B%BE%E6%A0%87%E4%B9%B1%E7%A0%81/" target="_self">
+          vscode终端zsh显示图标乱码
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/08/vscode%E7%BB%88%E7%AB%AFzsh%E6%98%BE%E7%A4%BA%E5%9B%BE%E6%A0%87%E4%B9%B1%E7%A0%81/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-12-08 09:21" pubdate>
+              2023-12-08
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/IDE/" class="category-chain-item">IDE</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2023/12/07/cmake%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/" target="_self">
           cmake教程记录
         </a>
@@ -260,7 +314,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/12/07/cmake%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/" target="_self">
         <div>
-          为什么要学cmake，先说一个我的使用场景。 我常用电脑有2台，mac和linux的，但是我常用工具链就那么几个，在两台电脑上的配置统一化就存在必要性了。再者以后再添置一台电脑，又得吭哧吭哧配置一遍工具链。其次，我曾经在mac上误删了rm -rf某个目录导致需要重新配置一遍。 凡此种种，都是实际的需求场景，所以我需要为自己做一个脚本工具，统一管理我使用的工具链，换电脑了只要执行一下脚本就行。 此前
+          
         </div>
       </a>
 
@@ -314,7 +368,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/24/Redis-2%E5%88%B7-0x09-initServerConfig%E5%88%9D%E5%A7%8B%E5%8C%96redisServer/" target="_self">
         <div>
-          这个方法的体量很大，作用是对redisServer结构体成员进行初始化赋值，通篇大部分都是重复性劳动，比较有意思的是initConfigValues()这个函数。这个函数体现了C语言的封装和多态的实现方式，在正式看源码之前先做一些前置性铺垫。 1 结构体成员赋值结构体中的成员可以在实例化的时候指定要初始化的值，也可以只实例化不做初始化动作。指定初始化的时候可以指定要进行初始化的成员，一个或者多个成
+          
         </div>
       </a>
 
@@ -375,7 +429,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/22/Redis-2%E5%88%B7-0x08-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" target="_self">
         <div>
-          首先我认为数据结构是算法的附着点，数据结构又是对内存布局的描述，一切的行为方法都是围绕内存布局展开的，所以学习数据结构最重要的就是搞清楚内存布局。 其次，数据结构的目的一定是为了解决数据的存取问题，但是为了实现高效的存取操作，一定会为此搭建纷繁复杂的基建。其核心一定是get和put，所以在搞明白数据结构的内存布局之后，我一般只关注数据是怎么存进去的和怎么取出来的。 1 内存布局1.1 布局dict
+          
         </div>
       </a>
 
@@ -436,7 +490,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/22/Redis-2%E5%88%B7-0x07-redisServer%E5%88%9D%E5%A7%8B%E5%8C%96/" target="_self">
         <div>
-          redisServer是一个定义在server.h中的UDT，是一个超级大的结构体，大的原因是描述了整个服务端实例的信息。 1 外部全局变量server.c文件中定义全局变量 123456/** * 全局变量定义 * 这个变量是未初始化全局变量 定义在了静态内存BSS段 * 为了能让其他文件访问到这个变量 在头文件中用extern将这个变量声明为了外部变量 */struct redisServer
+          
         </div>
       </a>
 
@@ -497,7 +551,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/21/%E9%9D%99%E6%80%81%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/" target="_self">
         <div>
-          进程内存布局由多个段(segment)组成，包括:  未初始化的数据段或由符号段开始块BSS 数据段(Data段) 文本段或代码段Text段(或Code段) 栈段(Stack段) 堆段(Heap段)  借助系统工具可以比较直观辅助分析静态内存布局:  size objdump  如下示例在linux系统上的使用 1 size12345❯ size test_c   text    data
+          
         </div>
       </a>
 
@@ -551,7 +605,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/" target="_self">
         <div>
-          1 权限随便看一些文件的权限信息，如下：   文件属性被分为4段，每一段以及每一位的信息都是固定的  第1段 文件属性 第2段 所有者用户权限 第3段 同组用户权限 第4段 其他用户权限  每一位都是0跟1标识  0 标识没有该权限 1 标识拥有该权限    3个2进制可以用1个8进制数表示，那么除开文件类型，剩余9位2进制数就是3位八进制数，那么    文件属性值(8进制) 所有者权限 同组用户
+          
         </div>
       </a>
 
@@ -612,7 +666,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/14/Redis-2%E5%88%B7-0x05-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" target="_self">
         <div>
-          在Redis-2刷-0x03-zmalloc实现细节解读中分析zmalloc_get_allocator_info函数时，主要依赖的api是je_mallctl，但是并没有找到这个函数的实现。 在jemalloc的git上我们看到如下描述：   所以，我们需要重新看一遍makefile中的规则编写，尤其是如何将jemalloc编译到项目中的。 1 根目录Makefile12345# 因为make的
+          
         </div>
       </a>
 
@@ -673,7 +727,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/14/Redis-2%E5%88%B7-0x04-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" target="_self">
         <div>
-          1 top命令top可以在终端获取到所有进程的内存占用信息，如图的RES就是某个进程的内存驻留大小，单位是kb，即1号进程驻留的物理地址空间大小为13000kb。   2 &#x2F;proc虚拟文件系统上述top命令采集的指标信息就来自&#x2F;proc虚拟文件系统，比如我们想要知道1号进程的信息，cat /proc/1/stat即可：   3 stat指标cat /proc/1/stat &
+          
         </div>
       </a>
 
@@ -734,7 +788,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/10/vim%E5%A4%8D%E5%88%B6%E8%A1%8C%E9%80%92%E5%A2%9E%E9%80%92%E5%87%8F%E6%A0%87%E5%8F%B7/" target="_self">
         <div>
-          在之前的VIM笔记中有提到过Recording模式的实际使用，刚好在写博客的时候又遇到了实际的场景，在此记录一下。   如图所示，我要在markdown中绘制一个表格，期望52行，有个特点就是第一列自增，形如第1项、第2项、第3项…，以此类推。 1 vim对数字的增减操作在normal模式下，将光标停留在数字上，ctrl+a便可以实现数字自增1，ctrl+x便可以实现数字自减1。 2 复制一行后将
+          
         </div>
       </a>
 
@@ -769,67 +823,6 @@
 
           </div>
         
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/11/09/Redis-2%E5%88%B7-0x03-zmalloc%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82%E8%A7%A3%E8%AF%BB/" target="_self">
-          Redis-2刷-0x03-zmalloc实现细节解读
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/09/Redis-2%E5%88%B7-0x03-zmalloc%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82%E8%A7%A3%E8%AF%BB/" target="_self">
-        <div>
-          前文了解了为何redis需要抽象一层内存管理器，以及redis是怎么做的跨平台兼容。这个章节尝试跟着zmalloc的代码进行逐行学习，整个zmalloc.c源文件700+行，再除去注释和换行等，实际代码规模不大，因此计划以函数为粒度进行解读和学习。  1 ASSERT_NO_SIZE_OVERFLOW 这是一个断言函数，这个函数存在的目的也是为了跨平台兼容。  12345678910111213
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-09 16:41" pubdate>
-              2023-11-09
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/2%E5%88%B7Redis/">#2刷Redis</a>
-            
-          </div>
         
       </div>
     </article>
@@ -929,7 +922,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();

@@ -65,7 +65,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -136,7 +136,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -148,7 +148,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -160,7 +160,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -172,7 +172,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -184,7 +184,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -252,15 +252,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2023/11/09/Hexo%E7%BD%91%E7%AB%99%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/" target="_self">
-          Hexo网站数据统计
+        <a href="/2023/11/09/Redis-2%E5%88%B7-0x03-zmalloc%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82%E8%A7%A3%E8%AF%BB/" target="_self">
+          Redis-2刷-0x03-zmalloc实现细节解读
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/09/Hexo%E7%BD%91%E7%AB%99%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/09/Redis-2%E5%88%B7-0x03-zmalloc%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82%E8%A7%A3%E8%AF%BB/" target="_self">
         <div>
-          Google Analytics提供了对站点访问的数据跟踪，即统计网站流量，便于进行用户行为分析。就是在网站植入回调js，可以自己进行硬编码，但是这样就不容易动态为每篇文章操作。Fluid主题提供了扩展支持，只要适配对应配置即可。  1 创建GA4账号和媒体应用创建好媒体应用之后记下measure id，之后要配置到fluid的配置文件。   2 配置Fluid  3 效果  4 Fluid的实
+          
         </div>
       </a>
 
@@ -268,7 +268,7 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-09 09:15" pubdate>
+            <time datetime="2023-11-09 16:41" pubdate>
               2023-11-09
             </time>
           </div>
@@ -284,7 +284,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Hexo/" class="category-chain-item">Hexo</a>
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
   
   
 
@@ -299,178 +299,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/Google-Analytics/">#Google Analytics</a>
+              <a href="/tags/2%E5%88%B7Redis/">#2刷Redis</a>
             
           </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/11/09/Hexo%E9%A1%B5%E8%84%9A%E6%98%BE%E7%A4%BA%E7%AB%99%E7%82%B9%E8%BF%90%E8%A1%8C%E6%97%B6%E9%95%BF/" target="_self">
-          Hexo页脚显示站点运行时长
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/09/Hexo%E9%A1%B5%E8%84%9A%E6%98%BE%E7%A4%BA%E7%AB%99%E7%82%B9%E8%BF%90%E8%A1%8C%E6%97%B6%E9%95%BF/" target="_self">
-        <div>
-          在网站页脚上显示该站运行时长。  1 js函数在根目录\source\js\路径下新建一个js文件duration.js，内容如下： 12345678910111213141516171819202122232425262728293031!(function() &#123;    /* 建站时间 */  var start = new Date(&quot;2023/02/27 24:00:
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-09 08:35" pubdate>
-              2023-11-09
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Hexo/" class="category-chain-item">Hexo</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/11/08/Hexo%E5%BC%80%E5%90%AFGitalk%E8%AF%84%E8%AE%BA/" target="_self">
-          Hexo开启Gitalk评论
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/08/Hexo%E5%BC%80%E5%90%AFGitalk%E8%AF%84%E8%AE%BA/" target="_self">
-        <div>
-          为hexo博客开启页面评论功能。 1 github第三方登陆授权根据地址连接进行填写即可，https://github.com/settings/applications/new，根据提示信息填写好之后保存Client ID和Client secrets。   如果之后忘记了信息可以点进网址查询。 2 开启issue我觉得没有必要专门再创建一个仓库用来做comment，因此就直接基于了当前博客托管
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-08 22:42" pubdate>
-              2023-11-08
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Hexo/" class="category-chain-item">Hexo</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Gitalk%E8%AF%84%E8%AE%BA/">#Gitalk评论</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/11/08/Hexo%E5%8D%87%E7%BA%A7Fluid%E4%B8%BB%E9%A2%98/" target="_self">
-          Hexo升级Fluid主题
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/08/Hexo%E5%8D%87%E7%BA%A7Fluid%E4%B8%BB%E9%A2%98/" target="_self">
-        <div>
-          我之前的Fluid主题是通过git将Fluid源码克隆在博客根目录/themes/下的，这样的方式跟源码耦合，对升级不友好。 先将Hexo和Fluid的配置文件托管在github，然后在项目下通过ln -s软链接方式使用配置文件。 1 删除项目下Fluid源码将博客根目录/themes/fluid删除。 2 安装Fluid主题在博客根目录下执行npm install --save hexo-the
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-11-08 21:42" pubdate>
-              2023-11-08
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Hexo/" class="category-chain-item">Hexo</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
         
       </div>
     </article>
@@ -490,7 +321,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/08/vim%E7%A6%81%E7%94%A8markdown%E8%AF%AD%E6%B3%95%E9%9A%90%E8%97%8F/" target="_self">
         <div>
-          1 vimrc配置vimrc文件托管在了git上。 不仅仅是vim配置，所有的工具链配置都写成了脚本托管在了git上，但是其中涉及到个人token或者密钥等隐私信息，因此仓库是private。 2 vim写md之前我是长期使用的typora，并且也非常喜欢这个软件。但是可能是因为即时渲染的性能开销，当编辑的文件过大或者其中插图过多，会存在着明显的卡顿现象。对于编辑md而言，我觉得这是本末倒置了，重
+          
         </div>
       </a>
 
@@ -551,7 +382,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" target="_self">
         <div>
-          1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统123456789101112131415161718#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;
+          
         </div>
       </a>
 
@@ -612,7 +443,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/" target="_self">
         <div>
-          虽然不同的开源项目有不同的Contribute的规范和要求，但是总体而言都是差不多的。最近再看redis源码，刚好提交了一次PR，在此记录一下整个流程。 1 fork项目首先将自己感兴趣的项目fork到自己的github仓库。    2 clone本地将自己github仓库的源码克隆到本地，并设置一下分支。 123456git clone git@github.com:Bannirui/redis
+          
         </div>
       </a>
 
@@ -673,7 +504,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/02/Clion%E9%85%8D%E7%BD%AEMakefile%E9%A1%B9%E7%9B%AE%E8%B7%B3%E8%BD%AC%E5%8A%9F%E8%83%BD/" target="_self">
         <div>
-          习惯了在Jetbrains系列上进行开发，自然而然也就用Clion阅读和开发C语言项目。但是该IDE对Makefile的支持远不如对Cmake的支持，比如用Clion打开Redis源码，无法进行函数跳转。 1 安装compiledb123brew search compiledbbrew info compiledbbrew install compiledb  2 创建compile_comma
+          
         </div>
       </a>
 
@@ -734,7 +565,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/01/Redis-2%E5%88%B7-0x01-Makefile/" target="_self">
         <div>
-          Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过成了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。 1 项目编译首先，在Readme中作者描述了如何编译项目，即在项目根目录执行make。   2 根目录Makefile根据编译命令可知，我们只要关注当前文件的第一条rule即可，如下： 123456789101112#
+          
         </div>
       </a>
 
@@ -795,7 +626,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/01/Redis-2%E5%88%B7-0x00-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" target="_self">
         <div>
-          我们期待从Readme中能够快速地对Redis有一个宏观的了解，也方便后续大处着眼小处着手去学习细节。 1 作者对Redis的定义原文描述 1234567Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data str
+          
         </div>
       </a>
 
@@ -837,6 +668,182 @@
               <a href="/tags/2%E5%88%B7Redis/">#2刷Redis</a>
             
           </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" target="_self">
+          IDEA插件开发
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/IDEA%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 13:18" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/IDE/" class="category-chain-item">IDE</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Plugin/">#Plugin</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/18/VIM%E7%AC%94%E8%AE%B0/" target="_self">
+          VIM笔记
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/18/VIM%E7%AC%94%E8%AE%B0/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-18 09:40" pubdate>
+              2023-10-18
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/vim/" class="category-chain-item">vim</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E7%AC%94%E8%AE%B0/">#笔记</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/08/01/%E5%A4%9A%E6%A1%8C%E9%9D%A2%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83/" target="_self">
+          多桌面系统环境
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/08/01/%E5%A4%9A%E6%A1%8C%E9%9D%A2%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-08-01 20:03" pubdate>
+              2023-08-01
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
         
       </div>
     </article>
@@ -936,7 +943,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();

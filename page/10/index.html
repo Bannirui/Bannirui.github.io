@@ -65,7 +65,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -136,7 +136,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -148,7 +148,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
+              <a class="nav-link" href="/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -160,7 +160,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
+              <a class="nav-link" href="/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -172,7 +172,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/tags/">
+              <a class="nav-link" href="/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -184,7 +184,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/about/">
+              <a class="nav-link" href="/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -249,201 +249,6 @@
   <div class="row mx-auto index-card">
     
     
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/06/Redis-0x0e-intset/" target="_self">
-          <img src="/img/Redis-0x0e-intset.png" srcset="/img/loading.gif" lazyload alt="Redis-0x0e-intset">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/06/Redis-0x0e-intset/" target="_self">
-          Redis-0x0e-intset
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/04/06/Redis-0x0e-intset/" target="_self">
-        <div>
-          数据类型的编码方式。 1 数据结构12345678typedef struct intset &#123;    // 编码 整数数组中整数的大小编码(16bit\32bit\64bit)    uint32_t encoding;    // 长度 也就是intset集合的整数个数    uint32_t length;    // 实际存储整数的数组    int8_t contents[];
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-06 13:37" pubdate>
-              2023-04-06
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/03/Redis-0x0d-quicklist/" target="_self">
-          <img src="/img/Redis-0x0d-quicklist.png" srcset="/img/loading.gif" lazyload alt="Redis-0x0d-quicklist">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x0d-quicklist/" target="_self">
-          Redis-0x0d-quicklist
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/04/03/Redis-0x0d-quicklist/" target="_self">
-        <div>
-          数据类型的编码方式。 1 数据结构1.1 链表节点quicklistNode12345678910111213141516171819202122232425// 32 bytetypedef struct quicklistNode &#123;    // 前驱节点    struct quicklistNode *prev;    // 后继节点    struct quicklistNod
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:23" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/04/03/Redis-0x0c-t-zset/" target="_self">
-          Redis-0x0c-t_zset
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x0c-t-zset/" target="_self">
-        <div>
-          数据类型zset有序集合。 1 数据结构关系   数据类型 实现 编码方式 数据结构    列表OBJ_ZSET t_zset OBJ_ENCODING_SKIPLIST zskiplist     OBJ_ENCODING_ZIPLIST ziplist   在使用ziplist进行编码时，ziplist中两两挨着的entry用来表达zset中的一个元素，entry1用来存储zset元素的值，e
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-03 22:11" pubdate>
-              2023-04-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
@@ -455,7 +260,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x0b-t-set/" target="_self">
         <div>
-          数据类型Set集合。 1 数据结构关系   数据类型 实现 编码方式 数据结构    列表OBJ_SET t_set OBJ_ENCODING_INTSET intset     OBJ_ENCODING_HT dict     2 迭代器2.1 数据结构1234567891011// set集合迭代器typedef struct &#123;    // 维护redisObject实例    r
+          
         </div>
       </a>
 
@@ -516,7 +321,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x0a-t-list/" target="_self">
         <div>
-          数据类型List列表。 1 list列表 数据结构关系   数据类型 实现 编码方式 数据结构    列表OBJ_LIST t_list OBJ_ENCODING_QUICKLIST quicklist     OBJ_ENCODING_ZIPLIST ziplist     2 列表长度1234567891011121314/** * @brief 列表长度 语义是列表中元素的数量 *
+          
         </div>
       </a>
 
@@ -577,7 +382,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/04/03/Redis-0x09-t-string/" target="_self">
         <div>
-          数据类型String字符串。 1 string字符串 数据结构关系   数据类型 实现 编码方式 数据结构    字符串OBJ_STRING t_string OBJ_ENCODING_INT sds     OBJ_ENCODING_EMBSTR sds     OBJ_ENCODING_RAW sds   2 增2.1 set1234567891011121314151617181920212
+          
         </div>
       </a>
 
@@ -644,7 +449,7 @@
       
       <a class="index-excerpt " href="/2023/04/03/Redis-0x08-redisObject/" target="_self">
         <div>
-          数据类型和编码   1 数据结构1.1 数据结构图  1.2 type字段   数据类型 宏定义 值    字符串 OBJ_STRING 0   列表 OBJ_LIST 1   集合 OBJ_SET 2   有序集合 OBJ_ZSET 3   哈希表 OBJ_HASH 4   1.3 encoding字段   编码方式 宏定义 值     OBJ_ENCODING_RAW 0    OBJ_ENC
+          
         </div>
       </a>
 
@@ -705,7 +510,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/04/02/Redis-0x07-t-hash/" target="_self">
         <div>
-          数据类型Hash哈希表。 1 数据结构关系   数据类型 实现 编码方式 数据结构    哈希表OBJ_HASH t_hash OBJ_ENCODING_ZIPLIST ziplist     OBJ_ENCODING_HT dict     2 迭代器2.1 数据结构12345678910// redisObject数据类型是OBJ_HASH 迭代器typedef struct &#123;
+          
         </div>
       </a>
 
@@ -772,7 +577,7 @@
       
       <a class="index-excerpt " href="/2023/04/01/Redis-0x06-zipmap/" target="_self">
         <div>
-          数据类型的编码方式。 1 zipmap数据结构1.1 结构图  1.2 字段解释1.2.1 zipmap   字段 长度 语义    zmlen 1 byte zipmap实例中存储了多少个键值对，也就是entry的数量。   entry ? zipmap中存储的每个键值对。   end 1 byte zipmap的结束标识符。   1.2.2 entry   字段 长度 语义    len 1
+          
         </div>
       </a>
 
@@ -839,7 +644,7 @@
       
       <a class="index-excerpt " href="/2023/03/30/Redis-0x05-ziplist/" target="_self">
         <div>
-          数据类型的编码方式。 1 ziplist是什么1.1 结构从注释上可以看出ziplist结构如下。   1.2 字段解释   字段 长度 语义    zlbytes uint32_t 表示ziplist占用内存大小。   zltail uint32_t 表示最后一个entry相对ziplist的地址偏移量。   zllen uint16_t entry节点数量，16bit上限是2^16-1。数量&
+          
         </div>
       </a>
 
@@ -849,6 +654,207 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-03-30 20:50" pubdate>
               2023-03-30
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/03/29/Redis-0x04-sds/" target="_self">
+          <img src="/img/Redis-0x04-sds.png" srcset="/img/loading.gif" lazyload alt="Redis-0x04-sds">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/29/Redis-0x04-sds/" target="_self">
+          Redis-0x04-sds
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/03/29/Redis-0x04-sds/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-29 23:14" pubdate>
+              2023-03-29
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/03/29/Redis-0x03-dict/" target="_self">
+          <img src="/img/Redis-0x03-dict.png" srcset="/img/loading.gif" lazyload alt="Redis-0x03-dict">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/29/Redis-0x03-dict/" target="_self">
+          Redis-0x03-dict
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/03/29/Redis-0x03-dict/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-29 11:35" pubdate>
+              2023-03-29
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis-6-2/">#Redis@6.2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/03/24/Redis-0x02-list/" target="_self">
+          <img src="/img/Redis-0x02-list.png" srcset="/img/loading.gif" lazyload alt="Redis-0x02-list">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/03/24/Redis-0x02-list/" target="_self">
+          Redis-0x02-list
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2023/03/24/Redis-0x02-list/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-03-24 09:45" pubdate>
+              2023-03-24
             </time>
           </div>
         
@@ -980,7 +986,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();
