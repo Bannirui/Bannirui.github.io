@@ -2,7 +2,6 @@
 title: Hexo页脚显示站点运行时长
 date: 2023-11-09 08:35:29
 categories: Hexo
-tags: 
 ---
 
 > 在网站页脚上显示该站运行时长。
@@ -10,7 +9,7 @@ tags:
 1 js函数
 ---
 
-在`根目录\source\vvd_js\`路径下新建一个js文件`duration.js`，内容如下：
+在`根目录\source\js\`路径下新建一个js文件`duration.js`，内容如下：
 
 ```js
 !(function() {
@@ -49,13 +48,19 @@ tags:
 2 hexo配置
 ---
 
+根目录下_config.yml文件
+
 ```yaml
 skip_render:
-  - vvd_js/**
+  - js/**
 ```
+
+这样配置的目的是告诉hexo不要对js目录下的js文件进行渲染，直接将这个文件复制到public目录下
 
 3 fluid配置
 ---
+
+根目录下`_config.fluid.yml`文件
 
 ```yaml
 footer:
@@ -64,7 +69,7 @@ footer:
      <div>
        <span id="timeDate">载入天数...</span>
        <span id="times">载入时分秒...</span>
-       <script src="/vvd_js/duration.js"></script>
+       <script src="/js/duration.js"></script>
      </div>
   '
 
@@ -72,5 +77,12 @@ footer:
 
 4 效果
 ---
+
+```sh
+hexo clean
+hexo s
+
+hexo g -d
+```
 
 ![](Hexo页脚显示站点运行时长/2023_11_09-08-45-21.png)

@@ -5,7 +5,7 @@ categories: [ Hexo ]
 tags: [ Fluid主题升级 ]
 ---
 
-我之前的Fluid主题是通过git将[Fluid源码](https://github.com/fluid-dev/hexo-theme-fluid)克隆在`博客根目录/themes/`下的，这样的方式通过根源码绑定，对升级不友好。
+我之前的Fluid主题是通过git将[Fluid源码](https://github.com/fluid-dev/hexo-theme-fluid)克隆在`博客根目录/themes/`下的，这样的方式跟源码耦合，对升级不友好。
 
 先将Hexo和Fluid的配置文件托管在[github](https://github.com/Bannirui/os_script.git)，然后在项目下通过`ln -s`软链接方式使用配置文件。
 
