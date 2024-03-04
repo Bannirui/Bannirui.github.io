@@ -1,5 +1,5 @@
 ---
-title: Java源码-编译openjdk
+title: Java源码-0x00-编译openjdk
 date: 2023-03-10 23:18:14
 category_bar: true
 categories:
@@ -44,13 +44,16 @@ tags:
 * Ubuntu
 
   * Ubuntu 22.04.3 LTS
+
   * libcups2-dev
+
   * libasound2-dev
   
 * ArchLinux
+
   * 6.4.10-arch1-1 (64-bit)
-  
-  * {% post_link Java源码-编译openjdk yay%}
+
+  * yay
   
   * debtap
   
@@ -68,7 +71,7 @@ tags:
     sudo debtap jdk-15_linux-x64_bin.deb
     ```
   
-    ![](Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png)
+    ![](./Java源码-0x00-编译openjdk/image-20230821163358689.png)
   
     ```shell
     sudo pacman -U jdk-15-15-1-x86_64.pkg.tar.zst
@@ -78,7 +81,7 @@ tags:
 
 ###### 1.2.2.1 requirement
 
-![](Java源码-编译openjdk/image-20230810163733538.png)
+![](./Java源码-0x00-编译openjdk/image-20230810163733538.png)
 
 https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
 
@@ -111,11 +114,11 @@ https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
 
 shell scripts for building
 
-![](Java源码-编译openjdk/image-20230810173201297.png)
+![](./Java源码-0x00-编译openjdk/image-20230810173201297.png)
 
 ##### 1.3.1 字符集修改
 
-![](Java源码-编译openjdk/202211212308471.png)
+![](./Java源码-0x00-编译openjdk/202211212308471.png)
 
 ##### 1.3.2 配置
 
@@ -245,41 +248,38 @@ make CONF=linux-x86_64-server-slowdebug
 
 #### 2.1 导入Clion
 
-![](Java源码-编译openjdk/202211192124928.png)
+![](./Java源码-0x00-编译openjdk/202211192124928.png)
 
-![](Java源码-编译openjdk/image-20230707151821394.png)
+![](./Java源码-0x00-编译openjdk/image-20230707151821394.png)
 
 #### 2.2 源码目录
 
-![](Java源码-编译openjdk/202211192127851.png)
-
+![](./Java源码-0x00-编译openjdk/202211192127851.png)
 
 
 设置到项目根目录
 
-![](Java源码-编译openjdk/image-20230707152911646.png)
+![](./Java源码-0x00-编译openjdk/image-20230707152911646.png)
 
 #### 2.3 配置
 
 ##### 2.3.1 build
 
-![](Java源码-编译openjdk/202211192135626.png)
+![](./Java源码-0x00-编译openjdk/202211192135626.png)
 
 ##### 2.3.2 clean
 
-![](Java源码-编译openjdk/image-20230707144648495.png)
+![](./Java源码-0x00-编译openjdk/image-20230707144648495.png)
 
 #### 2.4 构建目标
 
-![](Java源码-编译openjdk/202211192136119.png)
+![](./Java源码-0x00-编译openjdk/202211192136119.png)
 
 #### 2.5 LLDB修复
 
 ```shell
 vim ~/.lldbinit
 ```
-
-
 
 ```she
 br set -n main -o true -G true -C "pro hand -p true -s false SIGSEGV SIGBUS"
@@ -289,7 +289,7 @@ br set -n main -o true -G true -C "pro hand -p true -s false SIGSEGV SIGBUS"
 
 ##### 2.6.1 Jdk版本
 
-![](Java源码-编译openjdk/202211192145954.png)
+![](./Java源码-0x00-编译openjdk/202211192145954.png)
 
 ##### 2.6.2 Java文件
 
@@ -297,7 +297,7 @@ br set -n main -o true -G true -C "pro hand -p true -s false SIGSEGV SIGBUS"
 
 这种方式几乎不用，因为我觉得class字节码文件文.java源码文件放在一起太丑了。
 
-![](Java源码-编译openjdk/202211192158613.png)
+![](./Java源码-0x00-编译openjdk/202211192158613.png)
 
 ###### 2.6.2.2 调试Class文件
 
@@ -305,7 +305,7 @@ br set -n main -o true -G true -C "pro hand -p true -s false SIGSEGV SIGBUS"
 
 但是这样的前提最好是保证java和javac的可执行文件版本一致，所以单独新建一个Java项目，使用当前构建出来的jdk作为sdk，指定javac的output目录，将调试流程固化。也就是下面段落3的内容。
 
-![](Java源码-编译openjdk/image-20230505095007865.png)
+![](./Java源码-0x00-编译openjdk/image-20230505095007865.png)
 
 ### 3 IDea调试
 
@@ -315,7 +315,7 @@ br set -n main -o true -G true -C "pro hand -p true -s false SIGSEGV SIGBUS"
 
 [Git地址](https://github.com/Bannirui/openjdk15-debug.git)
 
-![](Java源码-编译openjdk/202302021319015.png)
+![](./Java源码-0x00-编译openjdk/202302021319015.png)
 
 注意项
 
@@ -324,13 +324,12 @@ br set -n main -o true -G true -C "pro hand -p true -s false SIGSEGV SIGBUS"
 
 #### 3.2 新建SDK
 
-![](Java源码-编译openjdk/202211192236482.png)
+![](./Java源码-0x00-编译openjdk/202211192236482.png)
 
 #### 3.3 项目使用SDK
 
-![](Java源码-编译openjdk/202211192237161.png)
+![](./Java源码-0x00-编译openjdk/202211192237161.png)
 
 #### 3.4 项目依赖
 
-![](Java源码-编译openjdk/202211192238493.png)
-
+![](./Java源码-0x00-编译openjdk/202211192238493.png)
