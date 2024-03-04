@@ -18,44 +18,44 @@
   
     <meta name="description" content="1 Sdk编译前言  大于openjdk11u的源码中都含有CompileCommands.gmk，修改即可解决openjdk在Clion中引入头文件问题。 Java源码换行注释后重新编译一下就行，即可解决class与src对应不上问题。  1.1 源码Git地址，分支是jdk15-study。 1.2 系统工具1.2.1 platform MacOS  macOS Big Sur 11.5.2">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java源码-编译openjdk">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/index.html">
+<meta property="og:title" content="Java源码-0x00-编译openjdk">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/index.html">
 <meta property="og:site_name" content="毛茸茸猫子">
 <meta property="og:description" content="1 Sdk编译前言  大于openjdk11u的源码中都含有CompileCommands.gmk，修改即可解决openjdk在Clion中引入头文件问题。 Java源码换行注释后重新编译一下就行，即可解决class与src对应不上问题。  1.1 源码Git地址，分支是jdk15-study。 1.2 系统工具1.2.1 platform MacOS  macOS Big Sur 11.5.2">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230810163733538.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230810173201297.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211212308471.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192118571.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230810173014328.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821165651446.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192124928.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230707151821394.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192127851.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230707152911646.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192135626.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230707144648495.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192136119.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192145954.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192158613.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230505095007865.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202302021319015.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192236482.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192237161.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192238493.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230810163733538.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230810173201297.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211212308471.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192118571.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230810173014328.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230821165651446.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192124928.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230707151821394.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192127851.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230707152911646.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192135626.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230707144648495.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192136119.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192145954.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192158613.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230505095007865.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202302021319015.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192236482.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192237161.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192238493.png">
 <meta property="article:published_time" content="2023-03-10T15:18:14.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:39:42.826Z">
+<meta property="article:modified_time" content="2024-03-04T05:21:05.865Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Java@15">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Java源码-编译openjdk - 毛茸茸猫子</title>
+  <title>Java源码-0x00-编译openjdk - 毛茸茸猫子</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -96,7 +96,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":true,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":["home"]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,7 +245,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Java源码-编译openjdk"></span>
+            <span id="subtitle">Java源码-0x00-编译openjdk</span>
           
         </div>
 
@@ -360,6 +360,15 @@
     
       
       
+        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/" title="Java源码-0x00-编译openjdk"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Java源码-0x00-编译openjdk</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" title="Java源码-AQS"
            class="list-group-item list-group-item-action
            ">
@@ -448,15 +457,6 @@
         </a>
       
     
-      
-      
-        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/" title="Java源码-编译openjdk"
-           class="list-group-item list-group-item-action
-           active">
-          <span class="category-post">Java源码-编译openjdk</span>
-        </a>
-      
-    
   </div>
 
         
@@ -475,7 +475,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Java源码-编译openjdk</h1>
+            <h1 id="seo-header">Java源码-0x00-编译openjdk</h1>
             
             
               <div class="markdown-body">
@@ -509,16 +509,19 @@
 </li>
 <li><p>Ubuntu</p>
 <ul>
-<li>Ubuntu 22.04.3 LTS</li>
-<li>libcups2-dev</li>
-<li>libasound2-dev</li>
+<li><p>Ubuntu 22.04.3 LTS</p>
+</li>
+<li><p>libcups2-dev</p>
+</li>
+<li><p>libasound2-dev</p>
+</li>
 </ul>
 </li>
 <li><p>ArchLinux</p>
 <ul>
 <li><p>6.4.10-arch1-1 (64-bit)</p>
 </li>
-<li><a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/" title="Java源码-编译openjdk">yay</a>
+<li><p>yay</p>
 </li>
 <li><p>debtap</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss debtap<br>yay -S debtap<br><br>debtap --version<br></code></pre></td></tr></table></figure>
@@ -526,13 +529,13 @@
 <li><p>jdk15</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo debtap -u<br>sudo debtap jdk-15_linux-x64_bin.deb<br></code></pre></td></tr></table></figure>
 
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230821163358689.png" srcset="/img/loading.gif" lazyload class="">
 
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo pacman -U jdk-15-15-1-x86_64.pkg.tar.zst<br></code></pre></td></tr></table></figure></li>
 </ul>
 </li>
 </ul>
-<h5 id="1-2-2-Boot-JDK"><a href="#1-2-2-Boot-JDK" class="headerlink" title="1.2.2 Boot JDK"></a>1.2.2 Boot JDK</h5><h6 id="1-2-2-1-requirement"><a href="#1-2-2-1-requirement" class="headerlink" title="1.2.2.1 requirement"></a>1.2.2.1 requirement</h6><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230810163733538.png" srcset="/img/loading.gif" lazyload class="">
+<h5 id="1-2-2-Boot-JDK"><a href="#1-2-2-Boot-JDK" class="headerlink" title="1.2.2 Boot JDK"></a>1.2.2 Boot JDK</h5><h6 id="1-2-2-1-requirement"><a href="#1-2-2-1-requirement" class="headerlink" title="1.2.2.1 requirement"></a>1.2.2.1 requirement</h6><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230810163733538.png" srcset="/img/loading.gif" lazyload class="">
 
 <p><a target="_blank" rel="noopener" href="https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html">https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html</a></p>
 <h6 id="1-2-2-2-install"><a href="#1-2-2-2-install" class="headerlink" title="1.2.2.2 install"></a>1.2.2.2 install</h6><ul>
@@ -548,9 +551,9 @@
 </li>
 </ul>
 <h4 id="1-3-编译"><a href="#1-3-编译" class="headerlink" title="1.3 编译"></a>1.3 编译</h4><p>shell scripts for building</p>
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230810173201297.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230810173201297.png" srcset="/img/loading.gif" lazyload class="">
 
-<h5 id="1-3-1-字符集修改"><a href="#1-3-1-字符集修改" class="headerlink" title="1.3.1 字符集修改"></a>1.3.1 字符集修改</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211212308471.png" srcset="/img/loading.gif" lazyload class="">
+<h5 id="1-3-1-字符集修改"><a href="#1-3-1-字符集修改" class="headerlink" title="1.3.1 字符集修改"></a>1.3.1 字符集修改</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211212308471.png" srcset="/img/loading.gif" lazyload class="">
 
 <h5 id="1-3-2-配置"><a href="#1-3-2-配置" class="headerlink" title="1.3.2 配置"></a>1.3.2 配置</h5><h6 id="1-3-2-1-macos"><a href="#1-3-2-1-macos" class="headerlink" title="1.3.2.1 macos"></a>1.3.2.1 macos</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">bash ./configure \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home \<br>--with-target-bits=64 \<br>--disable-warnings-as-errors \<br>--enable-dtrace<br></code></pre></td></tr></table></figure>
 
@@ -571,15 +574,15 @@
 
 <h5 id="1-3-4-验证编译结果"><a href="#1-3-4-验证编译结果" class="headerlink" title="1.3.4 验证编译结果"></a>1.3.4 验证编译结果</h5><h6 id="1-3-4-1-macos"><a href="#1-3-4-1-macos" class="headerlink" title="1.3.4.1 macos"></a>1.3.4.1 macos</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/macosx-x86_64-server-slowdebug/jdk/bin/java -version<br></code></pre></td></tr></table></figure>
 
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192118571.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192118571.png" srcset="/img/loading.gif" lazyload class="">
 
 <h6 id="1-3-4-2-ubuntu"><a href="#1-3-4-2-ubuntu" class="headerlink" title="1.3.4.2 ubuntu"></a>1.3.4.2 ubuntu</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/linux-x86_64-server-slowdebug/jdk/bin/java --version<br></code></pre></td></tr></table></figure>
 
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230810173014328.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230810173014328.png" srcset="/img/loading.gif" lazyload class="">
 
 <h6 id="1-3-4-3-ArchLinux"><a href="#1-3-4-3-ArchLinux" class="headerlink" title="1.3.4.3 ArchLinux"></a>1.3.4.3 ArchLinux</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/linux-x86_64-server-slowdebug/jdk/bin/java --version<br></code></pre></td></tr></table></figure>
 
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230821165651446.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230821165651446.png" srcset="/img/loading.gif" lazyload class="">
 
 <h5 id="1-3-5-重新编译"><a href="#1-3-5-重新编译" class="headerlink" title="1.3.5 重新编译"></a>1.3.5 重新编译</h5><p>比如在jdk源码中进行了注释，调试断点错行了，就需要重新编译。</p>
 <h6 id="1-3-5-1-macos"><a href="#1-3-5-1-macos" class="headerlink" title="1.3.5.1 macos"></a>1.3.5.1 macos</h6><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=macosx-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
@@ -590,54 +593,49 @@
 
 <h3 id="2-Clion调试"><a href="#2-Clion调试" class="headerlink" title="2 Clion调试"></a>2 Clion调试</h3><p>为什么不是使用clion直接open源码根目录，因为那样的方式在clion中代码跳转不了。</p>
 <p>如下方式方便跳转阅读代码。</p>
-<h4 id="2-1-导入Clion"><a href="#2-1-导入Clion" class="headerlink" title="2.1 导入Clion"></a>2.1 导入Clion</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192124928.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="2-1-导入Clion"><a href="#2-1-导入Clion" class="headerlink" title="2.1 导入Clion"></a>2.1 导入Clion</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192124928.png" srcset="/img/loading.gif" lazyload class="">
 
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230707151821394.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230707151821394.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="2-2-源码目录"><a href="#2-2-源码目录" class="headerlink" title="2.2 源码目录"></a>2.2 源码目录</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192127851.png" srcset="/img/loading.gif" lazyload class="">
-
+<h4 id="2-2-源码目录"><a href="#2-2-源码目录" class="headerlink" title="2.2 源码目录"></a>2.2 源码目录</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192127851.png" srcset="/img/loading.gif" lazyload class="">
 
 
 <p>设置到项目根目录</p>
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230707152911646.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230707152911646.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="2-3-配置"><a href="#2-3-配置" class="headerlink" title="2.3 配置"></a>2.3 配置</h4><h5 id="2-3-1-build"><a href="#2-3-1-build" class="headerlink" title="2.3.1 build"></a>2.3.1 build</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192135626.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="2-3-配置"><a href="#2-3-配置" class="headerlink" title="2.3 配置"></a>2.3 配置</h4><h5 id="2-3-1-build"><a href="#2-3-1-build" class="headerlink" title="2.3.1 build"></a>2.3.1 build</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192135626.png" srcset="/img/loading.gif" lazyload class="">
 
-<h5 id="2-3-2-clean"><a href="#2-3-2-clean" class="headerlink" title="2.3.2 clean"></a>2.3.2 clean</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230707144648495.png" srcset="/img/loading.gif" lazyload class="">
+<h5 id="2-3-2-clean"><a href="#2-3-2-clean" class="headerlink" title="2.3.2 clean"></a>2.3.2 clean</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230707144648495.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="2-4-构建目标"><a href="#2-4-构建目标" class="headerlink" title="2.4 构建目标"></a>2.4 构建目标</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192136119.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="2-4-构建目标"><a href="#2-4-构建目标" class="headerlink" title="2.4 构建目标"></a>2.4 构建目标</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192136119.png" srcset="/img/loading.gif" lazyload class="">
 
 <h4 id="2-5-LLDB修复"><a href="#2-5-LLDB修复" class="headerlink" title="2.5 LLDB修复"></a>2.5 LLDB修复</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim ~/.lldbinit<br></code></pre></td></tr></table></figure>
 
-
-
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs she">br set -n main -o true -G true -C &quot;pro hand -p true -s false SIGSEGV SIGBUS&quot;<br></code></pre></td></tr></table></figure>
 
-<h4 id="2-6-调试面板配置"><a href="#2-6-调试面板配置" class="headerlink" title="2.6 调试面板配置"></a>2.6 调试面板配置</h4><h5 id="2-6-1-Jdk版本"><a href="#2-6-1-Jdk版本" class="headerlink" title="2.6.1 Jdk版本"></a>2.6.1 Jdk版本</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192145954.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="2-6-调试面板配置"><a href="#2-6-调试面板配置" class="headerlink" title="2.6 调试面板配置"></a>2.6 调试面板配置</h4><h5 id="2-6-1-Jdk版本"><a href="#2-6-1-Jdk版本" class="headerlink" title="2.6.1 Jdk版本"></a>2.6.1 Jdk版本</h5><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192145954.png" srcset="/img/loading.gif" lazyload class="">
 
 <h5 id="2-6-2-Java文件"><a href="#2-6-2-Java文件" class="headerlink" title="2.6.2 Java文件"></a>2.6.2 Java文件</h5><h6 id="2-6-2-1-编译Java代码"><a href="#2-6-2-1-编译Java代码" class="headerlink" title="2.6.2.1 编译Java代码"></a>2.6.2.1 编译Java代码</h6><p>这种方式几乎不用，因为我觉得class字节码文件文.java源码文件放在一起太丑了。</p>
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192158613.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192158613.png" srcset="/img/loading.gif" lazyload class="">
 
 <h6 id="2-6-2-2-调试Class文件"><a href="#2-6-2-2-调试Class文件" class="headerlink" title="2.6.2.2 调试Class文件"></a>2.6.2.2 调试Class文件</h6><p>我几乎都用这种方式，直接提供javac编译好的class字节码文件。</p>
 <p>但是这样的前提最好是保证java和javac的可执行文件版本一致，所以单独新建一个Java项目，使用当前构建出来的jdk作为sdk，指定javac的output目录，将调试流程固化。也就是下面段落3的内容。</p>
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/image-20230505095007865.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/image-20230505095007865.png" srcset="/img/loading.gif" lazyload class="">
 
 <h3 id="3-IDea调试"><a href="#3-IDea调试" class="headerlink" title="3 IDea调试"></a>3 IDea调试</h3><p>在调试Jdk源码过程中可能需要追踪c&#x2F;cpp甚至汇编指令，方便起见新建项目不需要package路径。</p>
 <h4 id="3-1-新建项目"><a href="#3-1-新建项目" class="headerlink" title="3.1 新建项目"></a>3.1 新建项目</h4><p><a target="_blank" rel="noopener" href="https://github.com/Bannirui/openjdk15-debug.git">Git地址</a></p>
-<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202302021319015.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202302021319015.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>注意项</p>
 <ul>
 <li>Build system选择Intellij</li>
 <li>JDK选择自己编译好的SDK</li>
 </ul>
-<h4 id="3-2-新建SDK"><a href="#3-2-新建SDK" class="headerlink" title="3.2 新建SDK"></a>3.2 新建SDK</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192236482.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="3-2-新建SDK"><a href="#3-2-新建SDK" class="headerlink" title="3.2 新建SDK"></a>3.2 新建SDK</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192236482.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="3-3-项目使用SDK"><a href="#3-3-项目使用SDK" class="headerlink" title="3.3 项目使用SDK"></a>3.3 项目使用SDK</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192237161.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="3-3-项目使用SDK"><a href="#3-3-项目使用SDK" class="headerlink" title="3.3 项目使用SDK"></a>3.3 项目使用SDK</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192237161.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="3-4-项目依赖"><a href="#3-4-项目依赖" class="headerlink" title="3.4 项目依赖"></a>3.4 项目依赖</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-%E7%BC%96%E8%AF%91openjdk/202211192238493.png" srcset="/img/loading.gif" lazyload class="">
-
-
+<h4 id="3-4-项目依赖"><a href="#3-4-项目依赖" class="headerlink" title="3.4 项目依赖"></a>3.4 项目依赖</h4><img src="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/202211192238493.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -691,8 +689,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Java源码-编译openjdk</div>
-      <div>https://bannirui.github.io/2023/03/10/Java源码-编译openjdk/</div>
+      <div>Java源码-0x00-编译openjdk</div>
+      <div>https://bannirui.github.io/2023/03/10/Java源码-0x00-编译openjdk/</div>
     </div>
     <div class="license-meta">
       
@@ -770,7 +768,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '46a6eac0e826519e1e73af43768fb51f'
+            id: '2534eb0dfaf7010d0a8dbe054f9edad7'
           }
         )
         var gitalk = new Gitalk(options);
@@ -917,7 +915,7 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
 
   <script>
-    NProgress.configure({"showSpinner":true,"trickleSpeed":100})
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
     NProgress.start()
     window.addEventListener('load', function() {
       NProgress.done();
@@ -930,21 +928,6 @@
 <script  src="/js/events.js" ></script>
 <script  src="/js/plugins.js" ></script>
 
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
 
 
 

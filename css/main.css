@@ -562,7 +562,7 @@ sup > a::before,
   padding-right: 1rem !important;
 }
 #nprogress .bar {
-  height: 3px !important;
+  height: 2px !important;
   background-color: #29d !important;
 }
 #nprogress .peg {
