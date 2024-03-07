@@ -16,26 +16,24 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 类图  2 构造方法123456789101112131415161718192021222324&#x2F;&#x2F; LinkedBlockingQueue.java&#x2F;&#x2F; take锁    private final ReentrantLock takeLock &#x3D; new ReentrantLock();    &#x2F;&#x2F; put锁    private final ReentrantLock putLock">
+    <meta name="description" content="整体计划是将Java的源码事无巨细地过一遍  一是弥补一下认知缺陷  二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难  在此过程中完善对计算机OS的知识体系建立   难度很大，过程很大，工程很大，所以能否完结也是待定 阅读顺序   1 java.lang    2 java.util    3 java.util.concurrent    4">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java源码-LinkedBlockingQueue">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/index.html">
+<meta property="og:title" content="Java源码-0x01-源码阅读清单">
+<meta property="og:url" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/index.html">
 <meta property="og:site_name" content="毛茸茸猫子">
-<meta property="og:description" content="1 类图  2 构造方法123456789101112131415161718192021222324&#x2F;&#x2F; LinkedBlockingQueue.java&#x2F;&#x2F; take锁    private final ReentrantLock takeLock &#x3D; new ReentrantLock();    &#x2F;&#x2F; put锁    private final ReentrantLock putLock">
+<meta property="og:description" content="整体计划是将Java的源码事无巨细地过一遍  一是弥补一下认知缺陷  二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难  在此过程中完善对计算机OS的知识体系建立   难度很大，过程很大，工程很大，所以能否完结也是待定 阅读顺序   1 java.lang    2 java.util    3 java.util.concurrent    4">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/202211221522904.png">
-<meta property="article:published_time" content="2023-03-11T05:48:19.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:40:01.773Z">
+<meta property="article:published_time" content="2024-03-07T04:19:28.000Z">
+<meta property="article:modified_time" content="2024-03-07T05:09:24.076Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Java@15">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/202211221522904.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Java源码-LinkedBlockingQueue - 毛茸茸猫子</title>
+  <title>Java源码-0x01-源码阅读清单 - 毛茸茸猫子</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -225,7 +223,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle">Java源码-LinkedBlockingQueue</span>
+            <span id="subtitle">Java源码-0x01-源码阅读清单</span>
           
         </div>
 
@@ -236,8 +234,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-11 13:48" pubdate>
-          2023年3月11日 下午
+        <time datetime="2024-03-07 12:19" pubdate>
+          2024年3月7日 中午
         </time>
       </span>
     
@@ -248,7 +246,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          644 字
+          175 字
         
       </span>
     
@@ -259,7 +257,7 @@
         
         
         
-          6 分钟
+          2 分钟
         
       </span>
     
@@ -351,7 +349,7 @@
       
         <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="Java源码-0x01-源码阅读清单"
            class="list-group-item list-group-item-action
-           ">
+           active">
           <span class="category-post">Java源码-0x01-源码阅读清单</span>
         </a>
       
@@ -396,7 +394,7 @@
       
         <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" title="Java源码-LinkedBlockingQueue"
            class="list-group-item list-group-item-action
-           active">
+           ">
           <span class="category-post">Java源码-LinkedBlockingQueue</span>
         </a>
       
@@ -473,56 +471,425 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Java源码-LinkedBlockingQueue</h1>
+            <h1 id="seo-header">Java源码-0x01-源码阅读清单</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="1-类图"><a href="#1-类图" class="headerlink" title="1 类图"></a>1 类图</h2><img src="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/202211221522904.png" srcset="/img/loading.gif" lazyload class="">
-
-<h2 id="2-构造方法"><a href="#2-构造方法" class="headerlink" title="2 构造方法"></a>2 构造方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// LinkedBlockingQueue.java</span><br><br><span class="hljs-comment">// take锁</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">takeLock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReentrantLock</span>();<br>    <br><span class="hljs-comment">// put锁</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">putLock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReentrantLock</span>();<br>    <br><span class="hljs-keyword">public</span> <span class="hljs-title function_">LinkedBlockingQueue</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-built_in">this</span>(Integer.MAX_VALUE);<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Creates a &#123;<span class="hljs-doctag">@code</span> LinkedBlockingQueue&#125; with the given (fixed) capacity.</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> capacity the capacity of this queue</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@throws</span> IllegalArgumentException if &#123;<span class="hljs-doctag">@code</span> capacity&#125; is not greater</span><br><span class="hljs-comment">     *         than zero</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">LinkedBlockingQueue</span><span class="hljs-params">(<span class="hljs-type">int</span> capacity)</span> &#123;<br>        <span class="hljs-keyword">if</span> (capacity &lt;= <span class="hljs-number">0</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>();<br>        <span class="hljs-built_in">this</span>.capacity = capacity;<br>        last = head = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Node</span>&lt;E&gt;(<span class="hljs-literal">null</span>); <span class="hljs-comment">// 初始化单链表 头节点跟尾节点都是哑节点</span><br>    &#125;<br></code></pre></td></tr></table></figure>
-
-<h2 id="3-API"><a href="#3-API" class="headerlink" title="3 API"></a>3 API</h2><h3 id="3-1-put"><a href="#3-1-put" class="headerlink" title="3.1 put"></a>3.1 put</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// LinkedBlockingQueue.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">put</span><span class="hljs-params">(E e)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>        <span class="hljs-keyword">if</span> (e == <span class="hljs-literal">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullPointerException</span>();<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> c;<br>        <span class="hljs-keyword">final</span> Node&lt;E&gt; node = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Node</span>&lt;E&gt;(e); <span class="hljs-comment">// 单链表节点</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">putLock</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.putLock; <span class="hljs-comment">// 竞争put锁</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-type">AtomicInteger</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.count;<br>        putLock.lockInterruptibly();<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">/*</span><br><span class="hljs-comment">             * Note that count is used in wait guard even though it is</span><br><span class="hljs-comment">             * not protected by lock. This works because count can</span><br><span class="hljs-comment">             * only decrease at this point (all other puts are shut</span><br><span class="hljs-comment">             * out by lock), and we (or some other waiting put) are</span><br><span class="hljs-comment">             * signalled if it ever changes from capacity. Similarly</span><br><span class="hljs-comment">             * for all other uses of count in other wait guards.</span><br><span class="hljs-comment">             */</span><br>            <span class="hljs-keyword">while</span> (count.get() == <span class="hljs-built_in">this</span>.capacity) &#123;<br>                notFull.await(); <span class="hljs-comment">// 队列满了不能再放元素了 将put线程阻塞在条件队列上 等待有线程take元素打破条件唤醒阻塞的put线程</span><br>            &#125;<br>            <span class="hljs-built_in">this</span>.enqueue(node); <span class="hljs-comment">// 元素入队</span><br>            c = count.getAndIncrement(); <span class="hljs-comment">// 元素入队完更新元素数量</span><br>            <span class="hljs-keyword">if</span> (c + <span class="hljs-number">1</span> &lt; capacity)<br>                notFull.signal(); <span class="hljs-comment">// 队列还没满 尝试唤醒曾经因为队列满了而阻塞等待的put线程</span><br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            putLock.unlock();<br>        &#125;<br>        <span class="hljs-keyword">if</span> (c == <span class="hljs-number">0</span>)<br>            <span class="hljs-built_in">this</span>.signalNotEmpty(); <span class="hljs-comment">// 队列已经至少有一个元素了 尝试唤醒曾经因为队列空了而阻塞等待的take线程</span><br>    &#125;<br></code></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// LinkedBlockingQueue.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">enqueue</span><span class="hljs-params">(Node&lt;E&gt; node)</span> &#123; <span class="hljs-comment">// 元素入队 操作单链表</span><br>        <span class="hljs-comment">// assert putLock.isHeldByCurrentThread();</span><br>        <span class="hljs-comment">// assert last.next == null;</span><br>        last = last.next = node;<br>    &#125;<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-2-take"><a href="#3-2-take" class="headerlink" title="3.2 take"></a>3.2 take</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// LinkedBlockingQueue.java</span><br> <span class="hljs-keyword">public</span> E <span class="hljs-title function_">take</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>        <span class="hljs-keyword">final</span> E x;<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> c;<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">AtomicInteger</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.count;<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">takeLock</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.takeLock; <span class="hljs-comment">// take锁</span><br>        takeLock.lockInterruptibly(); <span class="hljs-comment">// 竞争take锁</span><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">while</span> (count.get() == <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-built_in">this</span>.notEmpty.await(); <span class="hljs-comment">// 队列为空 让take线程阻塞在take锁的条件队列上 等待有其他线程put元素后唤醒这个take线程</span><br>            &#125;<br>            x = dequeue(); <span class="hljs-comment">// 元素出队操作</span><br>            c = count.getAndDecrement(); <span class="hljs-comment">// 出队完成 更新队列中元素的数量</span><br>            <span class="hljs-keyword">if</span> (c &gt; <span class="hljs-number">1</span>)<br>                notEmpty.signal(); <span class="hljs-comment">// 取完这个元素之后队列中依然还有元素可以取 尝试唤醒之前因为队列为空而阻塞的take线程</span><br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            takeLock.unlock();<br>        &#125;<br>        <span class="hljs-keyword">if</span> (c == capacity)<br>            signalNotFull(); <span class="hljs-comment">// 取完这个元素之后队列肯定就不是满的 尝试唤醒之前因为队列满而阻塞的put线程</span><br>        <span class="hljs-keyword">return</span> x;<br>    &#125;<br></code></pre></td></tr></table></figure>
-
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> E <span class="hljs-title function_">dequeue</span><span class="hljs-params">()</span> &#123; <span class="hljs-comment">// 元素出队 操作单链表</span><br>        <span class="hljs-comment">// assert takeLock.isHeldByCurrentThread();</span><br>        <span class="hljs-comment">// assert head.item == null;</span><br>        Node&lt;E&gt; h = head; <span class="hljs-comment">// 单链表头节点</span><br>        Node&lt;E&gt; first = h.next; <span class="hljs-comment">// 出队节点</span><br>        h.next = h; <span class="hljs-comment">// help GC</span><br>        head = first;<br>        <span class="hljs-type">E</span> <span class="hljs-variable">x</span> <span class="hljs-operator">=</span> first.item;<br>        first.item = <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">return</span> x;<br>    &#125;<br></code></pre></td></tr></table></figure>
-
-<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h2><table>
-<thead>
-<tr>
-<th></th>
-<th>LinkedBlockingQueue</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>单链表</td>
-</tr>
-<tr>
-<td>是否有界</td>
-<td>是，可以不显示指定容量，默认值Integer.MAX_VALUE</td>
-</tr>
-<tr>
-<td>锁实现</td>
-<td>ReentrantLock</td>
-</tr>
-<tr>
-<td>锁数量</td>
-<td>2</td>
-</tr>
-<tr>
-<td>线程阻塞机制</td>
-<td>ReentrantLock条件队列阻塞&#x2F;通知唤醒</td>
-</tr>
-<tr>
-<td>生产者消费者用锁</td>
-<td>生产者使用put锁操作链表尾，消费者使用take锁操作链表头</td>
-</tr>
-</tbody></table>
+                <p>整体计划是将Java的源码事无巨细地过一遍</p>
+<ul>
+<li><p>一是弥补一下认知缺陷</p>
+</li>
+<li><p>二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难</p>
+</li>
+<li><p>在此过程中完善对计算机OS的知识体系建立</p>
+</li>
+</ul>
+<p>难度很大，过程很大，工程很大，所以能否完结也是待定</p>
+<h3 id="阅读顺序"><a href="#阅读顺序" class="headerlink" title="阅读顺序"></a>阅读顺序</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#1">1 java.lang</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#2">2 java.util</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#3">3 java.util.concurrent</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#4">4 java.util.concurrent.atomic</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#5">5 java.lang.reflect</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#6">6 java.lang.annotation</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#7">7 java.util.concurrent.locks</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#8">8 java.io</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#9">9 java.nio</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#10">10 java.sql</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#11">11 java.net</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#12">12 java.math</a></p>
+</li>
+</ul>
+<h4 id="1-java-lang"><a href="#1-java-lang" class="headerlink" title="1 java.lang"></a><a id="1">1 java.lang</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> </p>
+<a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/" title="Java源码-0x02-Object">Object</a>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+String</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractStringBuilder</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+StringBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+StringBuilder</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Boolean</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Byte</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Double</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Float</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Integer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Long</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Short</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Thread</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ThreadLocal</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Enum</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Throwable</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Error</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Exception</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Class</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ClassLoader</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Compiler</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+System</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Package</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Void</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Number</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Math</p>
+</li>
+</ul>
+<h4 id="2-java-util"><a href="#2-java-util" class="headerlink" title="2 java.util"></a><a id="2">2 java.util</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+AbstractList</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractSet </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ArrayList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedList</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+HashMap </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Hashtable</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+HashSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedHashMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedHashSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+TreeMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+TreeSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Vector</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Queue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Stack</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SortedMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SortedSet </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Collections</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Arrays</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Comparator</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Iterator</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Base64 </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Date</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+EventListener</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Random </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SubList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Timer </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+UUID </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+WeakHashMap</p>
+</li>
+</ul>
+<h4 id="3-java-util-concurrent"><a href="#3-java-util-concurrent" class="headerlink" title="3 java.util.concurrent"></a><a id="3">3 java.util.concurrent</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+ConcurrentHashMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Executor</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractExecutorService </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ExecutorService </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ThreadPoolExecutor</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BlockingQueue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractQueuedSynchronizer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CountDownLatch</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+FutureTask</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Semaphore</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CyclicBarrier</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CopyOnWriteArrayList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SynchronousQueue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BlockingDeque </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Callable</p>
+</li>
+</ul>
+<h4 id="4-java-util-concurrent-atomic"><a href="#4-java-util-concurrent-atomic" class="headerlink" title="4 java.util.concurrent.atomic"></a><a id="4">4 java.util.concurrent.atomic</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+AtomicBoolean</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicInteger</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicLong </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicReference</p>
+</li>
+</ul>
+<h4 id="5-java-lang-reflect"><a href="#5-java-lang-reflect" class="headerlink" title="5 java.lang.reflect"></a><a id="5">5 java.lang.reflect</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Field</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Method</p>
+</li>
+</ul>
+<h4 id="6-java-lang-annotation"><a href="#6-java-lang-annotation" class="headerlink" title="6 java.lang.annotation"></a><a id="6">6 java.lang.annotation</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Annotation</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Target</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Inherited</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Retention</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Documented</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ElementType</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Native </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Repeatable</p>
+</li>
+</ul>
+<h4 id="7-java-util-concurrent-locks"><a href="#7-java-util-concurrent-locks" class="headerlink" title="7 java.util.concurrent.locks"></a><a id="7">7 java.util.concurrent.locks</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Lock </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Condition</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ReentrantLock</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ReentrantReadWriteLock</p>
+</li>
+</ul>
+<h4 id="8-java-io"><a href="#8-java-io" class="headerlink" title="8 java.io"></a><a id="8">8 java.io</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+File</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+InputStream</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+OutputStream</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Reader</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Writer</p>
+</li>
+</ul>
+<h4 id="9-java-nio"><a href="#9-java-nio" class="headerlink" title="9 java.nio"></a><a id="9">9 java.nio</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Buffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ByteBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CharBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+DoubleBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+FloatBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+IntBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LongBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ShortBuffer</p>
+</li>
+</ul>
+<h4 id="10-java-sql"><a href="#10-java-sql" class="headerlink" title="10 java.sql"></a><a id="10">10 java.sql</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Connection</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Driver </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+DriverManager </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+JDBCType </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ResultSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Statement</p>
+</li>
+</ul>
+<h4 id="11-java-net"><a href="#11-java-net" class="headerlink" title="11 java.net"></a><a id="11">11 java.net</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Socket </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ServerSocket </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URI </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URL</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URLEncoder</p>
+</li>
+</ul>
+<h4 id="12-java-math"><a href="#12-java-math" class="headerlink" title="12 java.math"></a><a id="12">12 java.math</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+BigDecimal</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BigInteger</p>
+</li>
+</ul>
 
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
@@ -577,8 +944,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Java源码-LinkedBlockingQueue</div>
-      <div>https://bannirui.github.io/2023/03/11/Java源码-LinkedBlockingQueue/</div>
+      <div>Java源码-0x01-源码阅读清单</div>
+      <div>https://bannirui.github.io/2024/03/07/Java源码-0x01-源码阅读清单/</div>
     </div>
     <div class="license-meta">
       
@@ -590,7 +957,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月11日</div>
+          <div>2024年3月7日</div>
         </div>
       
       
@@ -622,9 +989,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" title="Java源码-SynchronousQueue">
+                      <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/" title="Java源码-0x02-Object">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Java源码-SynchronousQueue</span>
+                        <span class="hidden-mobile">Java源码-0x02-Object</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -632,8 +999,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" title="Java源码-ArrayBlockingQueue">
-                        <span class="hidden-mobile">Java源码-ArrayBlockingQueue</span>
+                      <a href="/2024/03/03/Hexo%E4%B8%BB%E9%A2%98-Fluid/" title="Hexo主题-Fluid">
+                        <span class="hidden-mobile">Hexo主题-Fluid</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -656,7 +1023,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '10b35559324060d5f695781b6d1ed52f'
+            id: 'aec723be023994e3d692c373f5bcc7e8'
           }
         )
         var gitalk = new Gitalk(options);
