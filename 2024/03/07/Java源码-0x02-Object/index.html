@@ -16,18 +16,20 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+    <meta name="description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用native方法，就必然要在">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java源码-0x02-Object">
 <meta property="og:url" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/index.html">
 <meta property="og:site_name" content="毛茸茸猫子">
-<meta property="og:description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+<meta property="og:description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用native方法，就必然要在">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709800139.png">
 <meta property="article:published_time" content="2024-03-07T04:41:30.000Z">
-<meta property="article:modified_time" content="2024-03-07T05:09:33.232Z">
+<meta property="article:modified_time" content="2024-03-08T04:24:49.952Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Java@15">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709800139.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -246,7 +248,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          27 字
+          394 字
         
       </span>
     
@@ -257,7 +259,7 @@
         
         
         
-          1 分钟
+          4 分钟
         
       </span>
     
@@ -476,7 +478,62 @@
             
               <div class="markdown-body">
                 
-                
+                <p>Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石</p>
+<ul>
+<li><p>注定该类的结构不可能复杂，甚至是最简单的</p>
+</li>
+<li><p>涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂</p>
+</li>
+</ul>
+<img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709800139.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>native方法</p>
+<ul>
+<li><p>hashCode</p>
+</li>
+<li><p>clone</p>
+</li>
+<li><p>notify</p>
+</li>
+<li><p>notifyAll</p>
+</li>
+<li><p>wait</p>
+</li>
+</ul>
+<p>需要研究的就是上述几个方法，都是native方法，既然想使用native方法，就必然要在链接的时候找到对应方法的实现，那么无外乎以下几种情况</p>
+<ul>
+<li><p>native方法写在jdk源码中，一起编译</p>
+</li>
+<li><p>native方法单独写的，编译成库文件</p>
+<ul>
+<li><p>从库文件类型角度分为</p>
+<ul>
+<li><p>静态库</p>
+</li>
+<li><p>动态库</p>
+</li>
+</ul>
+</li>
+<li><p>从开发角度分为</p>
+<ul>
+<li><p>jdk源码编写好的一份</p>
+</li>
+<li><p>我们自己开发的</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>首先这个native方法肯定不是我们开发的，所以是伴随着jdk源码提供的，那么既然都放在源码文件里面了，肯定不会把这个编译成动态库的，毕竟太影响性能了。那么是否有可能把源码编译成静态库来链接呢，我想正常情况下做项目都不会这样选择的。</p>
+<p>所以初步的结论是</p>
+<ul>
+<li><p>openjdk提供了Object类中这几个native方法的实现</p>
+</li>
+<li><p>因为Object是基类，所以这些方法一定会在jvm启动的时候就指定好内存地址，不然对象实例没法调用</p>
+</li>
+</ul>
+<h3 id="1-时机"><a href="#1-时机" class="headerlink" title="1 时机"></a>1 时机</h3>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -574,6 +631,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2024/03/08/IDEA%E8%BF%9C%E7%A8%8Bvim%E6%8F%92%E4%BB%B6%E5%BC%82%E5%B8%B8%E8%AE%B0%E5%BD%95/" title="IDEA远程vim插件异常记录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">IDEA远程vim插件异常记录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
