@@ -16,16 +16,20 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用native方法，就必然要在">
+    <meta name="description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  getClass  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用nati">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java源码-0x02-Object">
 <meta property="og:url" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/index.html">
 <meta property="og:site_name" content="毛茸茸猫子">
-<meta property="og:description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用native方法，就必然要在">
+<meta property="og:description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  getClass  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用nati">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709800139.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709910160.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709952617.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957390.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957532.png">
 <meta property="article:published_time" content="2024-03-07T04:41:30.000Z">
-<meta property="article:modified_time" content="2024-03-08T04:24:49.952Z">
+<meta property="article:modified_time" content="2024-03-09T16:00:19.905Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Java@15">
 <meta name="twitter:card" content="summary_large_image">
@@ -248,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          394 字
+          1.3k 字
         
       </span>
     
@@ -259,7 +263,7 @@
         
         
         
-          4 分钟
+          11 分钟
         
       </span>
     
@@ -317,7 +321,7 @@
         aria-expanded="true"
       >
         Java
-        <span class="list-group-count">(14)</span>
+        <span class="list-group-count">(16)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -362,6 +366,24 @@
            class="list-group-item list-group-item-action
            active">
           <span class="category-post">Java源码-0x02-Object</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="Java源码-0x03-MarkWord"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x03-MarkWord</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="Java源码-0x04-biasedLocking"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x04-biasedLocking</span>
         </a>
       
     
@@ -489,15 +511,17 @@
 
 <p>native方法</p>
 <ul>
-<li><p>hashCode</p>
+<li><p><a href="#2">getClass</a></p>
 </li>
-<li><p>clone</p>
+<li><p><a href="#3">hashCode</a></p>
 </li>
-<li><p>notify</p>
+<li><p><a href="#4">clone</a></p>
 </li>
-<li><p>notifyAll</p>
+<li><p><a href="#5">notify</a></p>
 </li>
-<li><p>wait</p>
+<li><p><a href="#6">notifyAll</a></p>
+</li>
+<li><p><a href="#7">wait</a></p>
 </li>
 </ul>
 <p>需要研究的就是上述几个方法，都是native方法，既然想使用native方法，就必然要在链接的时候找到对应方法的实现，那么无外乎以下几种情况</p>
@@ -533,7 +557,114 @@
 <li><p>因为Object是基类，所以这些方法一定会在jvm启动的时候就指定好内存地址，不然对象实例没法调用</p>
 </li>
 </ul>
-<h3 id="1-时机"><a href="#1-时机" class="headerlink" title="1 时机"></a>1 时机</h3>
+<h3 id="1-时机"><a href="#1-时机" class="headerlink" title="1 时机"></a>1 时机</h3><img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709910160.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>在jvm启动的过程中，会将Object类需要的几个native方法注册到klass对象中</p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>声明位置</th>
+<th>实现位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getClass</td>
+<td>java_lang_Object.h</td>
+<td>Object.c</td>
+</tr>
+<tr>
+<td>hashCode</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_IHashCode</td>
+</tr>
+<tr>
+<td>clone</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_Clone</td>
+</tr>
+<tr>
+<td>notify</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_MonitorNotify</td>
+</tr>
+<tr>
+<td>notifyAll</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_MonitorNotifyAll</td>
+</tr>
+<tr>
+<td>wait</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_MonitorWait</td>
+</tr>
+</tbody></table>
+<p>下面就跟进这几个方法看看具体的实现</p>
+<h3 id="2-getClass方法"><a href="#2-getClass方法" class="headerlink" title="2 getClass方法"></a><a id="2">2 getClass方法</a></h3><h3 id="3-hashCode方法"><a href="#3-hashCode方法" class="headerlink" title="3 hashCode方法"></a><a id="3">3 hashCode方法</a></h3><h4 id="3-1-JVM-IHashCode"><a href="#3-1-JVM-IHashCode" class="headerlink" title="3.1 JVM_IHashCode"></a>3.1 JVM_IHashCode</h4><p>java对象的hashcode值是直接或者间接存储在对象头的markword中的，并且还会跟不同锁状态有直接关联，甚至在偏向锁的场景下还会引起锁膨胀升级</p>
+<p>关于markword请看<a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="Java源码-0x03-MarkWord">Java源码-0x03-MarkWord</a></p>
+<p>文件<code>src/hotspot/share/prims/jvm.cpp</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Object的hashCode方法实现</span><br><span class="hljs-comment"> *   - handle是Object对象</span><br><span class="hljs-comment"> */</span><br><span class="hljs-built_in">JVM_ENTRY</span>(jint, <span class="hljs-built_in">JVM_IHashCode</span>(JNIEnv* env, jobject handle))<br>  <span class="hljs-built_in">JVMWrapper</span>(<span class="hljs-string">&quot;JVM_IHashCode&quot;</span>);<br>  <span class="hljs-comment">// as implemented in the classic virtual machine; return 0 if object is NULL</span><br>  <span class="hljs-keyword">return</span> handle == <span class="hljs-literal">NULL</span> ? <span class="hljs-number">0</span> : ObjectSynchronizer::<span class="hljs-built_in">FastHashCode</span> (THREAD, JNIHandles::<span class="hljs-built_in">resolve_non_null</span>(handle)) ;<br>JVM_END<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-2-hashcode存储"><a href="#3-2-hashcode存储" class="headerlink" title="3.2 hashcode存储"></a>3.2 hashcode存储</h4><img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709952617.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>以64位系统为例，hashcode最多31位，上图可以看出</p>
+<ul>
+<li><p>无锁状态下，hashcode记录在markword的位[38…8]上</p>
+</li>
+<li><p>偏向锁状态下，没有空间记录hashcode，换言之如果某个对象被加了偏向锁</p>
+<ul>
+<li><p>要么撤销偏向锁退化到无锁，在markword上记录hashcode</p>
+</li>
+<li><p>要么撤销偏向锁膨胀到轻量级锁，甚至重量级锁，hashcode记录在彼时对应的位置</p>
+</li>
+</ul>
+</li>
+<li><p>轻量级锁状态下，hashcode记录在栈中，在markword中用指针引用</p>
+</li>
+<li><p>重量级锁状态下，hashcode记录在堆中，在markword中用指针引用</p>
+</li>
+<li><p>被标记为GC的状态，hashcode已经没有记录的意义</p>
+</li>
+</ul>
+<h4 id="3-3-偏向锁撤销"><a href="#3-3-偏向锁撤销" class="headerlink" title="3.3 偏向锁撤销"></a>3.3 偏向锁撤销</h4><p>如果开启了<code>-XX:+UseBiasedLocking</code>偏向锁，因为在偏向锁状态下没有空间记录hashcode，所以要关闭偏向锁状态位</p>
+<p>也就是要把markword的第3位置为0，此时低3位就是<code>001</code>就是无锁状态</p>
+<p>偏向锁的有关方法请看<a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="Java源码-0x04-biasedLocking">Java源码-0x04-biasedLocking</a></p>
+<h4 id="3-4-hashcode算法"><a href="#3-4-hashcode算法" class="headerlink" title="3.4 hashcode算法"></a>3.4 hashcode算法</h4><p>hashcode的算法策略可以通过jvm启动参数指定</p>
+<img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957390.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>比如，指定<code>-XX:+UnlockExperimentalVMOptions -XX:hashCode=1</code></p>
+<img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957532.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>文件<code>src/hotspot/share/runtime/synchronizer.cpp</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * hashcode的算法实现</span><br><span class="hljs-comment"> * 提供了6种算法策略</span><br><span class="hljs-comment"> *   - 算法0 随机数</span><br><span class="hljs-comment"> *   - 算法1 内存地址+1个随机数-&gt;随机数</span><br><span class="hljs-comment"> *   - 算法2 固定值1</span><br><span class="hljs-comment"> *   - 算法3 自增序列</span><br><span class="hljs-comment"> *   - 算法4 内存地址</span><br><span class="hljs-comment"> *   - 算法5 当前线程有关的1个随机数+3个固定常数-&gt;随机数</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">intptr_t</span> <span class="hljs-title">get_next_hash</span><span class="hljs-params">(Thread* self, oop obj)</span> </span>&#123;<br>  <span class="hljs-type">intptr_t</span> value = <span class="hljs-number">0</span>;<br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * jvm的hashcode算法策略默认是5</span><br><span class="hljs-comment">   * 通过启动参数可以指定 -XX:+UnlockExperimentalVMOptions -XX:hashCode=0</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">0</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">1</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">2</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">3</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">4</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>  &#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-1-算法0"><a href="#3-4-1-算法0" class="headerlink" title="3.4.1 算法0"></a>3.4.1 算法0</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 随机数</span><br>value = os::<span class="hljs-built_in">random</span>();<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-2-算法1"><a href="#3-4-2-算法1" class="headerlink" title="3.4.2 算法1"></a>3.4.2 算法1</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 内存地址和随机数计算出来的随机值</span><br><span class="hljs-type">intptr_t</span> addr_bits = <span class="hljs-built_in">cast_from_oop</span>&lt;<span class="hljs-type">intptr_t</span>&gt;(obj) &gt;&gt; <span class="hljs-number">3</span>;<br>value = addr_bits ^ (addr_bits &gt;&gt; <span class="hljs-number">5</span>) ^ GVars.stw_random;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-3-算法2"><a href="#3-4-3-算法2" class="headerlink" title="3.4.3 算法2"></a>3.4.3 算法2</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 固定值1</span><br>value = <span class="hljs-number">1</span>;            <span class="hljs-comment">// for sensitivity testing</span><br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-4-算法3"><a href="#3-4-4-算法3" class="headerlink" title="3.4.4 算法3"></a>3.4.4 算法3</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 自增序列</span><br>value = ++GVars.hc_sequence;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-5-算法4"><a href="#3-4-5-算法4" class="headerlink" title="3.4.5 算法4"></a>3.4.5 算法4</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 内存地址</span><br>value = <span class="hljs-built_in">cast_from_oop</span>&lt;<span class="hljs-type">intptr_t</span>&gt;(obj);<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-6-算法5"><a href="#3-4-6-算法5" class="headerlink" title="3.4.6 算法5"></a>3.4.6 算法5</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// Marsaglia&#x27;s xor-shift scheme with thread-specific state</span><br><span class="hljs-comment">// This is probably the best overall implementation -- we&#x27;ll</span><br><span class="hljs-comment">// likely make this the default in future releases.</span><br><span class="hljs-comment">// 线程相关的1个随机值+3个常数 xor-shift算法计算出来的随机值</span><br>  <span class="hljs-type">unsigned</span> t = self-&gt;_hashStateX;<br>  t ^= (t &lt;&lt; <span class="hljs-number">11</span>);<br>  self-&gt;_hashStateX = self-&gt;_hashStateY;<br>  self-&gt;_hashStateY = self-&gt;_hashStateZ;<br>  self-&gt;_hashStateZ = self-&gt;_hashStateW;<br>  <span class="hljs-type">unsigned</span> v = self-&gt;_hashStateW;<br>  v = (v ^ (v &gt;&gt; <span class="hljs-number">19</span>)) ^ (t ^ (t &gt;&gt; <span class="hljs-number">8</span>));<br>  self-&gt;_hashStateW = v;<br>  value = v;<br></code></pre></td></tr></table></figure>
+
+<p>Thread类中的这几个成员的赋值在构造方法中可以看到</p>
+<ul>
+<li><p>_hashStateX</p>
+</li>
+<li><p>_hashStateY</p>
+</li>
+<li><p>_hashStateZ</p>
+</li>
+<li><p>_hashStateW</p>
+</li>
+</ul>
+<p>文件<code>src/hotspot/share/runtime/thread.cpp</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 下面这4个成员将来用来计算hashcode值的</span><br><span class="hljs-comment"> * jvm默认的hashcode计算方式用的就是xor-shift算法</span><br><span class="hljs-comment"> * 本质就是1个随机数+3个常数-&gt;计算出一个随机数</span><br><span class="hljs-comment"> */</span><br>_hashStateX = os::<span class="hljs-built_in">random</span>();<br>_hashStateY = <span class="hljs-number">842502087</span>;<br>_hashStateZ = <span class="hljs-number">0x8767</span>;    <span class="hljs-comment">// (int)(3579807591LL &amp; 0xffff) ;</span><br>_hashStateW = <span class="hljs-number">273326509</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-clone方法"><a href="#4-clone方法" class="headerlink" title="4 clone方法"></a><a id="4">4 clone方法</a></h3><h3 id="5-notify方法"><a href="#5-notify方法" class="headerlink" title="5 notify方法"></a><a id="5">5 notify方法</a></h3><h3 id="6-notifyAll方法"><a href="#6-notifyAll方法" class="headerlink" title="6 notifyAll方法"></a><a id="6">6 notifyAll方法</a></h3><h3 id="7-wait方法"><a href="#7-wait方法" class="headerlink" title="7 wait方法"></a><a id="7">7 wait方法</a></h3>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
