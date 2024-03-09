@@ -44,7 +44,7 @@ tags: Java@15
 
 #### <a id="1">1 java.lang</a>
 
-- [ ] {% post_link Java源码-0x02-Object Object %}
+- {% post_link Java源码-0x02-Object Object %}
 
 - [ ] String
 
