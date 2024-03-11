@@ -59,10 +59,15 @@ vim的visual模式下检测到TextYankPost指令就将选中内容发送到socke
 
 当远程机将数据发送回本地机端口时，本地机启动一个进程监听在该端口，将数据复制到剪贴板。
 
+- 创建脚本
+
+- 启动该脚本服务
+
+![](./vim与系统剪贴板直接的复制粘贴/1710132298.png)
+
 #### 2.4.1 监听服务
 
-
-文件路径`vim ~/Library/LaunchAgents/pbcopy.plist`
+脚本内容如下
 
 ```shell
 <?xml version="1.0" encoding="UTF-8"?>
@@ -94,13 +99,13 @@ vim的visual模式下检测到TextYankPost指令就将选中内容发送到socke
 </plist>
 ```
 
-#### 2.4.2 启动监听服务
+#### 2.4.2 脚本服务管理
 
-`launchctl load -w ~/Library/LaunchAgents/pbcopy.plist`
+- 启动命令 `launchctl load -w ~/Library/LaunchAgents/pbcopy.plist`
 
-#### 2.4.3 检查监听服务状态
+- 停止卸载命令 `launchctl unload -w ~/Library/LaunchAgents/pbcopy.plist`
 
-`launchctl list | grep localhost.pbcopy`
+- 服务状态命令 `launchctl list | grep localhost.pbcopy`
 
 信息如下，说明该程序正常监听在22222端口，等待数据到来，复制到剪贴板上
 
