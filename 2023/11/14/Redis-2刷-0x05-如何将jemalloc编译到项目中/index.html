@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-2刷-0x05-如何将jemalloc编译到项目中">
 <meta property="og:url" content="https://bannirui.github.io/2023/11/14/Redis-2%E5%88%B7-0x05-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/index.html">
-<meta property="og:site_name" content="毛茸茸猫子">
+<meta property="og:site_name" content="Bannirui Blog">
 <meta property="og:description" content="在Redis-2刷-0x03-zmalloc实现细节解读中分析zmalloc_get_allocator_info函数时，主要依赖的api是je_mallctl，但是并没有找到这个函数的实现。 在jemalloc的git上我们看到如下描述：   所以，我们需要重新看一遍makefile中的规则编写，尤其是如何将jemalloc编译到项目中的。 1 根目录Makefile12345# 因为make的">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/11/14/Redis-2%E5%88%B7-0x05-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/2023-11-14_23-31-34.png">
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-2刷-0x05-如何将jemalloc编译到项目中 - 毛茸茸猫子</title>
+  <title>Redis-2刷-0x05-如何将jemalloc编译到项目中 - Bannirui Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -129,7 +129,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>毛茸茸猫子</strong>
+      <strong>Bannirui Blog</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
