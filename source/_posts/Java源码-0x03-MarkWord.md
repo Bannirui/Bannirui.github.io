@@ -53,16 +53,16 @@ typedef unsigned long int	uintptr_t;
 
 ![](./Java源码-0x03-MarkWord/1709956991.png)
 
-### 3.1 验证UseBiasedLocking
+#### 3.1 验证UseBiasedLocking
 
-#### 3.1.1 默认
+##### 3.1.1 默认
 
 ![](./Java源码-0x03-MarkWord/1709954073.png)
 
-#### 3.1.1 手动关闭
+##### 3.1.2 手动关闭
 
 ![](./Java源码-0x03-MarkWord/1709954256.png)
 
-#### 3.1.1 手动开启
+##### 3.1.3 手动开启
 
 ![](./Java源码-0x03-MarkWord/1709954338.png)
