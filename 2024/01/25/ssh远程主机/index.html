@@ -25,12 +25,19 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706148360.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709132597.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706149922.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150411.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150579.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150869.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710417564.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174253.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174824.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175264.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175016.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710408969.png">
 <meta property="article:published_time" content="2024-01-25T01:26:27.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:35:15.112Z">
+<meta property="article:modified_time" content="2024-03-14T14:01:53.307Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png">
@@ -252,7 +259,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          454 字
+          859 字
         
       </span>
     
@@ -263,7 +270,7 @@
         
         
         
-          4 分钟
+          8 分钟
         
       </span>
     
@@ -321,7 +328,7 @@
         aria-expanded="true"
       >
         Linux
-        <span class="list-group-count">(11)</span>
+        <span class="list-group-count">(10)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -384,15 +391,6 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">ffmpeg工具</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2024/02/28/mac%E8%BF%9C%E7%A8%8Blinux%E7%9A%84gui/" title="mac远程linux的gui"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">mac远程linux的gui</span>
         </a>
       
     
@@ -478,21 +476,23 @@
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706148360.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>查看当前ssh服务器的ip地址<code>ip addr</code></p>
-<h2 id="2-本地连接远程"><a href="#2-本地连接远程" class="headerlink" title="2 本地连接远程"></a>2 本地连接远程</h2><h3 id="2-1-手动连接"><a href="#2-1-手动连接" class="headerlink" title="2.1 手动连接"></a>2.1 手动连接</h3><p>在终端输入<code>ssh 用户名@远程ip -p 22</code>即可，随后按照提示键入远程主机用户密码。</p>
+<h3 id="1-3-x11转发gui"><a href="#1-3-x11转发gui" class="headerlink" title="1.3 x11转发gui"></a>1.3 x11转发gui</h3><p>简单的ssh可能不足以满足我的需求，我要通过ssh转发gui的数据，所以要配置服务端开启x11转发功能</p>
+<p>文件<code>/etc/ssh/sshd_config</code>放开如下两行注释</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709132597.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="1-4-重启ssh"><a href="#1-4-重启ssh" class="headerlink" title="1.4 重启ssh"></a>1.4 重启ssh</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo systemctl restart ssh<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-5-重启服务器"><a href="#1-5-重启服务器" class="headerlink" title="1.5 重启服务器"></a>1.5 重启服务器</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">reboot<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-mac本地客户端"><a href="#2-mac本地客户端" class="headerlink" title="2 mac本地客户端"></a>2 mac本地客户端</h2><h3 id="2-1-手动连接"><a href="#2-1-手动连接" class="headerlink" title="2.1 手动连接"></a>2.1 手动连接</h3><p>在终端输入<code>ssh 用户名@远程ip -p 22</code>即可，随后按照提示键入远程主机用户密码。</p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706149922.png" srcset="/img/loading.gif" lazyload class="">
 
-<p>首先每次输入ip地址是比较繁琐的</p>
+
+<h3 id="2-2-自动连接"><a href="#2-2-自动连接" class="headerlink" title="2.2 自动连接"></a>2.2 自动连接</h3><p>上面的ssh命令连接方式很不友好，因此用iterm2终端配置</p>
 <ul>
-<li><p>可以先修改远程主机的<code>/etc/hostname</code>、<code>/etc/hosts</code>、<code>/etc/sysconfig/hostname</code>，为当前远程主机起个名称，让ssh客户端可以连接。然后重启主机<code>reboot</code>即可。</p>
+<li><p>新建一个profile专门给ssh连接archlinux使用</p>
 </li>
-<li><p>ssh客户端修改<code>/etc/hosts</code>增加上ip映射，那么之后就可以用易于记忆的<code>ssh 用户名@主机名 -p 22</code>来替代上面的ip地址了</p>
-</li>
-</ul>
-<h3 id="2-2-自动连接"><a href="#2-2-自动连接" class="headerlink" title="2.2 自动连接"></a>2.2 自动连接</h3><p>我没有使用上面的ip映射方案，因为用iterm2终端更省事。</p>
-<ul>
-<li><p>区别于本机的终端配置，新建一个</p>
-</li>
-<li><p>指定command为<code>ssh 用户名@远程主机ip -p 22</code></p>
+<li><p>指定command为<code>ssh -X 用户名@远程主机ip -p 22</code></p>
 </li>
 <li><p>识别到<code>password:</code>后自动输入用户密码，切记在密码之后加上换行符</p>
 </li>
@@ -504,7 +504,48 @@
 <p>至此，便可以直接新建一个终端窗口直连远程主机</p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150869.png" srcset="/img/loading.gif" lazyload class="">
 
-<h2 id="3-拷贝文件或文件夹"><a href="#3-拷贝文件或文件夹" class="headerlink" title="3 拷贝文件或文件夹"></a>3 拷贝文件或文件夹</h2><table>
+<h3 id="2-3-ssh配置"><a href="#2-3-ssh配置" class="headerlink" title="2.3 ssh配置"></a>2.3 ssh配置</h3><p>至此还是不够优雅</p>
+<ul>
+<li><p>首先要记录ip地址</p>
+</li>
+<li><p>其次安全操作还要输入密码</p>
+</li>
+</ul>
+<p>所以为了解决这两个问题</p>
+<h4 id="2-3-1-密钥创建和设置"><a href="#2-3-1-密钥创建和设置" class="headerlink" title="2.3.1 密钥创建和设置"></a>2.3.1 密钥创建和设置</h4><p>首先要在本机<code>~/.ssh</code>目录下运行<code>ssh-keygen</code>生成密钥，文件名称我就取名为archlinux，用于mac连接远程archlinux</p>
+<ul>
+<li><p>archlinux 私钥 这个文件放在本地</p>
+</li>
+<li><p>archlinux.pub 公钥 这个文件scp复制到远程archlinux的<code>~/.ssh</code>目录下重命名为authorized_keys</p>
+</li>
+</ul>
+<p>并且还要设置一下远程archlinux的<code>/etc/ssh/sshd_config</code>文件</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710417564.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="2-3-2-config配置"><a href="#2-3-2-config配置" class="headerlink" title="2.3.2 config配置"></a>2.3.2 config配置</h4><p>文件<code>~/.ssh/config</code>文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh">Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-3-3-x11转发配置"><a href="#2-3-3-x11转发配置" class="headerlink" title="2.3.3 x11转发配置"></a>2.3.3 x11转发配置</h4><p>我还要x11的转发配置，因此继续修改config配置</p>
+<p>文件<code>~/.ssh/config</code>文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 远程archlinux 开启x11转发gui</span><br>Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br>    ForwardX11 <span class="hljs-built_in">yes</span><br>    ForwardX11Trusted <span class="hljs-built_in">yes</span><br>    ForwardAgent <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-4-安装XQuartz"><a href="#2-4-安装XQuartz" class="headerlink" title="2.4 安装XQuartz"></a>2.4 安装XQuartz</h3><p><a target="_blank" rel="noopener" href="https://www.xquartz.org/">XQuartz官网</a></p>
+<p>下载安装即可，安装好后会进行重启</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ssh -X dingrui@archlinux<br></code></pre></td></tr></table></figure>
+
+<p>但是有一说一，这个gui做的是真丑，一看就是各种字符或者编解码支持得不够友好</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174253.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="2-5-终端和shell支持x11转发"><a href="#2-5-终端和shell支持x11转发" class="headerlink" title="2.5 终端和shell支持x11转发"></a>2.5 终端和shell支持x11转发</h3><h4 id="2-5-1-iterm2支持x11"><a href="#2-5-1-iterm2支持x11" class="headerlink" title="2.5.1 iterm2支持x11"></a>2.5.1 iterm2支持x11</h4><p>不得不说mac上最好用的终端是iTerm2，最好用的shell是zsh</p>
+<h5 id="2-5-2-xquartz中添加命令指向iterm2"><a href="#2-5-2-xquartz中添加命令指向iterm2" class="headerlink" title="2.5.2 xquartz中添加命令指向iterm2"></a>2.5.2 xquartz中添加命令指向iterm2</h5><img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174824.png" srcset="/img/loading.gif" lazyload class="">
+
+<h5 id="2-5-3-iterm2使用gui"><a href="#2-5-3-iterm2使用gui" class="headerlink" title="2.5.3 iterm2使用gui"></a>2.5.3 iterm2使用gui</h5><img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175264.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>在iterm2中运行的程序需要gui支持会自动转发x11给xquartz，唤起xquartz，然后显示出来</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175016.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="2-6-拷贝文件或文件夹"><a href="#2-6-拷贝文件或文件夹" class="headerlink" title="2.6 拷贝文件或文件夹"></a>2.6 拷贝文件或文件夹</h3><p>因为配置了<code>~/.ssh/config</code>的主机ip和hostname的映射，在使用scp的时候也不用指定ip了，直接指定主机名就行</p>
+<table>
 <thead>
 <tr>
 <th></th>
@@ -514,15 +555,21 @@
 </thead>
 <tbody><tr>
 <td>文件</td>
-<td>scp 本机路径 远程用户名@远程主机ip:远程路径</td>
-<td>scp 远程用户名@远程主机ip:远程路径 本机路径</td>
+<td>scp 本机文件 dingrui@archlinux:远程路径</td>
+<td>scp dingrui@archlinux:远程文件 本机路径</td>
 </tr>
 <tr>
 <td>文件夹</td>
-<td>scp -r 本机路径 远程用户名@远程主机ip:远程路径</td>
-<td>scp -r 远程用户名@远程主机ip:远程路径 本机路径</td>
+<td>scp -r 本机路径 dingrui@archlinux:远程路径</td>
+<td>scp -r dingrui@archlinux:远程路径 本机路径</td>
 </tr>
 </tbody></table>
+<h2 id="3-OpenGL的支持"><a href="#3-OpenGL的支持" class="headerlink" title="3 OpenGL的支持"></a>3 OpenGL的支持</h2><p>在ssh远程开发OpenGL的时候发现X11转发有问题，因此要配置VirtualGL来支持OpenGL的开发工作</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710408969.png" srcset="/img/loading.gif" lazyload class="">
+
+<p><a target="_blank" rel="noopener" href="https://rawcdn.githack.com/VirtualGL/virtualgl/3.0/doc/index.html#hd006">配置参考官方手册</a></p>
+<p>尝试了一下，过于复杂，而且我担心破坏现在archlinux上在使用的kde，所以放弃了。</p>
+<p>转换一个思路，linux远程开发opengl改成本地mac开发</p>
 
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
