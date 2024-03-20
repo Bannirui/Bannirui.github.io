@@ -28,6 +28,8 @@ linux是专门用来干重活的一台mini机，最近天气太冷，不想下�
 3 修改ssh的config
 ---
 
+[附上github的官方文档](https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port)
+
 ![](./代理git的ssh协议/1706079070.png)
 
 修改点
