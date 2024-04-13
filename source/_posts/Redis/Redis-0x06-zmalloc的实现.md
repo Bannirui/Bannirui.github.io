@@ -393,6 +393,7 @@ RSS=Resident Set Size
 
 #### 9.1.4 RSS
 
+{% post_link Redis/Redis-0x07-linux系统proc虚拟文件系统 %}
 
 #### 9.1.5 zmalloc_get_rss实现
 
@@ -494,6 +495,7 @@ size_t zmalloc_get_rss(void) {
 
 涉及到jemalloc系列函数，先看一下redis是如何整合jemalloc到项目中的
 
+{% post_link Redis/Redis-0x08-如何将jemalloc编译到项目中 %}
 
 ```c
 /**

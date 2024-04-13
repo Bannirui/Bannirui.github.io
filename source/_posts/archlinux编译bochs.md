@@ -110,4 +110,4 @@ bochs -q -f ./my_bochs_cfg
 
 ![](./archlinux编译bochs/1709132366.png)
 
-怎么配置ssh的远程gui，{% post_link mac远程linux的gui %}
+怎么配置ssh的远程gui，{% post_link ssh远程主机 %}

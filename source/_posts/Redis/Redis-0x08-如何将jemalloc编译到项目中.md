@@ -5,7 +5,7 @@ date: 2024-04-13 22:43:03
 categories: Redis
 ---
 
-在中分析`zmalloc_get_allocator_info`函数时，主要依赖的api是`je_mallctl`，但是并没有找到这个函数的实现。
+在zmalloc中分析`zmalloc_get_allocator_info`函数时，主要依赖的api是`je_mallctl`，但是并没有找到这个函数的实现。
 
 在[jemalloc的git上](https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md)我们看到如下描述：
 
