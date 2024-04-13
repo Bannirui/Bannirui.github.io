@@ -1,22 +1,19 @@
 ---
-title: Redis-2刷-0x01-Makefile
-date: 2023-11-01 21:58:21
+title: Redis-0x03-Makefile脚本
 category_bar: true
-categories: [ 'Redis' ]
-tags: [ '2刷Redis' ]
+date: 2024-04-13 22:01:17
+categories: Redis
 ---
 
-Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过成了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。
+Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过程了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。
 
-1 项目编译
----
+### 1 项目编译
 
 首先，在Readme中作者描述了如何编译项目，即在项目根目录执行`make`。
 
-![](Redis-2刷-0x01-Makefile/2023-11-01_22-19-29.png)
+![](Redis-0x03-Makefile脚本/2023-11-01_22-19-29.png)
 
-2 根目录Makefile
----
+### 2 根目录Makefile
 
 根据编译命令可知，我们只要关注当前文件的第一条rule即可，如下：
 
@@ -37,8 +34,7 @@ default: all
 
 关于make的规则，可以参考[官网的文档](https://www.gnu.org/savannah-checkouts/gnu/make/manual/make.html)。
 
-3 src目录下Makefile
----
+### 3 src目录下Makefile
 
 ```Makefile
 # redis源码根目录下makefile中的cd src && make all
@@ -97,4 +93,4 @@ $(REDIS_SERVER_NAME): $(REDIS_SERVER_OBJ)
 
 #### 3.4 系统依赖
 
-![](./Redis-2刷-0x01-Makefile/1708524360.png)
+![](./Redis-0x03-Makefile脚本/1708524360.png)
