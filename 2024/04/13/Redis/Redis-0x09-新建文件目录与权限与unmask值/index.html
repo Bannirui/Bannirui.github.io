@@ -16,28 +16,27 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 权限随便看一些文件的权限信息，如下：   文件属性被分为4段，每一段以及每一位的信息都是固定的  第1段 文件属性 第2段 所有者用户权限 第3段 同组用户权限 第4段 其他用户权限  每一位都是0跟1标识  0 标识没有该权限 1 标识拥有该权限    3个2进制可以用1个8进制数表示，那么除开文件类型，剩余9位2进制数就是3位八进制数，那么    文件属性值(8进制) 所有者权限 同组用户">
+    <meta name="description" content="1 权限随便看一些文件的权限信息，如下：   文件属性被分为4段，每一段以及每一位的信息都是固定的  第1段 文件属性  第2段 所有者用户权限  第3段 同组用户权限  第4段 其他用户权限   每一位都是0跟1标识  0 标识没有该权限  1 标识拥有该权限     3个2进制可以用1个8进制数表示，那么除开文件类型，剩余9位2进制数就是3位八进制数，那么    文件属性值(8进制) 所有者权">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis-2刷-0x06-新建文件目录权限与umask值">
-<meta property="og:url" content="https://bannirui.github.io/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/index.html">
+<meta property="og:title" content="Redis-0x09-新建文件目录与权限与unmask值">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="1 权限随便看一些文件的权限信息，如下：   文件属性被分为4段，每一段以及每一位的信息都是固定的  第1段 文件属性 第2段 所有者用户权限 第3段 同组用户权限 第4段 其他用户权限  每一位都是0跟1标识  0 标识没有该权限 1 标识拥有该权限    3个2进制可以用1个8进制数表示，那么除开文件类型，剩余9位2进制数就是3位八进制数，那么    文件属性值(8进制) 所有者权限 同组用户">
+<meta property="og:description" content="1 权限随便看一些文件的权限信息，如下：   文件属性被分为4段，每一段以及每一位的信息都是固定的  第1段 文件属性  第2段 所有者用户权限  第3段 同组用户权限  第4段 其他用户权限   每一位都是0跟1标识  0 标识没有该权限  1 标识拥有该权限     3个2进制可以用1个8进制数表示，那么除开文件类型，剩余9位2进制数就是3位八进制数，那么    文件属性值(8进制) 所有者权">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/2023-11-15_16-49-00.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/2023-11-15_16-53-18.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/2023-11-15_17-14-38.png">
-<meta property="article:published_time" content="2023-11-15T08:22:20.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:45:34.268Z">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/2023-11-15_16-49-00.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/2023-11-15_16-53-18.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/2023-11-15_17-14-38.png">
+<meta property="article:published_time" content="2024-04-13T15:08:01.000Z">
+<meta property="article:modified_time" content="2024-04-13T15:11:58.703Z">
 <meta property="article:author" content="Bannirui">
-<meta property="article:tag" content="2刷Redis">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/2023-11-15_16-49-00.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/2023-11-15_16-49-00.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-2刷-0x06-新建文件目录权限与umask值 - Bannirui Blog</title>
+  <title>Redis-0x09-新建文件目录与权限与unmask值 - Bannirui Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -227,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Redis-2刷-0x06-新建文件目录权限与umask值"></span>
+            <span id="subtitle" data-typed-text="Redis-0x09-新建文件目录与权限与unmask值"></span>
           
         </div>
 
@@ -238,8 +237,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-11-15 16:22" pubdate>
-          2023年11月15日 下午
+        <time datetime="2024-04-13 23:08" pubdate>
+          2024年4月13日 晚上
         </time>
       </span>
     
@@ -319,7 +318,7 @@
         aria-expanded="true"
       >
         Redis
-        <span class="list-group-count">(52)</span>
+        <span class="list-group-count">(51)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -486,6 +485,15 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/04/03/Redis-0x0a-t-list/" title="Redis-0x0a-t_list"
            class="list-group-item list-group-item-action
            ">
@@ -499,15 +507,6 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x0b-t_set</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/03/Redis-0x0c-t-zset/" title="Redis-0x0c-t_zset"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x0c-t_zset</span>
         </a>
       
     
@@ -535,27 +534,33 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Redis-2刷-0x06-新建文件目录权限与umask值</h1>
+            <h1 id="seo-header">Redis-0x09-新建文件目录与权限与unmask值</h1>
             
             
               <div class="markdown-body">
                 
                 <h2 id="1-权限"><a href="#1-权限" class="headerlink" title="1 权限"></a>1 权限</h2><p>随便看一些文件的权限信息，如下：</p>
-<img src="/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/2023-11-15_16-49-00.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/2023-11-15_16-49-00.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>文件属性被分为4段，每一段以及每一位的信息都是固定的</p>
 <ul>
-<li>第1段 文件属性</li>
-<li>第2段 所有者用户权限</li>
-<li>第3段 同组用户权限</li>
-<li>第4段 其他用户权限</li>
+<li><p>第1段 文件属性</p>
+</li>
+<li><p>第2段 所有者用户权限</p>
+</li>
+<li><p>第3段 同组用户权限</p>
+</li>
+<li><p>第4段 其他用户权限</p>
+</li>
 </ul>
 <p>每一位都是0跟1标识</p>
 <ul>
-<li>0 标识没有该权限</li>
-<li>1 标识拥有该权限</li>
+<li><p>0 标识没有该权限</p>
+</li>
+<li><p>1 标识拥有该权限</p>
+</li>
 </ul>
-<img src="/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/2023-11-15_16-53-18.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/2023-11-15_16-53-18.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>3个2进制可以用1个8进制数表示，那么除开文件类型，剩余9位2进制数就是3位八进制数，那么</p>
 <table>
@@ -588,16 +593,20 @@
 </tbody></table>
 <p>其次，当创建新文件时，会有默认的规则：</p>
 <ul>
-<li>当新建的是文件时，默认不给执行权限，即创建出来的文件最大权限为0666，如果用户自己有执行需求，可以使用<code>chmod</code>更新执行权限</li>
-<li>当新建的是文件夹，默认是给执行权限的，因为对于文件夹肯定是有<code>cd</code>需求的，所有创建出来的最大权限为0777</li>
+<li><p>当新建的是文件时，默认不给执行权限，即创建出来的文件最大权限为0666，如果用户自己有执行需求，可以使用<code>chmod</code>更新执行权限</p>
+</li>
+<li><p>当新建的是文件夹，默认是给执行权限的，因为对于文件夹肯定是有<code>cd</code>需求的，所有创建出来的最大权限为0777</p>
+</li>
 </ul>
 <h2 id="2-umask库函数"><a href="#2-umask库函数" class="headerlink" title="2 umask库函数"></a>2 umask库函数</h2><p>OS提供了<code>mode_t umask(mode_t cmask)</code>库函数，通过<code>man 2 umask</code>查询手册，该函数的形参cmask表示要移除的权限，返回值为之前的cmask值。</p>
-<img src="/2023/11/15/Redis-2%E5%88%B7-0x06-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E4%B8%8Eumask%E5%80%BC/2023-11-15_17-14-38.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/2023-11-15_17-14-38.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>如图，默认的umask值为<code>0022</code>，即新建的文件权限移除写权限：</p>
 <ul>
-<li>新建的是文件，先从<code>0777</code>中移除group和others的写权限，更新为<code>0755</code>，因为是文件类型是文件，默认不给执行权限，将user、group和others的执行权限移除，更新为<code>0644</code>，也即<code>-rw-r--r--</code>。</li>
-<li>新建的文件夹，先从<code>0777</code>中移除group和others的写权限，更新为<code>0755</code>，因为文件类型是文件夹，默认是给执行权限的，因此最终权限为<code>0755</code>，也即<code>drwxr-xr-x</code>。</li>
+<li><p>新建的是文件，先从<code>0777</code>中移除group和others的写权限，更新为<code>0755</code>，因为是文件类型是文件，默认不给执行权限，将user、group和others的执行权限移除，更新为<code>0644</code>，也即<code>-rw-r--r--</code>。</p>
+</li>
+<li><p>新建的文件夹，先从<code>0777</code>中移除group和others的写权限，更新为<code>0755</code>，因为文件类型是文件夹，默认是给执行权限的，因此最终权限为<code>0755</code>，也即<code>drwxr-xr-x</code>。</p>
+</li>
 </ul>
 <h2 id="3-umask计算"><a href="#3-umask计算" class="headerlink" title="3 umask计算"></a>3 umask计算</h2><p>上述已经举过一个例子，下表多举几个示例：</p>
 <table>
@@ -663,13 +672,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/2%E5%88%B7Redis/" class="print-no-link">#2刷Redis</a>
-      
-    </div>
-  
 </div>
 
 
@@ -678,8 +680,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Redis-2刷-0x06-新建文件目录权限与umask值</div>
-      <div>https://bannirui.github.io/2023/11/15/Redis-2刷-0x06-新建文件目录权限与umask值/</div>
+      <div>Redis-0x09-新建文件目录与权限与unmask值</div>
+      <div>https://bannirui.github.io/2024/04/13/Redis/Redis-0x09-新建文件目录与权限与unmask值/</div>
     </div>
     <div class="license-meta">
       
@@ -691,7 +693,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年11月15日</div>
+          <div>2024年4月13日</div>
         </div>
       
       
@@ -723,18 +725,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/11/21/%E9%9D%99%E6%80%81%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/" title="静态内存布局">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">静态内存布局</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/11/14/Redis-2%E5%88%B7-0x05-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-2刷-0x05-如何将jemalloc编译到项目中">
-                        <span class="hidden-mobile">Redis-2刷-0x05-如何将jemalloc编译到项目中</span>
+                      <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中">
+                        <span class="hidden-mobile">Redis-0x08-如何将jemalloc编译到项目中</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -757,7 +753,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '62256ac3e7c714e6a3b7d20ce2664e05'
+            id: 'ef2706e7738dbce9be9e177b3e77a491'
           }
         )
         var gitalk = new Gitalk(options);
