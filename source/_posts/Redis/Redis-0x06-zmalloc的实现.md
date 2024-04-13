@@ -299,7 +299,7 @@ void zfree(void *ptr) {
 
 我觉得这样用一点空间换取来的是api和算法的统一，也让维护的内存使用量具有实际意义。
 
-![](Redis-2刷-0x03-zmalloc实现细节解读/IMG_B9C8F5A5AE81-1.jpeg)
+![](Redis-0x06-zmalloc的实现/IMG_B9C8F5A5AE81-1.jpeg)
 
 ### 6.2 zfree_usable
 
@@ -377,23 +377,22 @@ RSS=Resident Set Size
 
 这个函数就是给定一个字符串，给定一个目标字符，函数会找到在这个字符串中第一次出现目标字符的地方。
 
-![](Redis-2刷-0x03-zmalloc实现细节解读/9929901699585153.png)
+![](Redis-0x06-zmalloc的实现/9929901699585153.png)
 
 #### 9.1.2 strtol系列函数
 
 将字符串形式的数字转换成指定进制表达的整数形式。
 
-![](Redis-2刷-0x03-zmalloc实现细节解读/6591261699585265.png)
+![](Redis-0x06-zmalloc的实现/6591261699585265.png)
 
 #### 9.1.3 sysconf(...)
 
 系统进程的运行时信息sysconf(_SC_PAGESIZE)就是获取到内存页的一页有多少byte，比如一页4k就是4096byte。
 
-![](Redis-2刷-0x03-zmalloc实现细节解读/8836931699585757.png)
+![](Redis-0x06-zmalloc的实现/8836931699585757.png)
 
 #### 9.1.4 RSS
 
-{% post_link Redis-2刷-0x04-linux系统proc虚拟文件系统 %}
 
 #### 9.1.5 zmalloc_get_rss实现
 
@@ -493,7 +492,8 @@ size_t zmalloc_get_rss(void) {
 
 ### 10.1 有jemalloc的环境
 
-涉及到jemalloc系列函数，先看一下redis是如何整合jemalloc到项目中的，{% post_link Redis-2刷-0x05-如何将jemalloc编译到项目中 %}。
+涉及到jemalloc系列函数，先看一下redis是如何整合jemalloc到项目中的
+
 
 ```c
 /**
@@ -663,7 +663,7 @@ size_t zmalloc_get_smap_bytes_by_field(char *field, long pid) {
 
 跟RSS一样，`cat /proc/4649/smaps >> Desktop/smap.txt`，看一下文件的内容就可以非常简易地了解代码的实现。
 
-![](Redis-2刷-0x03-zmalloc实现细节解读/2023-11-15_10-59-05.png)
+![](Redis-0x06-zmalloc的实现/2023-11-15_10-59-05.png)
 
 ```c
 /*

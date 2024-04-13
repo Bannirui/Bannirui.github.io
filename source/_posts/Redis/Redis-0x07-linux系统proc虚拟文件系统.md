@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x04-linux系统proc虚拟文件系统
-date: 2023-11-14 13:57:32
+title: Redis-0x07-linux系统proc虚拟文件系统
 category_bar: true
-categories: [ Redis ]
-tags: [ 2刷Redis ]
+date: 2024-04-13 22:39:37
+categories: Redis
 ---
 
 1 top命令
@@ -11,14 +10,14 @@ tags: [ 2刷Redis ]
 
 top可以在终端获取到所有进程的内存占用信息，如图的RES就是某个进程的内存驻留大小，单位是kb，即1号进程驻留的物理地址空间大小为13000kb。
 
-![](Redis-2刷-0x04-linux系统proc虚拟文件系统/6750761699585414.png)
+![](Redis-0x07-linux系统proc虚拟文件系统/6750761699585414.png)
 
 2 /proc虚拟文件系统
 ---
 
 上述top命令采集的指标信息就来自/proc虚拟文件系统，比如我们想要知道1号进程的信息，`cat /proc/1/stat`即可：
 
-![](Redis-2刷-0x04-linux系统proc虚拟文件系统/4356911699585435.png)
+![](Redis-0x07-linux系统proc虚拟文件系统/4356911699585435.png)
 
 3 stat指标
 ---
@@ -138,4 +137,3 @@ S
 | 第52项               |               |                                                                                        | 0                    |
 
 说明1号进程驻留的物理内存大小为3250个page，而1个page大小为4kb(4096 byte)，则rss=13000kb。
-
