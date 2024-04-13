@@ -16,26 +16,26 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码https:&#x2F;&#x2F;github.com&#x2F;redis&#x2F;redis 123456781 fork2 git clone git@github.com:Bannirui&#x2F;redis.git3 git remote add upstream">
+    <meta name="description" content="Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过程了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。 1 项目编译首先，在Readme中作者描述了如何编译项目，即在项目根目录执行make。   2 根目录Makefile根据编译命令可知，我们只要关注当前文件的第一条rule即可，如下： 123456789101112#">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis-0x00-编译">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/index.html">
+<meta property="og:title" content="Redis-0x03-Makefile脚本">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码https:&#x2F;&#x2F;github.com&#x2F;redis&#x2F;redis 123456781 fork2 git clone git@github.com:Bannirui&#x2F;redis.git3 git remote add upstream">
+<meta property="og:description" content="Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过程了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。 1 项目编译首先，在Readme中作者描述了如何编译项目，即在项目根目录执行make。   2 根目录Makefile根据编译命令可知，我们只要关注当前文件的第一条rule即可，如下： 123456789101112#">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/img/Redis-default.png">
-<meta property="article:published_time" content="2023-03-23T02:21:59.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:46:10.299Z">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/2023-11-01_22-19-29.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/1708524360.png">
+<meta property="article:published_time" content="2024-04-13T14:01:17.000Z">
+<meta property="article:modified_time" content="2024-04-13T14:04:18.352Z">
 <meta property="article:author" content="Bannirui">
-<meta property="article:tag" content="Redis@6.2">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/img/Redis-default.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/2023-11-01_22-19-29.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-0x00-编译 - Bannirui Blog</title>
+  <title>Redis-0x03-Makefile脚本 - Bannirui Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -225,7 +225,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Redis-0x00-编译"></span>
+            <span id="subtitle" data-typed-text="Redis-0x03-Makefile脚本"></span>
           
         </div>
 
@@ -236,8 +236,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-23 10:21" pubdate>
-          2023年3月23日 上午
+        <time datetime="2024-04-13 22:01" pubdate>
+          2024年4月13日 晚上
         </time>
       </span>
     
@@ -248,7 +248,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          219 字
+          521 字
         
       </span>
     
@@ -259,7 +259,7 @@
         
         
         
-          2 分钟
+          5 分钟
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         Redis
-        <span class="list-group-count">(51)</span>
+        <span class="list-group-count">(52)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -331,19 +331,19 @@
     
       
       
-        <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" title="Redis-0x00-编译"
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
            class="list-group-item list-group-item-action
-           active">
-          <span class="category-post">Redis-0x00-编译</span>
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
         </a>
       
     
       
       
-        <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x01-学习目标"
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Redis-0x01-学习目标</span>
+          <span class="category-post">Redis-0x01-源码编译</span>
         </a>
       
     
@@ -353,6 +353,24 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x02-list</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
         </a>
       
     
@@ -376,6 +394,15 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
            class="list-group-item list-group-item-action
            ">
@@ -385,10 +412,28 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
         </a>
       
     
@@ -466,51 +511,6 @@
     
       
       
-        <a href="/2023/04/06/Redis-0x0f-zskiplist/" title="Redis-0x0f-zskiplist"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x0f-zskiplist</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x10-db/" title="Redis-0x10-db"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x10-db</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x11-object/" title="Redis-0x11-object"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x11-object</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Redis-0x12-服务端启动流程"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x12-服务端启动流程</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" title="Redis-0x13-注册OOM处理器"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x13-注册OOM处理器</span>
-        </a>
-      
-    
-      
-      
         <a href="/categories/Redis/" class="list-group-item list-group-item-action">
           <span class="category-post">More...</span>
         </a>
@@ -533,60 +533,54 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Redis-0x00-编译</h1>
+            <h1 id="seo-header">Redis-0x03-Makefile脚本</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="1-环境"><a href="#1-环境" class="headerlink" title="1 环境"></a>1 环境</h2><table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Ver</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>MacOS</td>
-<td>11.5.2</td>
-</tr>
-<tr>
-<td>Clion</td>
-<td>2022.3.3</td>
-</tr>
-<tr>
-<td>Clang</td>
-<td>12.0.5</td>
-</tr>
-<tr>
-<td>LLDB</td>
-<td>15.0.5</td>
-</tr>
-</tbody></table>
-<h2 id="2-源码"><a href="#2-源码" class="headerlink" title="2 源码"></a>2 源码</h2><p><a target="_blank" rel="noopener" href="https://github.com/redis/redis">https://github.com/redis/redis</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">1 fork<br>2 git clone git@github.com:Bannirui/redis.git<br>3 git remote add upstream git@github.com:redis/redis.git<br>4 git remote set-url --push upstream no_push<br>5 git fetch upstream<br>6 git checkout 6.2<br>7 git checkout -b study-6.2<br>8 git push origin study-6.2<br></code></pre></td></tr></table></figure>
+                <p>Redis以make作为项目构建管理工具，因此我们只要看Makefile的rule编写，就知道编译源码的过程了。况且每个人编写Makefile的习惯各样，也可以借此良机借鉴风格。</p>
+<h3 id="1-项目编译"><a href="#1-项目编译" class="headerlink" title="1 项目编译"></a>1 项目编译</h3><p>首先，在Readme中作者描述了如何编译项目，即在项目根目录执行<code>make</code>。</p>
+<img src="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/2023-11-01_22-19-29.png" srcset="/img/loading.gif" lazyload class="">
 
-<h2 id="3-Clion"><a href="#3-Clion" class="headerlink" title="3 Clion"></a>3 Clion</h2><h3 id="3-1-ToolChain"><a href="#3-1-ToolChain" class="headerlink" title="3.1 ToolChain"></a>3.1 ToolChain</h3><p>将使用Clang作为构建调试工具，调试器不能使用GDB，之前使用GDB有问题，得使用LLDB。</p>
-<img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323103838439.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="2-根目录Makefile"><a href="#2-根目录Makefile" class="headerlink" title="2 根目录Makefile"></a>2 根目录Makefile</h3><p>根据编译命令可知，我们只要关注当前文件的第一条rule即可，如下：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-comment"># Top level makefile, the real shit is at src/Makefile</span><br><br><span class="hljs-comment"># 执行make的时候找到的第一个target是default 该target依赖一个dependency为all</span><br><span class="hljs-comment"># 但是该Makefile中没有再定义为all的target 即make找不到叫all的target</span><br><span class="hljs-comment"># 在这种情况下make会执行.DEFAULT</span><br><span class="hljs-section">default: all</span><br><br><span class="hljs-comment"># 因为make的执行是从default作为入口下来的</span><br><span class="hljs-comment"># 因此$@指代的是all</span><br><span class="hljs-comment"># 也就是说要执行的shell是cd src &amp;&amp; make all</span><br><span class="hljs-section">.DEFAULT:</span><br>	cd src &amp;&amp; <span class="hljs-variable">$(MAKE)</span> <span class="hljs-variable">$@</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="3-2-Makefile"><a href="#3-2-Makefile" class="headerlink" title="3.2 Makefile"></a>3.2 Makefile</h3><p>选择Clang作为Makefile项目的构建工具。</p>
-<img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323104043451.png" srcset="/img/loading.gif" lazyload class="">
+<p>关于make的规则，可以参考<a target="_blank" rel="noopener" href="https://www.gnu.org/savannah-checkouts/gnu/make/manual/make.html">官网的文档</a>。</p>
+<h3 id="3-src目录下Makefile"><a href="#3-src目录下Makefile" class="headerlink" title="3 src目录下Makefile"></a>3 src目录下Makefile</h3><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-comment"># redis源码根目录下makefile中的cd src &amp;&amp; make all</span><br><span class="hljs-comment"># MakeFile真正工作的地方</span><br><span class="hljs-section">all: <span class="hljs-variable">$(REDIS_SERVER_NAME)</span> <span class="hljs-variable">$(REDIS_SENTINEL_NAME)</span> <span class="hljs-variable">$(REDIS_CLI_NAME)</span> <span class="hljs-variable">$(REDIS_BENCHMARK_NAME)</span> <span class="hljs-variable">$(REDIS_CHECK_RDB_NAME)</span> <span class="hljs-variable">$(REDIS_CHECK_AOF_NAME)</span></span><br>	@echo <span class="hljs-string">&quot;&quot;</span><br>	@echo <span class="hljs-string">&quot;Hint: It&#x27;s a good idea to run &#x27;make test&#x27; ;)&quot;</span><br>	@echo <span class="hljs-string">&quot;&quot;</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="3-3-编译"><a href="#3-3-编译" class="headerlink" title="3.3 编译"></a>3.3 编译</h3><h4 id="3-3-1-运行"><a href="#3-3-1-运行" class="headerlink" title="3.3.1 运行"></a>3.3.1 运行</h4><img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323104203310.png" srcset="/img/loading.gif" lazyload class="">
+<p>从MakeFile中可以看出来redis工程共提供了如下6个可执行程序的编译</p>
+<ul>
+<li><p>redis-server</p>
+</li>
+<li><p>redis-sentinel</p>
+</li>
+<li><p>redis-check-rdb</p>
+</li>
+<li><p>redis-check-aof</p>
+</li>
+<li><p>redis-cli</p>
+</li>
+<li><p>redis-benchmark</p>
+</li>
+</ul>
+<p>以redis-server可执行程序的编译为例</p>
+<h4 id="3-1-源码文件"><a href="#3-1-源码文件" class="headerlink" title="3.1 源码文件"></a>3.1 源码文件</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-section">%.o: %.c .make-prerequisites</span><br>	<span class="hljs-variable">$(REDIS_CC)</span> -MMD -o <span class="hljs-variable">$@</span> -c <span class="hljs-variable">$&lt;</span><br></code></pre></td></tr></table></figure>
 
-<h4 id="3-3-2-make-test"><a href="#3-3-2-make-test" class="headerlink" title="3.3.2 make test"></a>3.3.2 make test</h4><p>根据提示，出现如下提示<code>It&#39;s a good idea to run &#39;make test&#39;</code>，则在终端执行<code>make test</code>。</p>
-<img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323104341081.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="3-2-o文件"><a href="#3-2-o文件" class="headerlink" title="3.2 .o文件"></a>3.2 .o文件</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Makefile">REDIS_SERVER_OBJ=adlist.o quicklist.o ae.o anet.o dict.o server.o sds.o zmalloc.o lzf_c.o lzf_d.o pqsort.o zipmap.o sha1.o ziplist.o release.o networking.o util.o object.o db.o replication.o rdb.o t_string.o t_list.o t_set.o t_zset.o t_hash.o config.o aof.o pubsub.o multi.o debug.o sort.o intset.o syncio.o cluster.o crc16.o endianconv.o slowlog.o scripting.o bio.o rio.o rand.o memtest.o crcspeed.o crc64.o bitops.o sentinel.o notify.o setproctitle.o blocked.o hyperloglog.o latency.o sparkline.o redis-check-rdb.o redis-check-aof.o geo.o lazyfree.o module.o evict.o expire.o geohash.o geohash_helper.o childinfo.o defrag.o siphash.o rax.o t_stream.o listpack.o localtime.o lolwut.o lolwut5.o lolwut6.o acl.o gopher.o tracking.o connection.o tls.o sha256.o timeout.o setcpuaffinity.o monotonic.o mt19937-64.o<br></code></pre></td></tr></table></figure>
 
-<h4 id="3-3-3-编译成功"><a href="#3-3-3-编译成功" class="headerlink" title="3.3.3 编译成功"></a>3.3.3 编译成功</h4><p>终端出现如下提示<code>All tests passed without errors</code>，则表示编译成功。</p>
-<img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323104921216.png" srcset="/img/loading.gif" lazyload class="">
+<p>上面的源码文件gcc编译为.o中间文件</p>
+<h4 id="3-3-链接"><a href="#3-3-链接" class="headerlink" title="3.3 链接"></a>3.3 链接</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-variable">$(REDIS_SERVER_NAME)</span>: <span class="hljs-variable">$(REDIS_SERVER_OBJ)</span><br>	<span class="hljs-variable">$(REDIS_LD)</span> -o <span class="hljs-variable">$@</span> <span class="hljs-variable">$^</span> ../deps/hiredis/libhiredis.a ../deps/lua/src/liblua.a <span class="hljs-variable">$(FINAL_LIBS)</span><br></code></pre></td></tr></table></figure>
 
-<h2 id="4-调试"><a href="#4-调试" class="headerlink" title="4 调试"></a>4 调试</h2><h3 id="4-1-配置"><a href="#4-1-配置" class="headerlink" title="4.1 配置"></a>4.1 配置</h3><img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323105129795.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="4-2-启动"><a href="#4-2-启动" class="headerlink" title="4.2 启动"></a>4.2 启动</h3><h4 id="4-2-1-服务端"><a href="#4-2-1-服务端" class="headerlink" title="4.2.1 服务端"></a>4.2.1 服务端</h4><p>服务端已经启动监听在知名端口。</p>
-<img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323105243908.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="4-2-2-客户端"><a href="#4-2-2-客户端" class="headerlink" title="4.2.2 客户端"></a>4.2.2 客户端</h4><p>启动客户端跟服务端交互，此时就可以进行调试跟踪了。</p>
-<img src="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/image-20230323105431146.png" srcset="/img/loading.gif" lazyload class="">
-
+<p>链接.o中间文件和链接库文件，编译为可执行文件</p>
+<ul>
+<li><p>系统依赖</p>
+</li>
+<li><p>静态库</p>
+</li>
+<li><p>动态库</p>
+</li>
+</ul>
+<h4 id="3-4-系统依赖"><a href="#3-4-系统依赖" class="headerlink" title="3.4 系统依赖"></a>3.4 系统依赖</h4><img src="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/1708524360.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -625,13 +619,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/Redis-6-2/" class="print-no-link">#Redis@6.2</a>
-      
-    </div>
-  
 </div>
 
 
@@ -640,8 +627,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Redis-0x00-编译</div>
-      <div>https://bannirui.github.io/2023/03/23/Redis-0x00-编译/</div>
+      <div>Redis-0x03-Makefile脚本</div>
+      <div>https://bannirui.github.io/2024/04/13/Redis/Redis-0x03-Makefile脚本/</div>
     </div>
     <div class="license-meta">
       
@@ -653,7 +640,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月23日</div>
+          <div>2024年4月13日</div>
         </div>
       
       
@@ -685,9 +672,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x01-学习目标">
+                      <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Redis-0x01-学习目标</span>
+                        <span class="hidden-mobile">Redis-0x04-用cmake构建项目</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -695,8 +682,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/11/Reactor/" title="Reactor">
-                        <span class="hidden-mobile">Reactor</span>
+                      <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始">
+                        <span class="hidden-mobile">Redis-0x02-从Readme开始</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -719,7 +706,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '73b17d6eb31d395a772a5dfd8e55c76d'
+            id: '4c89a0b26d6f051b120fef31f52f4c2d'
           }
         )
         var gitalk = new Gitalk(options);

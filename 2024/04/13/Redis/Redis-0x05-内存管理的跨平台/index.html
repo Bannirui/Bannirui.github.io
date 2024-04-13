@@ -16,29 +16,28 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统123456789101112131415161718#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;">
+    <meta name="description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统1234567891011121314151617#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;#i">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis-2刷-0x02-内存管理的跨平台">
-<meta property="og:url" content="https://bannirui.github.io/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/index.html">
+<meta property="og:title" content="Redis-0x05-内存管理的跨平台">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统123456789101112131415161718#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;">
+<meta property="og:description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统1234567891011121314151617#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;#i">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-36.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_15-43-29.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_18-28-03.png">
-<meta property="article:published_time" content="2023-11-08T01:29:41.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:47:47.682Z">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-36.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_15-43-29.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_18-28-03.png">
+<meta property="article:published_time" content="2024-04-13T14:18:55.000Z">
+<meta property="article:modified_time" content="2024-04-13T14:24:15.696Z">
 <meta property="article:author" content="Bannirui">
-<meta property="article:tag" content="2刷Redis">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-2刷-0x02-内存管理的跨平台 - Bannirui Blog</title>
+  <title>Redis-0x05-内存管理的跨平台 - Bannirui Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -228,7 +227,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Redis-2刷-0x02-内存管理的跨平台"></span>
+            <span id="subtitle" data-typed-text="Redis-0x05-内存管理的跨平台"></span>
           
         </div>
 
@@ -239,8 +238,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-11-08 09:29" pubdate>
-          2023年11月8日 上午
+        <time datetime="2024-04-13 22:18" pubdate>
+          2024年4月13日 晚上
         </time>
       </span>
     
@@ -320,7 +319,7 @@
         aria-expanded="true"
       >
         Redis
-        <span class="list-group-count">(51)</span>
+        <span class="list-group-count">(52)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -334,19 +333,19 @@
     
       
       
-        <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" title="Redis-0x00-编译"
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Redis-0x00-编译</span>
+          <span class="category-post">Redis-0x00-学习目标</span>
         </a>
       
     
       
       
-        <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x01-学习目标"
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Redis-0x01-学习目标</span>
+          <span class="category-post">Redis-0x01-源码编译</span>
         </a>
       
     
@@ -356,6 +355,24 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x02-list</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
         </a>
       
     
@@ -379,6 +396,15 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
            class="list-group-item list-group-item-action
            ">
@@ -388,10 +414,28 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
         </a>
       
     
@@ -469,51 +513,6 @@
     
       
       
-        <a href="/2023/04/06/Redis-0x0f-zskiplist/" title="Redis-0x0f-zskiplist"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x0f-zskiplist</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x10-db/" title="Redis-0x10-db"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x10-db</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x11-object/" title="Redis-0x11-object"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x11-object</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Redis-0x12-服务端启动流程"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x12-服务端启动流程</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" title="Redis-0x13-注册OOM处理器"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x13-注册OOM处理器</span>
-        </a>
-      
-    
-      
-      
         <a href="/categories/Redis/" class="list-group-item list-group-item-action">
           <span class="category-post">More...</span>
         </a>
@@ -536,68 +535,93 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Redis-2刷-0x02-内存管理的跨平台</h1>
+            <h1 id="seo-header">Redis-0x05-内存管理的跨平台</h1>
             
             
               <div class="markdown-body">
                 
                 <h2 id="1-操作系统的内存分配"><a href="#1-操作系统的内存分配" class="headerlink" title="1 操作系统的内存分配"></a>1 操作系统的内存分配</h2><p>一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。</p>
 <p>我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。</p>
-<h3 id="1-1-linux系统"><a href="#1-1-linux系统" class="headerlink" title="1.1 linux系统"></a>1.1 linux系统</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">test_malloc_usable_size</span> <span class="hljs-params">(<span class="hljs-type">int</span> cnt)</span><br>&#123;<br>  <span class="hljs-type">int</span> *p = <span class="hljs-built_in">malloc</span> (cnt * <span class="hljs-keyword">sizeof</span> (<span class="hljs-type">int</span>));<br>  <span class="hljs-type">size_t</span> sz = malloc_usable_size (p);<br>  <span class="hljs-built_in">free</span> (p);<br>  <span class="hljs-built_in">printf</span> (<span class="hljs-string">&quot;%d*size=%zu\n&quot;</span>, cnt, sz);<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span> <span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>  test_malloc_usable_size (<span class="hljs-number">2</span>);<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h3 id="1-1-linux系统"><a href="#1-1-linux系统" class="headerlink" title="1.1 linux系统"></a>1.1 linux系统</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">test_malloc_usable_size</span> <span class="hljs-params">(<span class="hljs-type">int</span> cnt)</span><br>&#123;<br>  <span class="hljs-type">int</span> *p = <span class="hljs-built_in">malloc</span> (cnt * <span class="hljs-keyword">sizeof</span> (<span class="hljs-type">int</span>));<br>  <span class="hljs-type">size_t</span> sz = malloc_usable_size (p);<br>  <span class="hljs-built_in">free</span> (p);<br>  <span class="hljs-built_in">printf</span> (<span class="hljs-string">&quot;%d*size=%zu\n&quot;</span>, cnt, sz);<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span> <span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>  test_malloc_usable_size (<span class="hljs-number">2</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h3 id="1-2-mac系统"><a href="#1-2-mac系统" class="headerlink" title="1.2 mac系统"></a>1.2 mac系统</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc/malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">test_malloc_size</span> <span class="hljs-params">(<span class="hljs-type">int</span> cnt)</span><br>&#123;<br>  <span class="hljs-type">int</span> *p = (<span class="hljs-type">int</span> *)<span class="hljs-built_in">malloc</span> (cnt * <span class="hljs-keyword">sizeof</span> (<span class="hljs-type">int</span>));<br>  <span class="hljs-type">size_t</span> ret = malloc_size (p);<br>  <span class="hljs-built_in">printf</span> (<span class="hljs-string">&quot;%d*(int), ret=%zu\n&quot;</span>, cnt, ret);<br>  <span class="hljs-built_in">free</span> (p);<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span> <span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>  test_malloc_size (<span class="hljs-number">1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>从上面的示例代码可以看出：</p>
 <ul>
-<li>虽然macos和linux都实现了<code>malloc</code>函数，但是二者的头文件路径并不一样，对于开发者而言在使用的时候就需要根据实际情况引入头文件</li>
-<li>两个平台都提供了查询动态内容实际分配的内存大小的功能，但是函数原型并不一样，在mac上是<code>malloc_size(...)</code>，在linux上是<code>malloc_usable_size(...)</code></li>
+<li><p>虽然macos和linux都实现了<code>malloc</code>函数，但是二者的头文件路径并不一样，对于开发者而言在使用的时候就需要根据实际情况引入头文件</p>
+</li>
+<li><p>两个平台都提供了查询动态内容实际分配的内存大小的功能，但是函数原型并不一样，在mac上是<code>malloc_size(...)</code>，在linux上是<code>malloc_usable_size(...)</code></p>
+</li>
 </ul>
 <p>关于库函数的手册说明，如下：</p>
 <ul>
-<li>mac的malloc_size  <img src="/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png" srcset="/img/loading.gif" lazyload class=""></li>
-<li>linux的malloc_usable_size  <img src="/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-36.png" srcset="/img/loading.gif" lazyload class=""></li>
+<li><p>mac的malloc_size</p>
+  <img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png" srcset="/img/loading.gif" lazyload class="">
+</li>
+<li><p>linux的malloc_usable_size</p>
+  <img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-36.png" srcset="/img/loading.gif" lazyload class=""></li>
 </ul>
 <h2 id="2-zmalloc分配器"><a href="#2-zmalloc分配器" class="headerlink" title="2 zmalloc分配器"></a>2 zmalloc分配器</h2><p>基于上述，redis想要做到跨平台的话，就要在各个系统提供的库函数之上，封装统一的api。再者，如果有了统一封装，又可以更方便定制化进行内存管理，即在用户进程和OS之间扮演了中介的角色。</p>
-<img src="/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_15-43-29.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_15-43-29.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>那么，zmalloc要关注的几个实现可能如下：</p>
 <ul>
-<li>统一的<code>malloc</code>系列函数</li>
-<li>统一的<code>free</code>系列函数</li>
-<li>记录用户进程向OS申请的内存，用于量化指标统计</li>
-<li>分析内存碎片和使用率等情况，合理地交互OS以达到内存管理</li>
+<li><p>统一的<code>malloc</code>系列函数</p>
+</li>
+<li><p>统一的<code>free</code>系列函数</p>
+</li>
+<li><p>记录用户进程向OS申请的内存，用于量化指标统计</p>
+</li>
+<li><p>分析内存碎片和使用率等情况，合理地交互OS以达到内存管理</p>
+</li>
 </ul>
 <p>目前为止看到的分配器的实现就3大类，tcmalloc实现、jemalloc实现、libc实现，而对标准库的实现依赖平台，我只熟悉mac和linux，姑且将OS分为3种：mac、linux和其他。即如下：</p>
 <ul>
-<li>tcmalloc内存分配器</li>
-<li>jemalloc内存分配器</li>
-<li>libc内存分配器<ul>
-<li>linux的glibc内存分配器</li>
-<li>mac的内存分配器</li>
-<li>其他OS的内存分配器</li>
+<li><p>tcmalloc内存分配器</p>
+</li>
+<li><p>jemalloc内存分配器</p>
+</li>
+<li><p>libc内存分配器</p>
+<ul>
+<li><p>linux的glibc内存分配器</p>
+</li>
+<li><p>mac的内存分配器</p>
+</li>
+<li><p>其他OS的内存分配器</p>
+</li>
 </ul>
 </li>
 </ul>
 <h2 id="3-内存分配器编译选项"><a href="#3-内存分配器编译选项" class="headerlink" title="3 内存分配器编译选项"></a>3 内存分配器编译选项</h2><p>编译选项需要从Makefile中看，3个选项</p>
 <ul>
-<li>tcmalloc</li>
-<li>jemalloc</li>
-<li>libc</li>
+<li><p>tcmalloc</p>
+</li>
+<li><p>jemalloc</p>
+</li>
+<li><p>libc</p>
+</li>
 </ul>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-comment"># Default allocator defaults to Jemalloc if it&#x27;s not an ARM</span><br><span class="hljs-comment"># 指定内存分配器 linux操作系统上redis默认使用的是jemalloc适配器</span><br>MALLOC=libc<br><span class="hljs-keyword">ifneq</span> (<span class="hljs-variable">$(uname_M)</span>,armv6l)<br><span class="hljs-keyword">ifneq</span> (<span class="hljs-variable">$(uname_M)</span>,armv7l)<br><span class="hljs-keyword">ifeq</span> (<span class="hljs-variable">$(uname_S)</span>,Linux)<br>	MALLOC=jemalloc<br><span class="hljs-keyword">endif</span><br><span class="hljs-keyword">endif</span><br><span class="hljs-keyword">endif</span><br><br><span class="hljs-comment"># 将tcmalloc分配器编译到项目中</span><br><span class="hljs-keyword">ifeq</span> (<span class="hljs-variable">$(MALLOC)</span>,tcmalloc)<br>	FINAL_CFLAGS+= -DUSE_TCMALLOC<br>	FINAL_LIBS+= -ltcmalloc<br><span class="hljs-keyword">endif</span><br><br><span class="hljs-comment"># MALLOC变量默认是libc也就是说默认使用系统自带的内存分配实现</span><br><span class="hljs-comment"># linux系统下会将MALLOC赋值为jemalloc 编译选项中通过宏定义USE_JEMALLOC标识使用了jemalloc内存分配器</span><br><span class="hljs-comment"># 将jemalloc分配器编译到项目中</span><br><span class="hljs-keyword">ifeq</span> (<span class="hljs-variable">$(MALLOC)</span>,jemalloc)<br>	DEPENDENCY_TARGETS+= jemalloc<br>	FINAL_CFLAGS+= -DUSE_JEMALLOC -I../deps/jemalloc/<span class="hljs-keyword">include</span><br>	FINAL_LIBS := ../deps/jemalloc/lib/libjemalloc.a <span class="hljs-variable">$(FINAL_LIBS)</span><br><span class="hljs-keyword">endif</span><br></code></pre></td></tr></table></figure>
 
 <p>使用哪个内存分配器是在编译的时候通过-D宏参数定义的</p>
 <ul>
-<li>-DUSE_TCMALLOC 使用tcmalloc分配器</li>
-<li>-DUSE_JEMALLOC 使用jemalloc分配器</li>
-<li>没有指定上述二者 就使用libc 即系统自带的默认分配器实现</li>
+<li><p>-DUSE_TCMALLOC 使用tcmalloc分配器</p>
+</li>
+<li><p>-DUSE_JEMALLOC 使用jemalloc分配器</p>
+</li>
+<li><p>没有指定上述二者 就使用libc 即系统自带的默认分配器实现</p>
+</li>
 </ul>
 <h2 id="4-zmalloc和zmalloc-size的封装"><a href="#4-zmalloc和zmalloc-size的封装" class="headerlink" title="4 zmalloc和zmalloc_size的封装"></a>4 zmalloc和zmalloc_size的封装</h2><p>统一封装api，要做的就是</p>
 <ul>
-<li>底层依赖的头文件</li>
-<li>底层函数封装<ul>
-<li>封装为zmalloc</li>
-<li>封装为zmalloc_size</li>
+<li><p>底层依赖的头文件</p>
+</li>
+<li><p>底层函数封装</p>
+<ul>
+<li><p>封装为zmalloc</p>
+</li>
+<li><p>封装为zmalloc_size</p>
+</li>
 </ul>
 </li>
 </ul>
@@ -618,22 +642,30 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">DESCRIPTION<br>     The malloc_size() function returns the size of the memory block that backs the allocation pointed to by ptr.  The memory block size<br>     is always at least as large as the allocation it backs, and may be larger.<br></code></pre></td></tr></table></figure>
 
 <p>即通过函数<code>malloc(...)</code>申请了动态内存，返回的结果是指针<code>ptr</code>，<code>malloc_size(...)</code>函数返回的就是<code>ptr</code>指针指向的这个内存块的大小，通常这个内存块大小都是比申请的更大的。</p>
-<img src="/2023/11/08/Redis-2%E5%88%B7-0x02-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_18-28-03.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_18-28-03.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>对于内存分配我的理解如上图所示</p>
 <ul>
-<li>首先OS中的内存可能本身就不连续，因此需要额外域记录着彼此的关联关系</li>
-<li>再者将来负责释放内存是通过<code>free(...)</code>函数，因此要在内存块中记录要回收的大小</li>
-<li>还可能为了考虑效率之类的，进行机器字长对齐</li>
-<li>所以相当于OS给用户进程的内存大小不仅要满足期望的需求大小，在此基础之上还需要额外的空间</li>
-<li>比如一个用户进程向系统申请3个单位的内存空间，此时OS有内存碎片，组合之后总共给了用户4个单位的内存空间，其中前1个单位用来存储meta信息，ptr指向的是起始地址是真正给用户进程读写的。</li>
+<li><p>首先OS中的内存可能本身就不连续，因此需要额外域记录着彼此的关联关系</p>
+</li>
+<li><p>再者将来负责释放内存是通过<code>free(...)</code>函数，因此要在内存块中记录要回收的大小</p>
+</li>
+<li><p>还可能为了考虑效率之类的，进行机器字长对齐</p>
+</li>
+<li><p>所以相当于OS给用户进程的内存大小不仅要满足期望的需求大小，在此基础之上还需要额外的空间</p>
+</li>
+<li><p>比如一个用户进程向系统申请3个单位的内存空间，此时OS有内存碎片，组合之后总共给了用户4个单位的内存空间，其中前1个单位用来存储meta信息，ptr指向的是起始地址是真正给用户进程读写的。</p>
+</li>
 </ul>
 <p>因此可以通过<code>malloc_size</code>这个函数来知道真正向系统申请了多少的内存。</p>
 <p>那么这个内存值的意义是什么呢，我觉得可能的用处有</p>
 <ul>
-<li>明确知道了某个系统\服务\进程向系统申请了多少的内存，即内存使用情况</li>
-<li>如果此时能够通过某个系统调用知道OS内存的真实分配情况，二者一比较就能知道当前内存使用率</li>
-<li>基于对内存碎片率的量化，拟定一个指标，如果恰好有一个系统调用触发内存回收，便可以有效控制内存的使用</li>
+<li><p>明确知道了某个系统\服务\进程向系统申请了多少的内存，即内存使用情况</p>
+</li>
+<li><p>如果此时能够通过某个系统调用知道OS内存的真实分配情况，二者一比较就能知道当前内存使用率</p>
+</li>
+<li><p>基于对内存碎片率的量化，拟定一个指标，如果恰好有一个系统调用触发内存回收，便可以有效控制内存的使用</p>
+</li>
 </ul>
 <p>前文看到的tcmalloc、jemalloc、mac的libc、linux的libc都是提供了对malloc_size的支持，如果恰好有一个内存分配器的实现没有对这个函数的提供，redis就要自己再额外的花费一定的开销用来记录内存大小了。假设约定用x个byte空间来记录大小，期望申请n个byte，实际申请N个byte，实际分配M个byte，那么可以想象此时记录的内存大小&#x3D;n+N，而大部分情况下M&gt;&#x3D;N，因此一旦分配器没有提供这样一个函数支持，那么记录的内存大小是不准确的，更逼近于申请大小，而不是对实际分配大小的记录。</p>
 
@@ -675,13 +707,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/2%E5%88%B7Redis/" class="print-no-link">#2刷Redis</a>
-      
-    </div>
-  
 </div>
 
 
@@ -690,8 +715,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Redis-2刷-0x02-内存管理的跨平台</div>
-      <div>https://bannirui.github.io/2023/11/08/Redis-2刷-0x02-内存管理的跨平台/</div>
+      <div>Redis-0x05-内存管理的跨平台</div>
+      <div>https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-内存管理的跨平台/</div>
     </div>
     <div class="license-meta">
       
@@ -703,7 +728,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年11月8日</div>
+          <div>2024年4月13日</div>
         </div>
       
       
@@ -735,9 +760,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/11/08/vim%E7%A6%81%E7%94%A8markdown%E8%AF%AD%E6%B3%95%E9%9A%90%E8%97%8F/" title="vim禁用markdown语法隐藏">
+                      <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">vim禁用markdown语法隐藏</span>
+                        <span class="hidden-mobile">Redis-0x06-zmalloc的实现</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -745,8 +770,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/" title="记一次Redis的PR提交">
-                        <span class="hidden-mobile">记一次Redis的PR提交</span>
+                      <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目">
+                        <span class="hidden-mobile">Redis-0x04-用cmake构建项目</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -769,7 +794,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'dabef08f923c0d7d1f8f826102a2f0b3'
+            id: '224dedc24e6a7b276ab260a05aaaa308'
           }
         )
         var gitalk = new Gitalk(options);

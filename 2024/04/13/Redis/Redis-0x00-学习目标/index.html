@@ -16,26 +16,23 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Redis项目是通过make构建的，考虑到以下几点，我觉得有必要通过cmake脚本生成MakeFile  cmake的跨平台性  源码的结构自定义组织   但是reids项目本身为了兼容跨平台性以及性能优化，提供了诸多的编译选项，我当前的cmake脚本只关注linux平台  linux系统  jemalloc内存分配器   1 项目结构  项目的构建分为两个部分  依赖的3rd_party编译，将">
+    <meta name="description" content="大概的计划是顺着启动入口从上至下，遇到数据结构看数据结构，遇到启动流程看启动流程。 1 main主程序   redis-server    redis-cli   2 数据类型   string    list    set    zset    hash   3 编码方式   sds    dict    zipmap    list    ziplist    intset    zskipl">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis-2刷-0x14-cmake构建项目">
-<meta property="og:url" content="https://bannirui.github.io/2024/02/21/Redis-2%E5%88%B7-0x14-cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/index.html">
+<meta property="og:title" content="Redis-0x00-学习目标">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="Redis项目是通过make构建的，考虑到以下几点，我觉得有必要通过cmake脚本生成MakeFile  cmake的跨平台性  源码的结构自定义组织   但是reids项目本身为了兼容跨平台性以及性能优化，提供了诸多的编译选项，我当前的cmake脚本只关注linux平台  linux系统  jemalloc内存分配器   1 项目结构  项目的构建分为两个部分  依赖的3rd_party编译，将">
+<meta property="og:description" content="大概的计划是顺着启动入口从上至下，遇到数据结构看数据结构，遇到启动流程看启动流程。 1 main主程序   redis-server    redis-cli   2 数据类型   string    list    set    zset    hash   3 编码方式   sds    dict    zipmap    list    ziplist    intset    zskipl">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2024/02/21/Redis-2%E5%88%B7-0x14-cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/1708518055.png">
-<meta property="article:published_time" content="2024-02-21T11:27:13.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:34:13.234Z">
+<meta property="article:published_time" content="2024-04-13T07:20:01.000Z">
+<meta property="article:modified_time" content="2024-04-13T07:41:02.974Z">
 <meta property="article:author" content="Bannirui">
-<meta property="article:tag" content="2刷Redis">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2024/02/21/Redis-2%E5%88%B7-0x14-cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/1708518055.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-2刷-0x14-cmake构建项目 - Bannirui Blog</title>
+  <title>Redis-0x00-学习目标 - Bannirui Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -225,7 +222,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Redis-2刷-0x14-cmake构建项目"></span>
+            <span id="subtitle" data-typed-text="Redis-0x00-学习目标"></span>
           
         </div>
 
@@ -236,8 +233,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-02-21 19:27" pubdate>
-          2024年2月21日 晚上
+        <time datetime="2024-04-13 15:20" pubdate>
+          2024年4月13日 下午
         </time>
       </span>
     
@@ -248,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          769 字
+          104 字
         
       </span>
     
@@ -259,7 +256,7 @@
         
         
         
-          7 分钟
+          1 分钟
         
       </span>
     
@@ -317,7 +314,7 @@
         aria-expanded="true"
       >
         Redis
-        <span class="list-group-count">(51)</span>
+        <span class="list-group-count">(52)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -331,19 +328,19 @@
     
       
       
-        <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" title="Redis-0x00-编译"
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
            class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x00-编译</span>
+           active">
+          <span class="category-post">Redis-0x00-学习目标</span>
         </a>
       
     
       
       
-        <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x01-学习目标"
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Redis-0x01-学习目标</span>
+          <span class="category-post">Redis-0x01-源码编译</span>
         </a>
       
     
@@ -353,6 +350,24 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x02-list</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
         </a>
       
     
@@ -376,6 +391,15 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
            class="list-group-item list-group-item-action
            ">
@@ -385,10 +409,28 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
         </a>
       
     
@@ -466,51 +508,6 @@
     
       
       
-        <a href="/2023/04/06/Redis-0x0f-zskiplist/" title="Redis-0x0f-zskiplist"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x0f-zskiplist</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x10-db/" title="Redis-0x10-db"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x10-db</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x11-object/" title="Redis-0x11-object"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x11-object</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Redis-0x12-服务端启动流程"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x12-服务端启动流程</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" title="Redis-0x13-注册OOM处理器"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x13-注册OOM处理器</span>
-        </a>
-      
-    
-      
-      
         <a href="/categories/Redis/" class="list-group-item list-group-item-action">
           <span class="category-post">More...</span>
         </a>
@@ -533,76 +530,190 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Redis-2刷-0x14-cmake构建项目</h1>
+            <h1 id="seo-header">Redis-0x00-学习目标</h1>
             
             
               <div class="markdown-body">
                 
-                <p>Redis项目是通过make构建的，考虑到以下几点，我觉得有必要通过cmake脚本生成MakeFile</p>
-<ul>
-<li><p>cmake的跨平台性</p>
+                <p>大概的计划是顺着启动入口从上至下，遇到数据结构看数据结构，遇到启动流程看启动流程。</p>
+<h3 id="1-main主程序"><a href="#1-main主程序" class="headerlink" title="1 main主程序"></a>1 main主程序</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+redis-server</p>
 </li>
-<li><p>源码的结构自定义组织</p>
-</li>
-</ul>
-<p>但是reids项目本身为了兼容跨平台性以及性能优化，提供了诸多的编译选项，我当前的cmake脚本只关注linux平台</p>
-<ul>
-<li><p>linux系统</p>
-</li>
-<li><p>jemalloc内存分配器</p>
+<li><p><input disabled="" type="checkbox"> 
+redis-cli</p>
 </li>
 </ul>
-<h3 id="1-项目结构"><a href="#1-项目结构" class="headerlink" title="1 项目结构"></a>1 项目结构</h3><img src="/2024/02/21/Redis-2%E5%88%B7-0x14-cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/1708518055.png" srcset="/img/loading.gif" lazyload class="">
-
-<p>项目的构建分为两个部分</p>
-<ul>
-<li><p>依赖的3rd_party编译，将其编译位链接库</p>
+<h3 id="2-数据类型"><a href="#2-数据类型" class="headerlink" title="2 数据类型"></a>2 数据类型</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+string</p>
 </li>
-<li><p>源码，将其编译位可执行程序</p>
+<li><p><input disabled="" type="checkbox"> 
+list</p>
 </li>
-</ul>
-<h3 id="2-make"><a href="#2-make" class="headerlink" title="2 make"></a>2 make</h3><p>之前看过了MakeFile的rule，<a href="/2023/11/01/Redis-2%E5%88%B7-0x01-Makefile/" title="Redis-2刷-0x01-Makefile">Redis-2刷-0x01-Makefile</a></p>
-<h3 id="3-cmake脚本编写"><a href="#3-cmake脚本编写" class="headerlink" title="3 cmake脚本编写"></a>3 cmake脚本编写</h3><p>为了尽可能的简单，因此只关注于linux平台，并且当前只编写了编译redis-server可执行程序的脚本</p>
-<p>从MakeFile中可以看出来redis工程共提供了如下6个可执行程序的编译</p>
-<ul>
-<li><p>redis-server</p>
+<li><p><input disabled="" type="checkbox"> 
+set</p>
 </li>
-<li><p>redis-sentinel</p>
+<li><p><input disabled="" type="checkbox"> 
+zset</p>
 </li>
-<li><p>redis-check-rdb</p>
-</li>
-<li><p>redis-check-aof</p>
-</li>
-<li><p>redis-cli</p>
-</li>
-<li><p>redis-benchmark</p>
+<li><p><input disabled="" type="checkbox"> 
+hash</p>
 </li>
 </ul>
-<h4 id="3-1-根目录"><a href="#3-1-根目录" class="headerlink" title="3.1 根目录"></a>3.1 根目录</h4><h5 id="3-1-1-CmakeLists-txt文件"><a href="#3-1-1-CmakeLists-txt文件" class="headerlink" title="3.1.1 CmakeLists.txt文件"></a>3.1.1 CmakeLists.txt文件</h5><p>负责源码的编译以及链接库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">cmake_minimum_required(VERSION 3.28.0)<br>project(redis_6.2 C)<br><br>#[[<br>1 redis源码<br>2 前置依赖脚本<br>3 编译成可执行程序redis-server<br>4 依赖3rd库 libhiredis.a liblua.a libjemalloc.a<br>5 系统库<br>6 链接库<br>]]<br><br>#执行shell<br>execute_process(<br>    COMMAND sh $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/src/mkreleasehdr.sh<br>    WORKING_DIRECTORY $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/src<br>)<br><br>#系统库<br>set(SYS_LIB -lm -latomic -ldl -lnsl -lresolv -lpthread -lrt -lcrypt -lbsd)<br><br>#redis-server的源码文件<br>set(REDIS_SERVER_SRC<br>src/adlist.c<br>src/quicklist.c<br>src/ae.c<br>src/anet.c<br>src/dict.c<br>src/server.c<br>src/sds.c<br>src/zmalloc.c<br>src/lzf_c.c<br>src/lzf_d.c<br>src/pqsort.c<br>src/zipmap.c<br>src/sha1.c<br>src/ziplist.c<br>src/release.c<br>src/networking.c<br>src/util.c<br>src/object.c<br>src/db.c<br>src/replication.c<br>src/rdb.c<br>src/t_string.c<br>src/t_list.c<br>src/t_set.c<br>src/t_zset.c<br>src/t_hash.c<br>src/config.c<br>src/aof.c<br>src/pubsub.c<br>src/multi.c<br>src/debug.c<br>src/sort.c<br>src/intset.c<br>src/syncio.c<br>src/cluster.c<br>src/crc16.c<br>src/endianconv.c<br>src/slowlog.c<br>src/scripting.c<br>src/bio.c<br>src/rio.c<br>src/rand.c<br>src/memtest.c<br>src/crcspeed.c<br>src/crc64.c<br>src/bitops.c<br>src/sentinel.c<br>src/notify.c<br>src/setproctitle.c<br>src/blocked.c<br>src/hyperloglog.c<br>src/latency.c<br>src/sparkline.c<br>src/redis-check-rdb.c<br>src/redis-check-aof.c<br>src/geo.c<br>src/lazyfree.c<br>src/module.c<br>src/evict.c<br>src/expire.c<br>src/geohash.c<br>src/geohash_helper.c<br>src/childinfo.c<br>src/defrag.c<br>src/siphash.c<br>src/rax.c<br>src/t_stream.c<br>src/listpack.c<br>src/localtime.c<br>src/lolwut.c<br>src/lolwut5.c<br>src/lolwut6.c<br>src/acl.c<br>src/gopher.c<br>src/tracking.c<br>src/connection.c<br>src/tls.c<br>src/sha256.c<br>src/timeout.c<br>src/setcpuaffinity.c<br>src/monotonic.c<br>src/mt19937-64.c<br>)<br><br>#external 3rd库<br>add_subdirectory(deps)<br><br>#3rd头文件路径<br>set(DEPS_HEADER_PATH $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/deps)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/hdr_histogram)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/hiredis)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/jemalloc/include)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/linenoise)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/lua/src)<br><br>#3rd库路径<br>set(DEPS_LIB_PATH $&#123;CMAKE_CURRENT_BINARY_DIR&#125;/deps)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/hdr_histogram)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/hiredis)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/jemalloc)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/linenoise)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/lua)<br><br>add_executable(redis-server $&#123;REDIS_SERVER_SRC&#125;)<br><br>#链接库文件<br>target_link_libraries(redis-server<br>    hiredis<br>    lua<br>    jemalloc<br>    $&#123;SYS_LIB&#125;<br>)<br></code></pre></td></tr></table></figure>
+<h3 id="3-编码方式"><a href="#3-编码方式" class="headerlink" title="3 编码方式"></a>3 编码方式</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+sds</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+dict</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+zipmap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+list</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ziplist</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+intset</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+zskiplist</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+quicklist</p>
+</li>
+</ul>
+<h3 id="4-数据结构"><a href="#4-数据结构" class="headerlink" title="4 数据结构"></a>4 数据结构</h3><ul>
+<li><input disabled="" type="checkbox"> object</li>
+</ul>
+<h3 id="5-net网络"><a href="#5-net网络" class="headerlink" title="5 net网络"></a>5 net网络</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+anet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+networking</p>
+</li>
+</ul>
+<h3 id="6-event事件"><a href="#6-event事件" class="headerlink" title="6 event事件"></a>6 event事件</h3><ul>
+<li><input disabled="" type="checkbox"> ae</li>
+</ul>
+<h3 id="7-data数据操作"><a href="#7-data数据操作" class="headerlink" title="7 data数据操作"></a>7 data数据操作</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+aof</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+config</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+db</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+multi</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+rdb</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+replication</p>
+</li>
+</ul>
+<h3 id="8-tool工具"><a href="#8-tool工具" class="headerlink" title="8 tool工具"></a>8 tool工具</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+bitops</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+debug</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+endianconv</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+help</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+lzf_c</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+lzf_d</p>
+</li>
+<li><p>[ ]rand</p>
+</li>
+<li><p>[ ]release</p>
+</li>
+<li><p>[ ]sha1</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+util</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+crc64</p>
+</li>
+</ul>
+<h3 id="9-baseinfo基本信息"><a href="#9-baseinfo基本信息" class="headerlink" title="9 baseinfo基本信息"></a>9 baseinfo基本信息</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+asciilogo</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+version</p>
+</li>
+</ul>
+<h3 id="10-compatible兼容"><a href="#10-compatible兼容" class="headerlink" title="10 compatible兼容"></a>10 compatible兼容</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+fmacros</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+solarisfixes</p>
+</li>
+</ul>
+<h3 id="11-wrapper封装类"><a href="#11-wrapper封装类" class="headerlink" title="11 wrapper封装类"></a>11 wrapper封装类</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+bio</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+hyperloglog</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+intset</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+latency</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+migrate</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+notify</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+object</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+pqsort</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+pubsub</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+rio</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+slowlog</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+sort</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+syncio</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+zmalloc</p>
+</li>
+</ul>
 
-<h5 id="3-1-2-configure-sh文件"><a href="#3-1-2-configure-sh文件" class="headerlink" title="3.1.2 configure.sh文件"></a>3.1.2 configure.sh文件</h5><p>执行cmake脚本生成Makefile</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>cmake -S . -B build<br></code></pre></td></tr></table></figure>
-
-<h5 id="3-1-3-build-sh文件"><a href="#3-1-3-build-sh文件" class="headerlink" title="3.1.3 build.sh文件"></a>3.1.3 build.sh文件</h5><p>执行make</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>cd build ; make<br></code></pre></td></tr></table></figure>
-
-<h5 id="3-1-4-run-sh文件"><a href="#3-1-4-run-sh文件" class="headerlink" title="3.1.4 run.sh文件"></a>3.1.4 run.sh文件</h5><p>运行redis-server可执行程序</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>cd build ; ./redis-server<br></code></pre></td></tr></table></figure>
-
-<h4 id="3-2-deps目录"><a href="#3-2-deps目录" class="headerlink" title="3.2 deps目录"></a>3.2 deps目录</h4><p>负责编译3rd_party的依赖</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">add_subdirectory(hdr_histogram)<br>add_subdirectory(hiredis)<br>add_subdirectory(jemalloc)<br>add_subdirectory(linenoise)<br>add_subdirectory(lua)<br></code></pre></td></tr></table></figure>
-
-<h5 id="3-2-1-deps-x2F-hdr-histogram"><a href="#3-2-1-deps-x2F-hdr-histogram" class="headerlink" title="3.2.1 deps&#x2F;hdr_histogram"></a>3.2.1 deps&#x2F;hdr_histogram</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">add_library(hdr_histogram<br>    hdr_histogram.h hdr_histogram.c<br>)<br></code></pre></td></tr></table></figure>
-
-<h5 id="3-2-2-deps-x2F-hiredis"><a href="#3-2-2-deps-x2F-hiredis" class="headerlink" title="3.2.2 deps&#x2F;hiredis"></a>3.2.2 deps&#x2F;hiredis</h5><p>hiredis本身就是cmake项目，因此不需要额外编写cmake脚本</p>
-<h5 id="3-2-3-deps-x2F-jemalloc"><a href="#3-2-3-deps-x2F-jemalloc" class="headerlink" title="3.2.3 deps&#x2F;jemalloc"></a>3.2.3 deps&#x2F;jemalloc</h5><h6 id="3-2-3-1-sh脚本"><a href="#3-2-3-1-sh脚本" class="headerlink" title="3.2.3.1 sh脚本"></a>3.2.3.1 sh脚本</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>./configure --with-version=5.1.0-0-g0 --with-lg-quantum=3 --with-jemalloc-prefix=je_<br>make lib/libjemalloc.a<br></code></pre></td></tr></table></figure>
-
-<h6 id="3-2-3-2-cmake脚本"><a href="#3-2-3-2-cmake脚本" class="headerlink" title="3.2.3.2 cmake脚本"></a>3.2.3.2 cmake脚本</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">execute_process(<br>    COMMAND bash &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/build_jemalloc.sh&quot;<br>    WORKING_DIRECTORY $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;<br>)<br><br>file(COPY lib/libjemalloc.a DESTINATION $&#123;CMAKE_CURRENT_BINARY_DIR&#125;)<br>file(REMOVE lib/libjemalloc.a)<br></code></pre></td></tr></table></figure>
-
-<h5 id="3-2-4-deps-x2F-linenoise"><a href="#3-2-4-deps-x2F-linenoise" class="headerlink" title="3.2.4 deps&#x2F;linenoise"></a>3.2.4 deps&#x2F;linenoise</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">add_library(linenoise linenoise.c)<br></code></pre></td></tr></table></figure>
-
-<h5 id="3-2-5-deps-x2F-lua"><a href="#3-2-5-deps-x2F-lua" class="headerlink" title="3.2.5 deps&#x2F;lua"></a>3.2.5 deps&#x2F;lua</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">file(GLOB LUA_SRC ./src/*.c)<br>add_library(lua $&#123;LUA_SRC&#125;)<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -641,13 +752,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/2%E5%88%B7Redis/" class="print-no-link">#2刷Redis</a>
-      
-    </div>
-  
 </div>
 
 
@@ -656,8 +760,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Redis-2刷-0x14-cmake构建项目</div>
-      <div>https://bannirui.github.io/2024/02/21/Redis-2刷-0x14-cmake构建项目/</div>
+      <div>Redis-0x00-学习目标</div>
+      <div>https://bannirui.github.io/2024/04/13/Redis/Redis-0x00-学习目标/</div>
     </div>
     <div class="license-meta">
       
@@ -669,7 +773,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年2月21日</div>
+          <div>2024年4月13日</div>
         </div>
       
       
@@ -701,9 +805,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/02/23/archlinux%E7%BC%96%E8%AF%91kvmtool/" title="archlinux编译kvmtool">
+                      <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">archlinux编译kvmtool</span>
+                        <span class="hidden-mobile">Redis-0x01-源码编译</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -711,8 +815,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/01/25/vim%E4%B8%8E%E7%B3%BB%E7%BB%9F%E5%89%AA%E8%B4%B4%E6%9D%BF%E7%9B%B4%E6%8E%A5%E7%9A%84%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4/" title="vim与系统剪贴板直接的复制粘贴">
-                        <span class="hidden-mobile">vim与系统剪贴板直接的复制粘贴</span>
+                      <a href="/2024/03/28/IDEA/IDEA%E5%86%85%E7%BD%AEmaven%E6%8F%92%E4%BB%B6%E7%A6%81%E7%94%A8http/" title="IDEA内置maven插件禁用http">
+                        <span class="hidden-mobile">IDEA内置maven插件禁用http</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -735,7 +839,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '89ae24b8b956b824335fc13764f4ed49'
+            id: '74b833dd4f6008b57f576fdf5c703c41'
           }
         )
         var gitalk = new Gitalk(options);

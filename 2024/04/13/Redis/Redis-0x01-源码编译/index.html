@@ -16,26 +16,32 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。 1 编码方式   status struct 文件 说明    1 redisObject\sds object.c OBJ_ENCODING_RAW   1 redisObject\sds object.c OBJ_ENCODING_INT   1 dict dict.c OBJ_ENCODING">
+    <meta name="description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码github源码地址 我的源码笔记地址 将源码for到自己仓库 12345672 git clone git@github.com:Bannirui&#x2F;redis.git3 git remote add upstream git@gi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis-0x01-学习目标">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/index.html">
+<meta property="og:title" content="Redis-0x01-源码编译">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。 1 编码方式   status struct 文件 说明    1 redisObject\sds object.c OBJ_ENCODING_RAW   1 redisObject\sds object.c OBJ_ENCODING_INT   1 dict dict.c OBJ_ENCODING">
+<meta property="og:description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码github源码地址 我的源码笔记地址 将源码for到自己仓库 12345672 git clone git@github.com:Bannirui&#x2F;redis.git3 git remote add upstream git@gi">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/img/Redis-default.png">
-<meta property="article:published_time" content="2023-03-23T15:40:55.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:46:29.580Z">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323103838439.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104043451.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104203310.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104341081.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104921216.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105129795.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105243908.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105431146.png">
+<meta property="article:published_time" content="2024-04-13T07:42:29.000Z">
+<meta property="article:modified_time" content="2024-04-13T07:51:22.929Z">
 <meta property="article:author" content="Bannirui">
-<meta property="article:tag" content="Redis@6.2">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/img/Redis-default.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323103838439.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-0x01-学习目标 - Bannirui Blog</title>
+  <title>Redis-0x01-源码编译 - Bannirui Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -225,7 +231,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Redis-0x01-学习目标"></span>
+            <span id="subtitle" data-typed-text="Redis-0x01-源码编译"></span>
           
         </div>
 
@@ -236,8 +242,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-23 23:40" pubdate>
-          2023年3月23日 晚上
+        <time datetime="2024-04-13 15:42" pubdate>
+          2024年4月13日 下午
         </time>
       </span>
     
@@ -248,7 +254,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          637 字
+          240 字
         
       </span>
     
@@ -259,7 +265,7 @@
         
         
         
-          6 分钟
+          3 分钟
         
       </span>
     
@@ -317,7 +323,7 @@
         aria-expanded="true"
       >
         Redis
-        <span class="list-group-count">(51)</span>
+        <span class="list-group-count">(52)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -331,19 +337,19 @@
     
       
       
-        <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" title="Redis-0x00-编译"
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Redis-0x00-编译</span>
+          <span class="category-post">Redis-0x00-学习目标</span>
         </a>
       
     
       
       
-        <a href="/2023/03/23/Redis-0x01-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x01-学习目标"
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">Redis-0x01-学习目标</span>
+          <span class="category-post">Redis-0x01-源码编译</span>
         </a>
       
     
@@ -353,6 +359,24 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x02-list</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
         </a>
       
     
@@ -376,6 +400,15 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
            class="list-group-item list-group-item-action
            ">
@@ -385,10 +418,28 @@
     
       
       
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
         <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
         </a>
       
     
@@ -466,51 +517,6 @@
     
       
       
-        <a href="/2023/04/06/Redis-0x0f-zskiplist/" title="Redis-0x0f-zskiplist"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x0f-zskiplist</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x10-db/" title="Redis-0x10-db"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x10-db</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/10/Redis-0x11-object/" title="Redis-0x11-object"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x11-object</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Redis-0x12-服务端启动流程"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x12-服务端启动流程</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/11/Redis-0x13-%E6%B3%A8%E5%86%8COOM%E5%A4%84%E7%90%86%E5%99%A8/" title="Redis-0x13-注册OOM处理器"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Redis-0x13-注册OOM处理器</span>
-        </a>
-      
-    
-      
-      
         <a href="/categories/Redis/" class="list-group-item list-group-item-action">
           <span class="category-post">More...</span>
         </a>
@@ -533,431 +539,61 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Redis-0x01-学习目标</h1>
+            <h1 id="seo-header">Redis-0x01-源码编译</h1>
             
             
               <div class="markdown-body">
                 
-                <p>Redis主要源码都在src目录下，没有分更多的模块。结合一份网上的文件结构说明，对文件进行分类。</p>
-<h2 id="1-编码方式"><a href="#1-编码方式" class="headerlink" title="1 编码方式"></a>1 编码方式</h2><table>
+                <h3 id="1-环境"><a href="#1-环境" class="headerlink" title="1 环境"></a>1 环境</h3><table>
 <thead>
 <tr>
-<th align="center">status</th>
-<th>struct</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
+<th>Name</th>
+<th>Ver</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">1</td>
-<td>redisObject\sds</td>
-<td align="left">object.c</td>
-<td align="left"><a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject">OBJ_ENCODING_RAW</a></td>
+<td>MacOS</td>
+<td>11.5.2</td>
 </tr>
 <tr>
-<td align="center">1</td>
-<td>redisObject\sds</td>
-<td align="left">object.c</td>
-<td align="left">OBJ_ENCODING_INT</td>
+<td>Clion</td>
+<td>2022.3.3</td>
 </tr>
 <tr>
-<td align="center">1</td>
-<td>dict</td>
-<td align="left">dict.c</td>
-<td align="left"><a href="/2023/03/29/Redis-0x03-dict/" title="Redis-0x03-dict">OBJ_ENCODING_HT</a></td>
+<td>Clang</td>
+<td>12.0.5</td>
 </tr>
 <tr>
-<td align="center">1</td>
-<td>zipmap</td>
-<td align="left">zipmap.c</td>
-<td align="left"><a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap">OBJ_ENCODING_ZIPMAP</a> 可能已经弃用了。</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td>list</td>
-<td align="left">adlist.c</td>
-<td align="left"><a href="/2023/03/24/Redis-0x02-list/" title="Redis-0x02-list">OBJ_ENCODING_LINKEDLIST</a> 双链表，作为数据类型编码已经切换成quicklist，现在主要用在redisServer实例里面的双链表数据结构。</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td>ziplist</td>
-<td align="left">ziplist.c</td>
-<td align="left"><a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist">OBJ_ENCODING_ZIPLIST</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td>intset</td>
-<td align="left">intset.c</td>
-<td align="left"><a href="/2023/04/06/Redis-0x0e-intset/" title="Redis-0x0e-intset">OBJ_ENCODING_INTSET</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td>zskiplist</td>
-<td align="left">t_zset.c</td>
-<td align="left"><a href="/2023/04/06/Redis-0x0f-zskiplist/" title="Redis-0x0f-zskiplist">OBJ_ENCODING_SKIPLIST</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td>redisObject\sds</td>
-<td align="left">object.c</td>
-<td align="left"><a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject">OBJ_ENCODING_EMBSTR</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td>quicklist</td>
-<td align="left">quicklist.c</td>
-<td align="left"><a href="/2023/04/03/Redis-0x0d-quicklist/" title="Redis-0x0d-quicklist">OBJ_ENCODING_QUICKLIST</a> 使用ziplist存储数据的双端链表。</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td>sds</td>
-<td align="left">sds.c</td>
-<td align="left"><a href="/2023/03/29/Redis-0x04-sds/" title="Redis-0x04-sds">字符串。</a></td>
+<td>LLDB</td>
+<td>15.0.5</td>
 </tr>
 </tbody></table>
-<h2 id="2-数据类型"><a href="#2-数据类型" class="headerlink" title="2 数据类型"></a>2 数据类型</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">1</td>
-<td align="left">t_string.c</td>
-<td align="left"><a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string">OBJ_STRING 字符串。</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left">t_list.c</td>
-<td align="left"><a href="/2023/04/03/Redis-0x0a-t-list/" title="Redis-0x0a-t_list">OBJ_LIST 列表。</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left">t_set.c</td>
-<td align="left"><a href="/2023/04/03/Redis-0x0b-t-set/" title="Redis-0x0b-t_set">OBJ_SET 集合。</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left">t_zset.c</td>
-<td align="left"><a href="/2023/04/03/Redis-0x0c-t-zset/" title="Redis-0x0c-t_zset">OBJ_ZSET 有序集合。</a></td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="left">t_hash.c</td>
-<td align="left"><a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash">OBJ_HASH 哈希。</a></td>
-</tr>
-</tbody></table>
-<h2 id="3-数据结构"><a href="#3-数据结构" class="headerlink" title="3 数据结构"></a>3 数据结构</h2><table>
-<thead>
-<tr>
-<th>status</th>
-<th>struct</th>
-<th>文件</th>
-<th>mark</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>redisObject</td>
-<td>server.h\object.c</td>
-<td><a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject">redis中数据的统一封装。</a></td>
-</tr>
-</tbody></table>
-<h2 id="1-main主程序"><a href="#1-main主程序" class="headerlink" title="1 main主程序"></a>1 main主程序</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">1</td>
-<td align="left">server.c</td>
-<td align="left"><a href="/2023/04/11/Redis-0x12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Redis-0x12-服务端启动流程">redis服务端。</a></td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">redis_cli.c</td>
-<td align="left">redis客户端。</td>
-</tr>
-</tbody></table>
-<h2 id="2-net网络"><a href="#2-net网络" class="headerlink" title="2 net网络"></a>2 net网络</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="left">anet.c</td>
-<td align="left">Server&#x2F;Client通信的基础封装。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">networking.c</td>
-<td align="left">网络协议传输方法定义。</td>
-</tr>
-</tbody></table>
-<h2 id="4-event事件"><a href="#4-event事件" class="headerlink" title="4 event事件"></a>4 event事件</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="left">ae.c</td>
-<td align="left">用于Redis的事件处理，包括句柄和超时事件。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">ae_epoll.c</td>
-<td align="left">实现了epoll系统调用的接口。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">ae_evport.c</td>
-<td align="left">实现了evport系统调用的接口。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">ae_kqueue.c</td>
-<td align="left">实现了kqueue系统调用的接口。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">ae_select.c</td>
-<td align="left">实现了select系统调用的接口。</td>
-</tr>
-</tbody></table>
-<h2 id="5-data数据操作"><a href="#5-data数据操作" class="headerlink" title="5 data数据操作"></a>5 data数据操作</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="left">aof.c</td>
-<td align="left">AOF的实现。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">config.c</td>
-<td align="left">将配置文件redis.conf文件中的配置读取出来。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">db.c</td>
-<td align="left">对于Redis内存数据库的相关操作。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">multi.c</td>
-<td align="left">事务处理操作。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">rdb.c</td>
-<td align="left">对于Redis本地数据库相关操作。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">replication.c</td>
-<td align="left">主从复制操作的实现。</td>
-</tr>
-</tbody></table>
-<h2 id="6-tool工具"><a href="#6-tool工具" class="headerlink" title="6 tool工具"></a>6 tool工具</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="left">bitops.c</td>
-<td align="left">位操作。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">debug.c</td>
-<td align="left">调试使用。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">endianconv.c</td>
-<td align="left">高低位转换，不通系统，高低位顺序不同。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">help.h</td>
-<td align="left">辅助命令行的提示。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">lzf_c.c</td>
-<td align="left">压缩算法。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">lzf_d.c</td>
-<td align="left">压缩算法。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">rand.c</td>
-<td align="left">随机数。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">release.c</td>
-<td align="left">发布时使用。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">sha1.c</td>
-<td align="left">sha加密算法。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">util.c</td>
-<td align="left">通用工具方法。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">crc64.c</td>
-<td align="left">循环冗余校验。</td>
-</tr>
-</tbody></table>
-<h2 id="7-baseinfo基本信息"><a href="#7-baseinfo基本信息" class="headerlink" title="7 baseinfo基本信息"></a>7 baseinfo基本信息</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="left">asciilogo.c</td>
-<td align="left">Redis的logo显示。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">version.h</td>
-<td align="left">Redis的版本号。</td>
-</tr>
-</tbody></table>
-<h2 id="8-compatible兼容"><a href="#8-compatible兼容" class="headerlink" title="8 compatible兼容"></a>8 compatible兼容</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="left">fmacros.h</td>
-<td align="left">兼容Mac系统。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">solarisfixes.h</td>
-<td align="left">兼容solary。</td>
-</tr>
-</tbody></table>
-<h2 id="9-wrapper封装类"><a href="#9-wrapper封装类" class="headerlink" title="9 wrapper封装类"></a>9 wrapper封装类</h2><table>
-<thead>
-<tr>
-<th align="center">status</th>
-<th align="left">文件</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="left">bio.c</td>
-<td align="left">background I&#x2F;O，开启后台线程使用。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">hyperloglog.c</td>
-<td align="left">高级数据结构。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">intset.c</td>
-<td align="left">整数范围内的使用set。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">latency.c</td>
-<td align="left">延迟类。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">migrate.c</td>
-<td align="left">命令迁移。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">notify.c</td>
-<td align="left">通知。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">object.c</td>
-<td align="left">创建和释放redisObject对象。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">pqsort.c</td>
-<td align="left">排序算法。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">pubsub.c</td>
-<td align="left">订阅模式实现。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">rio.c</td>
-<td align="left">Redis定义的一个I&#x2F;O类。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">slowlog.c</td>
-<td align="left">日志类型。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">sort.c</td>
-<td align="left">排序算法</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">syncio.c</td>
-<td align="left">同步Socket和I&#x2F;O操作。</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="left">zmalloc.c</td>
-<td align="left">关于Redis的内存分配的封装实现。</td>
-</tr>
-</tbody></table>
+<h3 id="2-源码"><a href="#2-源码" class="headerlink" title="2 源码"></a>2 源码</h3><p><a target="_blank" rel="noopener" href="https://github.com/redis/redis">github源码地址</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Bannirui/redis.git">我的源码笔记地址</a></p>
+<p>将源码for到自己仓库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">2 git clone git@github.com:Bannirui/redis.git<br>3 git remote add upstream git@github.com:redis/redis.git<br>4 git remote set-url --push upstream no_push<br>5 git fetch upstream<br>6 git checkout 6.2<br>7 git checkout -b study-6.2<br>8 git push origin study-6.2<br></code></pre></td></tr></table></figure>
 
+<h3 id="3-导入Clion并编译"><a href="#3-导入Clion并编译" class="headerlink" title="3 导入Clion并编译"></a>3 导入Clion并编译</h3><h4 id="3-1-ToolChain"><a href="#3-1-ToolChain" class="headerlink" title="3.1 ToolChain"></a>3.1 ToolChain</h4><p>将使用Clang作为构建调试工具，调试器不能使用GDB，之前使用GDB有问题，得使用LLDB。</p>
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323103838439.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-2-Makefile"><a href="#3-2-Makefile" class="headerlink" title="3.2 Makefile"></a>3.2 Makefile</h4><p>选择Clang作为Makefile项目的构建工具。</p>
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104043451.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-3-编译"><a href="#3-3-编译" class="headerlink" title="3.3 编译"></a>3.3 编译</h4><h5 id="3-3-1-运行"><a href="#3-3-1-运行" class="headerlink" title="3.3.1 运行"></a>3.3.1 运行</h5><img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104203310.png" srcset="/img/loading.gif" lazyload class="">
+
+<h5 id="3-3-2-make-test"><a href="#3-3-2-make-test" class="headerlink" title="3.3.2 make test"></a>3.3.2 make test</h5><p>根据提示，出现如下提示<code>It&#39;s a good idea to run &#39;make test&#39;</code>，则在终端执行<code>make test</code>。</p>
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104341081.png" srcset="/img/loading.gif" lazyload class="">
+
+<h5 id="3-3-3-编译成功"><a href="#3-3-3-编译成功" class="headerlink" title="3.3.3 编译成功"></a>3.3.3 编译成功</h5><p>终端出现如下提示<code>All tests passed without errors</code>，则表示编译成功。</p>
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104921216.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="4-调试"><a href="#4-调试" class="headerlink" title="4 调试"></a>4 调试</h3><h4 id="4-1-配置"><a href="#4-1-配置" class="headerlink" title="4.1 配置"></a>4.1 配置</h4><img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105129795.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="4-2-启动"><a href="#4-2-启动" class="headerlink" title="4.2 启动"></a>4.2 启动</h4><h5 id="4-2-1-服务端"><a href="#4-2-1-服务端" class="headerlink" title="4.2.1 服务端"></a>4.2.1 服务端</h5><p>服务端已经启动监听在知名端口。</p>
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105243908.png" srcset="/img/loading.gif" lazyload class="">
+
+<h5 id="4-2-2-客户端"><a href="#4-2-2-客户端" class="headerlink" title="4.2.2 客户端"></a>4.2.2 客户端</h5><p>启动客户端跟服务端交互，此时就可以进行调试跟踪了。</p>
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105431146.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -996,13 +632,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/Redis-6-2/" class="print-no-link">#Redis@6.2</a>
-      
-    </div>
-  
 </div>
 
 
@@ -1011,8 +640,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Redis-0x01-学习目标</div>
-      <div>https://bannirui.github.io/2023/03/23/Redis-0x01-学习目标/</div>
+      <div>Redis-0x01-源码编译</div>
+      <div>https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-源码编译/</div>
     </div>
     <div class="license-meta">
       
@@ -1024,7 +653,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月23日</div>
+          <div>2024年4月13日</div>
         </div>
       
       
@@ -1056,9 +685,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/24/Redis-0x02-list/" title="Redis-0x02-list">
+                      <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Redis-0x02-list</span>
+                        <span class="hidden-mobile">Redis-0x02-从Readme开始</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -1066,8 +695,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/23/Redis-0x00-%E7%BC%96%E8%AF%91/" title="Redis-0x00-编译">
-                        <span class="hidden-mobile">Redis-0x00-编译</span>
+                      <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标">
+                        <span class="hidden-mobile">Redis-0x00-学习目标</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -1090,7 +719,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '0fb9ca69287eaa9d3ae75a9dcbdabef0'
+            id: '9df4ecc2ba508ea03e72554ffb6b4c37'
           }
         )
         var gitalk = new Gitalk(options);
