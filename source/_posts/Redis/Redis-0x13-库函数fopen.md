@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x0B-库函数fopen
-date: 2023-12-28 14:58:32
+title: Redis-0x13-库函数fopen
 category_bar: true
+date: 2024-04-16 13:10:57
 categories: Redis
-tags: 2刷Redis
 ---
 
 1 查询系统手册

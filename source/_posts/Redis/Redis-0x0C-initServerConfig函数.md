@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x09-initServerConfig初始化redisServer
-date: 2023-11-24 10:56:31
+title: Redis-0x0C-initServerConfig函数
 category_bar: true
+date: 2024-04-15 19:34:19
 categories: Redis
-tags: 2刷Redis
 ---
 
 这个方法的体量很大，作用是对`redisServer`结构体成员进行初始化赋值，通篇大部分都是重复性劳动，比较有意思的是`initConfigValues()`这个函数。这个函数体现了C语言的封装和多态的实现方式，在正式看源码之前先做一些前置性铺垫。

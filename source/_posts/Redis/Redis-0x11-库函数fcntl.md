@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x13-库函数fcntl
-date: 2024-01-05 12:33:48
+title: Redis-0x11-库函数fcntl
 category_bar: true
+date: 2024-04-15 20:01:10
 categories: Redis
-tags: 2刷Redis
 ---
 
 ```shell
@@ -21,5 +20,3 @@ DESCRIPTION
 - F_GETFL 获取描述符(socket描述符)的状态标志
 
 - F_SETFL 设置描述符(socket描述符)的状态标志
-
-

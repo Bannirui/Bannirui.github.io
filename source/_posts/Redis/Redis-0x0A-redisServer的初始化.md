@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x07-redisServer初始化
-date: 2023-11-22 14:08:39
+title: Redis-0x0A-redisServer的初始化
 category_bar: true
+date: 2024-04-15 19:33:28
 categories: Redis
-tags: 2刷Redis
 ---
 
 `redisServer`是一个定义在`server.h`中的UDT，是一个超级大的结构体，大的原因是描述了整个服务端实例的信息。

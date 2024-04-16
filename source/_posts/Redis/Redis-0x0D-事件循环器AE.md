@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x10-事件循环器AE
-date: 2024-01-05 11:02:11
+title: Redis-0x0D-事件循环器AE
 category_bar: true
+date: 2024-04-15 19:34:46
 categories: Redis
-tags: 2刷Redis
 ---
 
 多路复用器应该是整个框架中的核心，在很多网络框架中都是起着一个重要的衔接作用
@@ -33,4 +32,3 @@ tags: 2刷Redis
 
 2 事件循环器
 ---
-

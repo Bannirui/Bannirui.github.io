@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x0D-库函数signal
-date: 2023-12-29 09:51:25
+title: Redis-0x15-库函数signal
 category_bar: true
+date: 2024-04-16 13:13:48
 categories: Redis
-tags: 2刷Redis
 ---
 
 1 手册查询

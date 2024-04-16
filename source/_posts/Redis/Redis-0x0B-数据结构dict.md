@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x08-数据结构dict
-date: 2023-11-22 14:10:00
+title: Redis-0x0B-数据结构dict
 category_bar: true
+date: 2024-04-15 19:33:55
 categories: Redis
-tags: 2刷Redis
 ---
 
 首先我认为数据结构是算法的附着点，数据结构又是对内存布局的描述，一切的行为方法都是围绕内存布局展开的，所以学习数据结构最重要的就是搞清楚内存布局。

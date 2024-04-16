@@ -1,9 +1,9 @@
 ---
-title: Redis-2刷-0x0E-数据结构-链表-list
-date: 2023-12-29 13:16:24
+title: Redis-0x16-数据结构list链表
 category_bar: true
+index_img: /img/Redis-0x16-数据结构list链表.png
+date: 2024-04-16 13:15:25
 categories: Redis
-tags: 2刷Redis
 ---
 
 redis中对双链表的实现没有特别之处，链表应该是redis数据结构最简单的一种了。一样地，除了数据阈，额外维护前驱和后继指针。

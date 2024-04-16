@@ -1,9 +1,8 @@
 ---
-title: Redis-2刷-0x0F-redis对象redisObject
-date: 2024-01-05 00:05:27
+title: Redis-0x17-redis对象redisObject
 category_bar: true
+date: 2024-04-16 13:50:21
 categories: Redis
-tags: 2刷Redis
 ---
 
 给一片内存，用户层是没办法进行解引用的，因为不知道数据的类型。因此redis定义了对象类型，万物皆可定义成对象，将来再逆向读出来。
