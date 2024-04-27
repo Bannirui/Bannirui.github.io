@@ -113,7 +113,6 @@ initServer();
 loadDataFromDisk();
 ```
 
-## 14 {% post_link Redis-0x1a-开启事件监听器 开启事件监听器 %}
 
 ```c
 // ze主循环 开启监听

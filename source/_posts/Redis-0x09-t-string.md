@@ -11,9 +11,9 @@ categories: [ Redis ]
 
 | 数据类型         | 实现     | 编码方式                                           | 数据结构 |
 | ---------------- | -------- | -------------------------------------------------- | -------- |
-| 字符串OBJ_STRING | t_string | {% post_link Redis-0x04-sds OBJ_ENCODING_INT %}    | sds      |
-|                  |          | {% post_link Redis-0x04-sds OBJ_ENCODING_EMBSTR %} | sds      |
-|                  |          | {% post_link Redis-0x04-sds OBJ_ENCODING_RAW %}    | sds      |
+| 字符串OBJ_STRING | t_string |     | sds      |
+|                  |          |  | sds      |
+|                  |          |     | sds      |
 
 ## 2 增
 

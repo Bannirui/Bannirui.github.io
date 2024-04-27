@@ -116,7 +116,6 @@ if (server.syslog_enabled) {
 createSharedObjects();
 ```
 
-## 5 {% post_link Redis-0x1a-开启事件监听器 创建事件监听器 %}
 
 ```c
 // 创建事件监听器
