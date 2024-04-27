@@ -24,7 +24,7 @@
 <meta property="og:description" content="1 进程信号处理策略123456789101112131415&#x2F;** * 忽略SIGHUP信号 * redis基本上都是以守护进程方式在运行 后台执行的时候不会有控制终端 忽略掉SIGHUP信号 *&#x2F;signal(SIGHUP, SIG_IGN);&#x2F;** * 忽略SIGPIPE信号 * SIGPIPE信号产生 *   - 在写管道发现读进程终止时产生信号 *   - 写已终止的SOCKET_STR">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-04-12T02:55:44.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:42:43.929Z">
+<meta property="article:modified_time" content="2024-04-27T10:28:23.552Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="Redis@6.2">
 <meta name="twitter:card" content="summary_large_image">
@@ -548,7 +548,8 @@
 
 <h2 id="4-创建共享对象"><a href="#4-创建共享对象" class="headerlink" title="4 创建共享对象"></a>4 创建共享对象</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 共享对象 相当于单例缓存池</span><br>createSharedObjects();<br></code></pre></td></tr></table></figure>
 
-<h2 id="5"><a href="#5" class="headerlink" title="5 "></a>5 <a href="/2023/04/12/Redis-0x1a-%E5%BC%80%E5%90%AF%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/" title="Redis-0x1a-开启事件监听器">创建事件监听器</a></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 创建事件监听器</span><br>server.el = aeCreateEventLoop(server.maxclients+CONFIG_FDSET_INCR);<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 创建事件监听器</span><br>server.el = aeCreateEventLoop(server.maxclients+CONFIG_FDSET_INCR);<br></code></pre></td></tr></table></figure>
 
 <h2 id="6-数据库db内存分配"><a href="#6-数据库db内存分配" class="headerlink" title="6 数据库db内存分配"></a>6 数据库db内存分配</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 数据库分配内存 默认配置16个数据库</span><br>server.db = zmalloc(<span class="hljs-keyword">sizeof</span>(redisDb)*server.dbnum);<br></code></pre></td></tr></table></figure>
 
