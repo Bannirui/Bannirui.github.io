@@ -16,15 +16,15 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="大概的计划是顺着启动入口从上至下，遇到数据结构看数据结构，遇到启动流程看启动流程。 1 main主程序   redis-server    redis-cli   2 数据类型   string    list    set    zset    hash   3 编码方式   sds    dict    zipmap    list    ziplist    intset    zskipl">
+    <meta name="description" content="大概的计划是顺着启动入口从上至下，遇到数据结构看数据结构，遇到启动流程看启动流程。 1 main主程序   redis-server    redis-cli   2 数据类型   string    list    set    zset    hash   3 编码方式   sds Redis-0x12-数据结构sds    dict Redis-0x0B-数据结构dict    zipmap">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x00-学习目标">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="大概的计划是顺着启动入口从上至下，遇到数据结构看数据结构，遇到启动流程看启动流程。 1 main主程序   redis-server    redis-cli   2 数据类型   string    list    set    zset    hash   3 编码方式   sds    dict    zipmap    list    ziplist    intset    zskipl">
+<meta property="og:description" content="大概的计划是顺着启动入口从上至下，遇到数据结构看数据结构，遇到启动流程看启动流程。 1 main主程序   redis-server    redis-cli   2 数据类型   string    list    set    zset    hash   3 编码方式   sds Redis-0x12-数据结构sds    dict Redis-0x0B-数据结构dict    zipmap">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-13T07:20:01.000Z">
-<meta property="article:modified_time" content="2024-04-28T02:10:29.383Z">
+<meta property="article:modified_time" content="2024-04-28T02:17:11.054Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -245,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          111 字
+          133 字
         
       </span>
     
@@ -256,7 +256,7 @@
         
         
         
-          1 分钟
+          2 分钟
         
       </span>
     
@@ -562,17 +562,17 @@ hash</p>
 </li>
 </ul>
 <h3 id="3-编码方式"><a href="#3-编码方式" class="headerlink" title="3 编码方式"></a>3 编码方式</h3><ul>
-<li><p><input disabled="" type="checkbox"> 
-sds</p>
+<li><p><input checked="" disabled="" type="checkbox"> 
+sds <a href="/2024/04/16/Redis/Redis-0x12-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/" title="Redis-0x12-数据结构sds">Redis-0x12-数据结构sds</a></p>
 </li>
-<li><p><input disabled="" type="checkbox"> 
-dict</p>
+<li><p><input checked="" disabled="" type="checkbox"> 
+dict <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict">Redis-0x0B-数据结构dict</a></p>
 </li>
 <li><p><input disabled="" type="checkbox"> 
 zipmap</p>
 </li>
-<li><p><input disabled="" type="checkbox"> 
-list</p>
+<li><p><input checked="" disabled="" type="checkbox"> 
+list <a href="/2024/04/16/Redis/Redis-0x16-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84list%E9%93%BE%E8%A1%A8/" title="Redis-0x16-数据结构list链表">Redis-0x16-数据结构list链表</a></p>
 </li>
 <li><p><input disabled="" type="checkbox"> 
 ziplist</p>
@@ -640,11 +640,14 @@ lzf_c</p>
 <li><p><input disabled="" type="checkbox"> 
 lzf_d</p>
 </li>
-<li><p>[ ]rand</p>
+<li><p><input disabled="" type="checkbox"> 
+rand</p>
 </li>
-<li><p>[ ]release</p>
+<li><p><input disabled="" type="checkbox"> 
+release</p>
 </li>
-<li><p>[ ]sha1</p>
+<li><p><input disabled="" type="checkbox"> 
+sha1</p>
 </li>
 <li><p><input disabled="" type="checkbox"> 
 util</p>
@@ -709,8 +712,8 @@ sort</p>
 <li><p><input disabled="" type="checkbox"> 
 syncio</p>
 </li>
-<li><p><input disabled="" type="checkbox"> 
-zmalloc</p>
+<li><p><input checked="" disabled="" type="checkbox"> 
+zmalloc <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现">Redis-0x06-zmalloc的实现</a></p>
 </li>
 </ul>
 
