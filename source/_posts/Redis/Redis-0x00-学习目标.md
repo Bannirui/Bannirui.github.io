@@ -28,13 +28,13 @@ categories: Redis
 
 ### 3 编码方式
 
-- [ ] sds
+- [X] sds {% post_link Redis/Redis-0x12-数据结构sds %}
 
-- [ ] dict
+- [X] dict {% post_link Redis/Redis-0x0B-数据结构dict %}
 
 - [ ] zipmap
 
-- [ ] list
+- [X] list {% post_link Redis/Redis-0x16-数据结构list链表 %}
 
 - [ ] ziplist
 
@@ -86,11 +86,11 @@ categories: Redis
 
 - [ ] lzf_d
 
-- [ ]rand
+- [ ] rand
 
-- [ ]release
+- [ ] release
 
-- [ ]sha1
+- [ ] sha1
 
 - [ ] util
 
@@ -136,4 +136,4 @@ categories: Redis
 
 - [ ] syncio
 
-- [ ] zmalloc
+- [X] zmalloc {% post_link Redis/Redis-0x06-zmalloc的实现 %}
