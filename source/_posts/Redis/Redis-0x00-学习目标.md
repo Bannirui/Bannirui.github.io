@@ -56,7 +56,7 @@ categories: Redis
 
 ### 6 event事件
 
-- [ ] ae
+- [X] ae {% post_link Redis/Redis-0x0D-事件循环器AE %}
 
 ### 7 data数据操作
 
