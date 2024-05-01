@@ -16,19 +16,17 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+    <meta name="description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo2 fcntl之前看过这个系统调用的文档Redis-0x11-库函数fcntl 通过该系统调用读取和设置文件描述符的标志位 2.1 设置socket的非阻塞模式123456789101112131415161718192021222324252627282930313233343536373839404142434">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x10-socket编程">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/15/Redis/Redis-0x10-socket%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+<meta property="og:description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo2 fcntl之前看过这个系统调用的文档Redis-0x11-库函数fcntl 通过该系统调用读取和设置文件描述符的标志位 2.1 设置socket的非阻塞模式123456789101112131415161718192021222324252627282930313233343536373839404142434">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/img/Redis-0x10-socket%E7%BC%96%E7%A8%8B.png">
 <meta property="article:published_time" content="2024-04-15T12:00:49.000Z">
-<meta property="article:modified_time" content="2024-04-15T12:00:49.565Z">
+<meta property="article:modified_time" content="2024-04-30T13:11:45.132Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/img/Redis-0x10-socket%E7%BC%96%E7%A8%8B.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -247,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          27 字
+          1.4k 字
         
       </span>
     
@@ -258,7 +256,7 @@
         
         
         
-          1 分钟
+          12 分钟
         
       </span>
     
@@ -306,6 +304,220 @@
 <div class="category-list">
   
   
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(47)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
 </div>
 
 
@@ -323,7 +535,52 @@
             
               <div class="markdown-body">
                 
-                
+                <p>socket相关的体系太庞杂了，这里就遇到一个记录一个。</p>
+<h2 id="1-getaddrinfo"><a href="#1-getaddrinfo" class="headerlink" title="1 getaddrinfo"></a>1 getaddrinfo</h2><h2 id="2-fcntl"><a href="#2-fcntl" class="headerlink" title="2 fcntl"></a>2 fcntl</h2><p>之前看过这个系统调用的文档<a href="/2024/04/15/Redis/Redis-0x11-%E5%BA%93%E5%87%BD%E6%95%B0fcntl/" title="Redis-0x11-库函数fcntl">Redis-0x11-库函数fcntl</a></p>
+<p>通过该系统调用读取和设置文件描述符的标志位</p>
+<h3 id="2-1-设置socket的非阻塞模式"><a href="#2-1-设置socket的非阻塞模式" class="headerlink" title="2.1 设置socket的非阻塞模式"></a>2.1 设置socket的非阻塞模式</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置socket的阻塞模式</span><br><span class="hljs-comment"> * 设置成阻塞或者非阻塞的</span><br><span class="hljs-comment"> * @param fd socket的fd</span><br><span class="hljs-comment"> * @param non_block 想要把fd设置成什么阻塞模式</span><br><span class="hljs-comment"> *                  &lt;ul&gt;</span><br><span class="hljs-comment"> *                    &lt;li&gt;非0 想要socket是非阻塞的&lt;/li&gt;</span><br><span class="hljs-comment"> *                    &lt;li&gt;0 想要socket是阻塞的&lt;/li&gt;</span><br><span class="hljs-comment"> *                  &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetSetBlock</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">int</span> non_block)</span> &#123;<br>    <span class="hljs-type">int</span> flags;<br><br>    <span class="hljs-comment">/* Set the socket blocking (if non_block is zero) or non-blocking.</span><br><span class="hljs-comment">     * Note that fcntl(2) for F_GETFL and F_SETFL can&#x27;t be</span><br><span class="hljs-comment">     * interrupted by a signal. */</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 获取socket的fd状态标志</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> ((flags = fcntl(fd, F_GETFL)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;fcntl(F_GETFL): %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br><br>    <span class="hljs-comment">/* Check if this flag has been set or unset, if so, </span><br><span class="hljs-comment">     * then there is no need to call fcntl to set/unset it again. */</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 判定fd的阻塞状态 已经是想要的效果了就ASAP地退出</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (!!(flags &amp; O_NONBLOCK) == !!non_block)<br>        <span class="hljs-keyword">return</span> ANET_OK;<br><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * &lt;ul&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;想要socket是非阻塞的 就把描述符状态标志低位第2位设置成1&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;想要socket是阻塞的 就把描述符状态标志低位第2位设置成0&lt;/li&gt;</span><br><span class="hljs-comment">	 * &lt;/ul&gt;</span><br><span class="hljs-comment">	 * 然后再把新的描述符状态标志设置给socket</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (non_block)<br>        flags |= O_NONBLOCK;<br>    <span class="hljs-keyword">else</span><br>        flags &amp;= ~O_NONBLOCK;<br><br>	<span class="hljs-comment">// 设置新的描述符状态标志给socket</span><br>    <span class="hljs-keyword">if</span> (fcntl(fd, F_SETFL, flags) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;fcntl(F_SETFL,O_NONBLOCK): %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-设置close-on-exec"><a href="#2-2-设置close-on-exec" class="headerlink" title="2.2 设置close-on-exec"></a>2.2 设置close-on-exec</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 在fd上设置close-on-exec标志</span><br><span class="hljs-comment"> * 作用是一个文件描述符fd被标记为FD_CLOEXEC时 当进程通过exec系列函数(比如execve()和execvp())执行新程序时 该fd会被自动关闭</span><br><span class="hljs-comment"> * @return fcntl系统调用的返回值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetCloexec</span><span class="hljs-params">(<span class="hljs-type">int</span> fd)</span> &#123;<br>    <span class="hljs-type">int</span> r;<br>    <span class="hljs-type">int</span> flags;<br><br>    <span class="hljs-keyword">do</span> &#123;<br>	    <span class="hljs-comment">// 读取socket的fd标志</span><br>        r = fcntl(fd, F_GETFD);<br>    &#125; <span class="hljs-keyword">while</span> (r == <span class="hljs-number">-1</span> &amp;&amp; errno == EINTR);<br><br>	<span class="hljs-comment">// 看看标志位上是不是已经有了FD_CLOEXEC标志</span><br>    <span class="hljs-keyword">if</span> (r == <span class="hljs-number">-1</span> || (r &amp; FD_CLOEXEC))<br>        <span class="hljs-keyword">return</span> r;<br><br>	<span class="hljs-comment">// 在标志上打上FD_CLOEXEC</span><br>    flags = r | FD_CLOEXEC;<br><br>    <span class="hljs-keyword">do</span> &#123;<br>	    <span class="hljs-comment">// 将新的socket描述符标志设置给socket</span><br>        r = fcntl(fd, F_SETFD, flags);<br>    &#125; <span class="hljs-keyword">while</span> (r == <span class="hljs-number">-1</span> &amp;&amp; errno == EINTR);<br><br>    <span class="hljs-keyword">return</span> r;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-setsockopt"><a href="#3-setsockopt" class="headerlink" title="3 setsockopt"></a>3 setsockopt</h2><p>设置socket</p>
+<p>这个库函数5个形参</p>
+<ul>
+<li><p>sockfd 是指向套接字实例的文件描述符</p>
+</li>
+<li><p>level 设置项是针对什么级别进行设置的</p>
+<ul>
+<li><p>SOL_SOCKET 表示设置的是套接字级别</p>
+</li>
+<li><p>IPPROTO_TCP 标识设置的是TCP协议</p>
+</li>
+</ul>
+</li>
+<li><p>optname 设置项名称</p>
+<ul>
+<li><p>SO_REUSEADDR 一般用来在服务端设置端口复用</p>
+</li>
+<li><p>SO_KEEPALIVE 设置keepalive</p>
+</li>
+</ul>
+</li>
+<li><p>optval 设置的值</p>
+</li>
+<li><p>optval 指针指向变量的大小</p>
+</li>
+</ul>
+<h3 id="3-1-设置SO-KEEPALIVE"><a href="#3-1-设置SO-KEEPALIVE" class="headerlink" title="3.1 设置SO_KEEPALIVE"></a>3.1 设置SO_KEEPALIVE</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 开启socket的keepalive功能</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) == <span class="hljs-number">-1</span>)<br>   &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_KEEPALIVE: %s&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-TCP-KEEPIDLE"><a href="#3-2-TCP-KEEPIDLE" class="headerlink" title="3.2 TCP_KEEPIDLE"></a>3.2 TCP_KEEPIDLE</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * TCP_KEEPIDLE是用于设置TCP的keepalive开始发送探测报文之前的空闲时间的选项</span><br><span class="hljs-comment"> * 一旦TCP的keepalive功能被启用 系统将会在连接空闲一段时间后开始发送探测报文以检测连接的存活性</span><br><span class="hljs-comment"> * TCP_KEEPIDLE选项允许指定在开始发送探测报文之前允许的最大空闲时间</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) &lt; <span class="hljs-number">0</span>) &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_KEEPIDLE: %s\n&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-3-TCP-KEEPINTVL"><a href="#3-3-TCP-KEEPINTVL" class="headerlink" title="3.3 TCP_KEEPINTVL"></a>3.3 TCP_KEEPINTVL</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * TCP_KEEPINTVL是用于设置TCP的keepalive探测间隔的选项</span><br><span class="hljs-comment"> * 一旦TCP的keepalive功能被启用 系统将会定期发送探测报文以检测连接的存活性</span><br><span class="hljs-comment"> * TCP_KEEPINTVL选项允许指定探测报文之间的时间间隔</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) &lt; <span class="hljs-number">0</span>) &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_KEEPINTVL: %s\n&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-4-TCP-KEEPCNT"><a href="#3-4-TCP-KEEPCNT" class="headerlink" title="3.4 TCP_KEEPCNT"></a>3.4 TCP_KEEPCNT</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 用于设置TCP的keepalive探测尝试次数的选项</span><br><span class="hljs-comment"> * 当TCP的keepalive功能被启用时 系统将会定期发送探测报文以检测连接的存活性</span><br><span class="hljs-comment"> * TCP_KEEPCNT选项允许指定在关闭连接之前允许的最大探测失败次数</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) &lt; <span class="hljs-number">0</span>) &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_KEEPCNT: %s\n&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-5-TCP-NODELAY"><a href="#3-5-TCP-NODELAY" class="headerlink" title="3.5 TCP_NODELAY"></a>3.5 TCP_NODELAY</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置是否开启Nagle算法</span><br><span class="hljs-comment"> * @param val 开启还是关闭延迟算法 1表示关闭延迟算法 0表示不关闭延迟算法</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">anetSetTcpNoDelay</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">int</span> val)</span><br>&#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * TCP_NODELAY是用于设置TCP的Nagle算法的选项</span><br><span class="hljs-comment">     * Nagle算法是一种优化TCP传输的算法 它通过在发送数据时进行缓冲 将多个小数据包合并成一个大数据包 从而减少网络上的数据包数量 提高传输效率</span><br><span class="hljs-comment">     * 在某些情况下 例如实时通信或者需要快速响应的应用中 这种缓冲可能会引入延迟，因此需要禁用Nagle算法</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) == <span class="hljs-number">-1</span>)<br>    &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_NODELAY: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-6-SO-SNDTIMEO"><a href="#3-6-SO-SNDTIMEO" class="headerlink" title="3.6 SO_SNDTIMEO"></a>3.6 SO_SNDTIMEO</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置socket的发送超时时间</span><br><span class="hljs-comment"> * @param ms 超时时间设置多少毫秒</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetSendTimeout</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">long</span> <span class="hljs-type">long</span> ms)</span> &#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">timeval</span> <span class="hljs-title">tv</span>;</span><br><br>    tv.tv_sec = ms/<span class="hljs-number">1000</span>;<br>    tv.tv_usec = (ms%<span class="hljs-number">1000</span>)*<span class="hljs-number">1000</span>;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * SO_SNDTIMEO是用于设置发送操作超时时间的选项</span><br><span class="hljs-comment">	 * 它允许设置在发送数据时等待的最大时间 如果在此时间内无法完成发送操作 则发送操作将被中断并返回错误</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &amp;tv, <span class="hljs-keyword">sizeof</span>(tv)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_SNDTIMEO: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-7-SO-RCVTIMEO"><a href="#3-7-SO-RCVTIMEO" class="headerlink" title="3.7 SO_RCVTIMEO"></a>3.7 SO_RCVTIMEO</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * socket在接收数据时最大的等待时长</span><br><span class="hljs-comment"> * @param ms 等待时长 毫秒</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetRecvTimeout</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">long</span> <span class="hljs-type">long</span> ms)</span> &#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">timeval</span> <span class="hljs-title">tv</span>;</span><br><br>    tv.tv_sec = ms/<span class="hljs-number">1000</span>;<br>    tv.tv_usec = (ms%<span class="hljs-number">1000</span>)*<span class="hljs-number">1000</span>;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * SO_RCVTIMEO选项用于设置接收操作的超时时间</span><br><span class="hljs-comment">	 * 它允许指定在接收数据时等待的最大时间 如果在此时间内未接收到数据 则接收操作将被中断并返回错误</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &amp;tv, <span class="hljs-keyword">sizeof</span>(tv)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_RCVTIMEO: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -339,6 +596,27 @@
             <hr/>
             <div>
               <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
   
   
 </div>
