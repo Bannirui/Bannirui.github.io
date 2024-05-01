@@ -1,7 +1,6 @@
 ---
 title: Redis-0x16-数据结构list链表
 category_bar: true
-index_img: /img/Redis-0x16-数据结构list链表.png
 date: 2024-04-16 13:15:25
 categories: Redis
 ---
