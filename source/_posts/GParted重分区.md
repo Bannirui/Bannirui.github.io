@@ -9,7 +9,7 @@ categories: Linux
 
 ![](GParted重分区/1702465863.jpg)
 
-可以看到分区`/dev/nvme0n1p2`，挂在带你在`/`下，当初装这个系统是用`arch install`自动分区的，没注意才分了20G，现在已经快满了，所以要进行重分区。
+可以看到分区`/dev/nvme0n1p2`，挂载在家目录`/`下，当初装这个系统是用`arch install`自动分区的，没注意才分了20G，现在已经快满了，所以要进行重分区。
 
 1 安装GParted
 ---
@@ -90,8 +90,6 @@ sudo unetbootin
 ### 3.2  U盘启动盘
 
 每个人进BIOS不尽相同，选择U盘启动即可。
-
-我的零克迷你机的方式在另一篇{% post_link 多桌面系统环境 %}中讲过。
 
 #### 3.2.1 gparted live模式
 

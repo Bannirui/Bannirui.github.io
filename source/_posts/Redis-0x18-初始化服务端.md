@@ -129,7 +129,7 @@ server.el = aeCreateEventLoop(server.maxclients+CONFIG_FDSET_INCR);
 server.db = zmalloc(sizeof(redisDb)*server.dbnum);
 ```
 
-## 7 {% post_link Redis-0x1b-Socket编程 socket创建监听 %}
+## 7 socket创建监听
 
 ```c
     /**

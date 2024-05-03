@@ -14,13 +14,15 @@ categories: Linux
 
 - 用balenaEtcher制作u盘启动盘
 
-- mini主机背面有提示，Dlete键进BIOS设置，F7引导选项
+- mini主机背面有提示，Dlete键进BIOS设置
 
 - bios->security->secure mode=standard
 
 - bios->security->secure boot=enabled
 
 - bios->boot->boot option#1=USB Device:UEFI
+
+- F4保存并退出
 
 2 键盘健位改键
 ---
@@ -429,4 +431,11 @@ yt-dlp https://www.bilibili.com/video/BV1zy4y1b7jZ/\?spm_id_from\=333.999.0.0\&v
 sudo add-apt-repository ppa:kicad/kicad-7.0-releases
 sudo apt update
 sudo apt install kicad
+```
+
+### 3.18 git
+
+```sh
+apt search git
+sudo apt install git
 ```
