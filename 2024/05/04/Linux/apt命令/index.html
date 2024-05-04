@@ -16,35 +16,23 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 系统安装1.1 ISOhttps:&#x2F;&#x2F;archlinux.org&#x2F;download&#x2F; 1.2 bootloaderhttps:&#x2F;&#x2F;etcher.balena.io&#x2F; 1.3 reboot电脑启动期间按Delete键进入BIOS界面 1.4 BIOS secure boot -&gt; enabled  secure boot mode -&gt; standard   secure boot">
+    <meta name="description" content="apt search 包名 搜索  sudo apt install 包名 安装  apt list 列表  apt list | grep 包名  apt list –installed 已安装的  apt list –upgradeable 可升级的  sudo apt upgrade 包名 升级某个包  sudo apt update 更新索引  sudo apt remove –pure">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ArchLinux环境">
-<meta property="og:url" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:title" content="apt命令">
+<meta property="og:url" content="https://bannirui.github.io/2024/05/04/Linux/apt%E5%91%BD%E4%BB%A4/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="1 系统安装1.1 ISOhttps:&#x2F;&#x2F;archlinux.org&#x2F;download&#x2F; 1.2 bootloaderhttps:&#x2F;&#x2F;etcher.balena.io&#x2F; 1.3 reboot电脑启动期间按Delete键进入BIOS界面 1.4 BIOS secure boot -&gt; enabled  secure boot mode -&gt; standard   secure boot">
+<meta property="og:description" content="apt search 包名 搜索  sudo apt install 包名 安装  apt list 列表  apt list | grep 包名  apt list –installed 已安装的  apt list –upgradeable 可升级的  sudo apt upgrade 包名 升级某个包  sudo apt update 更新索引  sudo apt remove –pure">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714574989.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575141.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575247.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575283.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575448.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575448.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575745.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575802.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575834.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575919.png">
-<meta property="og:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575891.png">
-<meta property="article:published_time" content="2024-05-01T14:45:48.000Z">
-<meta property="article:modified_time" content="2024-05-01T15:07:36.448Z">
+<meta property="article:published_time" content="2024-05-04T15:21:45.000Z">
+<meta property="article:modified_time" content="2024-05-04T15:25:53.385Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714574989.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>ArchLinux环境 - Bannirui Blog</title>
+  <title>apt命令 - Bannirui Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -234,7 +222,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="ArchLinux环境"></span>
+            <span id="subtitle" data-typed-text="apt命令"></span>
           
         </div>
 
@@ -245,8 +233,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-05-01 22:45" pubdate>
-          2024年5月1日 晚上
+        <time datetime="2024-05-04 23:21" pubdate>
+          2024年5月4日 晚上
         </time>
       </span>
     
@@ -257,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          753 字
+          80 字
         
       </span>
     
@@ -268,7 +256,7 @@
         
         
         
-          7 分钟
+          1 分钟
         
       </span>
     
@@ -351,7 +339,7 @@
       
         <a href="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/" title="ArchLinux环境"
            class="list-group-item list-group-item-action
-           active">
+           ">
           <span class="category-post">ArchLinux环境</span>
         </a>
       
@@ -405,7 +393,7 @@
       
         <a href="/2024/05/04/Linux/apt%E5%91%BD%E4%BB%A4/" title="apt命令"
            class="list-group-item list-group-item-action
-           ">
+           active">
           <span class="category-post">apt命令</span>
         </a>
       
@@ -482,120 +470,32 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">ArchLinux环境</h1>
+            <h1 id="seo-header">apt命令</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="1-系统安装"><a href="#1-系统安装" class="headerlink" title="1 系统安装"></a>1 系统安装</h2><h3 id="1-1-ISO"><a href="#1-1-ISO" class="headerlink" title="1.1 ISO"></a>1.1 ISO</h3><p><a target="_blank" rel="noopener" href="https://archlinux.org/download/">https://archlinux.org/download/</a></p>
-<h3 id="1-2-bootloader"><a href="#1-2-bootloader" class="headerlink" title="1.2 bootloader"></a>1.2 bootloader</h3><p><a target="_blank" rel="noopener" href="https://etcher.balena.io/">https://etcher.balena.io/</a></p>
-<h3 id="1-3-reboot"><a href="#1-3-reboot" class="headerlink" title="1.3 reboot"></a>1.3 reboot</h3><p>电脑启动期间按<code>Delete</code>键进入BIOS界面</p>
-<h3 id="1-4-BIOS"><a href="#1-4-BIOS" class="headerlink" title="1.4 BIOS"></a>1.4 BIOS</h3><ul>
-<li><p>secure boot -&gt; enabled</p>
+                <ul>
+<li><p>apt search 包名 搜索</p>
 </li>
-<li><p>secure boot mode -&gt; standard</p>
-<img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714574989.png" srcset="/img/loading.gif" lazyload class="">
+<li><p>sudo apt install 包名 安装</p>
 </li>
-<li><p>secure boot</p>
-<ul>
-<li>boot option #1 -&gt; usb</li>
-</ul>
-<img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575141.png" srcset="/img/loading.gif" lazyload class="">
+<li><p>apt list 列表</p>
 </li>
-<li><p>F4 -&gt; save &amp; exit</p>
+<li><p>apt list | grep 包名</p>
 </li>
-</ul>
-<h3 id="1-5-wifi"><a href="#1-5-wifi" class="headerlink" title="1.5 wifi"></a>1.5 wifi</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">rfkill list<br><br>iwctl<br><br>device list<br>station wlan0 scan<br>station wlan0 get-networks<br>station wlan0 connect wifi名称<br></code></pre></td></tr></table></figure>
-
-<p>随后根据提示输入wifi密码即可</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">quit<br><br>ping www.baidu.com<br></code></pre></td></tr></table></figure>
-
-<img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575247.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="1-6-archinstall"><a href="#1-6-archinstall" class="headerlink" title="1.6 archinstall"></a>1.6 archinstall</h3><p>archinstall内置在了系统镜像中，通过该脚本大大降低了系统安装的复杂性</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">archinstall<br></code></pre></td></tr></table></figure>
-
-<img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575283.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="1-7-reboot"><a href="#1-7-reboot" class="headerlink" title="1.7 reboot"></a>1.7 reboot</h3><ul>
-<li><p>退出archinstall脚本安装模式</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">exit<br></code></pre></td></tr></table></figure>
+<li><p>apt list –installed 已安装的</p>
 </li>
-<li><p>拔开启动引导U盘</p>
+<li><p>apt list –upgradeable 可升级的</p>
 </li>
-<li><p>重启系统</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">reboot<br></code></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="1-8-archlinux-desk"><a href="#1-8-archlinux-desk" class="headerlink" title="1.8 archlinux desk"></a>1.8 archlinux desk</h3><img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575448.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="1-9-键盘键位修改"><a href="#1-9-键盘键位修改" class="headerlink" title="1.9 键盘键位修改"></a>1.9 键盘键位修改</h3><p>mac上高频使用<code>command</code>键位，vim中的键位映射也习惯了<code>command</code>，反而不习惯了windows笔记本的control键位。刚好我的外接键盘<code>Alt</code>布局比较奇特，面积最大的功能键位。</p>
-<ul>
-<li><p>外接mac系统使用的时候将<code>Alt</code>映射为<code>Command</code>键，mac系统提供了键位修饰功能</p>
+<li><p>sudo apt upgrade 包名 升级某个包</p>
 </li>
-<li><p>外接ArchLinux系统使用的时候将<code>Alt</code>映射为<code>Ctrl</code>键，得修改系统文件</p>
+<li><p>sudo apt update 更新索引</p>
+</li>
+<li><p>sudo apt remove –purege 包名 卸载某个包(连带配置信息一起删除)</p>
 </li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd /usr/share/X11/xkb/keycodes/<br>sudo cp evdev evdev.bak<br>sudo vim evdev<br></code></pre></td></tr></table></figure>
 
-<p>然后根据自己的要求修改键位，比如我的需求是调换左边<code>ctrl</code>和左边<code>alt</code>。</p>
-<img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575448.png" srcset="/img/loading.gif" lazyload class="">
-
-<p>修改完成之后需要重启电脑，便可以生效。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">reboot<br><br>sudo rm -rf /usr/share/x11/skb/keycodes/evdev.bak<br></code></pre></td></tr></table></figure>
-
-<h2 id="2-系统美化"><a href="#2-系统美化" class="headerlink" title="2 系统美化"></a>2 系统美化</h2><p><a target="_blank" rel="noopener" href="https://arch.icekylin.online/guide/advanced/beauty-1.html">参考博客</a></p>
-<h2 id="3-常用软件"><a href="#3-常用软件" class="headerlink" title="3 常用软件"></a>3 常用软件</h2><h3 id="3-1-编程环境"><a href="#3-1-编程环境" class="headerlink" title="3.1 编程环境"></a>3.1 编程环境</h3><p>通过git的私人仓库os-script脚本配置</p>
-<ul>
-<li>vim</li>
-<li>zsh</li>
-<li>maven</li>
-<li>git</li>
-<li>ideavim</li>
-<li>codestyle</li>
-</ul>
-<h4 id="3-1-1-arm-none-eabi-gcc"><a href="#3-1-1-arm-none-eabi-gcc" class="headerlink" title="3.1.1 arm-none-eabi-gcc"></a>3.1.1 arm-none-eabi-gcc</h4><p>嵌入式开发的时候需要依赖交叉编译器。正常情况下，使用pacman或者yay直接安装即可，但是有时候需要指定版本，而包管理器又没有提供对应的版本。</p>
-<h4 id="3-1-1-1-使用yay安装"><a href="#3-1-1-1-使用yay安装" class="headerlink" title="3.1.1.1 使用yay安装"></a>3.1.1.1 使用yay安装</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss arm-none-eabi<br>yay -Syy arm-none-eabi<br></code></pre></td></tr></table></figure>
-
-<p>当前提供的版本是13.x，没有10.3版本的提供。</p>
-<h4 id="3-1-1-2-手动安装"><a href="#3-1-1-2-手动安装" class="headerlink" title="3.1.1.2 手动安装"></a>3.1.1.2 手动安装</h4><p><a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/gnu-rm">10.3版本的下载</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p ~/Documents/software/arm-none-eabi<br>tar -jxvf ~/Downloads/gcc-arm-none-eabi-10.3-2021.10-x86-linux.tar.bz2 -C ~/Documents/software/arm-none-eabi --strip-components 1<br></code></pre></td></tr></table></figure>
-
-<p>zshrc环境变量</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">arm-none-eabi-gcc指定10.3版本在yay上没有 手动安装设置环境变量</span><br>export ARM_NONE_EABI_HOME=~/Documents/software/arm-none-eabi<br>export PATH=$PATH:$ARM_NONE_EABI_HOME/bin<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-2-中文输入法"><a href="#3-2-中文输入法" class="headerlink" title="3.2 中文输入法"></a><del>3.2 中文输入法</del></h3><p>在linux使用中文输入法体验并不是很好，有需要的话还是用Mac ssh到Linux</p>
-<h4 id="3-2-1-install"><a href="#3-2-1-install" class="headerlink" title="3.2.1 install"></a>3.2.1 install</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo pacman -Syu fcitx5-im<br>sudo pacman -S fcitx5-chinese-addons<br></code></pre></td></tr></table></figure>
-
-<h4 id="3-2-2-path"><a href="#3-2-2-path" class="headerlink" title="3.2.2 path"></a>3.2.2 path</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">~.zshrc</span><br>export INPUT_METHOD=fcitx5<br>export GTK_IM_MODULE=fcitx5<br>export QT_IM_MODULE=fcitx5<br>export XMODIFIERS=@im=fcitx5<br></code></pre></td></tr></table></figure>
-
-<h4 id="3-2-3-系统设置"><a href="#3-2-3-系统设置" class="headerlink" title="3.2.3 系统设置"></a>3.2.3 系统设置</h4><img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575745.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="3-2-4-输入法添加"><a href="#3-2-4-输入法添加" class="headerlink" title="3.2.4 输入法添加"></a>3.2.4 输入法添加</h4><p>列表中输入法顺序就是切换顺序，顺位第一个输入法就是系统启动后的默认输入法。当前管理界面没有上移\下移的操作，因此要切换默认输入法的方式是先移除，然后按照需要的顺序添加。</p>
-<img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575802.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="3-2-5-系统自启动"><a href="#3-2-5-系统自启动" class="headerlink" title="3.2.5 系统自启动"></a>3.2.5 系统自启动</h4><img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575834.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="3-3-截图"><a href="#3-3-截图" class="headerlink" title="3.3 截图"></a><del>3.3 截图</del></h3><p>flameshot</p>
-<h4 id="3-3-1-install"><a href="#3-3-1-install" class="headerlink" title="3.3.1 install"></a>3.3.1 install</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo pacman -S flameshot<br></code></pre></td></tr></table></figure>
-
-<h4 id="3-3-2-开机启动项"><a href="#3-3-2-开机启动项" class="headerlink" title="3.3.2 开机启动项"></a>3.3.2 开机启动项</h4><img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575919.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="3-3-3-快捷键"><a href="#3-3-3-快捷键" class="headerlink" title="3.3.3 快捷键"></a>3.3.3 快捷键</h3><p>自定义截图快捷键</p>
-<img src="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/1714575891.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="3-4-yay"><a href="#3-4-yay" class="headerlink" title="3.4 yay"></a>3.4 yay</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo pacman -S git<br>sudo git clone https://aur.archlinux.org/yay-git.git<br>cd yay-git<br>makepkg -si<br><br>yay --version<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-5-百度网盘"><a href="#3-5-百度网盘" class="headerlink" title="3.5 百度网盘"></a>3.5 百度网盘</h3><h4 id="3-5-1-安装"><a href="#3-5-1-安装" class="headerlink" title="3.5.1 安装"></a>3.5.1 安装</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd  /home/dingrui/Documents/software/baidu-disk<br>cp ~/Downloads/baidunetdisk_4.17.7_amd64.deb ./<br>sudo debtap baidunetdisk_4.17.7_amd64.deb<br>sudo pacman -U baidunetdisk-4.17.7-1-x86_64.pkg.tar.zst<br></code></pre></td></tr></table></figure>
-
-<h4 id="3-5-2-卸载"><a href="#3-5-2-卸载" class="headerlink" title="3.5.2 卸载"></a>3.5.2 卸载</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">dkpg -l<br>sudo dpkg -P baidunetdisk<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-6-chrome"><a href="#3-6-chrome" class="headerlink" title="3.6 chrome"></a>3.6 chrome</h3><h4 id="3-6-1-安装"><a href="#3-6-1-安装" class="headerlink" title="3.6.1 安装"></a>3.6.1 安装</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss google-chrome<br>yay -S google-chrome<br></code></pre></td></tr></table></figure>
-
-<h4 id="3-6-2-卸载"><a href="#3-6-2-卸载" class="headerlink" title="3.6.2 卸载"></a>3.6.2 卸载</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pacman -Q google-chrome<br>sudo pacman -R google-chrome<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-7-kicad"><a href="#3-7-kicad" class="headerlink" title="3.7 kicad"></a>3.7 kicad</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pacman -Ss kicad<br>sudo pacman -S kicad<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-8-office"><a href="#3-8-office" class="headerlink" title="3.8 office"></a>3.8 office</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss openoffice<br>yay -S openoffice-bin<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -642,8 +542,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>ArchLinux环境</div>
-      <div>https://bannirui.github.io/2024/05/01/Linux/ArchLinux环境/</div>
+      <div>apt命令</div>
+      <div>https://bannirui.github.io/2024/05/04/Linux/apt命令/</div>
     </div>
     <div class="license-meta">
       
@@ -655,7 +555,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年5月1日</div>
+          <div>2024年5月4日</div>
         </div>
       
       
@@ -687,18 +587,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/05/03/Linux/Linux%E5%AE%89%E8%A3%85Qt%E7%8E%AF%E5%A2%83/" title="Linux安装Qt环境">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Linux安装Qt环境</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/05/01/Linux/Ubuntu%E7%8E%AF%E5%A2%83/" title="Ubuntu环境">
-                        <span class="hidden-mobile">Ubuntu环境</span>
+                      <a href="/2024/05/03/Linux/Linux%E5%AE%89%E8%A3%85Qt%E7%8E%AF%E5%A2%83/" title="Linux安装Qt环境">
+                        <span class="hidden-mobile">Linux安装Qt环境</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -721,7 +615,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'aef21bb5f67b81ac4fff912e8970e264'
+            id: '0d2eae9e4df3c7916c142baea7aa1517'
           }
         )
         var gitalk = new Gitalk(options);
