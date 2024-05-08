@@ -60,33 +60,61 @@ whereis bochs
 
 ![跟着官方文档操作即可](https://bochs.sourceforge.io/doc/docbook/user/compiling.html)
 
+#### 2.1.1 download source code
+
 ```shell
 wget -P ~/MyDev/env https://sourceforge.net/projects/bochs/files/bochs/2.7/bochs-2.7.tar.gz
 mkdir bochs
 tar -zxvf ./bochs-2.7.tar.gz -C ./bochs --strip-components 1
-
-yay -Ss sdl
-yay -Syy aur/sdl
-
-yay -Ss sdl2
-yay -Syy sdl2
 ```
+
+#### 2.1.3 config file
 
 修改一下configure命令
 
+```sh
+vim .conf.linux
+```
+
 ![](./archlinux编译bochs/1709128674.png)
 
-至于使用哪个lib，根据自己的情况耳钉
+
+至于使用哪个lib，根据自己的情况
 
 - --with-sdl
 
 - --with-sdl2
 
-```shell
+#### 2.1.4 configure
+
+```sh
 sh -x .conf.linux
+```
+
+#### 2.1.5 make
+
+```shell
 make
 sudo make install
 ```
+
+#### 2.1.4 error
+
+- Plugin support requires libltdl installed on your syste
+
+  ```sh
+  apt search libltdl
+  sudo apt install libltdl-dev
+  ```
+
+- fatal error: SDL.h: No such file or directory
+
+  ```sh
+  apt search sdl2
+  sudo apt install libsdl2-dev
+  ```
+
+#### 2.1.5 uninstall
 
 以后卸载也很简单
 
