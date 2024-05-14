@@ -10,6 +10,49 @@ socket相关的体系太庞杂了，这里就遇到一个记录一个。
 1 getaddrinfo
 ---
 
+解析主机名或服务，并为套接字分配地址信息
+
+这个库函数有4个参数
+
+- hostname 主机名或ip地址
+
+- servername 服务名或者端口号
+
+- hints 解析提示
+
+- serverinfo 该库函数的解析结果 是个数组
+
+### 1.1 解析提示
+
+解析提示的作用是提供一个模板给`getaddrinfo`
+
+- 一方面预填充信息 将来库函数可以直接拷贝到返回值里面
+
+- 再者 告知了库函数需要的套接字地址结构的某些限定 比如
+
+  - 协议族是IPv4或者IPv6
+
+  - 套接字类型是TCP套接字或者UDP套接字
+
+
+解析提示的使用方式如下
+
+```c
+	// 提供解析提示
+    memset(&hints,0,sizeof(hints));
+	// 协议族 适用于IPv4和IPv6
+    hints.ai_family = AF_UNSPEC;
+	// 套接字类型 TCP套接字
+    hints.ai_socktype = SOCK_STREAM;
+```
+
+### 1.2 参数举例
+
+|hostname|servername|
+|---|---|
+|www.baidu.com|http|
+|localhost|8080|
+
 2 fcntl
 ---
 
@@ -254,3 +297,241 @@ int anetRecvTimeout(char *err, int fd, long long ms) {
     return ANET_OK;
 }
 ```
+
+### 3.8 SO_REUSEADDR
+
+```c
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+        anetSetError(err, "setsockopt SO_REUSEADDR: %s", strerror(errno));
+        return ANET_ERR;
+    }
+
+```
+
+4 inet_ntop
+---
+
+库函数原型为`const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);`
+
+作用是将套接字的二进制格式的地址解析成字符串格式
+
+参数为
+
+- af 要解析的套接字地址的协议族
+
+  - AF_INET表示IPv4
+  
+  - AF_INET6表示IPv6.
+
+- src 要解析的套接字地址
+
+- dst 解析结果是字符串 存到什么地方
+
+- size dst字符串的长度
+
+```c
+/**
+ * 主机名解析成ip地址
+ * 将二进制格式转换为字符串格式
+ * @param err 上抛异常信息
+ * @param host 要解析的主机名
+ * @param ipbuf 解析出来的ip地址结果是字符串格式 放到这个char数组里面
+ * @param ipbuf_len char数组的长度
+ * @param flags
+ * @return <ul>状态码
+ *           <li>-1 失败</li>
+ *           <li>0 成功</li>
+ *         </ul>
+ */
+int anetResolve(char *err, char *host, char *ipbuf, size_t ipbuf_len,
+                       int flags)
+{
+    struct addrinfo hints, *info;
+    int rv;
+
+	// 提供解析提示
+    memset(&hints,0,sizeof(hints));
+    if (flags & ANET_IP_ONLY) hints.ai_flags = AI_NUMERICHOST;
+	// 协议族 适用于IPv4或者IPv6
+    hints.ai_family = AF_UNSPEC;
+	// 套接字类型是TCP套接字
+    hints.ai_socktype = SOCK_STREAM;  /* specify socktype to avoid dups */
+
+    if ((rv = getaddrinfo(host, NULL, &hints, &info)) != 0) {
+        anetSetError(err, "%s", gai_strerror(rv));
+        return ANET_ERR;
+    }
+    if (info->ai_family == AF_INET) {
+	    // 解析结果的协议族是IPv4
+        struct sockaddr_in *sa = (struct sockaddr_in *)info->ai_addr;
+		// IPv4类型的ip地址放到ipbuf上
+        inet_ntop(AF_INET, &(sa->sin_addr), ipbuf, ipbuf_len);
+    } else {
+	    // 解析结果的协议族是IPv6
+        struct sockaddr_in6 *sa = (struct sockaddr_in6 *)info->ai_addr;
+		// IPv6类型的ip地址放到ipbuf上
+        inet_ntop(AF_INET6, &(sa->sin6_addr), ipbuf, ipbuf_len);
+    }
+
+    freeaddrinfo(info);
+    return ANET_OK;
+}
+```
+
+5 socket
+---
+
+创建socket套接字实例
+
+- domain 指定通信的地址族 无非就是网络通信或者本地通信
+
+  - 网络通信
+  
+    - AF_INET 表示IPv4地址族
+
+	- AF_INET6 表示IPv6地址族
+
+  - 本地通信 AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快
+
+- type 指定套接字类型 对应的是运输层的协议类型
+
+  - SOCK_STREAM表示面向连接的流套接字
+
+  - SOCK_DGRAM表示无连接的数据报套接字
+
+- protocol 使用的协议 通常使用默认的协议 即0
+
+```c
+/**
+ * 创建TCP套接字
+ * 并且将其设置socket端口重用
+ * @param domain 指定socket的协议族 <ul>
+ *                                  <li>AF_INET 表示IPv4地址族</li>
+ *                                  <li>AF_INET6 表示IPv6地址族</li>
+ *                                  <li>AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快</li>
+ *                                </ul>
+ * @return <ul>
+ *           <li>-1 标识错误码</li>
+ *           <li>非-1 表示socket的fd</li>
+ *         </ul>
+ */
+static int anetCreateSocket(char *err, int domain) {
+    int s;
+	/**
+	 * 系统调用创建socket实例
+	 * <ul>
+	 *   <li>domain 指定通信的地址族<ul>
+	 *     <li>AF_INET 表示IPv4地址族</li>
+	 *     <li>AF_INET6 表示IPv6地址族</li>
+	 *     <li>AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快</li>
+	 *   </ul></li>
+	 *   <li>type 指定套接字类型<ul>
+	 *     <li>SOCK_STREAM表示面向连接的流套接字</li>
+	 *     <li>SOCK_DGRAM表示无连接的数据报套接字</li>
+	 *   </ul></li>
+	 *   <li>protocol 使用的协议 通常使用默认的协议 即0</li>
+	 * </ul>
+	 */
+    if ((s = socket(domain, SOCK_STREAM, 0)) == -1) {
+        anetSetError(err, "creating socket: %s", strerror(errno));
+        return ANET_ERR;
+    }
+
+    /* Make sure connection-intensive things like the redis benchmark
+     * will be able to close/open sockets a zillion of times */
+	// 这是reids的服务端 将socket设置为端口重用
+    if (anetSetReuseAddr(err,s) == ANET_ERR) {
+        close(s);
+        return ANET_ERR;
+    }
+    return s;
+}
+```
+
+6 connect
+---
+
+连接到服务器的套接字
+
+- sockfd 客户端socket 去连向服务器的套接字
+
+- addr 指向`sockaddr`结构体的指针 包含着服务器地址和端口信息
+
+- addrlen `addr`结构体的大小
+
+```c
+	/**
+	 * 让s这个套接字连接到服务器的套接字
+	 * <ul>
+	 *   <li>s 客户端的套接字</li>
+	 *   <li>sa sockaddr结构体的指针 包含着服务端地址和端口信息</li>
+	 *   <li>sa大小</li>
+	 * </ul>
+	 */
+    if (connect(s,(struct sockaddr*)&sa,sizeof(sa)) == -1) {
+        if (errno == EINPROGRESS &&
+            flags & ANET_CONNECT_NONBLOCK)
+            return s;
+
+        anetSetError(err, "connect: %s", strerror(errno));
+        close(s);
+        return ANET_ERR;
+    }
+```
+
+7 bind
+---
+
+将套接字绑定到一个特定的地址和端口上，这一步对服务端程序尤为重要
+
+服务器需要在一个固定的地址和端口上监听客户端的连接请求
+
+- sockfd 由socket函数返回的套接字文件描述符
+
+- addr 指向sockaddr结构的指针 包含要绑定的地址和端口信息
+
+- addrlen addr结构的大小
+
+```c
+    if (bind(s,sa,len) == -1) {
+        anetSetError(err, "bind: %s", strerror(errno));
+        close(s);
+        return ANET_ERR;
+    }
+```
+
+8 listen
+---
+
+将套接字设置为被动模式，以便接收来自客户端的请求
+
+- sockfd 由`socket`函数返回的套接字文件描述符
+
+- backlog 指定挂起连接队列的最大长度 未处理的连接请求将保存在这个队列中 直到用`accept`系统调用进行处理
+
+```c
+    if (listen(s, backlog) == -1) {
+        anetSetError(err, "listen: %s", strerror(errno));
+        close(s);
+        return ANET_ERR;
+    }
+```
+
+9 accept
+---
+
+接受连接请求，并在网络服务器编程中扮演关键角色
+它从监听套接字队列中获取一个待处理的连接，并返回一个新的套接字文件描述符，用于与客户端进行通信
+
+- 参数
+
+  - sockfd 监听套接字文件描述符，它是通过`socket`和`bind`以及`listen`配置好的
+
+  - addr 指向`sockaddr`结构体的指针，用于存储客户端的地址信息。可以为 NULL，这时不获取客户端地址信息
+
+
+- 返回值
+
+- 成功时，返回新的套接字文件描述符，用于与客户端进行通信
+
+- 失败时，返回-1，并设置`errno`以指示错误
