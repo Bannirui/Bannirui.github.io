@@ -16,15 +16,15 @@
   <meta name="author" content="Bannirui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo2 fcntl之前看过这个系统调用的文档Redis-0x11-库函数fcntl 通过该系统调用读取和设置文件描述符的标志位 2.1 设置socket的非阻塞模式123456789101112131415161718192021222324252627282930313233343536373839404142434">
+    <meta name="description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo解析主机名或服务，并为套接字分配地址信息 这个库函数有4个参数  hostname 主机名或ip地址  servername 服务名或者端口号  hints 解析提示  serverinfo 该库函数的解析结果 是个数组   1.1 解析提示解析提示的作用是提供一个模板给getaddrinfo  一方面预填充信息">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x10-socket编程">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/15/Redis/Redis-0x10-socket%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Bannirui Blog">
-<meta property="og:description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo2 fcntl之前看过这个系统调用的文档Redis-0x11-库函数fcntl 通过该系统调用读取和设置文件描述符的标志位 2.1 设置socket的非阻塞模式123456789101112131415161718192021222324252627282930313233343536373839404142434">
+<meta property="og:description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo解析主机名或服务，并为套接字分配地址信息 这个库函数有4个参数  hostname 主机名或ip地址  servername 服务名或者端口号  hints 解析提示  serverinfo 该库函数的解析结果 是个数组   1.1 解析提示解析提示的作用是提供一个模板给getaddrinfo  一方面预填充信息">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-15T12:00:49.000Z">
-<meta property="article:modified_time" content="2024-04-30T13:11:45.132Z">
+<meta property="article:modified_time" content="2024-05-20T06:55:01.178Z">
 <meta property="article:author" content="Bannirui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -245,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.4k 字
+          3k 字
         
       </span>
     
@@ -256,7 +256,7 @@
         
         
         
-          12 分钟
+          26 分钟
         
       </span>
     
@@ -314,7 +314,7 @@
         aria-expanded="true"
       >
         Redis
-        <span class="list-group-count">(47)</span>
+        <span class="list-group-count">(49)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -536,7 +536,51 @@
               <div class="markdown-body">
                 
                 <p>socket相关的体系太庞杂了，这里就遇到一个记录一个。</p>
-<h2 id="1-getaddrinfo"><a href="#1-getaddrinfo" class="headerlink" title="1 getaddrinfo"></a>1 getaddrinfo</h2><h2 id="2-fcntl"><a href="#2-fcntl" class="headerlink" title="2 fcntl"></a>2 fcntl</h2><p>之前看过这个系统调用的文档<a href="/2024/04/15/Redis/Redis-0x11-%E5%BA%93%E5%87%BD%E6%95%B0fcntl/" title="Redis-0x11-库函数fcntl">Redis-0x11-库函数fcntl</a></p>
+<h2 id="1-getaddrinfo"><a href="#1-getaddrinfo" class="headerlink" title="1 getaddrinfo"></a>1 getaddrinfo</h2><p>解析主机名或服务，并为套接字分配地址信息</p>
+<p>这个库函数有4个参数</p>
+<ul>
+<li><p>hostname 主机名或ip地址</p>
+</li>
+<li><p>servername 服务名或者端口号</p>
+</li>
+<li><p>hints 解析提示</p>
+</li>
+<li><p>serverinfo 该库函数的解析结果 是个数组</p>
+</li>
+</ul>
+<h3 id="1-1-解析提示"><a href="#1-1-解析提示" class="headerlink" title="1.1 解析提示"></a>1.1 解析提示</h3><p>解析提示的作用是提供一个模板给<code>getaddrinfo</code></p>
+<ul>
+<li><p>一方面预填充信息 将来库函数可以直接拷贝到返回值里面</p>
+</li>
+<li><p>再者 告知了库函数需要的套接字地址结构的某些限定 比如</p>
+<ul>
+<li><p>协议族是IPv4或者IPv6</p>
+</li>
+<li><p>套接字类型是TCP套接字或者UDP套接字</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>解析提示的使用方式如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 提供解析提示</span><br>   <span class="hljs-built_in">memset</span>(&amp;hints,<span class="hljs-number">0</span>,<span class="hljs-keyword">sizeof</span>(hints));<br><span class="hljs-comment">// 协议族 适用于IPv4和IPv6</span><br>   hints.ai_family = AF_UNSPEC;<br><span class="hljs-comment">// 套接字类型 TCP套接字</span><br>   hints.ai_socktype = SOCK_STREAM;<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-2-参数举例"><a href="#1-2-参数举例" class="headerlink" title="1.2 参数举例"></a>1.2 参数举例</h3><table>
+<thead>
+<tr>
+<th>hostname</th>
+<th>servername</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></td>
+<td>http</td>
+</tr>
+<tr>
+<td>localhost</td>
+<td>8080</td>
+</tr>
+</tbody></table>
+<h2 id="2-fcntl"><a href="#2-fcntl" class="headerlink" title="2 fcntl"></a>2 fcntl</h2><p>之前看过这个系统调用的文档<a href="/2024/04/15/Redis/Redis-0x11-%E5%BA%93%E5%87%BD%E6%95%B0fcntl/" title="Redis-0x11-库函数fcntl">Redis-0x11-库函数fcntl</a></p>
 <p>通过该系统调用读取和设置文件描述符的标志位</p>
 <h3 id="2-1-设置socket的非阻塞模式"><a href="#2-1-设置socket的非阻塞模式" class="headerlink" title="2.1 设置socket的非阻塞模式"></a>2.1 设置socket的非阻塞模式</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置socket的阻塞模式</span><br><span class="hljs-comment"> * 设置成阻塞或者非阻塞的</span><br><span class="hljs-comment"> * @param fd socket的fd</span><br><span class="hljs-comment"> * @param non_block 想要把fd设置成什么阻塞模式</span><br><span class="hljs-comment"> *                  &lt;ul&gt;</span><br><span class="hljs-comment"> *                    &lt;li&gt;非0 想要socket是非阻塞的&lt;/li&gt;</span><br><span class="hljs-comment"> *                    &lt;li&gt;0 想要socket是阻塞的&lt;/li&gt;</span><br><span class="hljs-comment"> *                  &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetSetBlock</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">int</span> non_block)</span> &#123;<br>    <span class="hljs-type">int</span> flags;<br><br>    <span class="hljs-comment">/* Set the socket blocking (if non_block is zero) or non-blocking.</span><br><span class="hljs-comment">     * Note that fcntl(2) for F_GETFL and F_SETFL can&#x27;t be</span><br><span class="hljs-comment">     * interrupted by a signal. */</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 获取socket的fd状态标志</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> ((flags = fcntl(fd, F_GETFL)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;fcntl(F_GETFL): %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br><br>    <span class="hljs-comment">/* Check if this flag has been set or unset, if so, </span><br><span class="hljs-comment">     * then there is no need to call fcntl to set/unset it again. */</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 判定fd的阻塞状态 已经是想要的效果了就ASAP地退出</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (!!(flags &amp; O_NONBLOCK) == !!non_block)<br>        <span class="hljs-keyword">return</span> ANET_OK;<br><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * &lt;ul&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;想要socket是非阻塞的 就把描述符状态标志低位第2位设置成1&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;想要socket是阻塞的 就把描述符状态标志低位第2位设置成0&lt;/li&gt;</span><br><span class="hljs-comment">	 * &lt;/ul&gt;</span><br><span class="hljs-comment">	 * 然后再把新的描述符状态标志设置给socket</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (non_block)<br>        flags |= O_NONBLOCK;<br>    <span class="hljs-keyword">else</span><br>        flags &amp;= ~O_NONBLOCK;<br><br>	<span class="hljs-comment">// 设置新的描述符状态标志给socket</span><br>    <span class="hljs-keyword">if</span> (fcntl(fd, F_SETFL, flags) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;fcntl(F_SETFL,O_NONBLOCK): %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -581,6 +625,109 @@
 <h3 id="3-6-SO-SNDTIMEO"><a href="#3-6-SO-SNDTIMEO" class="headerlink" title="3.6 SO_SNDTIMEO"></a>3.6 SO_SNDTIMEO</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置socket的发送超时时间</span><br><span class="hljs-comment"> * @param ms 超时时间设置多少毫秒</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetSendTimeout</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">long</span> <span class="hljs-type">long</span> ms)</span> &#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">timeval</span> <span class="hljs-title">tv</span>;</span><br><br>    tv.tv_sec = ms/<span class="hljs-number">1000</span>;<br>    tv.tv_usec = (ms%<span class="hljs-number">1000</span>)*<span class="hljs-number">1000</span>;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * SO_SNDTIMEO是用于设置发送操作超时时间的选项</span><br><span class="hljs-comment">	 * 它允许设置在发送数据时等待的最大时间 如果在此时间内无法完成发送操作 则发送操作将被中断并返回错误</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &amp;tv, <span class="hljs-keyword">sizeof</span>(tv)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_SNDTIMEO: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h3 id="3-7-SO-RCVTIMEO"><a href="#3-7-SO-RCVTIMEO" class="headerlink" title="3.7 SO_RCVTIMEO"></a>3.7 SO_RCVTIMEO</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * socket在接收数据时最大的等待时长</span><br><span class="hljs-comment"> * @param ms 等待时长 毫秒</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetRecvTimeout</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">long</span> <span class="hljs-type">long</span> ms)</span> &#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">timeval</span> <span class="hljs-title">tv</span>;</span><br><br>    tv.tv_sec = ms/<span class="hljs-number">1000</span>;<br>    tv.tv_usec = (ms%<span class="hljs-number">1000</span>)*<span class="hljs-number">1000</span>;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * SO_RCVTIMEO选项用于设置接收操作的超时时间</span><br><span class="hljs-comment">	 * 它允许指定在接收数据时等待的最大时间 如果在此时间内未接收到数据 则接收操作将被中断并返回错误</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &amp;tv, <span class="hljs-keyword">sizeof</span>(tv)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_RCVTIMEO: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-8-SO-REUSEADDR"><a href="#3-8-SO-REUSEADDR" class="headerlink" title="3.8 SO_REUSEADDR"></a>3.8 SO_REUSEADDR</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &amp;yes, <span class="hljs-keyword">sizeof</span>(yes)) == <span class="hljs-number">-1</span>) &#123;<br>    anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_REUSEADDR: %s&quot;</span>, strerror(errno));<br>    <span class="hljs-keyword">return</span> ANET_ERR;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="4-inet-ntop"><a href="#4-inet-ntop" class="headerlink" title="4 inet_ntop"></a>4 inet_ntop</h2><p>库函数原型为<code>const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);</code></p>
+<p>作用是将套接字的二进制格式的地址解析成字符串格式</p>
+<p>参数为</p>
+<ul>
+<li><p>af 要解析的套接字地址的协议族</p>
+<ul>
+<li><p>AF_INET表示IPv4</p>
+</li>
+<li><p>AF_INET6表示IPv6.</p>
+</li>
+</ul>
+</li>
+<li><p>src 要解析的套接字地址</p>
+</li>
+<li><p>dst 解析结果是字符串 存到什么地方</p>
+</li>
+<li><p>size dst字符串的长度</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 主机名解析成ip地址</span><br><span class="hljs-comment"> * 将二进制格式转换为字符串格式</span><br><span class="hljs-comment"> * @param err 上抛异常信息</span><br><span class="hljs-comment"> * @param host 要解析的主机名</span><br><span class="hljs-comment"> * @param ipbuf 解析出来的ip地址结果是字符串格式 放到这个char数组里面</span><br><span class="hljs-comment"> * @param ipbuf_len char数组的长度</span><br><span class="hljs-comment"> * @param flags</span><br><span class="hljs-comment"> * @return &lt;ul&gt;状态码</span><br><span class="hljs-comment"> *           &lt;li&gt;-1 失败&lt;/li&gt;</span><br><span class="hljs-comment"> *           &lt;li&gt;0 成功&lt;/li&gt;</span><br><span class="hljs-comment"> *         &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetResolve</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">char</span> *host, <span class="hljs-type">char</span> *ipbuf, <span class="hljs-type">size_t</span> ipbuf_len,</span><br><span class="hljs-params">                       <span class="hljs-type">int</span> flags)</span><br>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">addrinfo</span> <span class="hljs-title">hints</span>, *<span class="hljs-title">info</span>;</span><br>    <span class="hljs-type">int</span> rv;<br><br>	<span class="hljs-comment">// 提供解析提示</span><br>    <span class="hljs-built_in">memset</span>(&amp;hints,<span class="hljs-number">0</span>,<span class="hljs-keyword">sizeof</span>(hints));<br>    <span class="hljs-keyword">if</span> (flags &amp; ANET_IP_ONLY) hints.ai_flags = AI_NUMERICHOST;<br>	<span class="hljs-comment">// 协议族 适用于IPv4或者IPv6</span><br>    hints.ai_family = AF_UNSPEC;<br>	<span class="hljs-comment">// 套接字类型是TCP套接字</span><br>    hints.ai_socktype = SOCK_STREAM;  <span class="hljs-comment">/* specify socktype to avoid dups */</span><br><br>    <span class="hljs-keyword">if</span> ((rv = getaddrinfo(host, <span class="hljs-literal">NULL</span>, &amp;hints, &amp;info)) != <span class="hljs-number">0</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;%s&quot;</span>, gai_strerror(rv));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (info-&gt;ai_family == AF_INET) &#123;<br>	    <span class="hljs-comment">// 解析结果的协议族是IPv4</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sockaddr_in</span> *<span class="hljs-title">sa</span> =</span> (<span class="hljs-keyword">struct</span> sockaddr_in *)info-&gt;ai_addr;<br>		<span class="hljs-comment">// IPv4类型的ip地址放到ipbuf上</span><br>        inet_ntop(AF_INET, &amp;(sa-&gt;sin_addr), ipbuf, ipbuf_len);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>	    <span class="hljs-comment">// 解析结果的协议族是IPv6</span><br>        <span class="hljs-keyword">struct</span> sockaddr_in6 *sa = (<span class="hljs-keyword">struct</span> sockaddr_in6 *)info-&gt;ai_addr;<br>		<span class="hljs-comment">// IPv6类型的ip地址放到ipbuf上</span><br>        inet_ntop(AF_INET6, &amp;(sa-&gt;sin6_addr), ipbuf, ipbuf_len);<br>    &#125;<br><br>    freeaddrinfo(info);<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-socket"><a href="#5-socket" class="headerlink" title="5 socket"></a>5 socket</h2><p>创建socket套接字实例</p>
+<ul>
+<li><p>domain 指定通信的地址族 无非就是网络通信或者本地通信</p>
+<ul>
+<li><p>网络通信</p>
+<ul>
+<li><p>AF_INET 表示IPv4地址族</p>
+</li>
+<li><p>AF_INET6 表示IPv6地址族</p>
+</li>
+</ul>
+</li>
+<li><p>本地通信 AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快</p>
+</li>
+</ul>
+</li>
+<li><p>type 指定套接字类型 对应的是运输层的协议类型</p>
+<ul>
+<li><p>SOCK_STREAM表示面向连接的流套接字</p>
+</li>
+<li><p>SOCK_DGRAM表示无连接的数据报套接字</p>
+</li>
+</ul>
+</li>
+<li><p>protocol 使用的协议 通常使用默认的协议 即0</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 创建TCP套接字</span><br><span class="hljs-comment"> * 并且将其设置socket端口重用</span><br><span class="hljs-comment"> * @param domain 指定socket的协议族 &lt;ul&gt;</span><br><span class="hljs-comment"> *                                  &lt;li&gt;AF_INET 表示IPv4地址族&lt;/li&gt;</span><br><span class="hljs-comment"> *                                  &lt;li&gt;AF_INET6 表示IPv6地址族&lt;/li&gt;</span><br><span class="hljs-comment"> *                                  &lt;li&gt;AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快&lt;/li&gt;</span><br><span class="hljs-comment"> *                                &lt;/ul&gt;</span><br><span class="hljs-comment"> * @return &lt;ul&gt;</span><br><span class="hljs-comment"> *           &lt;li&gt;-1 标识错误码&lt;/li&gt;</span><br><span class="hljs-comment"> *           &lt;li&gt;非-1 表示socket的fd&lt;/li&gt;</span><br><span class="hljs-comment"> *         &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">anetCreateSocket</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> domain)</span> &#123;<br>    <span class="hljs-type">int</span> s;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 系统调用创建socket实例</span><br><span class="hljs-comment">	 * &lt;ul&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;domain 指定通信的地址族&lt;ul&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;AF_INET 表示IPv4地址族&lt;/li&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;AF_INET6 表示IPv6地址族&lt;/li&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;/ul&gt;&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;type 指定套接字类型&lt;ul&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;SOCK_STREAM表示面向连接的流套接字&lt;/li&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;SOCK_DGRAM表示无连接的数据报套接字&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;/ul&gt;&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;protocol 使用的协议 通常使用默认的协议 即0&lt;/li&gt;</span><br><span class="hljs-comment">	 * &lt;/ul&gt;</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> ((s = socket(domain, SOCK_STREAM, <span class="hljs-number">0</span>)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;creating socket: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br><br>    <span class="hljs-comment">/* Make sure connection-intensive things like the redis benchmark</span><br><span class="hljs-comment">     * will be able to close/open sockets a zillion of times */</span><br>	<span class="hljs-comment">// 这是reids的服务端 将socket设置为端口重用</span><br>    <span class="hljs-keyword">if</span> (anetSetReuseAddr(err,s) == ANET_ERR) &#123;<br>        close(s);<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> s;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="6-connect"><a href="#6-connect" class="headerlink" title="6 connect"></a>6 connect</h2><p>连接到服务器的套接字</p>
+<ul>
+<li><p>sockfd 客户端socket 去连向服务器的套接字</p>
+</li>
+<li><p>addr 指向<code>sockaddr</code>结构体的指针 包含着服务器地址和端口信息</p>
+</li>
+<li><p>addrlen <code>addr</code>结构体的大小</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 让s这个套接字连接到服务器的套接字</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;s 客户端的套接字&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;sa sockaddr结构体的指针 包含着服务端地址和端口信息&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;sa大小&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (connect(s,(<span class="hljs-keyword">struct</span> sockaddr*)&amp;sa,<span class="hljs-keyword">sizeof</span>(sa)) == <span class="hljs-number">-1</span>) &#123;<br>       <span class="hljs-keyword">if</span> (errno == EINPROGRESS &amp;&amp;<br>           flags &amp; ANET_CONNECT_NONBLOCK)<br>           <span class="hljs-keyword">return</span> s;<br><br>       anetSetError(err, <span class="hljs-string">&quot;connect: %s&quot;</span>, strerror(errno));<br>       close(s);<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="7-bind"><a href="#7-bind" class="headerlink" title="7 bind"></a>7 bind</h2><p>将套接字绑定到一个特定的地址和端口上，这一步对服务端程序尤为重要</p>
+<p>服务器需要在一个固定的地址和端口上监听客户端的连接请求</p>
+<ul>
+<li><p>sockfd 由socket函数返回的套接字文件描述符</p>
+</li>
+<li><p>addr 指向sockaddr结构的指针 包含要绑定的地址和端口信息</p>
+</li>
+<li><p>addrlen addr结构的大小</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (bind(s,sa,len) == <span class="hljs-number">-1</span>) &#123;<br>    anetSetError(err, <span class="hljs-string">&quot;bind: %s&quot;</span>, strerror(errno));<br>    close(s);<br>    <span class="hljs-keyword">return</span> ANET_ERR;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="8-listen"><a href="#8-listen" class="headerlink" title="8 listen"></a>8 listen</h2><p>将套接字设置为被动模式，以便接收来自客户端的请求</p>
+<ul>
+<li><p>sockfd 由<code>socket</code>函数返回的套接字文件描述符</p>
+</li>
+<li><p>backlog 指定挂起连接队列的最大长度 未处理的连接请求将保存在这个队列中 直到用<code>accept</code>系统调用进行处理</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (listen(s, backlog) == <span class="hljs-number">-1</span>) &#123;<br>    anetSetError(err, <span class="hljs-string">&quot;listen: %s&quot;</span>, strerror(errno));<br>    close(s);<br>    <span class="hljs-keyword">return</span> ANET_ERR;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="9-accept"><a href="#9-accept" class="headerlink" title="9 accept"></a>9 accept</h2><p>接受连接请求，并在网络服务器编程中扮演关键角色<br>它从监听套接字队列中获取一个待处理的连接，并返回一个新的套接字文件描述符，用于与客户端进行通信</p>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><p>sockfd 监听套接字文件描述符，它是通过<code>socket</code>和<code>bind</code>以及<code>listen</code>配置好的</p>
+</li>
+<li><p>addr 指向<code>sockaddr</code>结构体的指针，用于存储客户端的地址信息。可以为 NULL，这时不获取客户端地址信息</p>
+</li>
+</ul>
+</li>
+<li><p>返回值</p>
+</li>
+<li><p>成功时，返回新的套接字文件描述符，用于与客户端进行通信</p>
+</li>
+<li><p>失败时，返回-1，并设置<code>errno</code>以指示错误</p>
+</li>
+</ul>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 

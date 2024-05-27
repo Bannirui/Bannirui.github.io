@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801234607240.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801235632322.png">
 <meta property="article:published_time" content="2023-02-28T00:46:26.000Z">
-<meta property="article:modified_time" content="2024-03-04T01:04:00.234Z">
+<meta property="article:modified_time" content="2024-05-14T13:06:30.646Z">
 <meta property="article:author" content="Bannirui">
 <meta property="article:tag" content="博客环境">
 <meta name="twitter:card" content="summary_large_image">
@@ -255,7 +255,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          497 字
+          514 字
         
       </span>
     
@@ -437,9 +437,34 @@
 <p>或者指定分类的目录<code>hexo new post 文章名称 -p /目录/文件名.md</code></p>
 <h5 id="2-8-4-发布访问"><a href="#2-8-4-发布访问" class="headerlink" title="2.8.4 发布访问"></a>2.8.4 发布访问</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo g -d<br></code></pre></td></tr></table></figure>
 
-<h4 id="2-9-更换新设备"><a href="#2-9-更换新设备" class="headerlink" title="2.9 更换新设备"></a>2.9 更换新设备</h4><h5 id="2-9-1-clone"><a href="#2-9-1-clone" class="headerlink" title="2.9.1 clone"></a>2.9.1 clone</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/Bannirui.github.io.git<br><br>cd Bannirui.github.io<br><br>sudo npm install<br><br>hexo s<br></code></pre></td></tr></table></figure>
+<h4 id="2-9-更换新设备"><a href="#2-9-更换新设备" class="headerlink" title="2.9 更换新设备"></a>2.9 更换新设备</h4><h5 id="2-9-1-reqirements"><a href="#2-9-1-reqirements" class="headerlink" title="2.9.1 reqirements"></a>2.9.1 reqirements</h5><p>install the requirements</p>
+<ul>
+<li><p>node</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">apt search node<br>sudo apt install nodejs<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>npm</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install npm<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>hexo-cli</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo npm install -g hexo-cli<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>gitalk</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo npm install hexo-plugin-gitalk --save<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>sync the config file and settings</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cd</span> ~/MyDev/env/os_script<br>./configure<br></code></pre></td></tr></table></figure>
 
-<h5 id="2-9-2-报错"><a href="#2-9-2-报错" class="headerlink" title="2.9.2 报错"></a>2.9.2 报错</h5><img src="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801233940886.png" srcset="/img/loading.gif" lazyload class="">
+<ul>
+<li><p>_configure.yml</p>
+</li>
+<li><p>_config.fluid.yml</p>
+</li>
+<li><p>_config.next.yml</p>
+</li>
+</ul>
+<h5 id="2-9-2-clone"><a href="#2-9-2-clone" class="headerlink" title="2.9.2 clone"></a>2.9.2 clone</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/Bannirui.github.io.git<br><br>cd Bannirui.github.io<br><br>sudo npm install<br><br>hexo s<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-9-3-报错"><a href="#2-9-3-报错" class="headerlink" title="2.9.3 报错"></a>2.9.3 报错</h5><img src="/2023/02/28/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801233940886.png" srcset="/img/loading.gif" lazyload class="">
 
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git config --global user.name &quot;Banirui&quot;<br>git config --global user.email &quot;banirui@outlook.com&quot;<br></code></pre></td></tr></table></figure>
 
