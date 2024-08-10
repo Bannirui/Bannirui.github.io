@@ -13,14 +13,14 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="Bannirui">
+  <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
     <meta name="description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统1234567891011121314151617#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;#i">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x05-内存管理的跨平台">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/index.html">
-<meta property="og:site_name" content="Bannirui Blog">
+<meta property="og:site_name" content="hex Blog">
 <meta property="og:description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统1234567891011121314151617#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;#i">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_18-28-03.png">
 <meta property="article:published_time" content="2024-04-13T14:18:55.000Z">
 <meta property="article:modified_time" content="2024-04-13T14:24:59.425Z">
-<meta property="article:author" content="Bannirui">
+<meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
   
@@ -37,7 +37,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-0x05-内存管理的跨平台 - Bannirui Blog</title>
+  <title>Redis-0x05-内存管理的跨平台 - hex Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -131,7 +131,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Bannirui Blog</strong>
+      <strong>hex Blog</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -722,7 +722,7 @@
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>Bannirui</div>
+          <div>dingrui</div>
         </div>
       
       

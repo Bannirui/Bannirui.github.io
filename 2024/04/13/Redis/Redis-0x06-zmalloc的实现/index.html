@@ -13,14 +13,14 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="Bannirui">
+  <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
     <meta name="description" content="前文了解了为何redis需要抽象一层内存管理器，以及redis是怎么做的跨平台兼容。   这个章节尝试跟着zmalloc的代码进行逐行学习，整个zmalloc.c源文件700+行，再除去注释和换行等，实际代码规模不大，因此计划以函数为粒度进行解读和学习。  1 ASSERT_NO_SIZE_OVERFLOW 这是一个断言函数，这个函数存在的目的也是为了跨平台兼容。  12345678910111">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x06-zmalloc的实现">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
-<meta property="og:site_name" content="Bannirui Blog">
+<meta property="og:site_name" content="hex Blog">
 <meta property="og:description" content="前文了解了为何redis需要抽象一层内存管理器，以及redis是怎么做的跨平台兼容。   这个章节尝试跟着zmalloc的代码进行逐行学习，整个zmalloc.c源文件700+行，再除去注释和换行等，实际代码规模不大，因此计划以函数为粒度进行解读和学习。  1 ASSERT_NO_SIZE_OVERFLOW 这是一个断言函数，这个函数存在的目的也是为了跨平台兼容。  12345678910111">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/IMG_B9C8F5A5AE81-1.jpeg">
@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/2023-11-15_10-59-05.png">
 <meta property="article:published_time" content="2024-04-13T14:28:06.000Z">
 <meta property="article:modified_time" content="2024-04-28T02:14:30.008Z">
-<meta property="article:author" content="Bannirui">
+<meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/IMG_B9C8F5A5AE81-1.jpeg">
   
@@ -38,7 +38,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-0x06-zmalloc的实现 - Bannirui Blog</title>
+  <title>Redis-0x06-zmalloc的实现 - hex Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -132,7 +132,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Bannirui Blog</strong>
+      <strong>hex Blog</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -805,7 +805,7 @@
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>Bannirui</div>
+          <div>dingrui</div>
         </div>
       
       

@@ -13,20 +13,20 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="Bannirui">
+  <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
     <meta name="description" content="1 不同任务类型的提交方式首先体现了Executor这个抽象接口的功能，实现解耦  提交任务的线程只关注于提交这个动作，任务提交完，使命就结束了 NioEventLoopGroup负责关注任务的管理和调度 所谓的管理就是如何在内存中组织编排任务实例 调度就是负责实现任务如何执行    名词(术语)约定，在Netty世界中，任务有2种  IO任务(特指的是Socket编程涉及的网络IO) 其他都叫做">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty-0x02-NioEventLoopGroup之任务管理">
 <meta property="og:url" content="https://bannirui.github.io/2023/05/10/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/index.html">
-<meta property="og:site_name" content="Bannirui Blog">
+<meta property="og:site_name" content="hex Blog">
 <meta property="og:description" content="1 不同任务类型的提交方式首先体现了Executor这个抽象接口的功能，实现解耦  提交任务的线程只关注于提交这个动作，任务提交完，使命就结束了 NioEventLoopGroup负责关注任务的管理和调度 所谓的管理就是如何在内存中组织编排任务实例 调度就是负责实现任务如何执行    名词(术语)约定，在Netty世界中，任务有2种  IO任务(特指的是Socket编程涉及的网络IO) 其他都叫做">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/05/10/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/image-20230510212923723.png">
 <meta property="article:published_time" content="2023-05-10T12:33:57.000Z">
 <meta property="article:modified_time" content="2024-03-03T11:41:19.807Z">
-<meta property="article:author" content="Bannirui">
+<meta property="article:author" content="dingrui">
 <meta property="article:tag" content="2刷Netty">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2023/05/10/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/image-20230510212923723.png">
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Netty-0x02-NioEventLoopGroup之任务管理 - Bannirui Blog</title>
+  <title>Netty-0x02-NioEventLoopGroup之任务管理 - hex Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -129,7 +129,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Bannirui Blog</strong>
+      <strong>hex Blog</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -653,7 +653,7 @@
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>Bannirui</div>
+          <div>dingrui</div>
         </div>
       
       

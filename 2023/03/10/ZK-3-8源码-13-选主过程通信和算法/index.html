@@ -13,21 +13,21 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="Bannirui">
+  <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
     <meta name="description" content="我们一贯的套路是先总览框架，然后细看每个组件，最后再梳理整个流程。 1 组件图在选主算法中，涉及到的组件有：  QuorumPeer 负责入口的驱动 QuorumCnxManager 负责网络通信 对接的数据协议是字节和Message ListenerHandler 负责通信连接和验证 RecvWorker 负责网络数据接收的线程 SenderWorker 负责网络数据发送的线程   FastLe">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ZK@3.8源码-13-选主过程通信和算法">
 <meta property="og:url" content="https://bannirui.github.io/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/index.html">
-<meta property="og:site_name" content="Bannirui Blog">
+<meta property="og:site_name" content="hex Blog">
 <meta property="og:description" content="我们一贯的套路是先总览框架，然后细看每个组件，最后再梳理整个流程。 1 组件图在选主算法中，涉及到的组件有：  QuorumPeer 负责入口的驱动 QuorumCnxManager 负责网络通信 对接的数据协议是字节和Message ListenerHandler 负责通信连接和验证 RecvWorker 负责网络数据接收的线程 SenderWorker 负责网络数据发送的线程   FastLe">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/image-20230310103455944.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/image-20230310114219700.png">
 <meta property="article:published_time" content="2023-03-10T02:34:14.000Z">
 <meta property="article:modified_time" content="2024-03-03T11:33:06.265Z">
-<meta property="article:author" content="Bannirui">
+<meta property="article:author" content="dingrui">
 <meta property="article:tag" content="ZK@3.8">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/image-20230310103455944.png">
@@ -36,7 +36,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>ZK@3.8源码-13-选主过程通信和算法 - Bannirui Blog</title>
+  <title>ZK@3.8源码-13-选主过程通信和算法 - hex Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -130,7 +130,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Bannirui Blog</strong>
+      <strong>hex Blog</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -754,7 +754,7 @@
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>Bannirui</div>
+          <div>dingrui</div>
         </div>
       
       
