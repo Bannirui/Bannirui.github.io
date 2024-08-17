@@ -1,9 +1,8 @@
 ---
-title: MySQL源码-0x00-环境
-date: 2023-04-25 22:56:50
+title: MySQL源码-0x01-编译mysql8
 category_bar: true
-tags: [ MySQL@8.0.32 ]
-categories: [ MySQL ]
+date: 2024-08-18 00:27:51
+categories: MySQL
 ---
 
 ### 1 环境
@@ -54,11 +53,11 @@ mkdir -p build/data
 -DMYSQL_DATADIR:PATH=/build/data
 ```
 
-![](MySQL源码-0x00-环境/image-20230426185421743.png)
+![](./MySQL源码-0x01-编译mysql8/image-20230426185421743.png)
 
 #### 3.3 编译
 
-![](MySQL源码-0x00-环境/image-20230426172509886.png)
+![](./MySQL源码-0x01-编译mysql8/image-20230426172509886.png)
 
 #### 3.4 运行msqld
 
@@ -70,7 +69,7 @@ mkdir -p build-out/data
 
 ##### 3.4.1 gitignore
 
-![](MySQL源码-0x00-环境/image-20230426190400219.png)
+![](./MySQL源码-0x01-编译mysql8/image-20230426190400219.png)
 
 ##### 3.4.2 初始化
 
@@ -80,7 +79,7 @@ mkdir -p build-out/data
 --initialize-insecure
 ```
 
-![](MySQL源码-0x00-环境/image-20230426190013421.png)
+![](./MySQL源码-0x01-编译mysql8/image-20230426190013421.png)
 
 ##### 3.4.3 启动服务
 
@@ -90,4 +89,3 @@ mkdir -p build-out/data
 --basedir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out
 --datadir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out/data
 ```
-
