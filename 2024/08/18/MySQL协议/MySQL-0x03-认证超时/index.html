@@ -16,29 +16,27 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 环境   Name Version    macOS 11.5.2   clion 2023.1.1   git 2.40.0   2 源码1234567891011121314151617fork&gt; git clone git@github.com:Bannirui&#x2F;mysql-server.git&gt; git remote add upstream git@github.com:">
+    <meta name="description" content="1 认证超时向mysql服务端发送认证包后收到了error包，解析出来看报错信息是超时导致的，因此要改一下服务端的配置文件。   2 mysql配置当时为了图省事，我的服务端是用homebrew安装的，因此得先找一下默认的配置文件路径。 1mysql --verbose --help | grep my.cnf    我的是在&#x2F;usr&#x2F;local&#x2F;etc&#x2F;my.cnf，在这个文件加上两行配置重启服">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL源码-0x00-环境">
-<meta property="og:url" content="https://bannirui.github.io/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:title" content="MySQL-0x03-认证超时">
+<meta property="og:url" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 环境   Name Version    macOS 11.5.2   clion 2023.1.1   git 2.40.0   2 源码1234567891011121314151617fork&gt; git clone git@github.com:Bannirui&#x2F;mysql-server.git&gt; git remote add upstream git@github.com:">
+<meta property="og:description" content="1 认证超时向mysql服务端发送认证包后收到了error包，解析出来看报错信息是超时导致的，因此要改一下服务端的配置文件。   2 mysql配置当时为了图省事，我的服务端是用homebrew安装的，因此得先找一下默认的配置文件路径。 1mysql --verbose --help | grep my.cnf    我的是在&#x2F;usr&#x2F;local&#x2F;etc&#x2F;my.cnf，在这个文件加上两行配置重启服">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426185421743.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426172509886.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426190400219.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426190013421.png">
-<meta property="article:published_time" content="2023-04-25T14:56:50.000Z">
-<meta property="article:modified_time" content="2024-03-03T11:41:11.606Z">
+<meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654487.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654650.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654856.png">
+<meta property="article:published_time" content="2024-08-17T16:17:44.000Z">
+<meta property="article:modified_time" content="2024-08-17T16:19:33.955Z">
 <meta property="article:author" content="dingrui">
-<meta property="article:tag" content="MySQL@8.0.32">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426185421743.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654487.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>MySQL源码-0x00-环境 - hex Blog</title>
+  <title>MySQL-0x03-认证超时 - hex Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -228,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="MySQL源码-0x00-环境"></span>
+            <span id="subtitle" data-typed-text="MySQL-0x03-认证超时"></span>
           
         </div>
 
@@ -239,8 +237,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-04-25 22:56" pubdate>
-          2023年4月25日 晚上
+        <time datetime="2024-08-18 00:17" pubdate>
+          2024年8月18日 凌晨
         </time>
       </span>
     
@@ -251,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          227 字
+          142 字
         
       </span>
     
@@ -315,17 +313,17 @@
     
     <div class="category row nomargin-x">
       <a class="category-item 
-          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="MySQL"
-        id="heading-62a004b95946bb97541afa471dcca73a" role="tab" data-toggle="collapse" href="#collapse-62a004b95946bb97541afa471dcca73a"
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="MySQL协议"
+        id="heading-41f665d4243547254fb4589f1372c547" role="tab" data-toggle="collapse" href="#collapse-41f665d4243547254fb4589f1372c547"
         aria-expanded="true"
       >
-        MySQL
-        <span class="list-group-count">(3)</span>
+        MySQL协议
+        <span class="list-group-count">(4)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
-      <div class="category-collapse collapse show" id="collapse-62a004b95946bb97541afa471dcca73a"
-           role="tabpanel" aria-labelledby="heading-62a004b95946bb97541afa471dcca73a">
+      <div class="category-collapse collapse show" id="collapse-41f665d4243547254fb4589f1372c547"
+           role="tabpanel" aria-labelledby="heading-41f665d4243547254fb4589f1372c547">
         
         
           
@@ -334,28 +332,37 @@
     
       
       
-        <a href="/2024/07/29/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/" title="MySQL-0x01"
+        <a href="/2024/07/16/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x00-MySQL%E5%8D%8F%E8%AE%AE/" title="MySQL-0x00-MySQL协议"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">MySQL-0x01</span>
+          <span class="category-post">MySQL-0x00-MySQL协议</span>
         </a>
       
     
       
       
-        <a href="/2024/08/03/MySQL/MySQL-0x02-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/" title="MySQL-0x02"
+        <a href="/2024/07/17/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x01-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F/" title="MySQL-0x01-协议格式"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">MySQL-0x02</span>
+          <span class="category-post">MySQL-0x01-协议格式</span>
         </a>
       
     
       
       
-        <a href="/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/" title="MySQL源码-0x00-环境"
+        <a href="/2024/07/17/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x02-%E6%8F%A1%E6%89%8B%E5%8C%85/" title="MySQL-0x02-握手包"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">MySQL-0x02-握手包</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/" title="MySQL-0x03-认证超时"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">MySQL源码-0x00-环境</span>
+          <span class="category-post">MySQL-0x03-认证超时</span>
         </a>
       
     
@@ -377,53 +384,21 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">MySQL源码-0x00-环境</h1>
+            <h1 id="seo-header">MySQL-0x03-认证超时</h1>
             
             
               <div class="markdown-body">
                 
-                <h3 id="1-环境"><a href="#1-环境" class="headerlink" title="1 环境"></a>1 环境</h3><table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Version</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>macOS</td>
-<td>11.5.2</td>
-</tr>
-<tr>
-<td>clion</td>
-<td>2023.1.1</td>
-</tr>
-<tr>
-<td>git</td>
-<td>2.40.0</td>
-</tr>
-</tbody></table>
-<h3 id="2-源码"><a href="#2-源码" class="headerlink" title="2 源码"></a>2 源码</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell">fork<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/mysql-server.git</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git remote add upstream git@github.com:mysql/mysql-server.git</span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git remote set-url --push upstream no_push</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git remote -v</span><br>origin  git@github.com:Bannirui/mysql-server.git (fetch)<br>origin  git@github.com:Bannirui/mysql-server.git (push)<br>upstream        git@github.com:mysql/mysql-server.git (fetch)<br>upstream        no_push (push)<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git checkout -b study-8.0 origin/8.0</span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git add .</span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git commit -m <span class="hljs-string">&#x27;buid on clion&#x27;</span></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git push origin study-8.0</span><br></code></pre></td></tr></table></figure>
+                <h3 id="1-认证超时"><a href="#1-认证超时" class="headerlink" title="1 认证超时"></a>1 认证超时</h3><p>向mysql服务端发送认证包后收到了error包，解析出来看报错信息是超时导致的，因此要改一下服务端的配置文件。</p>
+<img src="/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654487.png" srcset="/img/loading.gif" lazyload class="">
 
-<h3 id="3-Clion设置"><a href="#3-Clion设置" class="headerlink" title="3 Clion设置"></a>3 Clion设置</h3><h4 id="3-1-新建日志目录"><a href="#3-1-新建日志目录" class="headerlink" title="3.1 新建日志目录"></a>3.1 新建日志目录</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p build/data<br></code></pre></td></tr></table></figure>
+<h3 id="2-mysql配置"><a href="#2-mysql配置" class="headerlink" title="2 mysql配置"></a>2 mysql配置</h3><p>当时为了图省事，我的服务端是用<code>homebrew</code>安装的，因此得先找一下默认的配置文件路径。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">mysql --verbose --<span class="hljs-built_in">help</span> | grep my.cnf<br></code></pre></td></tr></table></figure>
 
-<h4 id="3-2-cmake设置"><a href="#3-2-cmake设置" class="headerlink" title="3.2 cmake设置"></a>3.2 cmake设置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">-DWITH_DEBUG:BOOL=ON<br>-DDOWNLOAD_BOOST:BOOL=ON<br>-DWITH_BOOST:PATH=/Users/dingrui/Dev/ENV/BOOST<br>-DCMAKE_INSTALL_PREFIX:PATH=/build<br>-DMYSQL_DATADIR:PATH=/build/data<br></code></pre></td></tr></table></figure>
+<img src="/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654650.png" srcset="/img/loading.gif" lazyload class="">
 
-<img src="/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426185421743.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="3-3-编译"><a href="#3-3-编译" class="headerlink" title="3.3 编译"></a>3.3 编译</h4><img src="/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426172509886.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="3-4-运行msqld"><a href="#3-4-运行msqld" class="headerlink" title="3.4 运行msqld"></a>3.4 运行msqld</h4><h5 id="3-4-1-新建data目录"><a href="#3-4-1-新建data目录" class="headerlink" title="3.4.1 新建data目录"></a>3.4.1 新建data目录</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p build-out/data<br></code></pre></td></tr></table></figure>
-
-<h5 id="3-4-1-gitignore"><a href="#3-4-1-gitignore" class="headerlink" title="3.4.1 gitignore"></a>3.4.1 gitignore</h5><img src="/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426190400219.png" srcset="/img/loading.gif" lazyload class="">
-
-<h5 id="3-4-2-初始化"><a href="#3-4-2-初始化" class="headerlink" title="3.4.2 初始化"></a>3.4.2 初始化</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">--basedir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out<br>--datadir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out/data<br>--initialize-insecure<br></code></pre></td></tr></table></figure>
-
-<img src="/2023/04/25/MySQL%E6%BA%90%E7%A0%81-0x00-%E7%8E%AF%E5%A2%83/image-20230426190013421.png" srcset="/img/loading.gif" lazyload class="">
-
-<h5 id="3-4-3-启动服务"><a href="#3-4-3-启动服务" class="headerlink" title="3.4.3 启动服务"></a>3.4.3 启动服务</h5><p>修改启动参数再次运行即可。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">--basedir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out<br>--datadir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out/data<br></code></pre></td></tr></table></figure>
-
-
+<p>我的是在<code>/usr/local/etc/my.cnf</code>，在这个文件加上两行配置重启服务端</p>
+<img src="/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654856.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -450,7 +425,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
+  <a href="/categories/MySQL%E5%8D%8F%E8%AE%AE/" class="category-chain-item">MySQL协议</a>
   
   
 
@@ -462,13 +437,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/MySQL-8-0-32/" class="print-no-link">#MySQL@8.0.32</a>
-      
-    </div>
-  
 </div>
 
 
@@ -477,8 +445,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>MySQL源码-0x00-环境</div>
-      <div>https://bannirui.github.io/2023/04/25/MySQL源码-0x00-环境/</div>
+      <div>MySQL-0x03-认证超时</div>
+      <div>https://bannirui.github.io/2024/08/18/MySQL协议/MySQL-0x03-认证超时/</div>
     </div>
     <div class="license-meta">
       
@@ -490,7 +458,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年4月25日</div>
+          <div>2024年8月18日</div>
         </div>
       
       
@@ -522,9 +490,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/04/26/IM%E8%81%8A%E5%A4%A9%E7%B3%BB%E7%BB%9F/" title="IM聊天系统">
+                      <a href="/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/" title="MySQL源码-0x01-编译mysql8">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">IM聊天系统</span>
+                        <span class="hidden-mobile">MySQL源码-0x01-编译mysql8</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -532,8 +500,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/04/22/stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" title="stm32单片机开发环境">
-                        <span class="hidden-mobile">stm32单片机开发环境</span>
+                      <a href="/2024/08/17/Linux/yt-dlp%E4%B8%8B%E8%BD%BD%E5%99%A8%E5%AE%89%E8%A3%85/" title="yt-dlp下载器安装">
+                        <span class="hidden-mobile">yt-dlp下载器安装</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -556,7 +524,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'bac8e66787dadadfbd24ac22cf73ddfe'
+            id: '8ece34d0cf3a9adf8f779b8310a2db75'
           }
         )
         var gitalk = new Gitalk(options);
