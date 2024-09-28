@@ -13,6 +13,10 @@ categories: Python
 
 ### 2 常用命令
 
+- python3 -m venv .venv
+
+- source .venv/bin/activate
+
 - python3 -m pip list
 
 - python3 -m pip install xxx
