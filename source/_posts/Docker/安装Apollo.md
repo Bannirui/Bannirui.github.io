@@ -1636,3 +1636,17 @@ docker run -p 8070:8070 \
 在宿主机访问`http://localhost:8070/`进入后台页面
 
 ![](./安装Apollo/1732109031.png)
+
+### 5 问题
+
+用docker部署的情况下，根据meta url返回的是docker镜像中的home page地址
+
+![](./安装Apollo/1732115385.png)
+
+这样会导致集成Apollo客户端读取不到正确的配置信息
+
+![](./安装Apollo/1732115519.png)
+
+解决方案参考[官方文档](https://github.com/apolloconfig/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#14-%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5)，启动客户端的时候`-Dapollo.configService=http://127.0.0.1:8080/`指定服务地址
+
+![](./安装Apollo/1732117150.png)
