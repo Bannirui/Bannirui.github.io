@@ -12,6 +12,12 @@ tags: Apollo
 
 需要注意的点就是部署在docker中域名不要使用localhost，用host.docker.internal
 
+在配置多环境时
+
+- ServerConfig::eureka.service.url要写入所有环境对应的注册中心地址
+- ServerConfig::apollo.portal.meta.servers要写入所有环境的meta地址
+- ServerConfig::pollo.portal.env要写入所有环境的标识
+
 ### 1 表
 
 #### 1.1 ApolloConfigDB dev环境
@@ -517,7 +523,7 @@ CREATE TABLE `AuditLogDataInfluence` (
 -- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
-    ('eureka.service.url', 'default', 'http://host.docker.internal:8080/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
+    ('eureka.service.url', 'default', 'http://host.docker.internal:8080/eureka/,http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
     ('namespace.lock.switch', 'default', 'false', '一次发布只能有一个人修改开关'),
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),
@@ -1043,7 +1049,7 @@ CREATE TABLE `AuditLogDataInfluence` (
 -- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
-    ('eureka.service.url', 'default', 'http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
+    ('eureka.service.url', 'default', 'http://host.docker.internal:8080/eureka/,http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
     ('namespace.lock.switch', 'default', 'false', '一次发布只能有一个人修改开关'),
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),
@@ -1547,13 +1553,22 @@ INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user
 
 #### 3.1 Apollo Config Service
 
+参数指定
+
+- -e SERVER_PORT java服务的端口
+
 ##### 3.1.1 dev环境
 
 ```sh
 docker run -p 8080:8080 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_DEV?characterEncoding=utf8" \
-    -e SPRING_DATASOURCE_USERNAME=dingrui -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -d -v /tmp/logs_dev:/opt/logs --name apollo-configservice-dev apolloconfig/apollo-configservice:latest
+    -e SPRING_DATASOURCE_USERNAME=dingrui \
+    -e SPRING_DATASOURCE_PASSWORD=19920308 \
+    -e SERVER_PORT=8080 \
+    -d \
+    -v /tmp/logs_dev:/opt/logs \
+    --name apollo-configservice-dev \
+    apolloconfig/apollo-configservice:latest
 ```
 
 ##### 3.1.2 fat环境
@@ -1561,8 +1576,13 @@ docker run -p 8080:8080 \
 ```sh
 docker run -p 8081:8081 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_FAT?characterEncoding=utf8" \
-    -e SPRING_DATASOURCE_USERNAME=dingrui -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -d -v /tmp/logs_dev:/opt/logs --name apollo-configservice-fat apolloconfig/apollo-configservice:latest
+    -e SPRING_DATASOURCE_USERNAME=dingrui \
+    -e SPRING_DATASOURCE_PASSWORD=19920308 \
+    -e SERVER_PORT=8081 \
+    -d \
+    -v /tmp/logs_dev:/opt/logs \
+    --name apollo-configservice-fat \
+    apolloconfig/apollo-configservice:latest
 ```
 
 #### 3.2 Apollo Admin Service
@@ -1572,8 +1592,13 @@ docker run -p 8081:8081 \
 ```sh
 docker run -p 8090:8090 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_DEV?characterEncoding=utf8" \
-    -e SPRING_DATASOURCE_USERNAME=dingrui -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -d -v /tmp/logs_dev:/opt/logs --name apollo-adminservice-dev apolloconfig/apollo-adminservice:latest
+    -e SPRING_DATASOURCE_USERNAME=dingrui \
+    -e SPRING_DATASOURCE_PASSWORD=19920308 \
+    -e SERVER_PORT=8090 \
+    -d \
+    -v /tmp/logs_dev:/opt/logs \
+    --name apollo-adminservice-dev \
+    apolloconfig/apollo-adminservice:latest
 ```
 
 ##### 3.2.2 fat环境
@@ -1581,8 +1606,13 @@ docker run -p 8090:8090 \
 ```sh
 docker run -p 8091:8091 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_FAT?characterEncoding=utf8" \
-    -e SPRING_DATASOURCE_USERNAME=dingrui -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -d -v /tmp/logs_dev:/opt/logs --name apollo-adminservice-fat apolloconfig/apollo-adminservice:latest
+    -e SPRING_DATASOURCE_USERNAME=dingrui \
+    -e SPRING_DATASOURCE_PASSWORD=19920308 \
+    -e SERVER_PORT=8091 \
+    -d \
+    -v /tmp/logs_dev:/opt/logs \
+    --name apollo-adminservice-fat \
+    apolloconfig/apollo-adminservice:latest
 ```
 
 #### 3.3 Apollo Portal
@@ -1590,16 +1620,20 @@ docker run -p 8091:8091 \
 ```sh
 docker run -p 8070:8070 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloPortalDB?characterEncoding=utf8" \
-    -e SPRING_DATASOURCE_USERNAME=dingrui -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -e APOLLO_PORTAL_ENVS=dev,fat \
-    -e DEV_META=http://host.docker.internal:8080 -e FAT_META=http://host.docker.internal:8081 \
-    -d -v /tmp/logs:/opt/logs --name apollo-portal apolloconfig/apollo-portal:latest
+    -e SPRING_DATASOURCE_USERNAME=dingrui \
+    -e SPRING_DATASOURCE_PASSWORD=19920308 \
+    -e SERVER_PORT=8070 \
+    -e APOLLO_PORTAL_ENVS=DEV,FAT \
+    -e DEV_META=http://host.docker.internal:8080 \
+    -e FAT_META=http://host.docker.internal:8081 \
+    -d \
+    -v /tmp/logs:/opt/logs \
+    --name apollo-portal \
+    apolloconfig/apollo-portal:latest
 ```
 
 ### 4 访问
 
 在宿主机访问`http://localhost:8070/`进入后台页面
 
-![](./安装Apollo/1732003691.png)
-
-> 目前为止，集群还有问题，配置了两套环境但是只有dev环境生效
+![](./安装Apollo/1732109031.png)
