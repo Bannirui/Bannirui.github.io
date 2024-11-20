@@ -12,13 +12,12 @@ tags: Apollo
 
 需要注意的点就是部署在docker中域名不要使用localhost，用host.docker.internal
 
+### 1 表
+
 在配置多环境时
 
-- ServerConfig::eureka.service.url要写入所有环境对应的注册中心地址
 - ServerConfig::apollo.portal.meta.servers要写入所有环境的meta地址
 - ServerConfig::pollo.portal.env要写入所有环境的标识
-
-### 1 表
 
 #### 1.1 ApolloConfigDB dev环境
 
@@ -523,7 +522,7 @@ CREATE TABLE `AuditLogDataInfluence` (
 -- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
-    ('eureka.service.url', 'default', 'http://host.docker.internal:8080/eureka/,http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
+    ('eureka.service.url', 'default', 'http://host.docker.internal:8080/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
     ('namespace.lock.switch', 'default', 'false', '一次发布只能有一个人修改开关'),
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),
@@ -1049,7 +1048,7 @@ CREATE TABLE `AuditLogDataInfluence` (
 -- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
-    ('eureka.service.url', 'default', 'http://host.docker.internal:8080/eureka/,http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
+    ('eureka.service.url', 'default', 'http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
     ('namespace.lock.switch', 'default', 'false', '一次发布只能有一个人修改开关'),
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),
