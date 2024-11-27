@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="我使用的调试器是openocd，但是查看了帮助信息好像没有找到关于list列表信息功能，这着实是有点不太科学的。我现在的需求就是需要查看电脑端口的占用情况已经设备详情信息。因此找到了pyocd这款调试器，目前这个调试器仅仅为了满足list的需求，如果使用体验很好的话，程序的烧录可能也会切到这个调试器。 我的设备是Arch Linux x86_64。 1 安装12pip --versionpip i">
+    <meta name="description" content="我使用的调试器是openocd，但是查看了帮助信息好像没有找到关于list列表信息功能，这着实是有点不太科学的。我现在的需求就是需要查看电脑端口的占用情况已经设备详情信息。因此找到了pyocd这款调试器，目前这个调试器仅仅为了满足list的需求，如果使用体验很好的话，程序的烧录可能也会切到这个调试器。 我的设备是Arch Linux x86_64。 1 安装shell12pip --version">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pyocd使用">
 <meta property="og:url" content="https://bannirui.github.io/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="我使用的调试器是openocd，但是查看了帮助信息好像没有找到关于list列表信息功能，这着实是有点不太科学的。我现在的需求就是需要查看电脑端口的占用情况已经设备详情信息。因此找到了pyocd这款调试器，目前这个调试器仅仅为了满足list的需求，如果使用体验很好的话，程序的烧录可能也会切到这个调试器。 我的设备是Arch Linux x86_64。 1 安装12pip --versionpip i">
+<meta property="og:description" content="我使用的调试器是openocd，但是查看了帮助信息好像没有找到关于list列表信息功能，这着实是有点不太科学的。我现在的需求就是需要查看电脑端口的占用情况已经设备详情信息。因此找到了pyocd这款调试器，目前这个调试器仅仅为了满足list的需求，如果使用体验很好的话，程序的烧录可能也会切到这个调试器。 我的设备是Arch Linux x86_64。 1 安装shell12pip --version">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/1702344978.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/1702345077.png">
@@ -74,7 +74,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -385,12 +385,12 @@
                 
                 <p>我使用的调试器是<code>openocd</code>，但是查看了帮助信息好像没有找到关于<code>list</code>列表信息功能，这着实是有点不太科学的。我现在的需求就是需要查看电脑端口的占用情况已经设备详情信息。因此找到了<code>pyocd</code>这款调试器，目前这个调试器仅仅为了满足<code>list</code>的需求，如果使用体验很好的话，程序的烧录可能也会切到这个调试器。</p>
 <p>我的设备是Arch Linux x86_64。</p>
-<h2 id="1-安装"><a href="#1-安装" class="headerlink" title="1 安装"></a>1 安装</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip --version<br>pip install pyocd<br></code></pre></td></tr></table></figure>
+<h2 id="1-安装"><a href="#1-安装" class="headerlink" title="1 安装"></a>1 安装</h2><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-nlujcim3z9fisx"></i><span>shell</span><div class="collapse show" id="collapse-nlujcim3z9fisx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip --version<br>pip install pyocd<br></code></pre></td></tr></table></div></figure>
 
 <p>然后就提示<code>error: externally-managed-environment</code>，并给出友善建议使用<code>pacman -S python-xzy</code>，于是乎</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss pyocd<br>yay -Syy python-pyocd<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-wp3gltm3z9fisx"></i><span>shell</span><div class="collapse show" id="collapse-wp3gltm3z9fisx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss pyocd<br>yay -Syy python-pyocd<br></code></pre></td></tr></table></div></figure>
 
-<h2 id="2-list"><a href="#2-list" class="headerlink" title="2 list"></a>2 list</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">pyocd --version<br>pyocd --help<br>pyocd list --help<br></code></pre></td></tr></table></figure>
+<h2 id="2-list"><a href="#2-list" class="headerlink" title="2 list"></a>2 list</h2><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-h45vpfm3z9fisx"></i><span>shell</span><div class="collapse show" id="collapse-h45vpfm3z9fisx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">pyocd --version<br>pyocd --help<br>pyocd list --help<br></code></pre></td></tr></table></div></figure>
 
 <p>可以看到<code>pyocd</code>的子功能<code>list</code>提供了很多的option。</p>
 <img src="/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/1702344978.png" srcset="/img/loading.gif" lazyload class="">

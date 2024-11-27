@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="实现在aof.c中 aof使用的是简单的文本协议 一个完整的协议为 12345678*n$len1指令1$len2指令2...$lenn指令n  以set name dingrui为例 这条redis命令写到aof中为 1234567*3$3set$4name$7dingrui    		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8">
+    <meta name="description" content="实现在aof.c中 aof使用的是简单的文本协议 一个完整的协议为 text12345678*n$len1指令1$len2指令2...$lenn指令n  以set name dingrui为例 这条redis命令写到aof中为 text1234567*3$3set$4name$7dingrui    		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d1441880">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x19-AOF持久化">
 <meta property="og:url" content="https://bannirui.github.io/2024/05/21/Redis/Redis-0x19-AOF%E6%8C%81%E4%B9%85%E5%8C%96/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="实现在aof.c中 aof使用的是简单的文本协议 一个完整的协议为 12345678*n$len1指令1$len2指令2...$lenn指令n  以set name dingrui为例 这条redis命令写到aof中为 1234567*3$3set$4name$7dingrui    		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8">
+<meta property="og:description" content="实现在aof.c中 aof使用的是简单的文本协议 一个完整的协议为 text12345678*n$len1指令1$len2指令2...$lenn指令n  以set name dingrui为例 这条redis命令写到aof中为 text1234567*3$3set$4name$7dingrui    		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d1441880">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-21T06:29:03.000Z">
 <meta property="article:modified_time" content="2024-05-31T05:22:23.102Z">
@@ -70,7 +70,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -541,10 +541,10 @@
                 <p>实现在aof.c中</p>
 <p>aof使用的是简单的文本协议</p>
 <p>一个完整的协议为</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">*n<br>$len1<br>指令1<br>$len2<br>指令2<br>...<br>$lenn<br>指令n<br></code></pre></td></tr></table></figure>
+<figure class="highlight text"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-cdf2hvm3z9fit0"></i><span>text</span><div class="collapse show" id="collapse-cdf2hvm3z9fit0"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">*n<br>$len1<br>指令1<br>$len2<br>指令2<br>...<br>$lenn<br>指令n<br></code></pre></td></tr></table></div></figure>
 
 <p>以<code>set name dingrui</code>为例 这条redis命令写到aof中为</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">*3<br>$3<br>set<br>$4<br>name<br>$7<br>dingrui<br></code></pre></td></tr></table></figure>
+<figure class="highlight text"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-z0e1ocm3z9fit0"></i><span>text</span><div class="collapse show" id="collapse-z0e1ocm3z9fit0"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">*3<br>$3<br>set<br>$4<br>name<br>$7<br>dingrui<br></code></pre></td></tr></table></div></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 

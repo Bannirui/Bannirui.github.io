@@ -19,17 +19,17 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 image在desktop搜索mysql 选中了最新的版本pull下来 2 container  运行image，通过环境参数制定mysql的默认密码MYSQL_ROOT_PASSWORD&#x3D;19920308 对应的docker run如下 1docker run --name mysql -p 3306:3306 --env&#x3D;MYSQL_ROOT_PASSWORD&#x3D;19920308 -d my">
+    <meta name="description" content="1 image在desktop搜索mysql 选中了最新的版本pull下来 2 container  运行image，通过环境参数制定mysql的默认密码MYSQL_ROOT_PASSWORD&#x3D;19920308 对应的docker run如下 shell1docker run --name mysql -p 3306:3306 --env&#x3D;MYSQL_ROOT_PASSWORD&#x3D;19920308">
 <meta property="og:type" content="article">
 <meta property="og:title" content="安装MySQL">
 <meta property="og:url" content="https://bannirui.github.io/2024/11/19/Docker/%E5%AE%89%E8%A3%85MySQL/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 image在desktop搜索mysql 选中了最新的版本pull下来 2 container  运行image，通过环境参数制定mysql的默认密码MYSQL_ROOT_PASSWORD&#x3D;19920308 对应的docker run如下 1docker run --name mysql -p 3306:3306 --env&#x3D;MYSQL_ROOT_PASSWORD&#x3D;19920308 -d my">
+<meta property="og:description" content="1 image在desktop搜索mysql 选中了最新的版本pull下来 2 container  运行image，通过环境参数制定mysql的默认密码MYSQL_ROOT_PASSWORD&#x3D;19920308 对应的docker run如下 shell1docker run --name mysql -p 3306:3306 --env&#x3D;MYSQL_ROOT_PASSWORD&#x3D;19920308">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/11/19/Docker/%E5%AE%89%E8%A3%85MySQL/1731985029.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/11/19/Docker/%E5%AE%89%E8%A3%85MySQL/1731993883.png">
 <meta property="article:published_time" content="2024-11-19T01:51:17.000Z">
-<meta property="article:modified_time" content="2024-11-19T05:26:38.483Z">
+<meta property="article:modified_time" content="2024-11-27T02:21:12.515Z">
 <meta property="article:author" content="dingrui">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary_large_image">
@@ -74,7 +74,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -388,10 +388,10 @@
 
 <p>运行image，通过环境参数制定mysql的默认密码<code>MYSQL_ROOT_PASSWORD=19920308</code></p>
 <p>对应的docker run如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker run --name mysql -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-n6tk2sm3z9fisy"></i><span>shell</span><div class="collapse show" id="collapse-n6tk2sm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker run --name mysql -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="3-新建mysql用户"><a href="#3-新建mysql用户" class="headerlink" title="3 新建mysql用户"></a>3 新建mysql用户</h3><p>启动docker bash执行如下，创建个新的mysql用户，分配远程访问权限</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">CREATE USER <span class="hljs-string">&#x27;dingrui&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> IDENTIFIED BY <span class="hljs-string">&#x27;19920308&#x27;</span>;<br>GRANT ALL ON *.* TO <span class="hljs-string">&#x27;dingrui&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span>;<br>FLUSH PRIVILEGES;<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-l7v83dm3z9fisy"></i><span>sh</span><div class="collapse show" id="collapse-l7v83dm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">CREATE USER <span class="hljs-string">&#x27;dingrui&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> IDENTIFIED BY <span class="hljs-string">&#x27;19920308&#x27;</span>;<br>GRANT ALL ON *.* TO <span class="hljs-string">&#x27;dingrui&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span>;<br>FLUSH PRIVILEGES;<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="4-连接mysql"><a href="#4-连接mysql" class="headerlink" title="4 连接mysql"></a>4 连接mysql</h3><p>然后用宿主机ip进行连接</p>
 <img src="/2024/11/19/Docker/%E5%AE%89%E8%A3%85MySQL/1731993883.png" srcset="/img/loading.gif" lazyload class="">

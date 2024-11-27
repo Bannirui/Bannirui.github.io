@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 查询系统手册1man 3 fopen  2 库函数2.1 原型1234#include &lt;stdio.h&gt;FILE *fopen(const char * restrict path, const char * restrict mode);  12345678910The fopen() function opens the file whose name is the stri">
+    <meta name="description" content="1 查询系统手册shell1man 3 fopen  2 库函数2.1 原型shell1234#include &lt;stdio.h&gt;FILE *fopen(const char * restrict path, const char * restrict mode);  shell12345678910The fopen() function opens the file whose n">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x13-库函数fopen">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/16/Redis/Redis-0x13-%E5%BA%93%E5%87%BD%E6%95%B0fopen/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 查询系统手册1man 3 fopen  2 库函数2.1 原型1234#include &lt;stdio.h&gt;FILE *fopen(const char * restrict path, const char * restrict mode);  12345678910The fopen() function opens the file whose name is the stri">
+<meta property="og:description" content="1 查询系统手册shell1man 3 fopen  2 库函数2.1 原型shell1234#include &lt;stdio.h&gt;FILE *fopen(const char * restrict path, const char * restrict mode);  shell12345678910The fopen() function opens the file whose n">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-16T05:10:57.000Z">
 <meta property="article:modified_time" content="2024-04-16T05:11:28.999Z">
@@ -70,7 +70,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -538,11 +538,11 @@
             
               <div class="markdown-body">
                 
-                <h2 id="1-查询系统手册"><a href="#1-查询系统手册" class="headerlink" title="1 查询系统手册"></a>1 查询系统手册</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">man 3 fopen<br></code></pre></td></tr></table></figure>
+                <h2 id="1-查询系统手册"><a href="#1-查询系统手册" class="headerlink" title="1 查询系统手册"></a>1 查询系统手册</h2><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-gf5w12m3z9fit0"></i><span>shell</span><div class="collapse show" id="collapse-gf5w12m3z9fit0"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">man 3 fopen<br></code></pre></td></tr></table></div></figure>
 
-<h2 id="2-库函数"><a href="#2-库函数" class="headerlink" title="2 库函数"></a>2 库函数</h2><h3 id="2-1-原型"><a href="#2-1-原型" class="headerlink" title="2.1 原型"></a>2.1 原型</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">include &lt;stdio.h&gt;</span><br><br>FILE *<br>fopen(const char * restrict path, const char * restrict mode);<br></code></pre></td></tr></table></figure>
+<h2 id="2-库函数"><a href="#2-库函数" class="headerlink" title="2 库函数"></a>2 库函数</h2><h3 id="2-1-原型"><a href="#2-1-原型" class="headerlink" title="2.1 原型"></a>2.1 原型</h3><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-ujpyyom3z9fit0"></i><span>shell</span><div class="collapse show" id="collapse-ujpyyom3z9fit0"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">include &lt;stdio.h&gt;</span><br><br>FILE *<br>fopen(const char * restrict path, const char * restrict mode);<br></code></pre></td></tr></table></div></figure>
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">The fopen() function opens the file whose name is the string pointed to by path and associates a stream with it.<br><br>The argument mode points to a string beginning with one of the following letters:<br><br>“r”     Open for reading.  The stream is positioned at the beginning of the file.  Fail if the file does not exist.<br><br>“w”     Open for writing.  The stream is positioned at the beginning of the file.  Create the file if it does not exist.<br><br>“a”     Open for writing.  The stream is positioned at the end of the file.  Subsequent writes to the file will always end up at the<br>        then current end of file, irrespective of any intervening fseek(3) or similar.  Create the file if it does not exist.<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-wbj70xm3z9fit0"></i><span>shell</span><div class="collapse show" id="collapse-wbj70xm3z9fit0"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">The fopen() function opens the file whose name is the string pointed to by path and associates a stream with it.<br><br>The argument mode points to a string beginning with one of the following letters:<br><br>“r”     Open for reading.  The stream is positioned at the beginning of the file.  Fail if the file does not exist.<br><br>“w”     Open for writing.  The stream is positioned at the beginning of the file.  Create the file if it does not exist.<br><br>“a”     Open for writing.  The stream is positioned at the end of the file.  Subsequent writes to the file will always end up at the<br>        then current end of file, irrespective of any intervening fseek(3) or similar.  Create the file if it does not exist.<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="2-2-入参"><a href="#2-2-入参" class="headerlink" title="2.2 入参"></a>2.2 入参</h3><p>2个参数都是必填</p>
 <ul>

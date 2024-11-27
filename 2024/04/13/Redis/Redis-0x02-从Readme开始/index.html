@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="我们期待从Readme中能够快速地对Redis有一个宏观的了解，也方便后续大处着眼小处着手去学习细节。 1 作者对Redis的定义原文描述 1234567Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data str">
+    <meta name="description" content="我们期待从Readme中能够快速地对Redis有一个宏观的了解，也方便后续大处着眼小处着手去学习细节。 1 作者对Redis的定义原文描述 txt1234567Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x02-从Readme开始">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="我们期待从Readme中能够快速地对Redis有一个宏观的了解，也方便后续大处着眼小处着手去学习细节。 1 作者对Redis的定义原文描述 1234567Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data str">
+<meta property="og:description" content="我们期待从Readme中能够快速地对Redis有一个宏观的了解，也方便后续大处着眼小处着手去学习细节。 1 作者对Redis的定义原文描述 txt1234567Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-13T13:55:09.000Z">
 <meta property="article:modified_time" content="2024-04-13T14:33:57.833Z">
@@ -70,7 +70,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -540,7 +540,7 @@
                 
                 <p>我们期待从Readme中能够快速地对Redis有一个宏观的了解，也方便后续大处着眼小处着手去学习细节。</p>
 <h3 id="1-作者对Redis的定义"><a href="#1-作者对Redis的定义" class="headerlink" title="1 作者对Redis的定义"></a>1 作者对Redis的定义</h3><p>原文描述</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs txt">Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data structures via a set of commands, which are sent using a *server-client* model with TCP sockets and a simple protocol. So different processes can query and modify the same data structures in a shared way.<br><br>Data structures implemented into Redis have a few special properties:<br><br>* Redis cares to store them on disk, even if they are always served and modified into the server memory. This means that Redis is fast, but that it is also non-volatile.<br>* The implementation of data structures emphasizes memory efficiency, so data structures inside Redis will likely use less memory compared to the same data structure modelled using a high-level programming language.<br>* Redis offers a number of features that are natural to find in a database, like replication, tunable levels of durability, clustering, and high availability.<br></code></pre></td></tr></table></figure>
+<figure class="highlight txt"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-coau5rm3z9fisz"></i><span>txt</span><div class="collapse show" id="collapse-coau5rm3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs txt">Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data structures via a set of commands, which are sent using a *server-client* model with TCP sockets and a simple protocol. So different processes can query and modify the same data structures in a shared way.<br><br>Data structures implemented into Redis have a few special properties:<br><br>* Redis cares to store them on disk, even if they are always served and modified into the server memory. This means that Redis is fast, but that it is also non-volatile.<br>* The implementation of data structures emphasizes memory efficiency, so data structures inside Redis will likely use less memory compared to the same data structure modelled using a high-level programming language.<br>* Redis offers a number of features that are natural to find in a database, like replication, tunable levels of durability, clustering, and high availability.<br></code></pre></td></tr></table></div></figure>
 
 <p>从中能够感受到作者对自己实现的数据结构有着更大的推销热情，基于TCP的网络模型一言以蔽之，而着重笔墨在数据结构的介绍上。</p>
 <p>在粗浅学习过Redis之后我更认同作者的观点。问为什么Redis这么快，我可能会回答两个点</p>

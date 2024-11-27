@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="升级IDE之后，maven拉取包报错，禁用了http的域名 1 maven插件版本版本大于3.8的   2 maven安装目录的配置找到IDE内置maven的安装目录 &#x2F;Users&#x2F;dingrui&#x2F;Applications&#x2F;IntelliJ IDEA Ultimate.app&#x2F;Contents&#x2F;plugins&#x2F;maven&#x2F;lib&#x2F;maven3&#x2F;conf   如下配置内容注释即可 123456789">
+    <meta name="description" content="升级IDE之后，maven拉取包报错，禁用了http的域名 1 maven插件版本版本大于3.8的   2 maven安装目录的配置找到IDE内置maven的安装目录 &#x2F;Users&#x2F;dingrui&#x2F;Applications&#x2F;IntelliJ IDEA Ultimate.app&#x2F;Contents&#x2F;plugins&#x2F;maven&#x2F;lib&#x2F;maven3&#x2F;conf   如下配置内容注释即可 xml123456">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IDEA内置maven插件禁用http">
 <meta property="og:url" content="https://bannirui.github.io/2024/03/28/IDEA/IDEA%E5%86%85%E7%BD%AEmaven%E6%8F%92%E4%BB%B6%E7%A6%81%E7%94%A8http/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="升级IDE之后，maven拉取包报错，禁用了http的域名 1 maven插件版本版本大于3.8的   2 maven安装目录的配置找到IDE内置maven的安装目录 &#x2F;Users&#x2F;dingrui&#x2F;Applications&#x2F;IntelliJ IDEA Ultimate.app&#x2F;Contents&#x2F;plugins&#x2F;maven&#x2F;lib&#x2F;maven3&#x2F;conf   如下配置内容注释即可 123456789">
+<meta property="og:description" content="升级IDE之后，maven拉取包报错，禁用了http的域名 1 maven插件版本版本大于3.8的   2 maven安装目录的配置找到IDE内置maven的安装目录 &#x2F;Users&#x2F;dingrui&#x2F;Applications&#x2F;IntelliJ IDEA Ultimate.app&#x2F;Contents&#x2F;plugins&#x2F;maven&#x2F;lib&#x2F;maven3&#x2F;conf   如下配置内容注释即可 xml123456">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/03/28/IDEA/IDEA%E5%86%85%E7%BD%AEmaven%E6%8F%92%E4%BB%B6%E7%A6%81%E7%94%A8http/1711596972.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/03/28/IDEA/IDEA%E5%86%85%E7%BD%AEmaven%E6%8F%92%E4%BB%B6%E7%A6%81%E7%94%A8http/1711596892.png">
@@ -73,7 +73,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -427,7 +427,7 @@
 <img src="/2024/03/28/IDEA/IDEA%E5%86%85%E7%BD%AEmaven%E6%8F%92%E4%BB%B6%E7%A6%81%E7%94%A8http/1711596892.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>如下配置内容注释即可</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!--maven3.8.x之后就加了这样一个默认配置 禁用了http的仓库 但是公司私服基本都是http的--&gt;</span><br><span class="hljs-comment">&lt;!--</span><br><span class="hljs-comment">&lt;mirror&gt;</span><br><span class="hljs-comment">  &lt;id&gt;maven-default-http-blocker&lt;/id&gt;</span><br><span class="hljs-comment">  &lt;mirrorOf&gt;external:http:*&lt;/mirrorOf&gt;</span><br><span class="hljs-comment">  &lt;name&gt;Pseudo repository to mirror external repositories initially using HTTP.&lt;/name&gt;</span><br><span class="hljs-comment">  &lt;url&gt;http://0.0.0.0/&lt;/url&gt;</span><br><span class="hljs-comment">  &lt;blocked&gt;true&lt;/blocked&gt;</span><br><span class="hljs-comment">&lt;/mirror&gt;</span><br><span class="hljs-comment">--&gt;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight xml"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-d3a2smm3z9fisy"></i><span>xml</span><div class="collapse show" id="collapse-d3a2smm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!--maven3.8.x之后就加了这样一个默认配置 禁用了http的仓库 但是公司私服基本都是http的--&gt;</span><br><span class="hljs-comment">&lt;!--</span><br><span class="hljs-comment">&lt;mirror&gt;</span><br><span class="hljs-comment">  &lt;id&gt;maven-default-http-blocker&lt;/id&gt;</span><br><span class="hljs-comment">  &lt;mirrorOf&gt;external:http:*&lt;/mirrorOf&gt;</span><br><span class="hljs-comment">  &lt;name&gt;Pseudo repository to mirror external repositories initially using HTTP.&lt;/name&gt;</span><br><span class="hljs-comment">  &lt;url&gt;http://0.0.0.0/&lt;/url&gt;</span><br><span class="hljs-comment">  &lt;blocked&gt;true&lt;/blocked&gt;</span><br><span class="hljs-comment">&lt;/mirror&gt;</span><br><span class="hljs-comment">--&gt;</span><br></code></pre></td></tr></table></div></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 

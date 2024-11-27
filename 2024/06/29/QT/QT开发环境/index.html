@@ -74,7 +74,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -399,10 +399,10 @@
   <img src="/2024/06/29/QT/QT%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/1719659605.png" srcset="/img/loading.gif" lazyload class="">
 </li>
 <li><p>设置qt的meta&#x2F;resouce&#x2F;ui编译器开启</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">set</span>(CMAKE_AUTOMOC <span class="hljs-keyword">ON</span>)<br><span class="hljs-keyword">set</span>(CMAKE_AUTORCC <span class="hljs-keyword">ON</span>)<br><span class="hljs-keyword">set</span>(CMAKE_AUTOUIC <span class="hljs-keyword">ON</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight cmake"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-ze68jcm3z9fisz"></i><span>cmake</span><div class="collapse show" id="collapse-ze68jcm3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">set</span>(CMAKE_AUTOMOC <span class="hljs-keyword">ON</span>)<br><span class="hljs-keyword">set</span>(CMAKE_AUTORCC <span class="hljs-keyword">ON</span>)<br><span class="hljs-keyword">set</span>(CMAKE_AUTOUIC <span class="hljs-keyword">ON</span>)<br></code></pre></td></tr></table></div></figure>
 </li>
 <li><p>设置CMAKE_PREFIX_PATH</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">if</span> (APPLE)<br>  <span class="hljs-keyword">set</span>(CMAKE_PREFIX_PATH <span class="hljs-string">&quot;/Users/dingrui/Qt/6.7.0/macos&quot;</span>)<br><span class="hljs-keyword">elseif</span> (LINUX)<br>  <span class="hljs-keyword">set</span>(CMAKE_PREFIX_PATH <span class="hljs-string">&quot;/home/dingrui/MyApp/Qt/6.7.0/gcc_64&quot;</span>)<br><span class="hljs-keyword">endif</span> ()<br></code></pre></td></tr></table></figure></li>
+<figure class="highlight cmake"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-hxkj6hm3z9fisz"></i><span>cmake</span><div class="collapse show" id="collapse-hxkj6hm3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">if</span> (APPLE)<br>  <span class="hljs-keyword">set</span>(CMAKE_PREFIX_PATH <span class="hljs-string">&quot;/Users/dingrui/Qt/6.7.0/macos&quot;</span>)<br><span class="hljs-keyword">elseif</span> (LINUX)<br>  <span class="hljs-keyword">set</span>(CMAKE_PREFIX_PATH <span class="hljs-string">&quot;/home/dingrui/MyApp/Qt/6.7.0/gcc_64&quot;</span>)<br><span class="hljs-keyword">endif</span> ()<br></code></pre></td></tr></table></div></figure></li>
 </ul>
 
 <div id="gitalk-container"></div>

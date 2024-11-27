@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 环境准备   Name Version    macOS 11.5.2   Git 2.40.0   Ant 1.10.13   IDEA 2023.1   2 源码2.1 forkhttps:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;tomcat 2.2 clone1git clone git@github.com:Bannirui&#x2F;tomcat.git  2.3 checkout新切一个分支">
+    <meta name="description" content="1 环境准备   Name Version    macOS 11.5.2   Git 2.40.0   Ant 1.10.13   IDEA 2023.1   2 源码2.1 forkhttps:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;tomcat 2.2 cloneshell1git clone git@github.com:Bannirui&#x2F;tomcat.git  2.3 checkout新">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tomcat-0x00-调试环境">
 <meta property="og:url" content="https://bannirui.github.io/2023/04/15/Tomcat-0x00-%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 环境准备   Name Version    macOS 11.5.2   Git 2.40.0   Ant 1.10.13   IDEA 2023.1   2 源码2.1 forkhttps:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;tomcat 2.2 clone1git clone git@github.com:Bannirui&#x2F;tomcat.git  2.3 checkout新切一个分支">
+<meta property="og:description" content="1 环境准备   Name Version    macOS 11.5.2   Git 2.40.0   Ant 1.10.13   IDEA 2023.1   2 源码2.1 forkhttps:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;tomcat 2.2 cloneshell1git clone git@github.com:Bannirui&#x2F;tomcat.git  2.3 checkout新">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/img/Tomcat-0x00-%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83.png">
 <meta property="article:published_time" content="2023-04-15T02:43:29.000Z">
@@ -73,7 +73,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -389,10 +389,10 @@
 </tr>
 </tbody></table>
 <h3 id="2-源码"><a href="#2-源码" class="headerlink" title="2 源码"></a>2 源码</h3><h4 id="2-1-fork"><a href="#2-1-fork" class="headerlink" title="2.1 fork"></a>2.1 fork</h4><p><a target="_blank" rel="noopener" href="https://github.com/apache/tomcat">https://github.com/apache/tomcat</a></p>
-<h4 id="2-2-clone"><a href="#2-2-clone" class="headerlink" title="2.2 clone"></a>2.2 clone</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/tomcat.git<br></code></pre></td></tr></table></figure>
+<h4 id="2-2-clone"><a href="#2-2-clone" class="headerlink" title="2.2 clone"></a>2.2 clone</h4><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-w9621bm3z9fisw"></i><span>shell</span><div class="collapse show" id="collapse-w9621bm3z9fisw"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/tomcat.git<br></code></pre></td></tr></table></div></figure>
 
 <h4 id="2-3-checkout"><a href="#2-3-checkout" class="headerlink" title="2.3 checkout"></a>2.3 checkout</h4><p>新切一个分支my-study-11，此后学习过程中的笔记也会同步记录在这个分支上。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">git checkout -b my-study-11<br>git push origin my-study-11:my-study-11<br><br>git remote add upstream https://github.com/apache/tomcat.git<br>git remote set-url --push upstream no_push<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-wrxkglm3z9fisw"></i><span>shell</span><div class="collapse show" id="collapse-wrxkglm3z9fisw"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">git checkout -b my-study-11<br>git push origin my-study-11:my-study-11<br><br>git remote add upstream https://github.com/apache/tomcat.git<br>git remote set-url --push upstream no_push<br></code></pre></td></tr></table></div></figure>
 
 
 

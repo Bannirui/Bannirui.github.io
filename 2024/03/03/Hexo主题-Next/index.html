@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 主题安装选用npm管理包的方式 到项目根目录下 1sudo npm install hexo-theme-next  将来更新主题sudo npm install hexo-theme-next@latest 2 启用主题修改hexo的配置文件根目录&#x2F;_config.yml 1234# 主题# fluid# nexttheme: next  本地运行站点看下效果 12hexo cleanhex">
+    <meta name="description" content="1 主题安装选用npm管理包的方式 到项目根目录下 sh1sudo npm install hexo-theme-next  将来更新主题sudo npm install hexo-theme-next@latest 2 启用主题修改hexo的配置文件根目录&#x2F;_config.yml yaml1234# 主题# fluid# nexttheme: next  本地运行站点看下效果 sh12hexo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo主题-Next">
 <meta property="og:url" content="https://bannirui.github.io/2024/03/03/Hexo%E4%B8%BB%E9%A2%98-Next/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 主题安装选用npm管理包的方式 到项目根目录下 1sudo npm install hexo-theme-next  将来更新主题sudo npm install hexo-theme-next@latest 2 启用主题修改hexo的配置文件根目录&#x2F;_config.yml 1234# 主题# fluid# nexttheme: next  本地运行站点看下效果 12hexo cleanhex">
+<meta property="og:description" content="1 主题安装选用npm管理包的方式 到项目根目录下 sh1sudo npm install hexo-theme-next  将来更新主题sudo npm install hexo-theme-next@latest 2 启用主题修改hexo的配置文件根目录&#x2F;_config.yml yaml1234# 主题# fluid# nexttheme: next  本地运行站点看下效果 sh12hexo">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/03/03/Hexo%E4%B8%BB%E9%A2%98-Next/1709444294.png">
 <meta property="article:published_time" content="2024-03-03T05:12:58.000Z">
@@ -72,7 +72,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -319,7 +319,7 @@
         aria-expanded="true"
       >
         Hexo
-        <span class="list-group-count">(3)</span>
+        <span class="list-group-count">(4)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -358,6 +358,15 @@
         </a>
       
     
+      
+      
+        <a href="/2024/11/27/Hexo/%E4%BB%A3%E7%A0%81%E5%9D%97%E6%8A%98%E5%8F%A0/" title="代码块折叠"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">代码块折叠</span>
+        </a>
+      
+    
   </div>
 
         
@@ -383,14 +392,14 @@
                 
                 <h3 id="1-主题安装"><a href="#1-主题安装" class="headerlink" title="1 主题安装"></a>1 主题安装</h3><p>选用npm管理包的方式</p>
 <p>到项目根目录下</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo npm install hexo-theme-next<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-ix7ho4m3z9fisr"></i><span>sh</span><div class="collapse show" id="collapse-ix7ho4m3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo npm install hexo-theme-next<br></code></pre></td></tr></table></div></figure>
 
 <p>将来更新主题<code>sudo npm install hexo-theme-next@latest</code></p>
 <h3 id="2-启用主题"><a href="#2-启用主题" class="headerlink" title="2 启用主题"></a>2 启用主题</h3><p>修改hexo的配置文件<code>根目录/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># 主题</span><br><span class="hljs-comment"># fluid</span><br><span class="hljs-comment"># next</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">next</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight yaml"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-barpx3m3z9fisr"></i><span>yaml</span><div class="collapse show" id="collapse-barpx3m3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># 主题</span><br><span class="hljs-comment"># fluid</span><br><span class="hljs-comment"># next</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">next</span><br></code></pre></td></tr></table></div></figure>
 
 <p>本地运行站点看下效果</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo clean<br>hexo s<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-231fuum3z9fisr"></i><span>sh</span><div class="collapse show" id="collapse-231fuum3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo clean<br>hexo s<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="3-主题配置"><a href="#3-主题配置" class="headerlink" title="3 主题配置"></a>3 主题配置</h3><p>下面便是针对主题进行配置</p>
 <ul>
@@ -402,10 +411,10 @@
 <img src="/2024/03/03/Hexo%E4%B8%BB%E9%A2%98-Next/1709444294.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>执行如下脚本便可以在<code>博客根目录</code>下建立软链接<code>根目录/_config.next.yml</code></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cd</span> /Users/dingrui/MyDev/env/os_script<br>./configure.sh<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-gyefo4m3z9fisr"></i><span>sh</span><div class="collapse show" id="collapse-gyefo4m3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cd</span> /Users/dingrui/MyDev/env/os_script<br>./configure.sh<br></code></pre></td></tr></table></div></figure>
 
 <p>之后便在<code>根目录/_config.next.yml</code>中根据自己的需求进行配置即可</p>
-<h4 id="3-1-菜单设置"><a href="#3-1-菜单设置" class="headerlink" title="3.1 菜单设置"></a>3.1 菜单设置</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">menu:</span><br>  <span class="hljs-attr">home:</span> <span class="hljs-string">/home/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-home</span><br>  <span class="hljs-attr">tags:</span> <span class="hljs-string">/tags/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-tags</span><br>  <span class="hljs-attr">categories:</span> <span class="hljs-string">/categories/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-th</span><br>  <span class="hljs-attr">archives:</span> <span class="hljs-string">/archives/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-archive</span><br>  <span class="hljs-attr">about:</span> <span class="hljs-string">/about/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-user</span><br>  <span class="hljs-comment">#schedule: /schedule/ || fa fa-calendar</span><br>  <span class="hljs-comment">#sitemap: /sitemap.xml || fa fa-sitemap</span><br>  <span class="hljs-comment">#commonweal: /404/ || fa fa-heartbeat</span><br></code></pre></td></tr></table></figure>
+<h4 id="3-1-菜单设置"><a href="#3-1-菜单设置" class="headerlink" title="3.1 菜单设置"></a>3.1 菜单设置</h4><figure class="highlight yaml"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-xluqspm3z9fisr"></i><span>yaml</span><div class="collapse show" id="collapse-xluqspm3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">menu:</span><br>  <span class="hljs-attr">home:</span> <span class="hljs-string">/home/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-home</span><br>  <span class="hljs-attr">tags:</span> <span class="hljs-string">/tags/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-tags</span><br>  <span class="hljs-attr">categories:</span> <span class="hljs-string">/categories/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-th</span><br>  <span class="hljs-attr">archives:</span> <span class="hljs-string">/archives/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-archive</span><br>  <span class="hljs-attr">about:</span> <span class="hljs-string">/about/</span> <span class="hljs-string">||</span> <span class="hljs-string">fa</span> <span class="hljs-string">fa-user</span><br>  <span class="hljs-comment">#schedule: /schedule/ || fa fa-calendar</span><br>  <span class="hljs-comment">#sitemap: /sitemap.xml || fa fa-sitemap</span><br>  <span class="hljs-comment">#commonweal: /404/ || fa fa-heartbeat</span><br></code></pre></td></tr></table></div></figure>
 
 <p>将来通过<code>hexo generate</code>生成静态页面的时候会在<code>public</code>目录下生成对应的<code>index.html</code>，在source目录下默认是没有这几个页面的</p>
 <ul>
@@ -423,36 +432,36 @@
 <li><p>1 home</p>
 <ul>
 <li><p>新建</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page home<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-m3wlt1m3z9fisr"></i><span>sh</span><div class="collapse show" id="collapse-m3wlt1m3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page home<br></code></pre></td></tr></table></div></figure>
 </li>
 <li><p>内容</p>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: home<br>date: 2024-03-03 15:05:49<br><span class="hljs-section">type: home</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure></li>
+<figure class="highlight md"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-kheknum3z9fisr"></i><span>md</span><div class="collapse show" id="collapse-kheknum3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: home<br>date: 2024-03-03 15:05:49<br><span class="hljs-section">type: home</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></div></figure></li>
 </ul>
 </li>
 <li><p>2 tags</p>
 <ul>
 <li><p>新建</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page tags<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-enzr27m3z9fisr"></i><span>sh</span><div class="collapse show" id="collapse-enzr27m3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page tags<br></code></pre></td></tr></table></div></figure>
 </li>
 <li><p>内容</p>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: 标签<br>date: 2024-03-03 14:59:32<br><span class="hljs-section">type: tags</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure></li>
+<figure class="highlight md"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-xjfwrqm3z9fisr"></i><span>md</span><div class="collapse show" id="collapse-xjfwrqm3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: 标签<br>date: 2024-03-03 14:59:32<br><span class="hljs-section">type: tags</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></div></figure></li>
 </ul>
 </li>
 <li><p>3 categories</p>
 </li>
 <li><p>新建</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page categories<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-v5fopem3z9fisr"></i><span>sh</span><div class="collapse show" id="collapse-v5fopem3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page categories<br></code></pre></td></tr></table></div></figure>
 </li>
 <li><p>内容</p>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: 类别<br>date: 2024-03-03 14:59:43<br><span class="hljs-section">type: categories</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight md"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-43t63em3z9fisr"></i><span>md</span><div class="collapse show" id="collapse-43t63em3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: 类别<br>date: 2024-03-03 14:59:43<br><span class="hljs-section">type: categories</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></div></figure>
 </li>
 <li><p>4 about</p>
 <ul>
 <li><p>新建</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page about<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-8nlt2wm3z9fisr"></i><span>sh</span><div class="collapse show" id="collapse-8nlt2wm3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo new page about<br></code></pre></td></tr></table></div></figure>
 </li>
 <li><p>内容</p>
-<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: about<br>date: 2023-02-27 22:43:06<br><span class="hljs-section">layout: about</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure></li>
+<figure class="highlight md"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-vj550qm3z9fisr"></i><span>md</span><div class="collapse show" id="collapse-vj550qm3z9fisr"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br>title: about<br>date: 2023-02-27 22:43:06<br><span class="hljs-section">layout: about</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></div></figure></li>
 </ul>
 </li>
 </ul>

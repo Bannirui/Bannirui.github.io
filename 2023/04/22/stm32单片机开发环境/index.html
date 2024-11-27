@@ -73,7 +73,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -432,7 +432,7 @@
 <h4 id="2-3-包管理路径设置"><a href="#2-3-包管理路径设置" class="headerlink" title="2.3 包管理路径设置"></a>2.3 包管理路径设置</h4><p>将MCU固件包和STM32Cube扩展包都安装都该路径。</p>
 <img src="/2023/04/22/stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/image-20230710133319180.png" srcset="/img/loading.gif" lazyload class="">
 
-<h3 id="3-交叉编译器安装"><a href="#3-交叉编译器安装" class="headerlink" title="3 交叉编译器安装"></a>3 交叉编译器安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew tap ArmMbed/homebrew-formulae<br><br>brew install arm-none-eabi-gcc<br><br>arm-none-eabi-gcc -v<br></code></pre></td></tr></table></figure>
+<h3 id="3-交叉编译器安装"><a href="#3-交叉编译器安装" class="headerlink" title="3 交叉编译器安装"></a>3 交叉编译器安装</h3><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-vlagjlm3z9fisy"></i><span>shell</span><div class="collapse show" id="collapse-vlagjlm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew tap ArmMbed/homebrew-formulae<br><br>brew install arm-none-eabi-gcc<br><br>arm-none-eabi-gcc -v<br></code></pre></td></tr></table></div></figure>
 
 <h3 id="4-Clion设置"><a href="#4-Clion设置" class="headerlink" title="4 Clion设置"></a>4 Clion设置</h3><h4 id="4-1-toolChain"><a href="#4-1-toolChain" class="headerlink" title="4.1 toolChain"></a>4.1 toolChain</h4><p>ARM工具链，编译器指定为步骤3安装好的交叉编译器。</p>
 <img src="/2023/04/22/stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/image-20230711145316861.png" srcset="/img/loading.gif" lazyload class="">
@@ -500,7 +500,7 @@
 
 <h4 id="6-2-编译"><a href="#6-2-编译" class="headerlink" title="6.2 编译"></a>6.2 编译</h4><img src="/2023/04/22/stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/image-20230422094629035.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="6-3-openocd"><a href="#6-3-openocd" class="headerlink" title="6.3 openocd"></a>6.3 openocd</h4><h5 id="6-3-1-配置文件"><a href="#6-3-1-配置文件" class="headerlink" title="6.3.1 配置文件"></a>6.3.1 配置文件</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">set CPUTAPID 0<br>source [find interface/stlink.cfg]<br>transport select hla_swd<br>source [find target/stm32f1x.cfg]<br>adapter speed 10000<br>reset_config none<br></code></pre></td></tr></table></figure>
+<h4 id="6-3-openocd"><a href="#6-3-openocd" class="headerlink" title="6.3 openocd"></a>6.3 openocd</h4><h5 id="6-3-1-配置文件"><a href="#6-3-1-配置文件" class="headerlink" title="6.3.1 配置文件"></a>6.3.1 配置文件</h5><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-9oo071m3z9fisy"></i><span>shell</span><div class="collapse show" id="collapse-9oo071m3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">set CPUTAPID 0<br>source [find interface/stlink.cfg]<br>transport select hla_swd<br>source [find target/stm32f1x.cfg]<br>adapter speed 10000<br>reset_config none<br></code></pre></td></tr></table></div></figure>
 
 <img src="/2023/04/22/stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/image-20230711093405031.png" srcset="/img/loading.gif" lazyload class="">
 
@@ -513,7 +513,7 @@
 <h4 id="6-4-code"><a href="#6-4-code" class="headerlink" title="6.4 code"></a>6.4 code</h4><img src="/2023/04/22/stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/image-20230422095443839.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>上面设置GPIO的时候给PC13设置过网络标号，这个地方也可以使用网络标号</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">HAL_GPIO_WritePin(D2_GPIO_Port, D2_Pin, GPIO_PIN_SET);<br>HAL_Delay(<span class="hljs-number">500</span>);<br>HAL_GPIO_WritePin(D2_GPIO_Port, D2_Pin, GPIO_PIN_RESET);<br>HAL_Delay(<span class="hljs-number">500</span>);<br></code></pre></td></tr></table></figure>
+<figure class="highlight c"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-algfdem3z9fisy"></i><span>c</span><div class="collapse show" id="collapse-algfdem3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">HAL_GPIO_WritePin(D2_GPIO_Port, D2_Pin, GPIO_PIN_SET);<br>HAL_Delay(<span class="hljs-number">500</span>);<br>HAL_GPIO_WritePin(D2_GPIO_Port, D2_Pin, GPIO_PIN_RESET);<br>HAL_Delay(<span class="hljs-number">500</span>);<br></code></pre></td></tr></table></div></figure>
 
 <h4 id="6-5-仿真器接线"><a href="#6-5-仿真器接线" class="headerlink" title="6.5 仿真器接线"></a>6.5 仿真器接线</h4><img src="/2023/04/22/stm32%E5%8D%95%E7%89%87%E6%9C%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/image-20230711094916664.png" srcset="/img/loading.gif" lazyload class="">
 

@@ -74,7 +74,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -555,7 +555,7 @@
 <li><p>修改软件源</p>
 </li>
 </ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo sed -i <span class="hljs-string">&quot;s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g&quot;</span> /etc/apt/sources.list<br>sudo sed -i <span class="hljs-string">&quot;s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g&quot;</span> /etc/apt/sources.list<br>sudo apt update &amp;&amp; sudo apt upgrade -y<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-oobqwkm3z9fisz"></i><span>sh</span><div class="collapse show" id="collapse-oobqwkm3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo sed -i <span class="hljs-string">&quot;s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g&quot;</span> /etc/apt/sources.list<br>sudo sed -i <span class="hljs-string">&quot;s@http://.*security.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g&quot;</span> /etc/apt/sources.list<br>sudo apt update &amp;&amp; sudo apt upgrade -y<br></code></pre></td></tr></table></div></figure>
 
 <ul>
 <li>安装ssh服务端</li>
@@ -564,7 +564,7 @@
 <ul>
 <li>修改sshd配置<code>sudo vim /etc/ssh/sshd_config</code></li>
 </ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 根据自己的喜好放开端口</span><br>Port 22<br>AddressFamily any<br>ListenAddress 0.0.0.0<br>PermitRootLogin <span class="hljs-built_in">yes</span><br>PasswordAuthentication <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-32zizsm3z9fisz"></i><span>sh</span><div class="collapse show" id="collapse-32zizsm3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 根据自己的喜好放开端口</span><br>Port 22<br>AddressFamily any<br>ListenAddress 0.0.0.0<br>PermitRootLogin <span class="hljs-built_in">yes</span><br>PasswordAuthentication <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></div></figure>
 
 <ul>
 <li><p>启动ssh服务<code>sudo /usr/sbin/service ssh start</code></p>
@@ -595,7 +595,7 @@
 </li>
 </ul>
 <p>新建环境变量USERPROFILE&#x3D;当前用户目录 在用户目录根目录下新建sshd.bat脚本</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs sh">rem sshd.bat<br>@<span class="hljs-built_in">echo</span> off<br>setlocal<br><br>; 这段脚本在终端执行 因为lunix主机需要密码 所以会唤醒终端等待用户输入 因此通过-S指定密码 就不会阻塞在终端等用户输入了<br>C:\Windows\System32\bash.exe -c <span class="hljs-string">&quot;echo 19920308 | sudo -S /usr/sbin/service ssh start&quot;</span><br>rem C:\Windows\System32\wsl.exe -e <span class="hljs-string">&quot;echo 19920308 | sudo -S /usr/sbin/service ssh start&quot;</span><br><br>; 映射网卡 把win收到的ssh请求转给linux<br>C:\Windows\System32\netsh.exe interface portproxy delete v4tov4 listenport=22 listenaddress=0.0.0.0 protocol=tcp<br><br><span class="hljs-keyword">for</span> /f %%i <span class="hljs-keyword">in</span> (<span class="hljs-string">&#x27;wsl hostname -I&#x27;</span>) <span class="hljs-keyword">do</span> <span class="hljs-built_in">set</span> IP=%%i<br>C:\Windows\System32\netsh.exe interface portproxy add v4tov4 listenport=22 listenaddress=0.0.0.0 connectport=22 connectaddress=%IP%<br><br>endlocal<br><br>; pause<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-wiipusm3z9fisz"></i><span>sh</span><div class="collapse show" id="collapse-wiipusm3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs sh">rem sshd.bat<br>@<span class="hljs-built_in">echo</span> off<br>setlocal<br><br>; 这段脚本在终端执行 因为lunix主机需要密码 所以会唤醒终端等待用户输入 因此通过-S指定密码 就不会阻塞在终端等用户输入了<br>C:\Windows\System32\bash.exe -c <span class="hljs-string">&quot;echo 19920308 | sudo -S /usr/sbin/service ssh start&quot;</span><br>rem C:\Windows\System32\wsl.exe -e <span class="hljs-string">&quot;echo 19920308 | sudo -S /usr/sbin/service ssh start&quot;</span><br><br>; 映射网卡 把win收到的ssh请求转给linux<br>C:\Windows\System32\netsh.exe interface portproxy delete v4tov4 listenport=22 listenaddress=0.0.0.0 protocol=tcp<br><br><span class="hljs-keyword">for</span> /f %%i <span class="hljs-keyword">in</span> (<span class="hljs-string">&#x27;wsl hostname -I&#x27;</span>) <span class="hljs-keyword">do</span> <span class="hljs-built_in">set</span> IP=%%i<br>C:\Windows\System32\netsh.exe interface portproxy add v4tov4 listenport=22 listenaddress=0.0.0.0 connectport=22 connectaddress=%IP%<br><br>endlocal<br><br>; pause<br></code></pre></td></tr></table></div></figure>
 
 <p>将上面的脚本配置到windows的开机自启动</p>
 <img src="/2024/09/21/Linux/ssh%E8%BF%9E%E6%8E%A5windows%E7%9A%84wsl/1726889980.png" srcset="/img/loading.gif" lazyload class="">

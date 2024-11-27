@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 认证超时向mysql服务端发送认证包后收到了error包，解析出来看报错信息是超时导致的，因此要改一下服务端的配置文件。   2 mysql配置当时为了图省事，我的服务端是用homebrew安装的，因此得先找一下默认的配置文件路径。 1mysql --verbose --help | grep my.cnf    我的是在&#x2F;usr&#x2F;local&#x2F;etc&#x2F;my.cnf，在这个文件加上两行配置重启服">
+    <meta name="description" content="1 认证超时向mysql服务端发送认证包后收到了error包，解析出来看报错信息是超时导致的，因此要改一下服务端的配置文件。   2 mysql配置当时为了图省事，我的服务端是用homebrew安装的，因此得先找一下默认的配置文件路径。 sh1mysql --verbose --help | grep my.cnf    我的是在&#x2F;usr&#x2F;local&#x2F;etc&#x2F;my.cnf，在这个文件加上两行配置重">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL-0x03-认证超时">
 <meta property="og:url" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 认证超时向mysql服务端发送认证包后收到了error包，解析出来看报错信息是超时导致的，因此要改一下服务端的配置文件。   2 mysql配置当时为了图省事，我的服务端是用homebrew安装的，因此得先找一下默认的配置文件路径。 1mysql --verbose --help | grep my.cnf    我的是在&#x2F;usr&#x2F;local&#x2F;etc&#x2F;my.cnf，在这个文件加上两行配置重启服">
+<meta property="og:description" content="1 认证超时向mysql服务端发送认证包后收到了error包，解析出来看报错信息是超时导致的，因此要改一下服务端的配置文件。   2 mysql配置当时为了图省事，我的服务端是用homebrew安装的，因此得先找一下默认的配置文件路径。 sh1mysql --verbose --help | grep my.cnf    我的是在&#x2F;usr&#x2F;local&#x2F;etc&#x2F;my.cnf，在这个文件加上两行配置重">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654487.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654650.png">
@@ -74,7 +74,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -396,7 +396,7 @@
 <img src="/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654487.png" srcset="/img/loading.gif" lazyload class="">
 
 <h3 id="2-mysql配置"><a href="#2-mysql配置" class="headerlink" title="2 mysql配置"></a>2 mysql配置</h3><p>当时为了图省事，我的服务端是用<code>homebrew</code>安装的，因此得先找一下默认的配置文件路径。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">mysql --verbose --<span class="hljs-built_in">help</span> | grep my.cnf<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-uz24qsm3z9fisz"></i><span>sh</span><div class="collapse show" id="collapse-uz24qsm3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">mysql --verbose --<span class="hljs-built_in">help</span> | grep my.cnf<br></code></pre></td></tr></table></div></figure>
 
 <img src="/2024/08/18/MySQL%E5%8D%8F%E8%AE%AE/MySQL-0x03-%E8%AE%A4%E8%AF%81%E8%B6%85%E6%97%B6/1722654650.png" srcset="/img/loading.gif" lazyload class="">
 

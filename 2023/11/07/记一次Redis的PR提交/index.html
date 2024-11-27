@@ -19,12 +19,12 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="虽然不同的开源项目有不同的Contribute的规范和要求，但是总体而言都是差不多的。最近再看redis源码，刚好提交了一次PR，在此记录一下整个流程。 1 fork项目首先将自己感兴趣的项目fork到自己的github仓库。    2 clone本地将自己github仓库的源码克隆到本地，并设置一下分支。 123456git clone git@github.com:Bannirui&#x2F;redis">
+    <meta name="description" content="虽然不同的开源项目有不同的Contribute的规范和要求，但是总体而言都是差不多的。最近再看redis源码，刚好提交了一次PR，在此记录一下整个流程。 1 fork项目首先将自己感兴趣的项目fork到自己的github仓库。    2 clone本地将自己github仓库的源码克隆到本地，并设置一下分支。 shell123456git clone git@github.com:Bannirui&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记一次Redis的PR提交">
 <meta property="og:url" content="https://bannirui.github.io/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="虽然不同的开源项目有不同的Contribute的规范和要求，但是总体而言都是差不多的。最近再看redis源码，刚好提交了一次PR，在此记录一下整个流程。 1 fork项目首先将自己感兴趣的项目fork到自己的github仓库。    2 clone本地将自己github仓库的源码克隆到本地，并设置一下分支。 123456git clone git@github.com:Bannirui&#x2F;redis">
+<meta property="og:description" content="虽然不同的开源项目有不同的Contribute的规范和要求，但是总体而言都是差不多的。最近再看redis源码，刚好提交了一次PR，在此记录一下整个流程。 1 fork项目首先将自己感兴趣的项目fork到自己的github仓库。    2 clone本地将自己github仓库的源码克隆到本地，并设置一下分支。 shell123456git clone git@github.com:Bannirui&#x2F;">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/2023-11-07_14-47-30.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/2023-11-07_14-57-35.png">
@@ -77,7 +77,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -383,7 +383,7 @@
 
 
 <h2 id="2-clone本地"><a href="#2-clone本地" class="headerlink" title="2 clone本地"></a>2 clone本地</h2><p>将自己github仓库的源码克隆到本地，并设置一下分支。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/redis.git<br>cd redis<br>git remote add upstream https://github.com/redis/redis.git<br>git remote set-url --push upstream no_push<br>git fetch upstream<br>git rebase upstream/unstable<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-ght5glm3z9fisy"></i><span>shell</span><div class="collapse show" id="collapse-ght5glm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/redis.git<br>cd redis<br>git remote add upstream https://github.com/redis/redis.git<br>git remote set-url --push upstream no_push<br>git fetch upstream<br>git rebase upstream/unstable<br></code></pre></td></tr></table></div></figure>
 
 <h2 id="3-issue提交"><a href="#3-issue提交" class="headerlink" title="3 issue提交"></a>3 issue提交</h2><p>提交一个issue，一般项目都会有issue模板，按照要求填写信息即可。<br>内容尽可能做到详尽，让人能够了解上下文信息。</p>
 <img src="/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/2023-11-07_14-57-35.png" srcset="/img/loading.gif" lazyload class="">
@@ -391,7 +391,7 @@
 <img src="/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/2023-11-07_15-01-03.png" srcset="/img/loading.gif" lazyload class="">
 
 <h2 id="4-code"><a href="#4-code" class="headerlink" title="4 code"></a>4 code</h2><p>随后就是新切一个分支进行开发，然后将其提交并push到自己仓库的远程。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">git fetch upstream<br>git checkout unstable<br>git rebase upstream/unstable<br>git checkout -b fix-12719<br>git add .<br>git commit -m &#x27;[ISSUE #12719] pass NULL to gettimeofday callee&#x27;<br>git pull<br>git push origin fix-12719<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-a8ff20m3z9fisy"></i><span>shell</span><div class="collapse show" id="collapse-a8ff20m3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">git fetch upstream<br>git checkout unstable<br>git rebase upstream/unstable<br>git checkout -b fix-12719<br>git add .<br>git commit -m &#x27;[ISSUE #12719] pass NULL to gettimeofday callee&#x27;<br>git pull<br>git push origin fix-12719<br></code></pre></td></tr></table></div></figure>
 
 <h2 id="5-PR"><a href="#5-PR" class="headerlink" title="5 PR"></a>5 PR</h2><p>此时到可以在自己仓库看到黄色提示按钮或者点击Pull requests按钮。<br>跟issue的提交内容差不多，也是尽量格式简单，内容详尽。</p>
 <img src="/2023/11/07/%E8%AE%B0%E4%B8%80%E6%AC%A1Redis%E7%9A%84PR%E6%8F%90%E4%BA%A4/2023-11-07_15-07-50.png" srcset="/img/loading.gif" lazyload class="">

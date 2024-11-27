@@ -70,7 +70,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -510,11 +510,11 @@
 <h2 id="1-下载安装器"><a href="#1-下载安装器" class="headerlink" title="1 下载安装器"></a>1 下载安装器</h2><p><a target="_blank" rel="noopener" href="https://www.qt.io/product/development-tools">官网地址</a>上注册个人账号，下载安装器。</p>
 <h2 id="2-安装开发工具"><a href="#2-安装开发工具" class="headerlink" title="2 安装开发工具"></a>2 安装开发工具</h2><p>我选择的是QtCreator</p>
 <h2 id="3-基本依赖"><a href="#3-基本依赖" class="headerlink" title="3 基本依赖"></a>3 基本依赖</h2><p>图形化开发，系统还需要提供一些基础依赖包</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install build-essential libgl1-mesa-dev<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-c5a7l2m3z9fisz"></i><span>sh</span><div class="collapse show" id="collapse-c5a7l2m3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install build-essential libgl1-mesa-dev<br></code></pre></td></tr></table></div></figure>
 
 <h2 id="4-cmake文件指定安装包"><a href="#4-cmake文件指定安装包" class="headerlink" title="4 cmake文件指定安装包"></a>4 cmake文件指定安装包</h2><p>因为这种安装方式不会把头文件install到<code>/usr/include</code>中，并且lib也不会安装，所以要指定<code>CMAKE_PREFIX_PATH</code></p>
 <p>以为的安装路径为例</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">set(CMAKE_PREFIX_PATH &quot;/home/dingrui/MyApp/Qt/6.7.0/gcc_64&quot;)<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-m2776em3z9fisz"></i><span>CMakeLists</span><div class="collapse show" id="collapse-m2776em3z9fisz"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">set(CMAKE_PREFIX_PATH &quot;/home/dingrui/MyApp/Qt/6.7.0/gcc_64&quot;)<br></code></pre></td></tr></table></div></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 

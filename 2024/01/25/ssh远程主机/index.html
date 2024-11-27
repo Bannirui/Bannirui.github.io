@@ -84,7 +84,7 @@
   
 <link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
 <link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
-<link rel="stylesheet" href="/css/mac.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
 
 
 
@@ -546,9 +546,9 @@
 <p>文件<code>/etc/ssh/sshd_config</code>放开如下两行注释</p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709132597.png" srcset="/img/loading.gif" lazyload class="">
 
-<h3 id="1-4-重启ssh"><a href="#1-4-重启ssh" class="headerlink" title="1.4 重启ssh"></a>1.4 重启ssh</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo systemctl restart ssh<br></code></pre></td></tr></table></figure>
+<h3 id="1-4-重启ssh"><a href="#1-4-重启ssh" class="headerlink" title="1.4 重启ssh"></a>1.4 重启ssh</h3><figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-62a29sm3z9fisy"></i><span>shell</span><div class="collapse show" id="collapse-62a29sm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo systemctl restart ssh<br></code></pre></td></tr></table></div></figure>
 
-<h3 id="1-5-重启服务器"><a href="#1-5-重启服务器" class="headerlink" title="1.5 重启服务器"></a>1.5 重启服务器</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">reboot<br></code></pre></td></tr></table></figure>
+<h3 id="1-5-重启服务器"><a href="#1-5-重启服务器" class="headerlink" title="1.5 重启服务器"></a>1.5 重启服务器</h3><figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-6wqvuwm3z9fisy"></i><span>sh</span><div class="collapse show" id="collapse-6wqvuwm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">reboot<br></code></pre></td></tr></table></div></figure>
 
 <h2 id="2-mac本地客户端"><a href="#2-mac本地客户端" class="headerlink" title="2 mac本地客户端"></a>2 mac本地客户端</h2><h3 id="2-1-手动连接"><a href="#2-1-手动连接" class="headerlink" title="2.1 手动连接"></a>2.1 手动连接</h3><p>在终端输入<code>ssh 用户名@远程ip -p 22</code>即可，随后按照提示键入远程主机用户密码。</p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706149922.png" srcset="/img/loading.gif" lazyload class="">
@@ -589,15 +589,15 @@
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710417564.png" srcset="/img/loading.gif" lazyload class="">
 
 <h4 id="2-3-2-config配置"><a href="#2-3-2-config配置" class="headerlink" title="2.3.2 config配置"></a>2.3.2 config配置</h4><p>文件<code>~/.ssh/config</code>文件</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh">Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-hyjvd2m3z9fisy"></i><span>sh</span><div class="collapse show" id="collapse-hyjvd2m3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh">Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br></code></pre></td></tr></table></div></figure>
 
 <h4 id="2-3-3-x11转发配置"><a href="#2-3-3-x11转发配置" class="headerlink" title="2.3.3 x11转发配置"></a>2.3.3 x11转发配置</h4><p>我还要x11的转发配置，因此继续修改config配置</p>
 <p>文件<code>~/.ssh/config</code>文件</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 远程archlinux 开启x11转发gui</span><br>Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br>    ForwardX11 <span class="hljs-built_in">yes</span><br>    ForwardX11Trusted <span class="hljs-built_in">yes</span><br>    ForwardAgent <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-cs9l9vm3z9fisy"></i><span>sh</span><div class="collapse show" id="collapse-cs9l9vm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 远程archlinux 开启x11转发gui</span><br>Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br>    ForwardX11 <span class="hljs-built_in">yes</span><br>    ForwardX11Trusted <span class="hljs-built_in">yes</span><br>    ForwardAgent <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></div></figure>
 
 <h3 id="2-4-安装XQuartz"><a href="#2-4-安装XQuartz" class="headerlink" title="2.4 安装XQuartz"></a>2.4 安装XQuartz</h3><p><a target="_blank" rel="noopener" href="https://www.xquartz.org/">XQuartz官网</a></p>
 <p>下载安装即可，安装好后会进行重启</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ssh -X dingrui@archlinux<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><i class="iconfont icon-github-fill" type="button" data-toggle="collapse" data-target="#collapse-344gnlm3z9fisy"></i><span>shell</span><div class="collapse show" id="collapse-344gnlm3z9fisy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ssh -X dingrui@archlinux<br></code></pre></td></tr></table></div></figure>
 
 <p>但是有一说一，这个gui做的是真丑，一看就是各种字符或者编解码支持得不够友好</p>
 <img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174253.png" srcset="/img/loading.gif" lazyload class="">
