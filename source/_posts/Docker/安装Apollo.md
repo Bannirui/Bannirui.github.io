@@ -21,9 +21,6 @@ tags: Apollo
 
 #### 1.1 ApolloConfigDB dev环境
 
-<details>
-<summary>dev环境sql</summary>
-
 ```sql
 --
 -- Copyright 2024 Apollo Authors
@@ -547,12 +544,8 @@ VALUES
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 ```
-</details>
 
 #### 1.2 ApolloConfigDB fat环境
-
-<details>
-<summary>fat环境sql</summary>
 
 ```sql
 --
@@ -1077,12 +1070,8 @@ VALUES
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 ```
-</details>
 
 #### 1.4 ApolloPortalDB
-
-<details>
-<summary>ApolloPortalDB表</summary>
 
 ```sql
 --
@@ -1549,7 +1538,6 @@ INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 ```
-</details>
 
 ### 2 下载镜像
 

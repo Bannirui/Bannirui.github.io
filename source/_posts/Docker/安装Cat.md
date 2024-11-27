@@ -15,8 +15,6 @@ docker pull meituaninc/cat:3.0.1
 ```
 
 ### 2 初始化数据库
-<details>
-  <summary>sql</summary>
 
 ```sql
 CREATE TABLE `dailyreport` (
@@ -325,7 +323,6 @@ CREATE TABLE `server_alarm_rule` (
       KEY `updatetime` (`updatetime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统告警的配置';
 ```
-</details>
 
 ### 3 配置文件
 
