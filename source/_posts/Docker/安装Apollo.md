@@ -1559,11 +1559,11 @@ INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user
 ##### 3.1.1 dev环境
 
 ```sh
-docker run -p 8080:8080 \
+docker run -p 8082:8082 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_DEV?characterEncoding=utf8" \
     -e SPRING_DATASOURCE_USERNAME=dingrui \
     -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -e SERVER_PORT=8080 \
+    -e SERVER_PORT=8082 \
     -d \
     -v /tmp/logs_dev:/opt/logs \
     --name apollo-configservice-dev \

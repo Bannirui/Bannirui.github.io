@@ -361,6 +361,10 @@ CREATE TABLE `server_alarm_rule` (
 
 ### 4 创建容器
 
+![](./安装Cat/1734960064.png)
+
+修改对应的配置参数 防止端口占用冲突 ~~~没有生效~~~
+
 ```sh
 docker run \
     -p 8080:8080 \
