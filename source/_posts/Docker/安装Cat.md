@@ -8,10 +8,10 @@ tags: Cat
 
 [官网地址](https://github.com/dianping/cat)
 
-### 1 下载镜像
+### 1 下载源码
 
 ```sh
-docker pull meituaninc/cat:3.0.1
+git clone https://github.com/dianping/cat.git
 ```
 
 ### 2 初始化数据库
@@ -326,58 +326,75 @@ CREATE TABLE `server_alarm_rule` (
 
 ### 3 配置文件
 
-#### 3.1 clients.xml
+docker/client.xml的文件中指定端口为8085，尽量不要占用知名端口8080
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <config mode="client">
     <servers>
-        <server ip="127.0.0.1" port="2280" http-port="8080"/>
+        <server ip="127.0.0.1" port="2280" http-port="8085"/>
     </servers>
 </config>
 ```
 
-#### 3.2 datasources.xml
+### 4 构建镜像
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
+进入到源码根目录
 
-<data-sources>
-    <data-source id="cat">
-        <maximum-pool-size>3</maximum-pool-size>
-        <connection-timeout>1s</connection-timeout>
-        <idle-timeout>10m</idle-timeout>
-        <statement-cache-size>1000</statement-cache-size>
-        <properties>
-            <driver>com.mysql.jdbc.Driver</driver>
-            <url>jdbc:mysql://host.docker.internal:3306/cat</url>
-            <user>dingrui</user>
-            <password>19920308</password>
-            <connectionProperties>useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&socketTimeout=120000</connectionProperties>
-        </properties>
-    </data-source>
-</data-sources>
+```sh
+cp ./docker/Dockerfile ./
+
+docker build -f Dockerfile -t my-cat:v1 .
 ```
 
-### 4 创建容器
+Dockerfile文件如下
+```Dockerfile
+# 构建
+FROM maven:3.8.4-openjdk-8 as builder
+WORKDIR /app
+COPY cat-alarm cat-alarm
+COPY cat-consumer cat-consumer
+COPY cat-hadoop cat-hadoop
+COPY cat-client cat-client
+COPY cat-core cat-core
+COPY cat-home cat-home
+COPY pom.xml pom.xml
+RUN mvn clean package -DskipTests
 
-![](./安装Cat/1734960064.png)
+# 运行
+FROM tomcat:8.5.41-jre8-alpine
+ENV TZ=Asia/Shanghai
+COPY --from=builder /app/cat-home/target/cat-home.war /usr/local/tomcat/webapps/cat.war
+COPY docker/datasources.xml /data/appdatas/cat/datasources.xml
+COPY docker/datasources.sh datasources.sh
+# tomcat的端口替换为8085
+RUN sed -i "s/port=\"8080\"/port=\"8085\"\ URIEncoding=\"utf-8\"/g" $CATALINA_HOME/conf/server.xml && chmod +x datasources.sh
+RUN ln -s /lib /lib64 \
+    && apk add --no-cache bash tini libc6-compat linux-pam krb5 krb5-libs
+CMD ["/bin/sh", "-c", "./datasources.sh && catalina.sh run"]
+```
 
-修改对应的配置参数 防止端口占用冲突 ~~~没有生效~~~
+### 5 启动容器
 
 ```sh
 docker run \
-    -p 8080:8080 \
+    -p 8085:8085 \
     -p 2280:2280 \
-    -v /Users/dingrui/MyDev/code/java/cat/docker/cfg:/data/appdatas/cat/ \
+    -v /Users/dingrui/MyDev/code/java/cat/docker:/data/appdatas/cat/ \
+    -e MYSQL_URL=host.docker.internal \
+    -e MYSQL_PORT=3306 \
+    -e MYSQL_USERNAME=dingrui \
+    -e MYSQL_PASSWD=19920308 \
+    -e MYSQL_SCHEMA=cat \
     -d \
-    --name cat \
-    meituaninc/cat:3.0.1
+    --name my-cat \
+    my-cat:v1
 ```
 
 ### 5 后台页面
 
+- 网址 http://127.0.0.1:8085/cat/s/config?op=projects
 - 账号 admin
 - 密码 admin
 
-![](./安装Cat/1732620052.png)
+![](./安装Cat/1735121114.png)
