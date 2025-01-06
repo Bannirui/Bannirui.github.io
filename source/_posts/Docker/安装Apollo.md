@@ -522,7 +522,7 @@ CREATE TABLE `AuditLogDataInfluence` (
 -- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
-    ('eureka.service.url', 'default', 'http://host.docker.internal:8080/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
+    ('eureka.service.url', 'default', 'http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
     ('namespace.lock.switch', 'default', 'false', '一次发布只能有一个人修改开关'),
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),
@@ -1048,7 +1048,7 @@ CREATE TABLE `AuditLogDataInfluence` (
 -- ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
-    ('eureka.service.url', 'default', 'http://host.docker.internal:8081/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
+    ('eureka.service.url', 'default', 'http://host.docker.internal:8082/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
     ('namespace.lock.switch', 'default', 'false', '一次发布只能有一个人修改开关'),
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),
@@ -1513,7 +1513,7 @@ VALUES
     ('consumer.token.salt', 'someSalt', 'consumer token salt'),
     ('admin.createPrivateNamespace.switch', 'true', '是否允许项目管理员创建私有namespace'),
     ('configView.memberOnly.envs', 'pro', '只对项目成员显示配置信息的环境列表，多个env以英文逗号分隔'),
-    ('apollo.portal.meta.servers', '{"DEV":"http://host.docker.internal:8080","FAT":"http://host.docker.internal:8081"}', '各环境Meta Service列表');
+    ('apollo.portal.meta.servers', '{"DEV":"http://host.docker.internal:8081","FAT":"http://host.docker.internal:8082"}', '各环境Meta Service列表');
 
 
 INSERT INTO `Users` (`Username`, `Password`, `UserDisplayName`, `Email`, `Enabled`)
@@ -1559,11 +1559,11 @@ INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user
 ##### 3.1.1 dev环境
 
 ```sh
-docker run -p 8082:8082 \
+docker run -p 8081:8081 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_DEV?characterEncoding=utf8" \
     -e SPRING_DATASOURCE_USERNAME=dingrui \
     -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -e SERVER_PORT=8082 \
+    -e SERVER_PORT=8081 \
     -d \
     -v /tmp/logs_dev:/opt/logs \
     --name apollo-configservice-dev \
@@ -1573,11 +1573,11 @@ docker run -p 8082:8082 \
 ##### 3.1.2 fat环境
 
 ```sh
-docker run -p 8081:8081 \
+docker run -p 8082:8082 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_FAT?characterEncoding=utf8" \
     -e SPRING_DATASOURCE_USERNAME=dingrui \
     -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -e SERVER_PORT=8081 \
+    -e SERVER_PORT=8082 \
     -d \
     -v /tmp/logs_dev:/opt/logs \
     --name apollo-configservice-fat \
@@ -1589,11 +1589,11 @@ docker run -p 8081:8081 \
 ##### 3.2.1 dev环境
 
 ```sh
-docker run -p 8090:8090 \
+docker run -p 8091:8091 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_DEV?characterEncoding=utf8" \
     -e SPRING_DATASOURCE_USERNAME=dingrui \
     -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -e SERVER_PORT=8090 \
+    -e SERVER_PORT=8091 \
     -d \
     -v /tmp/logs_dev:/opt/logs \
     --name apollo-adminservice-dev \
@@ -1603,11 +1603,11 @@ docker run -p 8090:8090 \
 ##### 3.2.2 fat环境
 
 ```sh
-docker run -p 8091:8091 \
+docker run -p 8092:8092 \
     -e SPRING_DATASOURCE_URL="jdbc:mysql://host.docker.internal:3306/ApolloConfigDB_FAT?characterEncoding=utf8" \
     -e SPRING_DATASOURCE_USERNAME=dingrui \
     -e SPRING_DATASOURCE_PASSWORD=19920308 \
-    -e SERVER_PORT=8091 \
+    -e SERVER_PORT=8092 \
     -d \
     -v /tmp/logs_dev:/opt/logs \
     --name apollo-adminservice-fat \
@@ -1623,8 +1623,8 @@ docker run -p 8070:8070 \
     -e SPRING_DATASOURCE_PASSWORD=19920308 \
     -e SERVER_PORT=8070 \
     -e APOLLO_PORTAL_ENVS=DEV,FAT \
-    -e DEV_META=http://host.docker.internal:8080 \
-    -e FAT_META=http://host.docker.internal:8081 \
+    -e DEV_META=http://host.docker.internal:8081 \
+    -e FAT_META=http://host.docker.internal:8082 \
     -d \
     -v /tmp/logs:/opt/logs \
     --name apollo-portal \
