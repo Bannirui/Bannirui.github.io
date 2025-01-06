@@ -371,6 +371,7 @@ COPY docker/datasources.sh datasources.sh
 RUN sed -i "s/port=\"8080\"/port=\"8085\"\ URIEncoding=\"utf-8\"/g" $CATALINA_HOME/conf/server.xml && chmod +x datasources.sh
 RUN ln -s /lib /lib64 \
     && apk add --no-cache bash tini libc6-compat linux-pam krb5 krb5-libs
+EXPOSE 8085 2280
 CMD ["/bin/sh", "-c", "./datasources.sh && catalina.sh run"]
 ```
 
