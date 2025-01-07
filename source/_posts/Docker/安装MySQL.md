@@ -8,7 +8,8 @@ tags: MySQL
 
 ### 1 image
 
-在desktop搜索mysql 选中了最新的版本pull下来
+- docker pull mysql:5.7
+- docker pull mysql:8.0
 
 ### 2 container
 
@@ -18,13 +19,16 @@ tags: MySQL
 
 对应的docker run如下
 
-```shell
-docker run --name mysql -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql
-```
+- docker run --name mysql5 -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:5.7
+- docker run --name mysql8 -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:8.0
 
 ### 3 新建mysql用户
 
-启动docker bash执行如下，创建个新的mysql用户，分配远程访问权限
+启动docker bash以root用户登陆
+
+`mysql -uroot -p19920308`
+
+创建个新的mysql用户并分配远程访问权限
 
 ```sh
 CREATE USER 'dingrui'@'%' IDENTIFIED BY '19920308';
@@ -35,4 +39,5 @@ FLUSH PRIVILEGES;
 ### 4 连接mysql
 
 然后用宿主机ip进行连接
+
 ![](./安装MySQL/1731993883.png)
