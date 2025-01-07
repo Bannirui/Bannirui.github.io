@@ -470,19 +470,59 @@ http://127.0.0.1:8085/cat/s/config?op=serverConfigUpdate
 
 http://127.0.0.1:8085/cat/s/config?op=routerConfigUpdate
 
+客户端路配置有两个注意点
+- 要接入的cat-client
+- 要连接的服务端ip不要写127.0.0.1，要写本机真实的ip
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<router-config backup-server="127.0.0.1" backup-server-port="2280">
-   <default-server id="127.0.0.1" weight="1.0" port="2280" enable="true"/>
+<router-config backup-server="10.181.137.245" backup-server-port="2280">
+   <default-server id="10.181.137.245" weight="1.0" port="2280" enable="true"/>
    <network-policy id="default" title="默认" block="false" server-group="default_group">
    </network-policy>
    <server-group id="default_group" title="default-group">
-      <group-server id="127.0.0.1"/>
+      <group-server id="10.181.137.245"/>
    </server-group>
    <domain id="cat">
       <group id="default">
-         <server id="127.0.0.1" port="2280" weight="1.0"/>
+         <server id="10.181.137.245" port="2280" weight="1.0"/>
+      </group>
+   </domain>
+   <domain id="msb">
+      <group id="default">
+         <server id="10.181.137.245" port="2280" weight="1.0"/>
       </group>
    </domain>
 </router-config>
+
 ```
+
+### 8 应用接入cat-client
+
+#### 8.1 AppName
+
+/resources/META-INF/app.properties
+
+```properties
+app.id=SampleApp
+```
+
+#### 8.2 client.xml
+
+/resources/META-INF/cat/client.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<config mode="client">
+    <servers>
+        # cat-client要连接的服务端
+        <server ip="127.0.0.1" port="2280" http-port="8085"/>
+    </servers>
+    # 客户端配置
+    <domain id="msb" enabled="true" />
+</config>
+```
+
+#### 8.3 日志看板
+
+![](./安装Cat/1736245718.png)
