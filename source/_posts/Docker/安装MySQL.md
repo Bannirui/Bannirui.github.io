@@ -15,12 +15,16 @@ tags: MySQL
 
 ![](./安装MySQL/1731985029.png)
 
-运行image，通过环境参数制定mysql的默认密码`MYSQL_ROOT_PASSWORD=19920308`
+为了多应用容器共享同个数据库，需要建立docker网络
 
-对应的docker run如下
+```sh
+docker network create mysql5network
+```
 
-- docker run --name mysql5 -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:5.7
-- docker run --name mysql8 -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:8.0
+运行image，通过环境参数制定mysql的默认密码`MYSQL_ROOT_PASSWORD=19920308`，启动容器并连接到网络中
+
+- docker run --name mysql5 --network mysql5network -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:5.7
+- docker run --name mysql8 --network mysql8network -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:8.0
 
 ### 3 新建mysql用户
 
