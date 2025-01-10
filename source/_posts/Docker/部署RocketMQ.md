@@ -56,13 +56,14 @@ services:
     image: apacherocketmq/rocketmq-dashboard:1.0.0
     container_name: rmq-dashboard
     ports:
-      - 8080:8080
+      - 8083:8083
     restart: on-failure:3
     privileged: true
     depends_on:
       - 'namesrv'
+    # 自定义端口 避开知名端口8080
     environment:
-      - JAVA_OPTS= -Xmx256M -Xms256M -Xmn128M -Drocketmq.namesrv.addr=namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+      - JAVA_OPTS= -Xmx256M -Xms256M -Xmn128M -Drocketmq.namesrv.addr=namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false -Dserver.port=8083
 ```
 
 ### 3 配置文件
@@ -122,6 +123,6 @@ transactionCheckInterval=10
 
 ### 5 管理后台
 
-访问http://127.0.0.1:8080/#/
+访问http://127.0.0.1:8083/#/
 
 ![](./部署RocketMQ/1736502608.png)
