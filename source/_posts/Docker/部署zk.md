@@ -81,3 +81,8 @@ services:
 ```sh
 docker-compose up -d
 ```
+
+### 4 ui管理
+
+[下载安装](https://github.com/vran-dev/PrettyZoo/releases)
+![](./部署zk/1737639051.png)
