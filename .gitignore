@@ -11,3 +11,6 @@ _multiconfig.yml
 _config.yml
 # hexo主题配置文件
 _config.*.yml
+
+# cmake or make build output
+/build

@@ -16,3 +16,12 @@ Build a blog site via `GitHub Pages` and `Hexo`, also putting them into an archi
 <p align="center">
 <a href="INTRODUCE.md">介绍</a>
 </p>
+
+### 1 Quick Start
+
+项目目录执行脚本
+
+```sh
+chmod +x ./configure.sh
+./configure.sh
+```

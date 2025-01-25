@@ -18,6 +18,23 @@ touch docker-compose.yml
 
 ### 2 docker compose
 
+#### 2.1 单机
+```yaml
+# zk单机
+services:
+  zk1:
+    image: zookeeper:3.9
+    hostname: zk1
+    container_name: zk1
+    # 8080端口是web admin 不要映射
+    ports:
+      - 2181:2181
+    volumes:
+      - ./zk1/data:/data
+      - ./zk1/datalog:/datalog
+```
+
+#### 2.2 集群
 ```yaml
 # 给zk集群配置一个网络，网络名为zk-net
 networks:
