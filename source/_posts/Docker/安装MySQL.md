@@ -6,12 +6,20 @@ categories: Docker
 tags: MySQL
 ---
 
-### 1 image
+### 1 宿主机目录
 
-- docker pull mysql:5.7
-- docker pull mysql:8.0
+```she
+mkdir -p /Users/dingrui/MyApp/docker-app/mysql5
+touch docer-compose.yml
+```
 
-### 2 container
+### 2 docker compose
+
+mysql官方没有mac arm架构的镜像
+
+```sh
+docker pull mysql:5.7 --platform linux/x86_6
+```
 
 ![](./安装MySQL/1731985029.png)
 
@@ -21,10 +29,18 @@ tags: MySQL
 docker network create mysql5network
 ```
 
-运行image，通过环境参数制定mysql的默认密码`MYSQL_ROOT_PASSWORD=19920308`，启动容器并连接到网络中
+```yaml
+services:
+  mysql5:
+    image: mysql:5.7
+    container_name: mysql5
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=19920308
+```
 
-- docker run --name mysql5 --network mysql5network -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:5.7
-- docker run --name mysql8 --network mysql8network -p 3306:3306 --env=MYSQL_ROOT_PASSWORD=19920308 -d mysql:8.0
+执行`docker-compose up -d`
 
 ### 3 新建mysql用户
 
