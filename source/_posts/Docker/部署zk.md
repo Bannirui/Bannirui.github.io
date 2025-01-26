@@ -103,3 +103,47 @@ docker-compose up -d
 
 [下载安装](https://github.com/vran-dev/PrettyZoo/releases)
 ![](./部署zk/1737639051.png)
+
+但是这个dmg不支持mac arm架构的处理器，因此要另寻他路，修改上面的脚本
+
+```yaml
+# zk单机
+services:
+  zk1:
+    image: zookeeper:3.9
+    hostname: zk1
+    container_name: zk1
+    # 8080端口是web admin 不要映射
+    ports:
+      - 2181:2181
+    volumes:
+      - ./zk1/data:/data
+      - ./zk1/datalog:/datalog
+  #连接zk服务端的ui管理后台
+  zkui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure:3
+    container_name: zkui
+    ports:
+      - 9090:9090
+```
+
+```Dockerfile
+#FROM arm64v8/openjdk:8-jre
+FROM bitnami/java:1.8
+WORKDIR /var/app
+RUN apt-get update && apt-get install -y git maven 
+RUN git clone https://github.com/DeemOpen/zkui.git
+RUN cd zkui && mvn clean package
+RUN mv ./zkui/target/zkui-*jar-with-dependencies.jar ./zkui.jar
+RUN mv ./zkui/config.cfg ./config.cfg
+# localhost替换host.docker.internal
+RUN sed -i "s/localhost/host.docker.internal/g" ./config.cfg
+ENTRYPOINT java -jar zkui.jar
+EXPOSE 9090
+```
+
+部署好后连接宿主机`127.0.0.1:9090`即可
+![](./部署zk/1737907610.png)
