@@ -1,0 +1,4113 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="redisServer是一个定义在server.h中的UDT，是一个超级大的结构体，大的原因是描述了整个服务端实例的信息。 1 外部全局变量server.c文件中定义全局变量 123456&#x2F;** * 全局变量定义 * 这个变量是未初始化全局变量 定义在了静态内存BSS段 * 为了能让其他文件访问到这个变量 在头文件中用extern将这个变量声明为了外部变量 *&#x2F;struct redisServer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x0A-redisServer的初始化">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="redisServer是一个定义在server.h中的UDT，是一个超级大的结构体，大的原因是描述了整个服务端实例的信息。 1 外部全局变量server.c文件中定义全局变量 123456&#x2F;** * 全局变量定义 * 这个变量是未初始化全局变量 定义在了静态内存BSS段 * 为了能让其他文件访问到这个变量 在头文件中用extern将这个变量声明为了外部变量 *&#x2F;struct redisServer">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-15T11:33:28.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.488Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x0A-redisServer的初始化 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x0A-redisServer的初始化"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-15 19:33" pubdate>
+          2024年4月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(52)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x0A-redisServer的初始化</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><code>redisServer</code>是一个定义在<code>server.h</code>中的UDT，是一个超级大的结构体，大的原因是描述了整个服务端实例的信息。</p>
+<h2 id="1-外部全局变量"><a href="#1-外部全局变量" class="headerlink" title="1 外部全局变量"></a>1 外部全局变量</h2><p>server.c文件中定义全局变量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 全局变量定义</span><br><span class="hljs-comment"> * 这个变量是未初始化全局变量 定义在了静态内存BSS段</span><br><span class="hljs-comment"> * 为了能让其他文件访问到这个变量 在头文件中用extern将这个变量声明为了外部变量</span><br><span class="hljs-comment"> */</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">redisServer</span> <span class="hljs-title">server</span>;</span> <span class="hljs-comment">/* Server global state */</span><br></code></pre></td></tr></table></figure>
+
+<p>server.c将变量声明为外部的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 在server.c文件中将其定义为了全局变量 这个地方用extern修饰将变量声明为外部变量 让其他文件也能访问到这个变量</span><br><span class="hljs-keyword">extern</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">redisServer</span> <span class="hljs-title">server</span>;</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-初始化"><a href="#2-初始化" class="headerlink" title="2 初始化"></a>2 初始化</h2><table>
+<thead>
+<tr>
+<th>id</th>
+<th>成员</th>
+<th>类型</th>
+<th>业务含义</th>
+<th>初始化地方</th>
+<th>初始化值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>pid</td>
+<td>pid_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>main_thread_id</td>
+<td>pthread_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>configfile</td>
+<td>char*</td>
+<td>配置文件绝对路径</td>
+<td>server.c::main</td>
+<td>在启动车程序的时候通过命令行指定的运行参数，第1个参数就得指定配置文件的绝对路径</td>
+</tr>
+<tr>
+<td>4</td>
+<td>executable</td>
+<td>char*</td>
+<td>可执行程程序绝对路径</td>
+<td>server.c::main</td>
+<td>启动程序，可执行程序的的绝对路径</td>
+</tr>
+<tr>
+<td>5</td>
+<td>exec_argv</td>
+<td>char**</td>
+<td>运行参数</td>
+<td>server.c::main</td>
+<td>数组里面存放字符串，每个字符串就是启动程序时候的运行参数</td>
+</tr>
+<tr>
+<td>6</td>
+<td>dynamic_hz</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>7</td>
+<td>config_hz</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10</td>
+</tr>
+<tr>
+<td>8</td>
+<td>umask</td>
+<td>mode_t</td>
+<td>记录系统的umask值</td>
+<td>server.c::main</td>
+<td>系统的umask值</td>
+</tr>
+<tr>
+<td>9</td>
+<td>hz</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>10</td>
+</tr>
+<tr>
+<td>10</td>
+<td>in_fork_child</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>db</td>
+<td>redisDb*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td>commands</td>
+<td>dict*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>所有暴露给客户端的api</td>
+</tr>
+<tr>
+<td>13</td>
+<td>orig_commands</td>
+<td>dict*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>所有暴露给客户端的api</td>
+</tr>
+<tr>
+<td>14</td>
+<td>el</td>
+<td>aeEventLoop*</td>
+<td></td>
+<td>server.c::main-&gt;initServer</td>
+<td>ae实例</td>
+</tr>
+<tr>
+<td>15</td>
+<td>errors</td>
+<td>ras*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>16</td>
+<td>lruclock</td>
+<td>redisAtomic unsigned int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>系统时间 秒</td>
+</tr>
+<tr>
+<td>17</td>
+<td>shutvolatile</td>
+<td>sig_atomic_tdown_asap</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td>activerehashing</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>19</td>
+<td>active_defrag_running</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>20</td>
+<td>pidfile</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>21</td>
+<td>arch_bits</td>
+<td>int</td>
+<td>机器是64位还是32位</td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>64</td>
+</tr>
+<tr>
+<td>22</td>
+<td>cronloops</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>runid</td>
+<td>char[41]</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;getRandomHexChars</td>
+<td>长度40的随机[0…9 a…f]字符串</td>
+</tr>
+<tr>
+<td>24</td>
+<td>sentinel_mode</td>
+<td>int</td>
+<td>标识程序启动模式<br>0 标识不启用哨兵模式<br>1 标识启用哨兵模式</td>
+<td>server.c::main</td>
+<td>0</td>
+</tr>
+<tr>
+<td>25</td>
+<td>initial_memory_usage</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>26</td>
+<td>always_show_logo</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>27</td>
+<td>in_eval</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>28</td>
+<td>in_exec</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>29</td>
+<td>propagate_in_transaction</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>30</td>
+<td>ignore_warnings</td>
+<td>char*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>31</td>
+<td>client_pause_in_transaction</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>32</td>
+<td>moduleapi</td>
+<td>dict*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>33</td>
+<td>sharedapi</td>
+<td>dict*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>34</td>
+<td>loadmodule_queue</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>35</td>
+<td>module_blocked_pipe</td>
+<td>int[2]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>36</td>
+<td>child_pid</td>
+<td>pid_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>37</td>
+<td>child_type</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>38</td>
+<td>module_client</td>
+<td>client*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>39</td>
+<td>port</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>6379</td>
+</tr>
+<tr>
+<td>40</td>
+<td>tls_port</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>41</td>
+<td>tcp_backlog</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>511</td>
+</tr>
+<tr>
+<td>42</td>
+<td>bindaddr</td>
+<td>char*[16]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>43</td>
+<td>bindaddr_count</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>44</td>
+<td>unixsocket</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>45</td>
+<td>unixsocketperm</td>
+<td>mode_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>46</td>
+<td>ipfd</td>
+<td>socketFds</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>ipfd::count赋值为0</td>
+</tr>
+<tr>
+<td>47</td>
+<td>tlsfd</td>
+<td>socketFds</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>tlsfd::count赋值为0</td>
+</tr>
+<tr>
+<td>48</td>
+<td>sofd</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>49</td>
+<td>cfd</td>
+<td>socketFds</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>50</td>
+<td>clients</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>51</td>
+<td>clients_to_close</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>52</td>
+<td>clients_pending_write</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>53</td>
+<td>clients_pending_read</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>54</td>
+<td>slaves</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>55</td>
+<td>monitors</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>56</td>
+<td>current_client</td>
+<td>client*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>57</td>
+<td>clients_timeout_table</td>
+<td>rax*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>58</td>
+<td>fixed_time_expire</td>
+<td>long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>59</td>
+<td>clients_index</td>
+<td>rax*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>60</td>
+<td>client_pause_type</td>
+<td>pause_type</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>CLIENT_PAUSE_TYPE 枚举值0</td>
+</tr>
+<tr>
+<td>61</td>
+<td>paused_clients</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>62</td>
+<td>client_pause_end_time</td>
+<td>mstime_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>63</td>
+<td>neterr</td>
+<td>char[256]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>64</td>
+<td>migrate_cached_sockets</td>
+<td>dict*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>dict实例</td>
+</tr>
+<tr>
+<td>65</td>
+<td>next_client_id</td>
+<td>redisAtomic uint64_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>1</td>
+</tr>
+<tr>
+<td>66</td>
+<td>protected_mode</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>67</td>
+<td>gopher_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>68</td>
+<td>io_threads_num</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>69</td>
+<td>io_threads_do_reads</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>70</td>
+<td>io_threads_active</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>71</td>
+<td>events_processed_while_blocked</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>72</td>
+<td>loading</td>
+<td>volatile sig_atomic_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>73</td>
+<td>loading_total_bytes</td>
+<td>off_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>74</td>
+<td>loading_rdb_used_mem</td>
+<td>off_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>75</td>
+<td>loading_loaded_bytes</td>
+<td>off_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>76</td>
+<td>loading_start_time</td>
+<td>time_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>77</td>
+<td>loading_process_events_interval_bytes</td>
+<td></td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>2M</td>
+</tr>
+<tr>
+<td>78</td>
+<td>delCommand</td>
+<td>struct redisCommand*</td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td></td>
+<td>命令del</td>
+</tr>
+<tr>
+<td>79</td>
+<td>multiCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令multi</td>
+</tr>
+<tr>
+<td>80</td>
+<td>lpushCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令lpush</td>
+</tr>
+<tr>
+<td>81</td>
+<td>lpopCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令lpop</td>
+</tr>
+<tr>
+<td>82</td>
+<td>rpopCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令rpop</td>
+</tr>
+<tr>
+<td>83</td>
+<td>zpopminCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令zpopmin</td>
+</tr>
+<tr>
+<td>84</td>
+<td>zpopmaxCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令zpopmax</td>
+</tr>
+<tr>
+<td>85</td>
+<td>sremCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令srem</td>
+</tr>
+<tr>
+<td>86</td>
+<td>execCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令exec</td>
+</tr>
+<tr>
+<td>87</td>
+<td>expireCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令expire</td>
+</tr>
+<tr>
+<td>88</td>
+<td>pexpireCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令pexpire</td>
+</tr>
+<tr>
+<td>89</td>
+<td>xclaimCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令xclaim</td>
+</tr>
+<tr>
+<td>90</td>
+<td>xgroupCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令xgroup</td>
+</tr>
+<tr>
+<td>91</td>
+<td>rpoplpushCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令rpoplpush</td>
+</tr>
+<tr>
+<td>92</td>
+<td>lmoveCommand</td>
+<td>struct redisCommand*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>命令lmove</td>
+</tr>
+<tr>
+<td>93</td>
+<td>stat_starttime</td>
+<td>time_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>94</td>
+<td>stat_numcommands</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>95</td>
+<td>stat_numconnections</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>96</td>
+<td>stat_expiredkeys</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>97</td>
+<td>stat_expired_stale_perc</td>
+<td>double</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>98</td>
+<td>stat_expired_time_cap_reached_count</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>99</td>
+<td>stat_expire_cycle_time_used</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>100</td>
+<td>stat_evictedkeys</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>101</td>
+<td>stat_keyspace_hits</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>102</td>
+<td>stat_keyspace_misses</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>103</td>
+<td>stat_active_defrag_hits</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>104</td>
+<td>stat_active_defrag_misses</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>105</td>
+<td>stat_active_defrag_key_hits</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>106</td>
+<td>stat_active_defrag_key_misses</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>107</td>
+<td>stat_active_defrag_scanned</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>108</td>
+<td>stat_peak_memory</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>109</td>
+<td>stat_fork_time</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>110</td>
+<td>stat_fork_rate</td>
+<td>double</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>111</td>
+<td>stat_total_forks</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>112</td>
+<td>stat_rejected_conn</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>113</td>
+<td>stat_sync_full</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>114</td>
+<td>stat_sync_partial_ok</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>115</td>
+<td>stat_sync_partial_err</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>116</td>
+<td>slowlog</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>117</td>
+<td>slowlog_entry_id</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>118</td>
+<td>slowlog_log_slower_than</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10000</td>
+</tr>
+<tr>
+<td>119</td>
+<td>slowlog_max_len</td>
+<td>unsigned long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>128</td>
+</tr>
+<tr>
+<td>120</td>
+<td>cron_malloc_stats</td>
+<td>struct malloc_stats</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>121</td>
+<td>stat_net_input_bytes</td>
+<td>redisAtomic long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>122</td>
+<td>stat_net_output_bytes</td>
+<td>redisAtomic long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>123</td>
+<td>stat_current_cow_bytes</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>124</td>
+<td>stat_current_cow_updated</td>
+<td>monotime</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>125</td>
+<td>stat_current_save_keys_processed</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>126</td>
+<td>stat_current_save_keys_total</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>127</td>
+<td>stat_rdb_cow_bytes</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>128</td>
+<td>stat_aof_cow_bytes</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>129</td>
+<td>stat_module_cow_bytes</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>130</td>
+<td>stat_module_progress</td>
+<td>double</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>131</td>
+<td>stat_clients_type_memory</td>
+<td>uint64_t[4]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>132</td>
+<td>stat_unexpected_error_replies</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>133</td>
+<td>stat_total_error_replies</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>134</td>
+<td>stat_dump_payload_sanitizations</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>135</td>
+<td>stat_io_reads_processed</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>136</td>
+<td>stat_io_writes_processed</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>137</td>
+<td>stat_total_reads_processed</td>
+<td>redisAtomic long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>138</td>
+<td>stat_total_writes_processed</td>
+<td>redisAtomic long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>139</td>
+<td>inst_metric</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>140</td>
+<td>verbosity</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>LL_NOTICE枚举值2</td>
+</tr>
+<tr>
+<td>141</td>
+<td>maxidletime</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>142</td>
+<td>tcpkeepalive</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>300</td>
+</tr>
+<tr>
+<td>143</td>
+<td>active_expire_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>1</td>
+</tr>
+<tr>
+<td>144</td>
+<td>active_expire_effort</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>145</td>
+<td>active_defrag_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>146</td>
+<td>sanitize_dump_payload</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>SANITIZE_DUMP_NO枚举值0</td>
+</tr>
+<tr>
+<td>147</td>
+<td>skip_checksum_validation</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>148</td>
+<td>jemalloc_bg_thread</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>149</td>
+<td>active_defrag_ignore_bytes</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>100&lt;&lt;20</td>
+</tr>
+<tr>
+<td>150</td>
+<td>active_defrag_threshold_lower</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10</td>
+</tr>
+<tr>
+<td>151</td>
+<td>active_defrag_threshold_upper</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>100</td>
+</tr>
+<tr>
+<td>152</td>
+<td>active_defrag_cycle_min</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>153</td>
+<td>active_defrag_cycle_max</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>25</td>
+</tr>
+<tr>
+<td>154</td>
+<td>active_defrag_max_scan_fields</td>
+<td>unsigned long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>155</td>
+<td>client_max_querybuf_len</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1024M</td>
+</tr>
+<tr>
+<td>156</td>
+<td>dbnum</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>16</td>
+</tr>
+<tr>
+<td>157</td>
+<td>supervised</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>158</td>
+<td>supervised_mode</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>SUPERVISED_NONE枚举值0</td>
+</tr>
+<tr>
+<td>159</td>
+<td>daemonize</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>160</td>
+<td>set_proc_title</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>161</td>
+<td>proc_title_template</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>“{title} {listen-addr} {server-mode}”</td>
+</tr>
+<tr>
+<td>162</td>
+<td>client_obuf_limits</td>
+<td>clientBufferLimitsConfig[3]</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>数组赋值3个元素<br>{0, 0, 0}<br>{1024<em>1024</em>256, 1024<em>1024</em>64, 60}<br>{1024<em>1024</em>32, 1024<em>1024</em>8, 60}</td>
+</tr>
+<tr>
+<td>163</td>
+<td>aof_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>164</td>
+<td>aof_state</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>165</td>
+<td>aof_fsync</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>AOF_FSYNC_EVERYSEC枚举值2</td>
+</tr>
+<tr>
+<td>166</td>
+<td>aof_filename</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>appendonly.aof</td>
+</tr>
+<tr>
+<td>167</td>
+<td>aof_no_fsync_on_rewrite</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>168</td>
+<td>aof_rewrite_perc</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>100</td>
+</tr>
+<tr>
+<td>169</td>
+<td>aof_rewrite_min_size</td>
+<td>off_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>64M</td>
+</tr>
+<tr>
+<td>170</td>
+<td>aof_rewrite_base_size</td>
+<td>off_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>171</td>
+<td>aof_current_size</td>
+<td>off_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>172</td>
+<td>aof_fsync_offset</td>
+<td>off_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>173</td>
+<td>aof_flush_sleep</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>174</td>
+<td>aof_rewrite_scheduled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>175</td>
+<td>aof_rewrite_buf_blocks</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>176</td>
+<td>aof_buf</td>
+<td>sds</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>177</td>
+<td>aof_fd</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>178</td>
+<td>aof_selected_db</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>179</td>
+<td>aof_flush_postponed_start</td>
+<td>time_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>180</td>
+<td>aof_last_fsync</td>
+<td>time_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>系统时间 秒</td>
+</tr>
+<tr>
+<td>181</td>
+<td>aof_rewrite_time_last</td>
+<td>time_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>182</td>
+<td>aof_rewrite_time_start</td>
+<td>time_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>183</td>
+<td>aof_lastbgrewrite_status</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>184</td>
+<td>aof_delayed_fsync</td>
+<td>unsigned long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>185</td>
+<td>aof_rewrite_incremental_fsync</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>186</td>
+<td>rdb_save_incremental_fsync</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>187</td>
+<td>aof_last_write_status</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>188</td>
+<td>aof_last_write_errno</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>189</td>
+<td>aof_load_truncated</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>190</td>
+<td>aof_use_rdb_preamble</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>191</td>
+<td>aof_bio_fsync_status</td>
+<td>redisAtomic int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>192</td>
+<td>aof_bio_fsync_errno</td>
+<td>redisAtomic int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>193</td>
+<td>aof_pipe_write_data_to_child</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>194</td>
+<td>aof_pipe_read_data_from_parent</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>195</td>
+<td>aof_pipe_write_ack_to_parent</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>196</td>
+<td>aof_pipe_read_ack_from_child</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>197</td>
+<td>aof_pipe_write_ack_to_child</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>198</td>
+<td>aof_pipe_read_ack_from_parent</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>199</td>
+<td>aof_stop_sending_diff</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>200</td>
+<td>aof_child_diff</td>
+<td>sds</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>201</td>
+<td>dirty</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>202</td>
+<td>dirty_before_bgsave</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>203</td>
+<td>saveparams</td>
+<td>struct saveparam*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>长度为3的数组 数组元素分别为[{60*60, 1}, {300, 100}, {60, 10000}]</td>
+</tr>
+<tr>
+<td>204</td>
+<td>saveparamslen</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>3</td>
+</tr>
+<tr>
+<td>205</td>
+<td>rdb_filename</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>dump.rdb</td>
+</tr>
+<tr>
+<td>206</td>
+<td>rdb_compression</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>207</td>
+<td>rdb_checksum</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>208</td>
+<td>rdb_del_sync_files</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>209</td>
+<td>lastsave</td>
+<td>time_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>210</td>
+<td>lastbgsave_try</td>
+<td>time_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>211</td>
+<td>rdb_save_time_last</td>
+<td>time_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>212</td>
+<td>rdb_save_time_start</td>
+<td>time_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>213</td>
+<td>rdb_bgsave_scheduled</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>214</td>
+<td>rdb_child_type</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>215</td>
+<td>lastbgsave_status</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>216</td>
+<td>stop_writes_on_bgsave_err</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>217</td>
+<td>rdb_pipe_read</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>218</td>
+<td>rdb_child_exit_pipe</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>219</td>
+<td>rdb_pipe_conns</td>
+<td>connection**</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>220</td>
+<td>rdb_pipe_numconns</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>221</td>
+<td>rdb_pipe_numconns_writing</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>222</td>
+<td>rdb_pipe_buff</td>
+<td>char*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>223</td>
+<td>rdb_pipe_bufflen</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>224</td>
+<td>rdb_key_save_delay</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>225</td>
+<td>key_load_delay</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>226</td>
+<td>child_info_pipe</td>
+<td>int[2]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>227</td>
+<td>child_info_nread</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>228</td>
+<td>also_propagate</td>
+<td>redisOpArray</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>229</td>
+<td>replication_allowed</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>230</td>
+<td>logfile</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>“”空字符串</td>
+</tr>
+<tr>
+<td>231</td>
+<td>syslog_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>232</td>
+<td>syslog_ident</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>redis</td>
+</tr>
+<tr>
+<td>233</td>
+<td>syslog_facility</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>234</td>
+<td>crashlog_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>235</td>
+<td>memcheck_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>236</td>
+<td>use_exit_on_panic</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>237</td>
+<td>replid</td>
+<td>char[41]</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;changeReplicationId</td>
+<td>长度40的随机字符串[0…9 a…f]</td>
+</tr>
+<tr>
+<td>238</td>
+<td>replid2</td>
+<td>char[41]</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;clearReplicationId2</td>
+<td>长度40全是0的字符串</td>
+</tr>
+<tr>
+<td>239</td>
+<td>master_repl_offset</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>240</td>
+<td>second_replid_offset</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;clearReplicationId2</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>241</td>
+<td>slaveseldb</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>242</td>
+<td>repl_ping_slave_period</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10</td>
+</tr>
+<tr>
+<td>243</td>
+<td>repl_backlog</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>244</td>
+<td>repl_backlog_size</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1M</td>
+</tr>
+<tr>
+<td>245</td>
+<td>repl_backlog_histlen</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>246</td>
+<td>repl_backlog_idx</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>247</td>
+<td>repl_backlog_off</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>248</td>
+<td>repl_backlog_time_limit</td>
+<td>time_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>60*60</td>
+</tr>
+<tr>
+<td>249</td>
+<td>repl_no_slaves_since</td>
+<td>time_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>系统时间(秒)</td>
+</tr>
+<tr>
+<td>250</td>
+<td>repl_min_slaves_to_write</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>251</td>
+<td>repl_min_slaves_max_lag</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10</td>
+</tr>
+<tr>
+<td>252</td>
+<td>repl_good_slaves_count</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>253</td>
+<td>repl_diskless_sync</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>254</td>
+<td>repl_diskless_load</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>PEPL_DISKLESS_LOAD_DISABLED枚举值0</td>
+</tr>
+<tr>
+<td>255</td>
+<td>repl_diskless_sync_delay</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>5</td>
+</tr>
+<tr>
+<td>256</td>
+<td>masteruser</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>257</td>
+<td>masterauth</td>
+<td>sds</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>258</td>
+<td>masterhost</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>259</td>
+<td>masterport</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>6379</td>
+</tr>
+<tr>
+<td>260</td>
+<td>repl_timeout</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>60</td>
+</tr>
+<tr>
+<td>261</td>
+<td>master</td>
+<td>client*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>262</td>
+<td>cached_master</td>
+<td>client*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>263</td>
+<td>repl_syncio_timeout</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>5</td>
+</tr>
+<tr>
+<td>264</td>
+<td>repl_state</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>REPL_STATE_NONE(枚举值0)</td>
+</tr>
+<tr>
+<td>265</td>
+<td>repl_transfer_size</td>
+<td>off_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>266</td>
+<td>repl_transfer_read</td>
+<td>off_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>267</td>
+<td>repl_transfer_last_fsync_off</td>
+<td>off_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>268</td>
+<td>repl_transfer_s</td>
+<td>connection*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>269</td>
+<td>repl_transfer_fd</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>270</td>
+<td>repl_transfer_tmpfile</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>271</td>
+<td>repl_transfer_lastio</td>
+<td>time_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>272</td>
+<td>repl_serve_stale_data</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>273</td>
+<td>repl_slave_ro</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>274</td>
+<td>repl_slave_ignore_maxmemory</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>275</td>
+<td>repl_down_since</td>
+<td>time_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>276</td>
+<td>repl_disable_tcp_nodelay</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>277</td>
+<td>slave_priority</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>100</td>
+</tr>
+<tr>
+<td>278</td>
+<td>replica_announced</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>279</td>
+<td>slave_announce_port</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>280</td>
+<td>slave_announce_ip</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>281</td>
+<td>master_replid</td>
+<td>char[41]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>282</td>
+<td>master_initial_offset</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>283</td>
+<td>repl_slave_lazy_flush</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>284</td>
+<td>repl_scriptcache_dict</td>
+<td>dict*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>285</td>
+<td>repl_scriptcache_fifo</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>286</td>
+<td>repl_scriptcache_size</td>
+<td>unsigned int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>287</td>
+<td>clients_waiting_acks</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>288</td>
+<td>get_ack_from_slaves</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>289</td>
+<td>maxclients</td>
+<td>unsigned int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10000</td>
+</tr>
+<tr>
+<td>290</td>
+<td>maxmemory</td>
+<td>unsigned long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>291</td>
+<td>maxmemory_policy</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>MAXMEMORY_NO_EVICTION枚举值7&lt;&lt;8</td>
+</tr>
+<tr>
+<td>292</td>
+<td>maxmemory_samples</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>5</td>
+</tr>
+<tr>
+<td>293</td>
+<td>maxmemory_eviction_tenacity</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10</td>
+</tr>
+<tr>
+<td>294</td>
+<td>lfu_log_factor</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10</td>
+</tr>
+<tr>
+<td>295</td>
+<td>lfu_decay_time</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>296</td>
+<td>proto_max_bulk_len</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>512M</td>
+</tr>
+<tr>
+<td>297</td>
+<td>oom_score_adj_base</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>298</td>
+<td>oom_score_adj_values</td>
+<td>int[3]</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>数组3个元素赋值为整数<br>0<br>200<br>800</td>
+</tr>
+<tr>
+<td>299</td>
+<td>oom_score_adj</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>OOM_SCORE_ADJ_NO枚举值0</td>
+</tr>
+<tr>
+<td>300</td>
+<td>disable_thp</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>301</td>
+<td>blocked_clients</td>
+<td>unsigned int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>302</td>
+<td>blocked_clients_by_type</td>
+<td>unsigned int[7]</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>数组元素全部为0</td>
+</tr>
+<tr>
+<td>303</td>
+<td>unblocked_clients</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>304</td>
+<td>ready_keys</td>
+<td>list*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>305</td>
+<td>tracking_clients</td>
+<td>unsigned int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>306</td>
+<td>tracking_table_max_keys</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1000000</td>
+</tr>
+<tr>
+<td>307</td>
+<td>sort_desc</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>308</td>
+<td>sort_alpha</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>309</td>
+<td>sort_bypattern</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>310</td>
+<td>sort_store</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>311</td>
+<td>hash_max_ziplist_entries</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>512</td>
+</tr>
+<tr>
+<td>312</td>
+<td>hash_max_ziplist_value</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>64</td>
+</tr>
+<tr>
+<td>313</td>
+<td>set_max_intset_entries</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>512</td>
+</tr>
+<tr>
+<td>314</td>
+<td>zset_max_ziplist_entries</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>128</td>
+</tr>
+<tr>
+<td>315</td>
+<td>zset_max_ziplist_value</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>64</td>
+</tr>
+<tr>
+<td>316</td>
+<td>hll_sparse_max_bytes</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>3000</td>
+</tr>
+<tr>
+<td>317</td>
+<td>stream_node_max_bytes</td>
+<td>size_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>4096</td>
+</tr>
+<tr>
+<td>318</td>
+<td>stream_node_max_entries</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>100</td>
+</tr>
+<tr>
+<td>319</td>
+<td>list_max_ziplist_size</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>-2</td>
+</tr>
+<tr>
+<td>320</td>
+<td>list_compress_depth</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>321</td>
+<td>unixtime</td>
+<td>redisAtomic time_t</td>
+<td>系统时间 秒</td>
+<td>server.c::main-&gt;initServerConfig-&gt;updateCachedTime</td>
+<td>系统时间</td>
+</tr>
+<tr>
+<td>322</td>
+<td>timezone</td>
+<td>time_t</td>
+<td>系统时间跟格林威治时间差异</td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>系统时间跟格林威治时间差异多少秒</td>
+</tr>
+<tr>
+<td>323</td>
+<td>daylight_active</td>
+<td>int</td>
+<td>系统时间夏令时(DST)标识<br>0 不是DST<br>1 是DST</td>
+<td>server.c::main-&gt;initServerConfig-&gt;updateCachedTime</td>
+<td>0</td>
+</tr>
+<tr>
+<td>324</td>
+<td>mstime</td>
+<td>mstime_t</td>
+<td>系统时间 毫秒</td>
+<td>server.c::main-&gt;initServerConfig-&gt;updateCachedTime</td>
+<td>系统时间</td>
+</tr>
+<tr>
+<td>325</td>
+<td>ustime</td>
+<td>ustime_t</td>
+<td>系统时间 微秒</td>
+<td>server.c::main-&gt;initServerConfig-&gt;updateCachedTime</td>
+<td>系统时间</td>
+</tr>
+<tr>
+<td>326</td>
+<td>blocking_op_nesting</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>327</td>
+<td>blocked_last_cron</td>
+<td>long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>328</td>
+<td>pubsub_channels</td>
+<td>dict*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>329</td>
+<td>pubsub_patterns</td>
+<td>dict*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>330</td>
+<td>notify_keyspace_events</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>331</td>
+<td>cluster_enabled</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>332</td>
+<td>cluster_node_timeout</td>
+<td>mstime_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>15000</td>
+</tr>
+<tr>
+<td>333</td>
+<td>cluster_configfile</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>nodes.conf</td>
+</tr>
+<tr>
+<td>334</td>
+<td>cluster</td>
+<td>struct clusterState*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>335</td>
+<td>cluster_migration_barrier</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>336</td>
+<td>cluster_allow_replica_migration</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>337</td>
+<td>cluster_slave_validity_factor</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>10</td>
+</tr>
+<tr>
+<td>338</td>
+<td>cluster_require_full_coverage</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>339</td>
+<td>cluster_slave_no_failover</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>340</td>
+<td>cluster_announce_ip</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>341</td>
+<td>cluster_announce_port</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>342</td>
+<td>cserver.c::main-&gt;initServerConfig-&gt;initConfigValuesluster_announce_bus_port</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>343</td>
+<td>cluster_module_flags</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>344</td>
+<td>cluster_allow_reads_when_down</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>345</td>
+<td>cluster_config_file_lock_fd</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>346</td>
+<td>lua</td>
+<td>lua_State*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>347</td>
+<td>lua_client</td>
+<td>client*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>348</td>
+<td>lua_caller</td>
+<td>client*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>349</td>
+<td>lua_cur_script</td>
+<td>char*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>350</td>
+<td>lua_scripts</td>
+<td>client*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>351</td>
+<td>lua_scripts_mem</td>
+<td>unsigned long long</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>352</td>
+<td>lua_time_limit</td>
+<td>mstime_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>5000</td>
+</tr>
+<tr>
+<td>353</td>
+<td>lua_time_start</td>
+<td>monotime</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>354</td>
+<td>lua_time_snapshot</td>
+<td>mstime_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>355</td>
+<td>lua_write_dirty</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>356</td>
+<td>lua_random_dirty</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>357</td>
+<td>lua_replicate_commands</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>358</td>
+<td>lua_multi_emitted</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>359</td>
+<td>lua_repl</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>360</td>
+<td>lua_timedout</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>361</td>
+<td>lua_kill</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>362</td>
+<td>lua_always_replicate_commands</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>1</td>
+</tr>
+<tr>
+<td>363</td>
+<td>lua_oom</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>364</td>
+<td>lazyfree_lazy_eviction</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>365</td>
+<td>lazyfree_lazy_expire</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>366</td>
+<td>lazyfree_lazy_server_del</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>367</td>
+<td>lazyfree_lazy_user_del</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>368</td>
+<td>lazyfree_lazy_user_flush</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>369</td>
+<td>latency_monitor_threshold</td>
+<td>long long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>370</td>
+<td>latency_events</td>
+<td>dict*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>371</td>
+<td>acl_filename</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>“”空字符串</td>
+</tr>
+<tr>
+<td>372</td>
+<td>acllog_max_len</td>
+<td>unsigned long</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>128</td>
+</tr>
+<tr>
+<td>373</td>
+<td>requirepass</td>
+<td>sds</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>374</td>
+<td>acl_pubsub_default</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>USER_FLAG_ALLCHANNELS枚举值1&lt;&lt;5</td>
+</tr>
+<tr>
+<td>375</td>
+<td>watchdog_period</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>376</td>
+<td>system_memory_size</td>
+<td>size_t</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>377</td>
+<td>tls_cluster</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>378</td>
+<td>tls_replication</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+<tr>
+<td>379</td>
+<td>tls_auth_clients</td>
+<td>int</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>380</td>
+<td>tls_ctx_config</td>
+<td>redisTLSContextConfig</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>redisTLSContextConfig::session_cache_size赋值为20k<br>redisTLSContextConfig::session_cache_timeout赋值为300<br>redisTLSContextConfig::prefer_server_ciphers赋值为0<br>redisTLSContextConfig::session_caching赋值为1<br>redisTLSContextConfig::cert_file赋值为NULL<br>redisTLSContextConfig::key_file赋值为NULL<br>redisTLSContextConfig::key_file_pass赋值为NULL<br>redisTLSContextConfig::client_cert_file赋值为NULL<br>redisTLSContextConfig::client_key_file赋值为NULL<br>redisTLSContextConfig::client_key_file_pass赋值为NULL<br>redisTLSContextConfig::dh_params_file赋值为NULL<br>redisTLSContextConfig::ca_cert_file赋值为NULL<br>redisTLSContextConfig::ca_cert_dir赋值为NULL<br>redisTLSContextConfig::protocols赋值为NULL<br>redisTLSContextConfig::ciphers赋值为NULL<br>redisTLSContextConfig::ciphersuites赋值为NULL</td>
+</tr>
+<tr>
+<td>381</td>
+<td>server_cpulist</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>382</td>
+<td>bio_cpulist</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>383</td>
+<td>aof_rewrite_cpulist</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>384</td>
+<td>bgsave_cpulist</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>385</td>
+<td>sentinel_config</td>
+<td>struct sentinelConfig*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>386</td>
+<td>failover_end_time</td>
+<td>mstime_t</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>387</td>
+<td>force_failover</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>388</td>
+<td>target_replica_host</td>
+<td>char*</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>389</td>
+<td>target_replica_port</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>0</td>
+</tr>
+<tr>
+<td>390</td>
+<td>failover_state</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig</td>
+<td>NO_FAILOVER枚举值0</td>
+</tr>
+<tr>
+<td>390</td>
+<td>cluster_announce_tls_port</td>
+<td>int</td>
+<td></td>
+<td>server.c::main-&gt;initServerConfig-&gt;initConfigValues</td>
+<td>0</td>
+</tr>
+</tbody></table>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x0A-redisServer的初始化</div>
+      <div>https://bannirui.github.io/2024/04/15/Redis/Redis-0x0A-redisServer的初始化/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x0B-数据结构dict</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值">
+                        <span class="hidden-mobile">Redis-0x09-新建文件目录与权限与unmask值</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '28d89cd327603958a81bd68fde76de36'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

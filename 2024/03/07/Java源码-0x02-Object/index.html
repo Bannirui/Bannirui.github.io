@@ -1,0 +1,1111 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  getClass  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用nati">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java源码-0x02-Object">
+<meta property="og:url" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石  注定该类的结构不可能复杂，甚至是最简单的  涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂     native方法  getClass  hashCode  clone  notify  notifyAll  wait   需要研究的就是上述几个方法，都是native方法，既然想使用nati">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709800139.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709910160.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709952617.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957390.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957532.png">
+<meta property="article:published_time" content="2024-03-07T04:41:30.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.288Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="Java@15">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709800139.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Java源码-0x02-Object - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java源码-0x02-Object"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-07 12:41" pubdate>
+          2024年3月7日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Java"
+        id="heading-d52387880e1ea22817a72d3759213819" role="tab" data-toggle="collapse" href="#collapse-d52387880e1ea22817a72d3759213819"
+        aria-expanded="true"
+      >
+        Java
+        <span class="list-group-count">(17)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-d52387880e1ea22817a72d3759213819"
+           role="tabpanel" aria-labelledby="heading-d52387880e1ea22817a72d3759213819">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/05/14/JNI%E4%BD%BF%E7%94%A8/" title="JNI使用"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JNI使用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/" title="Java源码-0x00-编译openjdk"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x00-编译openjdk</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="Java源码-0x01-源码阅读清单"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x01-源码阅读清单</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/" title="Java源码-0x02-Object"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Java源码-0x02-Object</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="Java源码-0x03-MarkWord"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x03-MarkWord</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="Java源码-0x04-biasedLocking"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x04-biasedLocking</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/10/Java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="Java源码-0x05-宏定义"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x05-宏定义</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" title="Java源码-AQS"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-AQS</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" title="Java源码-ArrayBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-ArrayBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-COW/" title="Java源码-COW"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-COW</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" title="Java源码-LinkedBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-LinkedBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" title="Java源码-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Selector</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" title="Java源码-SynchronousQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-SynchronousQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-Thread/" title="Java源码-Thread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Thread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" title="Java源码-ThreadPoolExecutor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-ThreadPoolExecutor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/04/Java%E6%BA%90%E7%A0%81-Timer/" title="Java源码-Timer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Timer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-synchronized/" title="Java源码-synchronized"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-synchronized</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java源码-0x02-Object</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石</p>
+<ul>
+<li><p>注定该类的结构不可能复杂，甚至是最简单的</p>
+</li>
+<li><p>涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂</p>
+</li>
+</ul>
+<img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709800139.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>native方法</p>
+<ul>
+<li><p><a href="#2">getClass</a></p>
+</li>
+<li><p><a href="#3">hashCode</a></p>
+</li>
+<li><p><a href="#4">clone</a></p>
+</li>
+<li><p><a href="#5">notify</a></p>
+</li>
+<li><p><a href="#6">notifyAll</a></p>
+</li>
+<li><p><a href="#7">wait</a></p>
+</li>
+</ul>
+<p>需要研究的就是上述几个方法，都是native方法，既然想使用native方法，就必然要在链接的时候找到对应方法的实现，那么无外乎以下几种情况</p>
+<ul>
+<li><p>native方法写在jdk源码中，一起编译</p>
+</li>
+<li><p>native方法单独写的，编译成库文件</p>
+<ul>
+<li><p>从库文件类型角度分为</p>
+<ul>
+<li><p>静态库</p>
+</li>
+<li><p>动态库</p>
+</li>
+</ul>
+</li>
+<li><p>从开发角度分为</p>
+<ul>
+<li><p>jdk源码编写好的一份</p>
+</li>
+<li><p>我们自己开发的</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>首先这个native方法肯定不是我们开发的，所以是伴随着jdk源码提供的，那么既然都放在源码文件里面了，肯定不会把这个编译成动态库的，毕竟太影响性能了。那么是否有可能把源码编译成静态库来链接呢，我想正常情况下做项目都不会这样选择的。</p>
+<p>所以初步的结论是</p>
+<ul>
+<li><p>openjdk提供了Object类中这几个native方法的实现</p>
+</li>
+<li><p>因为Object是基类，所以这些方法一定会在jvm启动的时候就指定好内存地址，不然对象实例没法调用</p>
+</li>
+</ul>
+<h3 id="1-时机"><a href="#1-时机" class="headerlink" title="1 时机"></a>1 时机</h3><img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709910160.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>在jvm启动的过程中，会将Object类需要的几个native方法注册到klass对象中</p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>声明位置</th>
+<th>实现位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getClass</td>
+<td>java_lang_Object.h</td>
+<td>Object.c</td>
+</tr>
+<tr>
+<td>hashCode</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_IHashCode</td>
+</tr>
+<tr>
+<td>clone</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_Clone</td>
+</tr>
+<tr>
+<td>notify</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_MonitorNotify</td>
+</tr>
+<tr>
+<td>notifyAll</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_MonitorNotifyAll</td>
+</tr>
+<tr>
+<td>wait</td>
+<td>java_lang_Object.h</td>
+<td>绑定jvm.h的JVM_MonitorWait</td>
+</tr>
+</tbody></table>
+<p>下面就跟进这几个方法看看具体的实现</p>
+<h3 id="2-getClass方法"><a href="#2-getClass方法" class="headerlink" title="2 getClass方法"></a><a id="2">2 getClass方法</a></h3><h3 id="3-hashCode方法"><a href="#3-hashCode方法" class="headerlink" title="3 hashCode方法"></a><a id="3">3 hashCode方法</a></h3><h4 id="3-1-JVM-IHashCode"><a href="#3-1-JVM-IHashCode" class="headerlink" title="3.1 JVM_IHashCode"></a>3.1 JVM_IHashCode</h4><p>java对象的hashcode值是直接或者间接存储在对象头的markword中的，并且还会跟不同锁状态有直接关联，甚至在偏向锁的场景下还会引起锁膨胀升级</p>
+<p>关于markword请看<a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="Java源码-0x03-MarkWord">Java源码-0x03-MarkWord</a></p>
+<p>文件<code>src/hotspot/share/prims/jvm.cpp</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Object的hashCode方法实现</span><br><span class="hljs-comment"> *   - handle是Object对象</span><br><span class="hljs-comment"> */</span><br><span class="hljs-built_in">JVM_ENTRY</span>(jint, <span class="hljs-built_in">JVM_IHashCode</span>(JNIEnv* env, jobject handle))<br>  <span class="hljs-built_in">JVMWrapper</span>(<span class="hljs-string">&quot;JVM_IHashCode&quot;</span>);<br>  <span class="hljs-comment">// as implemented in the classic virtual machine; return 0 if object is NULL</span><br>  <span class="hljs-keyword">return</span> handle == <span class="hljs-literal">NULL</span> ? <span class="hljs-number">0</span> : ObjectSynchronizer::<span class="hljs-built_in">FastHashCode</span> (THREAD, JNIHandles::<span class="hljs-built_in">resolve_non_null</span>(handle)) ;<br>JVM_END<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-2-hashcode存储"><a href="#3-2-hashcode存储" class="headerlink" title="3.2 hashcode存储"></a>3.2 hashcode存储</h4><img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709952617.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>以64位系统为例，hashcode最多31位，上图可以看出</p>
+<ul>
+<li><p>无锁状态下，hashcode记录在markword的位[38…8]上</p>
+</li>
+<li><p>偏向锁状态下，没有空间记录hashcode，换言之如果某个对象被加了偏向锁</p>
+<ul>
+<li><p>要么撤销偏向锁退化到无锁，在markword上记录hashcode</p>
+</li>
+<li><p>要么撤销偏向锁膨胀到轻量级锁，甚至重量级锁，hashcode记录在彼时对应的位置</p>
+</li>
+</ul>
+</li>
+<li><p>轻量级锁状态下，hashcode记录在栈中，在markword中用指针引用</p>
+</li>
+<li><p>重量级锁状态下，hashcode记录在堆中，在markword中用指针引用</p>
+</li>
+<li><p>被标记为GC的状态，hashcode已经没有记录的意义</p>
+</li>
+</ul>
+<h4 id="3-3-偏向锁撤销"><a href="#3-3-偏向锁撤销" class="headerlink" title="3.3 偏向锁撤销"></a>3.3 偏向锁撤销</h4><p>如果开启了<code>-XX:+UseBiasedLocking</code>偏向锁，因为在偏向锁状态下没有空间记录hashcode，所以要关闭偏向锁状态位</p>
+<p>也就是要把markword的第3位置为0，此时低3位就是<code>001</code>就是无锁状态</p>
+<p>偏向锁的有关方法请看<a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="Java源码-0x04-biasedLocking">Java源码-0x04-biasedLocking</a></p>
+<h4 id="3-4-hashcode算法"><a href="#3-4-hashcode算法" class="headerlink" title="3.4 hashcode算法"></a>3.4 hashcode算法</h4><p>hashcode的算法策略可以通过jvm启动参数指定</p>
+<img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957390.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>比如，指定<code>-XX:+UnlockExperimentalVMOptions -XX:hashCode=1</code></p>
+<img src="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/1709957532.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>文件<code>src/hotspot/share/runtime/synchronizer.cpp</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * hashcode的算法实现</span><br><span class="hljs-comment"> * 提供了6种算法策略</span><br><span class="hljs-comment"> *   - 算法0 随机数</span><br><span class="hljs-comment"> *   - 算法1 内存地址+1个随机数-&gt;随机数</span><br><span class="hljs-comment"> *   - 算法2 固定值1</span><br><span class="hljs-comment"> *   - 算法3 自增序列</span><br><span class="hljs-comment"> *   - 算法4 内存地址</span><br><span class="hljs-comment"> *   - 算法5 当前线程有关的1个随机数+3个固定常数-&gt;随机数</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">intptr_t</span> <span class="hljs-title">get_next_hash</span><span class="hljs-params">(Thread* self, oop obj)</span> </span>&#123;<br>  <span class="hljs-type">intptr_t</span> value = <span class="hljs-number">0</span>;<br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * jvm的hashcode算法策略默认是5</span><br><span class="hljs-comment">   * 通过启动参数可以指定 -XX:+UnlockExperimentalVMOptions -XX:hashCode=0</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">0</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">1</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">2</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">3</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (hashCode == <span class="hljs-number">4</span>) &#123;<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>  &#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-1-算法0"><a href="#3-4-1-算法0" class="headerlink" title="3.4.1 算法0"></a>3.4.1 算法0</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 随机数</span><br>value = os::<span class="hljs-built_in">random</span>();<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-2-算法1"><a href="#3-4-2-算法1" class="headerlink" title="3.4.2 算法1"></a>3.4.2 算法1</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 内存地址和随机数计算出来的随机值</span><br><span class="hljs-type">intptr_t</span> addr_bits = <span class="hljs-built_in">cast_from_oop</span>&lt;<span class="hljs-type">intptr_t</span>&gt;(obj) &gt;&gt; <span class="hljs-number">3</span>;<br>value = addr_bits ^ (addr_bits &gt;&gt; <span class="hljs-number">5</span>) ^ GVars.stw_random;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-3-算法2"><a href="#3-4-3-算法2" class="headerlink" title="3.4.3 算法2"></a>3.4.3 算法2</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 固定值1</span><br>value = <span class="hljs-number">1</span>;            <span class="hljs-comment">// for sensitivity testing</span><br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-4-算法3"><a href="#3-4-4-算法3" class="headerlink" title="3.4.4 算法3"></a>3.4.4 算法3</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 自增序列</span><br>value = ++GVars.hc_sequence;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-5-算法4"><a href="#3-4-5-算法4" class="headerlink" title="3.4.5 算法4"></a>3.4.5 算法4</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 内存地址</span><br>value = <span class="hljs-built_in">cast_from_oop</span>&lt;<span class="hljs-type">intptr_t</span>&gt;(obj);<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-6-算法5"><a href="#3-4-6-算法5" class="headerlink" title="3.4.6 算法5"></a>3.4.6 算法5</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// Marsaglia&#x27;s xor-shift scheme with thread-specific state</span><br><span class="hljs-comment">// This is probably the best overall implementation -- we&#x27;ll</span><br><span class="hljs-comment">// likely make this the default in future releases.</span><br><span class="hljs-comment">// 线程相关的1个随机值+3个常数 xor-shift算法计算出来的随机值</span><br>  <span class="hljs-type">unsigned</span> t = self-&gt;_hashStateX;<br>  t ^= (t &lt;&lt; <span class="hljs-number">11</span>);<br>  self-&gt;_hashStateX = self-&gt;_hashStateY;<br>  self-&gt;_hashStateY = self-&gt;_hashStateZ;<br>  self-&gt;_hashStateZ = self-&gt;_hashStateW;<br>  <span class="hljs-type">unsigned</span> v = self-&gt;_hashStateW;<br>  v = (v ^ (v &gt;&gt; <span class="hljs-number">19</span>)) ^ (t ^ (t &gt;&gt; <span class="hljs-number">8</span>));<br>  self-&gt;_hashStateW = v;<br>  value = v;<br></code></pre></td></tr></table></figure>
+
+<p>Thread类中的这几个成员的赋值在构造方法中可以看到</p>
+<ul>
+<li><p>_hashStateX</p>
+</li>
+<li><p>_hashStateY</p>
+</li>
+<li><p>_hashStateZ</p>
+</li>
+<li><p>_hashStateW</p>
+</li>
+</ul>
+<p>文件<code>src/hotspot/share/runtime/thread.cpp</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 下面这4个成员将来用来计算hashcode值的</span><br><span class="hljs-comment"> * jvm默认的hashcode计算方式用的就是xor-shift算法</span><br><span class="hljs-comment"> * 本质就是1个随机数+3个常数-&gt;计算出一个随机数</span><br><span class="hljs-comment"> */</span><br>_hashStateX = os::<span class="hljs-built_in">random</span>();<br>_hashStateY = <span class="hljs-number">842502087</span>;<br>_hashStateZ = <span class="hljs-number">0x8767</span>;    <span class="hljs-comment">// (int)(3579807591LL &amp; 0xffff) ;</span><br>_hashStateW = <span class="hljs-number">273326509</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-clone方法"><a href="#4-clone方法" class="headerlink" title="4 clone方法"></a><a id="4">4 clone方法</a></h3><h3 id="5-notify方法"><a href="#5-notify方法" class="headerlink" title="5 notify方法"></a><a id="5">5 notify方法</a></h3><h3 id="6-notifyAll方法"><a href="#6-notifyAll方法" class="headerlink" title="6 notifyAll方法"></a><a id="6">6 notifyAll方法</a></h3><h3 id="7-wait方法"><a href="#7-wait方法" class="headerlink" title="7 wait方法"></a><a id="7">7 wait方法</a></h3>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java-15/" class="print-no-link">#Java@15</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java源码-0x02-Object</div>
+      <div>https://bannirui.github.io/2024/03/07/Java源码-0x02-Object/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/03/08/IDEA%E8%BF%9C%E7%A8%8Bvim%E6%8F%92%E4%BB%B6%E5%BC%82%E5%B8%B8%E8%AE%B0%E5%BD%95/" title="IDEA远程vim插件异常记录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">IDEA远程vim插件异常记录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="Java源码-0x01-源码阅读清单">
+                        <span class="hidden-mobile">Java源码-0x01-源码阅读清单</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'a752701ba676c8abc53107525dbbee32'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

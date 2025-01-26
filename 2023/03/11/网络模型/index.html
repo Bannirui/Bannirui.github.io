@@ -1,0 +1,875 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="同步IO-应用程序自己去解决数据读取的过程，应用过程既关注过程，也关注结果 异步IO-应用程序向内核发送数据读取的需求，过程由os操作，应用程序只关注结果，数据由其他线程负责投递 因此IO是同步还是异步，一定是由内核开放的api决定的，最终应用程序通过系统调用决定使用哪种方式，如果内核不支持异步，应用代码写出花来也没办法异步 阻塞IO-应用程序操作socket的accept、read、write这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络模型">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="同步IO-应用程序自己去解决数据读取的过程，应用过程既关注过程，也关注结果 异步IO-应用程序向内核发送数据读取的需求，过程由os操作，应用程序只关注结果，数据由其他线程负责投递 因此IO是同步还是异步，一定是由内核开放的api决定的，最终应用程序通过系统调用决定使用哪种方式，如果内核不支持异步，应用代码写出花来也没办法异步 阻塞IO-应用程序操作socket的accept、read、write这">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-11T06:24:38.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.663Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="线程模型">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>网络模型 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="网络模型"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-11 14:24" pubdate>
+          2023年3月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="网络IO"
+        id="heading-8cf9a49511c5d639433ebc4cf43ab681" role="tab" data-toggle="collapse" href="#collapse-8cf9a49511c5d639433ebc4cf43ab681"
+        aria-expanded="true"
+      >
+        网络IO
+        <span class="list-group-count">(4)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-8cf9a49511c5d639433ebc4cf43ab681"
+           role="tabpanel" aria-labelledby="heading-8cf9a49511c5d639433ebc4cf43ab681">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/03/11/KQueue/" title="KQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">KQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Reactor/" title="Reactor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Reactor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/TCP/" title="TCP"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">TCP</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" title="网络模型"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">网络模型</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">网络模型</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>同步</strong>IO-应用程序自己去解决数据读取的过程，应用过程既关注过程，也关注结果</p>
+<p><strong>异步</strong>IO-应用程序向内核发送数据读取的需求，过程由os操作，应用程序只关注结果，数据由其他线程负责投递</p>
+<p>因此IO是同步还是异步，一定是由内核开放的api决定的，最终应用程序通过系统调用决定使用哪种方式，如果内核不支持异步，应用代码写出花来也没办法异步</p>
+<p><strong>阻塞</strong>IO-应用程序操作socket的accept、read、write这些过程存在阻塞点</p>
+<p><strong>非阻塞</strong>IO-应用程序可以不需要阻塞在上面的步骤上</p>
+<p>显而易见，是否阻塞也一定是内核支持的，比如<code>socket.accpet()</code>对应的某个内核实现就是阻塞的，不支持非阻塞，那么应用程序也只能阻塞</p>
+<p>Java中</p>
+<p>BIO就是同步阻塞IO</p>
+<p>NIO就是同步非阻塞IO</p>
+<h2 id="1-BIO"><a href="#1-BIO" class="headerlink" title="1 BIO"></a>1 BIO</h2><h3 id="1-1-一个线程版本"><a href="#1-1-一个线程版本" class="headerlink" title="1.1 一个线程版本"></a>1.1 一个线程版本</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model;<br><br><span class="hljs-keyword">import</span> java.io.BufferedReader;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.InputStream;<br><span class="hljs-keyword">import</span> java.io.InputStreamReader;<br><span class="hljs-keyword">import</span> java.net.ServerSocket;<br><span class="hljs-keyword">import</span> java.net.Socket;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;功能实现就是获取请求的连接，获取该连接发送的消息，开展业务逻辑&lt;/p&gt;</span><br><span class="hljs-comment"> * &lt;p&gt;涉及到的阻塞操作是&lt;tt&gt;accept&lt;/tt&gt;和&lt;tt&gt;read&lt;/tt&gt;&lt;/p&gt;</span><br><span class="hljs-comment"> * &lt;p&gt;在整个轮询中，假使获取到了一个&lt;tt&gt;socket&lt;/tt&gt;之后，后续的操作整个被阻塞住，并且与此同时有源源不断的连接进来，但是因为main线程一直阻塞，导致请求无法处理&lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/20</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BIOModelByMainThread</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">PORT</span> <span class="hljs-operator">=</span> <span class="hljs-number">9991</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-comment">// 在os底层做了bind和listen</span><br>        <span class="hljs-type">ServerSocket</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerSocket</span>(PORT);<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 第1个阻塞点 拿到连接的socket</span><br><span class="hljs-comment">             */</span><br>            <span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> server.accept();<br>            <span class="hljs-type">InputStream</span> <span class="hljs-variable">in</span> <span class="hljs-operator">=</span> socket.getInputStream();<br>            <span class="hljs-type">BufferedReader</span> <span class="hljs-variable">reader</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedReader</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InputStreamReader</span>(in));<br>            <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>                <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 第2个阻塞点</span><br><span class="hljs-comment">                 */</span><br>                <span class="hljs-type">String</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> reader.readLine();<br>                <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/21 业务逻辑</span><br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个版本的问题很明显，因为阻塞导致请求无法被处理，那么正常情况下可能就会朝着多线程的方向发展，为每个请求连接分配一个线程</p>
+<h3 id="1-2-多线程版本"><a href="#1-2-多线程版本" class="headerlink" title="1.2 多线程版本"></a>1.2 多线程版本</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model;<br><br><span class="hljs-keyword">import</span> java.io.BufferedReader;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.InputStream;<br><span class="hljs-keyword">import</span> java.io.InputStreamReader;<br><span class="hljs-keyword">import</span> java.net.ServerSocket;<br><span class="hljs-keyword">import</span> java.net.Socket;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;多线程&lt;/p&gt;</span><br><span class="hljs-comment"> * &lt;p&gt;为每个连接都创建一个线程 每个线程中的&lt;tt&gt;read&lt;/tt&gt;操作是阻塞点&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;假使读操作这样的一个阻塞近乎于不阻塞，也就是一个线程创建后，拿到cpu执行时间片后可以立马执行，执行完后进行线程销毁&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;假使读操作近乎于无限阻塞，就是一个线程创建后，一直被阻塞&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * 上面是两个极限情况，实际情况即使没那么糟糕也明显存在的问题就是&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;线程创建和销毁都是比较重的os开销&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;线程创建过多占用内存资源很大&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;线程之间上下文切换占用os资源&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * &lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/21</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BIOModelMultipleThread</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">PORT</span> <span class="hljs-operator">=</span> <span class="hljs-number">9991</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">ServerSocket</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerSocket</span>(PORT);<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> server.accept();<br>            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(() -&gt; &#123;<br>                <span class="hljs-keyword">try</span> &#123;<br>                    <span class="hljs-type">InputStream</span> <span class="hljs-variable">in</span> <span class="hljs-operator">=</span> socket.getInputStream();<br>                    <span class="hljs-type">BufferedReader</span> <span class="hljs-variable">reader</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedReader</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InputStreamReader</span>(in));<br>                    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>                        <span class="hljs-type">String</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> reader.readLine();<br>                        <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/21 业务逻辑</span><br>                    &#125;<br>                &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>                &#125;<br>            &#125;).start();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>有了多线程版本的问题后，可能会想着是不是可以用线程池实现，解决繁重的线程创建和销毁的问题，让线程得以复用</p>
+<h3 id="1-3-线程池版本"><a href="#1-3-线程池版本" class="headerlink" title="1.3 线程池版本"></a>1.3 线程池版本</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model;<br><br><span class="hljs-keyword">import</span> java.io.BufferedReader;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.InputStream;<br><span class="hljs-keyword">import</span> java.io.InputStreamReader;<br><span class="hljs-keyword">import</span> java.net.ServerSocket;<br><span class="hljs-keyword">import</span> java.net.Socket;<br><span class="hljs-keyword">import</span> java.util.concurrent.*;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;多线程&lt;/p&gt;</span><br><span class="hljs-comment"> * &lt;p&gt;为每个连接都创建一个线程 每个线程中的&lt;tt&gt;read&lt;/tt&gt;操作是阻塞点&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;假使读操作这样的一个阻塞近乎于不阻塞，也就是一个线程创建后，拿到cpu执行时间片后可以立马执行，执行完后进行线程销毁&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;假使读操作近乎于无限阻塞，就是一个线程创建后，一直被阻塞&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * 上面是两个极限情况，实际情况即使没那么糟糕也明显存在的问题就是&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;线程创建和销毁都是比较重的os开销&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;线程创建过多占用内存资源很大&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;线程之间上下文切换占用os资源&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * &lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/21</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BIOModelByThreadPool</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">PORT</span> <span class="hljs-operator">=</span> <span class="hljs-number">9991</span>;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ExecutorService</span> <span class="hljs-variable">myTP</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadPoolExecutor</span>(<span class="hljs-number">2</span>, <span class="hljs-number">5</span>, <span class="hljs-number">60L</span>, TimeUnit.SECONDS, <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedBlockingQueue</span>&lt;&gt;(Integer.MAX_VALUE));<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 任务对象</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyTask</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>        <span class="hljs-keyword">private</span> Socket socket;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">MyTask</span><span class="hljs-params">(Socket socket)</span> &#123;<br>            <span class="hljs-built_in">this</span>.socket = socket;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-type">InputStream</span> <span class="hljs-variable">in</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>            <span class="hljs-keyword">try</span> &#123;<br>                in = <span class="hljs-built_in">this</span>.socket.getInputStream();<br>                <span class="hljs-type">BufferedReader</span> <span class="hljs-variable">reader</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedReader</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InputStreamReader</span>(in));<br>                <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>                    <span class="hljs-type">String</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> reader.readLine();<br>                    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/21 业务逻辑</span><br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">ServerSocket</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerSocket</span>(PORT);<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> server.accept();<br>            <span class="hljs-comment">// 封装成任务丢进线程池</span><br>            myTP.submit(<span class="hljs-keyword">new</span> <span class="hljs-title class_">MyTask</span>(socket));<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>即使是多线程版本，依然存在不容忽视的问题</p>
+<ol>
+<li>线程池资源</li>
+<li>任务存在阻塞点，单个任务存在执行效率问题</li>
+<li>任务一直阻塞的话，引发线程池任务队列容量设置问题，更甚触发线程池拒绝策略或者直接OOM</li>
+</ol>
+<p>其上，os内核提供的系统调用只支持阻塞式，业务代码再怎么写都是存在着或多或少的问题和弊端，其根本原因就是内核的阻塞调用</p>
+<p>换言之，想要改变这样的编码，就得需要内核做出相应的支持</p>
+<h2 id="2-NIO"><a href="#2-NIO" class="headerlink" title="2 NIO"></a>2 NIO</h2><h3 id="2-1-随便查询几个方法的手册"><a href="#2-1-随便查询几个方法的手册" class="headerlink" title="2.1 随便查询几个方法的手册"></a>2.1 随便查询几个方法的手册</h3><h4 id="2-1-1-socket"><a href="#2-1-1-socket" class="headerlink" title="2.1.1 socket"></a>2.1.1 socket</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">man 2 socket<br>NAME<br>     socket -- create an endpoint <span class="hljs-keyword">for</span> communication<br><br>SYNOPSIS<br>     <span class="hljs-comment">#include &lt;sys/socket.h&gt;</span><br><br>     int<br>     socket(int domain, int <span class="hljs-built_in">type</span>, int protocol);<br><br>RETURN VALUES<br>     A -1 is returned <span class="hljs-keyword">if</span> an error occurs, otherwise the <span class="hljs-built_in">return</span> value is a descriptor referencing the socket.<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-1-2-bind"><a href="#2-1-2-bind" class="headerlink" title="2.1.2 bind"></a>2.1.2 bind</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs bash">man 2 <span class="hljs-built_in">bind</span><br>NAME<br>     <span class="hljs-built_in">bind</span> -- <span class="hljs-built_in">bind</span> a name to a socket<br><br>SYNOPSIS<br>     <span class="hljs-comment">#include &lt;sys/socket.h&gt;</span><br><br>     int<br>     <span class="hljs-built_in">bind</span>(int socket, const struct sockaddr *address, socklen_t address_len);<br><br>DESCRIPTION<br>     <span class="hljs-built_in">bind</span>() assigns a name to an unnamed socket.  When a socket is created with socket(2) it exists <span class="hljs-keyword">in</span> a name space<br>     (address family) but has no name assigned.  <span class="hljs-built_in">bind</span>() requests that address be assigned to the socket.<br><br>NOTES<br>     Binding a name <span class="hljs-keyword">in</span> the UNIX domain creates a socket <span class="hljs-keyword">in</span> the file system that must be deleted by the <span class="hljs-built_in">caller</span> when it is no<br>     longer needed (using <span class="hljs-built_in">unlink</span>(2)).<br><br>     The rules used <span class="hljs-keyword">in</span> name binding vary between communication domains.  Consult the manual entries <span class="hljs-keyword">in</span> section 4 <span class="hljs-keyword">for</span><br>     detailed information.<br><br>RETURN VALUES<br>     Upon successful completion, a value of 0 is returned.  Otherwise, a value of -1 is returned and the global <span class="hljs-built_in">integer</span><br>     variable errno is <span class="hljs-built_in">set</span> to indicate the error.<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-1-3-listen"><a href="#2-1-3-listen" class="headerlink" title="2.1.3 listen"></a>2.1.3 listen</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs bash">man 2 listen<br>LISTEN(2)                   BSD System Calls Manual                  LISTEN(2)<br><br>NAME<br>     listen -- listen <span class="hljs-keyword">for</span> connections on a socket<br><br>SYNOPSIS<br>     <span class="hljs-comment">#include &lt;sys/socket.h&gt;</span><br><br>     int<br>     listen(int socket, int backlog);<br><br>DESCRIPTION<br>     Creation of socket-based connections requires several operations.  First, a socket is created with socket(2).  Next, a<br>     willingness to accept incoming connections and a queue <span class="hljs-built_in">limit</span> <span class="hljs-keyword">for</span> incoming connections are specified with listen().<br>     Finally, the connections are accepted with accept(2).  The listen() call applies only to sockets of <span class="hljs-built_in">type</span> SOCK_STREAM.<br><br>     The backlog parameter defines the maximum length <span class="hljs-keyword">for</span> the queue of pending connections.  If a connection request<br>     arrives with the queue full, the client may receive an error with an indication of ECONNREFUSED.  Alternatively, <span class="hljs-keyword">if</span><br>     the underlying protocol supports retransmission, the request may be ignored so that retries may succeed.<br><br>RETURN VALUES<br>     The listen() <span class="hljs-keyword">function</span> returns the value 0 <span class="hljs-keyword">if</span> successful; otherwise the value -1 is returned and the global variable<br>     errno is <span class="hljs-built_in">set</span> to indicate the error.<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-1-4-accept"><a href="#2-1-4-accept" class="headerlink" title="2.1.4 accept"></a>2.1.4 accept</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs bash">man 2 accept<br>ACCEPT(2)                   BSD System Calls Manual                  ACCEPT(2)<br><br>NAME<br>     accept -- accept a connection on a socket<br><br>SYNOPSIS<br>     <span class="hljs-comment">#include &lt;sys/socket.h&gt;</span><br><br>     int<br>     accept(int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);<br><br>DESCRIPTION<br>     The argument socket is a socket that has been created with socket(2), bound to an address with <span class="hljs-built_in">bind</span>(2), and is listen-<br>     ing <span class="hljs-keyword">for</span> connections after a listen(2).  accept() extracts the first connection request on the queue of pending connec-<br>     tions, creates a new socket with the same properties of socket, and allocates a new file descriptor <span class="hljs-keyword">for</span> the socket.<br>     If no pending connections are present on the queue, and the socket is not marked as non-blocking, accept() blocks the<br>     <span class="hljs-built_in">caller</span> until a connection is present.  If the socket is marked non-blocking and no pending connections are present on<br>     the queue, accept() returns an error as described below.  The accepted socket may not be used to accept more connec-<br>     tions.  The original socket socket, remains open.<br><br>     The argument address is a result parameter that is filled <span class="hljs-keyword">in</span> with the address of the connecting entity, as known to<br>     the communications layer.  The exact format of the address parameter is determined by the domain <span class="hljs-keyword">in</span> <span class="hljs-built_in">which</span> the communi-<br>     cation is occurring.  The address_len is a value-result parameter; it should initially contain the amount of space<br>     pointed to by address; on <span class="hljs-built_in">return</span> it will contain the actual length (<span class="hljs-keyword">in</span> bytes) of the address returned.  This call is<br>     used with connection-based socket types, currently with SOCK_STREAM.<br><br>     It is possible to select(2) a socket <span class="hljs-keyword">for</span> the purposes of doing an accept() by selecting it <span class="hljs-keyword">for</span> <span class="hljs-built_in">read</span>.<br><br>     For certain protocols <span class="hljs-built_in">which</span> require an explicit confirmation, such as ISO or DATAKIT, accept() can be thought of as<br>     merely dequeuing the next connection request and not implying confirmation.  Confirmation can be implied by a normal<br>     <span class="hljs-built_in">read</span> or write on the new file descriptor, and rejection can be implied by closing the new socket.<br><br>     One can obtain user connection request data without confirming the connection by issuing a recvmsg(2) call with an<br>     msg_iovlen of 0 and a non-zero msg_controllen, or by issuing a getsockopt(2) request.  Similarly, one can provide user<br>     connection rejection information by issuing a sendmsg(2) call with providing only the control information, or by call-<br>     ing setsockopt(2).<br><br>RETURN VALUES<br>     The call returns -1 on error and the global variable errno is <span class="hljs-built_in">set</span> to indicate the error.  If it succeeds, it returns a<br>     non-negative <span class="hljs-built_in">integer</span> that is a descriptor <span class="hljs-keyword">for</span> the accepted socket.<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-1-5-recv"><a href="#2-1-5-recv" class="headerlink" title="2.1.5 recv"></a>2.1.5 recv</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash">man 2 recv<br>RECV(2)                     BSD System Calls Manual                    RECV(2)<br><br>NAME<br>     recv, recvfrom, recvmsg -- receive a message from a socket<br><br>LIBRARY<br>     Standard C Library (libc, -lc)<br><br>SYNOPSIS<br>     <span class="hljs-comment">#include &lt;sys/socket.h&gt;</span><br><br>     ssize_t<br>     recv(int socket, void *buffer, size_t length, int flags);<br><br>     ssize_t<br>     recvfrom(int socket, void *restrict buffer, size_t length, int flags, struct sockaddr *restrict address,<br>         socklen_t *restrict address_len);<br><br>     ssize_t<br>     recvmsg(int socket, struct msghdr *message, int flags);<br>     <br>RETURN VALUES<br>     These calls <span class="hljs-built_in">return</span> the number of bytes received, or -1 <span class="hljs-keyword">if</span> an error occurred.<br><br>     For TCP sockets, the <span class="hljs-built_in">return</span> value 0 means the peer has closed its half side of the connection.<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-1-6-send"><a href="#2-1-6-send" class="headerlink" title="2.1.6 send"></a>2.1.6 send</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs bash">man 2 send<br>SEND(2)                     BSD System Calls Manual                    SEND(2)<br><br>NAME<br>     send, sendmsg, sendto -- send a message from a socket<br><br>SYNOPSIS<br>     <span class="hljs-comment">#include &lt;sys/socket.h&gt;</span><br><br>     ssize_t<br>     send(int socket, const void *buffer, size_t length, int flags);<br><br>     ssize_t<br>     sendmsg(int socket, const struct msghdr *message, int flags);<br><br>     ssize_t<br>     sendto(int socket, const void *buffer, size_t length, int flags, const struct sockaddr *dest_addr,<br>         socklen_t dest_len);<br>         <br>RETURN VALUES<br>     Upon successful completion, the number of bytes <span class="hljs-built_in">which</span> were sent is returned.  Otherwise, -1 is returned and the global<br>     variable errno is <span class="hljs-built_in">set</span> to indicate the error.<br></code></pre></td></tr></table></figure>
+
+<p>凡此种种，也就意味着在java层面的代码最终执行到os sc的时候不需要阻塞等待结果返回，而是一定可以拿到一个有明确语义的返回值，java再根据语义封装成类对象，用户代码根据一定规则判断是否获取到连接对象或者是否可读可写之类的</p>
+<h3 id="2-2-NIO单路版本"><a href="#2-2-NIO单路版本" class="headerlink" title="2.2 NIO单路版本"></a>2.2 NIO单路版本</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model;<br><br><span class="hljs-keyword">import</span> java.io.BufferedReader;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.InputStream;<br><span class="hljs-keyword">import</span> java.io.InputStreamReader;<br><span class="hljs-keyword">import</span> java.net.InetSocketAddress;<br><span class="hljs-keyword">import</span> java.net.ServerSocket;<br><span class="hljs-keyword">import</span> java.net.Socket;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.util.ArrayList;<br><span class="hljs-keyword">import</span> java.util.List;<br><span class="hljs-keyword">import</span> java.util.Objects;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;NIO非阻塞下 单路模型&lt;/p&gt;</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * &lt;p&gt;逆向理解多路复用 当前连接的获取不存在阻塞 也就是说可以源源不断获取大量的连接 但是连接的读写状态我们并不知道</span><br><span class="hljs-comment"> * &lt;p&gt;现在有个集合 里面全是socket&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;用户层可以轮询挨个向os发送sc 问它这个socket的状态 拿到读写状态后进行操作 这个时候发生了一次系统调用 想知道整个集合的socket状态就得发生N次系统调用&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;os提供一个函数 入参是集合 我们一次性将所有socket发给os os告诉用户这些连接的读写状态 发生一次系统调用&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;&lt;/p&gt;</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * &lt;p&gt;如上的这种方式就叫多路复用 实现三剑客&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;select&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;poll&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;epoll&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;&lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/21</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NIOModelSingle</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> List&lt;Socket&gt; SOCKETS = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">ServerSocketChannel</span> <span class="hljs-variable">channel</span> <span class="hljs-operator">=</span> ServerSocketChannel.open();<br>        <span class="hljs-comment">// 非阻塞模式</span><br>        channel.configureBlocking(<span class="hljs-literal">false</span>);<br>        <span class="hljs-type">ServerSocket</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> channel.socket();<br>        server.bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(<span class="hljs-number">9090</span>));<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> server.accept();<br>            <span class="hljs-keyword">if</span> (Objects.isNull(socket)) <span class="hljs-keyword">continue</span>;<br>            SOCKETS.add(socket);<br>            <span class="hljs-keyword">for</span> (Socket s : SOCKETS) &#123;<br>                <span class="hljs-type">InputStream</span> <span class="hljs-variable">in</span> <span class="hljs-operator">=</span> s.getInputStream();<br>                <span class="hljs-type">BufferedReader</span> <span class="hljs-variable">reader</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedReader</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InputStreamReader</span>(in));<br>                <span class="hljs-type">String</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> reader.readLine();<br>                <span class="hljs-keyword">if</span>(Objects.isNull(msg)) <span class="hljs-keyword">continue</span>;<br>                <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/21 业务逻辑</span><br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-NIO多路复用版本"><a href="#2-3-NIO多路复用版本" class="headerlink" title="2.3 NIO多路复用版本"></a>2.3 NIO多路复用版本</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model;<br><br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.net.InetSocketAddress;<br><span class="hljs-keyword">import</span> java.net.ServerSocket;<br><span class="hljs-keyword">import</span> java.net.Socket;<br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.util.ArrayList;<br><span class="hljs-keyword">import</span> java.util.Iterator;<br><span class="hljs-keyword">import</span> java.util.List;<br><span class="hljs-keyword">import</span> java.util.Set;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;NIO非阻塞下 多路复用模型&lt;/p&gt;</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/21</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NIOModelMultiple</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> List&lt;Socket&gt; SOCKETS = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">Selector</span> <span class="hljs-variable">selector</span> <span class="hljs-operator">=</span> Selector.open();<br>        <span class="hljs-type">ServerSocketChannel</span> <span class="hljs-variable">channel</span> <span class="hljs-operator">=</span> ServerSocketChannel.open();<br>        <span class="hljs-comment">// 非阻塞模式</span><br>        channel.configureBlocking(<span class="hljs-literal">false</span>);<br>        <span class="hljs-type">ServerSocket</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> channel.socket();<br>        server.bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(<span class="hljs-number">9090</span>));<br>        channel.register(selector, SelectionKey.OP_ACCEPT);<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            selector.select();<br>            <span class="hljs-comment">// 多路复用器</span><br>            Set&lt;SelectionKey&gt; selectionKeys = selector.selectedKeys();<br>            Iterator&lt;SelectionKey&gt; it = selectionKeys.iterator();<br>            <span class="hljs-keyword">while</span> (it.hasNext()) &#123;<br>                <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> it.next();<br>                it.remove();<br>                <span class="hljs-keyword">if</span> (key.isAcceptable()) &#123;<br>                    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/21</span><br>                &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key.isReadable()) &#123;<br>                    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/21</span><br>                &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key.isWritable()) &#123;<br>                    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/21</span><br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>两个版本的对比，有了多路复用的加持，同样的NIO模式，在应用层上的并发显而易见得到了质的提升</p>
+<p>我的理解，多路复用仅仅是一种os提供的一种减少系统调用的方式，想要真正优雅的使用，还需要对此封装一个实现，比如上面这个Selector就是Java中的实现，对于这样的实现其实就是提供给用户层一个多路复用器</p>
+<p>对于os而言，多路复用就是一个调用实现，不同的OS系统有不同的实现</p>
+<ol>
+<li>Select</li>
+<li>Poll</li>
+<li>EPoll</li>
+<li>KQueue</li>
+</ol>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BD%91%E7%BB%9CIO/" class="category-chain-item">网络IO</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/" class="print-no-link">#线程模型</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>网络模型</div>
+      <div>https://bannirui.github.io/2023/03/11/网络模型/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/11/Reactor/" title="Reactor">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Reactor</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/11/KQueue/" title="KQueue">
+                        <span class="hidden-mobile">KQueue</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '8bef3612e2b90c84ab76b11c204819c8'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

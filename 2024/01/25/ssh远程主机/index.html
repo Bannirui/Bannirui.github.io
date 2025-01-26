@@ -1,0 +1,1064 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 linux主机服务端1.1 sshd安装 查看sshd状态systemctl status sshd     如果没有ssh服务端就进行安装和配置  是否安装过yay -Q |grep openssh  安装yay -Syy openssh  启动systemctl start sshd  开机自启动systemctl enable ssh     1.2 sshd配置因为我不打算登陆root">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh远程主机">
+<meta property="og:url" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="1 linux主机服务端1.1 sshd安装 查看sshd状态systemctl status sshd     如果没有ssh服务端就进行安装和配置  是否安装过yay -Q |grep openssh  安装yay -Syy openssh  启动systemctl start sshd  开机自启动systemctl enable ssh     1.2 sshd配置因为我不打算登陆root">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706148360.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709132597.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706149922.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150411.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150579.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150869.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710417564.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174253.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174824.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175264.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175016.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710408969.png">
+<meta property="article:published_time" content="2024-01-25T01:26:27.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.579Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>ssh远程主机 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ssh远程主机"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-25 09:26" pubdate>
+          2024年1月25日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          859 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Linux"
+        id="heading-edc9f0a5a5d57797bf68e37364743831" role="tab" data-toggle="collapse" href="#collapse-edc9f0a5a5d57797bf68e37364743831"
+        aria-expanded="true"
+      >
+        Linux
+        <span class="list-group-count">(17)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-edc9f0a5a5d57797bf68e37364743831"
+           role="tabpanel" aria-labelledby="heading-edc9f0a5a5d57797bf68e37364743831">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/12/31/ArchLinux%E5%AE%89%E8%A3%85%E8%93%9D%E7%89%99%E6%A8%A1%E5%9D%97/" title="ArchLinux安装蓝牙模块"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ArchLinux安装蓝牙模块</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/" title="ArchLinux环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ArchLinux环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/" title="GParted重分区"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">GParted重分区</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/11/Linux%E5%AE%89%E8%A3%85FreeCAD/" title="Linux安装FreeCAD"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Linux安装FreeCAD</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/03/Linux/Linux%E5%AE%89%E8%A3%85Qt%E7%8E%AF%E5%A2%83/" title="Linux安装Qt环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Linux安装Qt环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Linux/Mac%E7%8E%AF%E5%A2%83/" title="Mac环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Mac环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Linux/Ubuntu%E7%8E%AF%E5%A2%83/" title="Ubuntu环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Ubuntu环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/04/Linux/apt%E5%91%BD%E4%BB%A4/" title="apt命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">apt命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/" title="archlinux编译bochs"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">archlinux编译bochs</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/02/23/archlinux%E7%BC%96%E8%AF%91kvmtool/" title="archlinux编译kvmtool"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">archlinux编译kvmtool</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/24/ffmpeg%E5%B7%A5%E5%85%B7/" title="ffmpeg工具"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ffmpeg工具</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/09/28/Linux/mac%E9%80%9A%E8%BF%87%E7%BD%91%E7%BA%BF%E5%85%B1%E4%BA%ABwifi/" title="mac通过网线共享wifi"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">mac通过网线共享wifi</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/" title="ssh远程主机"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">ssh远程主机</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/09/21/Linux/ssh%E8%BF%9E%E6%8E%A5windows%E7%9A%84wsl/" title="ssh连接到windows的wsl"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ssh连接到windows的wsl</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/25/systemctl%E5%91%BD%E4%BB%A4/" title="systemctl命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">systemctl命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/11/yay%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="yay常用命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">yay常用命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/08/17/Linux/yt-dlp%E4%B8%8B%E8%BD%BD%E5%99%A8%E5%AE%89%E8%A3%85/" title="yt-dlp下载器安装"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">yt-dlp下载器安装</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ssh远程主机</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-linux主机服务端"><a href="#1-linux主机服务端" class="headerlink" title="1 linux主机服务端"></a>1 linux主机服务端</h2><h3 id="1-1-sshd安装"><a href="#1-1-sshd安装" class="headerlink" title="1.1 sshd安装"></a>1.1 sshd安装</h3><ul>
+<li>查看sshd状态<code>systemctl status sshd</code></li>
+</ul>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706147581.png" srcset="/img/loading.gif" lazyload class="">
+
+<ul>
+<li><p>如果没有ssh服务端就进行安装和配置</p>
+<ul>
+<li><p>是否安装过<code>yay -Q |grep openssh</code></p>
+</li>
+<li><p>安装<code>yay -Syy openssh</code></p>
+</li>
+<li><p>启动<code>systemctl start sshd</code></p>
+</li>
+<li><p>开机自启动<code>systemctl enable ssh</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-2-sshd配置"><a href="#1-2-sshd配置" class="headerlink" title="1.2 sshd配置"></a>1.2 sshd配置</h3><p>因为我不打算登陆root用户，所以没有修改配置文件<code>/etc/ssh/sshd-config</code></p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706148360.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>查看当前ssh服务器的ip地址<code>ip addr</code></p>
+<h3 id="1-3-x11转发gui"><a href="#1-3-x11转发gui" class="headerlink" title="1.3 x11转发gui"></a>1.3 x11转发gui</h3><p>简单的ssh可能不足以满足我的需求，我要通过ssh转发gui的数据，所以要配置服务端开启x11转发功能</p>
+<p>文件<code>/etc/ssh/sshd_config</code>放开如下两行注释</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709132597.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="1-4-重启ssh"><a href="#1-4-重启ssh" class="headerlink" title="1.4 重启ssh"></a>1.4 重启ssh</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo systemctl restart ssh<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-5-重启服务器"><a href="#1-5-重启服务器" class="headerlink" title="1.5 重启服务器"></a>1.5 重启服务器</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">reboot<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-mac本地客户端"><a href="#2-mac本地客户端" class="headerlink" title="2 mac本地客户端"></a>2 mac本地客户端</h2><h3 id="2-1-手动连接"><a href="#2-1-手动连接" class="headerlink" title="2.1 手动连接"></a>2.1 手动连接</h3><p>在终端输入<code>ssh 用户名@远程ip -p 22</code>即可，随后按照提示键入远程主机用户密码。</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706149922.png" srcset="/img/loading.gif" lazyload class="">
+
+
+<h3 id="2-2-自动连接"><a href="#2-2-自动连接" class="headerlink" title="2.2 自动连接"></a>2.2 自动连接</h3><p>上面的ssh命令连接方式很不友好，因此用iterm2终端配置</p>
+<ul>
+<li><p>新建一个profile专门给ssh连接archlinux使用</p>
+</li>
+<li><p>指定command为<code>ssh -X 用户名@远程主机ip -p 22</code></p>
+</li>
+<li><p>识别到<code>password:</code>后自动输入用户密码，切记在密码之后加上换行符</p>
+</li>
+</ul>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150411.png" srcset="/img/loading.gif" lazyload class="">
+
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150579.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>至此，便可以直接新建一个终端窗口直连远程主机</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1706150869.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="2-3-ssh配置"><a href="#2-3-ssh配置" class="headerlink" title="2.3 ssh配置"></a>2.3 ssh配置</h3><p>至此还是不够优雅</p>
+<ul>
+<li><p>首先要记录ip地址</p>
+</li>
+<li><p>其次安全操作还要输入密码</p>
+</li>
+</ul>
+<p>所以为了解决这两个问题</p>
+<h4 id="2-3-1-密钥创建和设置"><a href="#2-3-1-密钥创建和设置" class="headerlink" title="2.3.1 密钥创建和设置"></a>2.3.1 密钥创建和设置</h4><p>首先要在本机<code>~/.ssh</code>目录下运行<code>ssh-keygen</code>生成密钥，文件名称我就取名为archlinux，用于mac连接远程archlinux</p>
+<ul>
+<li><p>archlinux 私钥 这个文件放在本地</p>
+</li>
+<li><p>archlinux.pub 公钥 这个文件scp复制到远程archlinux的<code>~/.ssh</code>目录下重命名为authorized_keys</p>
+</li>
+</ul>
+<p>并且还要设置一下远程archlinux的<code>/etc/ssh/sshd_config</code>文件</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710417564.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="2-3-2-config配置"><a href="#2-3-2-config配置" class="headerlink" title="2.3.2 config配置"></a>2.3.2 config配置</h4><p>文件<code>~/.ssh/config</code>文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh">Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-3-3-x11转发配置"><a href="#2-3-3-x11转发配置" class="headerlink" title="2.3.3 x11转发配置"></a>2.3.3 x11转发配置</h4><p>我还要x11的转发配置，因此继续修改config配置</p>
+<p>文件<code>~/.ssh/config</code>文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 远程archlinux 开启x11转发gui</span><br>Host archlinux<br>	HostName 192.168.0.17<br>	User dingrui<br>    <span class="hljs-comment"># 私钥路径</span><br>    <span class="hljs-comment"># ssh dingrui@archlinux</span><br>    <span class="hljs-comment"># 再执行ssh连接的时候就可以免密登陆了</span><br>    IdentityFile ~/.ssh/archlinux<br>    ForwardX11 <span class="hljs-built_in">yes</span><br>    ForwardX11Trusted <span class="hljs-built_in">yes</span><br>    ForwardAgent <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-4-安装XQuartz"><a href="#2-4-安装XQuartz" class="headerlink" title="2.4 安装XQuartz"></a>2.4 安装XQuartz</h3><p><a target="_blank" rel="noopener" href="https://www.xquartz.org/">XQuartz官网</a></p>
+<p>下载安装即可，安装好后会进行重启</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ssh -X dingrui@archlinux<br></code></pre></td></tr></table></figure>
+
+<p>但是有一说一，这个gui做的是真丑，一看就是各种字符或者编解码支持得不够友好</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174253.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="2-5-终端和shell支持x11转发"><a href="#2-5-终端和shell支持x11转发" class="headerlink" title="2.5 终端和shell支持x11转发"></a>2.5 终端和shell支持x11转发</h3><h4 id="2-5-1-iterm2支持x11"><a href="#2-5-1-iterm2支持x11" class="headerlink" title="2.5.1 iterm2支持x11"></a>2.5.1 iterm2支持x11</h4><p>不得不说mac上最好用的终端是iTerm2，最好用的shell是zsh</p>
+<h5 id="2-5-2-xquartz中添加命令指向iterm2"><a href="#2-5-2-xquartz中添加命令指向iterm2" class="headerlink" title="2.5.2 xquartz中添加命令指向iterm2"></a>2.5.2 xquartz中添加命令指向iterm2</h5><img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709174824.png" srcset="/img/loading.gif" lazyload class="">
+
+<h5 id="2-5-3-iterm2使用gui"><a href="#2-5-3-iterm2使用gui" class="headerlink" title="2.5.3 iterm2使用gui"></a>2.5.3 iterm2使用gui</h5><img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175264.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>在iterm2中运行的程序需要gui支持会自动转发x11给xquartz，唤起xquartz，然后显示出来</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1709175016.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="2-6-拷贝文件或文件夹"><a href="#2-6-拷贝文件或文件夹" class="headerlink" title="2.6 拷贝文件或文件夹"></a>2.6 拷贝文件或文件夹</h3><p>因为配置了<code>~/.ssh/config</code>的主机ip和hostname的映射，在使用scp的时候也不用指定ip了，直接指定主机名就行</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>本机-&gt;远程</th>
+<th>远程-&gt;本机</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件</td>
+<td>scp 本机文件 dingrui@archlinux:远程路径</td>
+<td>scp dingrui@archlinux:远程文件 本机路径</td>
+</tr>
+<tr>
+<td>文件夹</td>
+<td>scp -r 本机路径 dingrui@archlinux:远程路径</td>
+<td>scp -r dingrui@archlinux:远程路径 本机路径</td>
+</tr>
+</tbody></table>
+<h2 id="3-OpenGL的支持"><a href="#3-OpenGL的支持" class="headerlink" title="3 OpenGL的支持"></a>3 OpenGL的支持</h2><p>在ssh远程开发OpenGL的时候发现X11转发有问题，因此要配置VirtualGL来支持OpenGL的开发工作</p>
+<img src="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/1710408969.png" srcset="/img/loading.gif" lazyload class="">
+
+<p><a target="_blank" rel="noopener" href="https://rawcdn.githack.com/VirtualGL/virtualgl/3.0/doc/index.html#hd006">配置参考官方手册</a></p>
+<p>尝试了一下，过于复杂，而且我担心破坏现在archlinux上在使用的kde，所以放弃了。</p>
+<p>转换一个思路，linux远程开发opengl改成本地mac开发</p>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ssh远程主机</div>
+      <div>https://bannirui.github.io/2024/01/25/ssh远程主机/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/01/25/systemctl%E5%91%BD%E4%BB%A4/" title="systemctl命令">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">systemctl命令</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/01/24/ffmpeg%E5%B7%A5%E5%85%B7/" title="ffmpeg工具">
+                        <span class="hidden-mobile">ffmpeg工具</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'dc92374527a562d91e3ea7679cda00ec'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,986 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 调试配置为了调试方便，先配置集群启动的调试面板。 1.1 调试面板  1.2 配置文件配置文件内容如下： 123456789101112131415tickTime&#x3D;2000initLimit&#x3D;10syncLimit&#x3D;5# zk数据dataDir&#x3D;&#x2F;tmp&#x2F;zookeeper&#x2F;data# 事务日志dataLogDir&#x3D;&#x2F;tmp&#x2F;zookeeper&#x2F;logclientPort&#x3D;2181# 定时任">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZK@3.8源码-10-集群模式">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="1 调试配置为了调试方便，先配置集群启动的调试面板。 1.1 调试面板  1.2 配置文件配置文件内容如下： 123456789101112131415tickTime&#x3D;2000initLimit&#x3D;10syncLimit&#x3D;5# zk数据dataDir&#x3D;&#x2F;tmp&#x2F;zookeeper&#x2F;data# 事务日志dataLogDir&#x3D;&#x2F;tmp&#x2F;zookeeper&#x2F;logclientPort&#x3D;2181# 定时任">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/image-20230308202925638.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/image-20230308204726905.png">
+<meta property="article:published_time" content="2023-03-08T12:21:04.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.551Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="ZK@3.8">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/image-20230308202925638.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>ZK@3.8源码-10-集群模式 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ZK@3.8源码-10-集群模式"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-08 20:21" pubdate>
+          2023年3月8日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="ZooKeeper"
+        id="heading-acbfb3e07bc6528e76ff58b9441ce7e6" role="tab" data-toggle="collapse" href="#collapse-acbfb3e07bc6528e76ff58b9441ce7e6"
+        aria-expanded="true"
+      >
+        ZooKeeper
+        <span class="list-group-count">(14)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-acbfb3e07bc6528e76ff58b9441ce7e6"
+           role="tabpanel" aria-labelledby="heading-acbfb3e07bc6528e76ff58b9441ce7e6">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/02/28/ZK-3-8%E6%BA%90%E7%A0%81-00-%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83/" title="ZK@3.8源码-00-源码环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-00-源码环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/04/ZK-3-8%E6%BA%90%E7%A0%81-01-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%E5%90%AF%E5%8A%A8/" title="ZK@3.8源码-01-服务端单机模式启动"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-01-服务端单机模式启动</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-02-CnxnChannelHandler/" title="ZK@3.8源码-02-CnxnChannelHandler"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-02-CnxnChannelHandler</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-03-SessionTrackerImpl/" title="ZK@3.8源码-03-SessionTrackerImpl"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-03-SessionTrackerImpl</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-04-RequestThrottler/" title="ZK@3.8源码-04-RequestThrottler"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-04-RequestThrottler</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-05-FileTxnSnaplog/" title="ZK@3.8源码-05-FileTxnSnaplog"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-05-FileTxnSnaplog</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/ZK-3-8%E6%BA%90%E7%A0%81-06-RequestProcessor/" title="ZK@3.8源码-06-RequestProcessor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-06-RequestProcessor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-07-NettyServerCnxn/" title="ZK@3.8源码-07-NettyServerCnxn"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-07-NettyServerCnxn</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-08-ZKDatabase/" title="ZK@3.8源码-08-ZKDatabase"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-08-ZKDatabase</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-09-%E5%8D%95%E6%9C%BA%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%B1%87%E6%80%BB/" title="ZK@3.8源码-09-单机启动流程汇总"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-09-单机启动流程汇总</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/" title="ZK@3.8源码-10-集群模式"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">ZK@3.8源码-10-集群模式</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" title="ZK@3.8源码-11-QuorumCnxManager组件"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-11-QuorumCnxManager组件</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" title="ZK@3.8源码-12-FastLeaderElection组件"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-12-FastLeaderElection组件</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/" title="ZK@3.8源码-13-选主过程通信和算法"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ZK@3.8源码-13-选主过程通信和算法</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ZK@3.8源码-10-集群模式</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-调试配置"><a href="#1-调试配置" class="headerlink" title="1 调试配置"></a>1 调试配置</h2><p>为了调试方便，先配置集群启动的调试面板。</p>
+<h3 id="1-1-调试面板"><a href="#1-1-调试面板" class="headerlink" title="1.1 调试面板"></a>1.1 调试面板</h3><img src="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/image-20230308202925638.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="1-2-配置文件"><a href="#1-2-配置文件" class="headerlink" title="1.2 配置文件"></a>1.2 配置文件</h3><p>配置文件内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cfg">tickTime=2000<br>initLimit=10<br>syncLimit=5<br># zk数据<br>dataDir=/tmp/zookeeper/data<br># 事务日志<br>dataLogDir=/tmp/zookeeper/log<br>clientPort=2181<br># 定时任务清理文件 1小时执行一次<br>autopurge.purgeInterval=1<br><br># 伪集群  主机:心跳端口:数据端口<br>server.0=127.0.0.1:2008:6008<br>server.1=127.0.0.1:2007:6007<br>server.2=127.0.0.1:2006:6006<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-入口"><a href="#2-入口" class="headerlink" title="2 入口"></a>2 入口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 启动集群节点</span><br><span class="hljs-comment">             */</span><br>quorumPeer.start();<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-QuorumPeer组件"><a href="#3-QuorumPeer组件" class="headerlink" title="3 QuorumPeer组件"></a>3 QuorumPeer组件</h2><h3 id="3-1-类图"><a href="#3-1-类图" class="headerlink" title="3.1 类图"></a>3.1 类图</h3><p>从类图可以看出QuorumPeer很纯粹，就是一个Java线程，上面也分析过会在start()方法的最后调用父类的start()，最终当线程被CPU调度之后回调到当前类的<code>run()</code>方法，因此先看start()方法再看run()方法。</p>
+<img src="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-10-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/image-20230308204726905.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="3-2-start-方法"><a href="#3-2-start-方法" class="headerlink" title="3.2 start()方法"></a>3.2 start()方法</h3><p>首先，集群是单机的集合，因此之前看过的那些组件核心作用还是不会变的，这是相同点。</p>
+<p>不同点在于：</p>
+<ul>
+<li>集群如何选主对外提供服务</li>
+<li>集群间数据如何同步</li>
+<li>集群Master崩溃了如何恢复</li>
+</ul>
+<p>其实也就是ZAB协议是如何实现的：</p>
+<ul>
+<li>崩溃恢复</li>
+<li>原子广播</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">start</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">if</span> (!getView().containsKey(myid)) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<span class="hljs-string">&quot;My id &quot;</span> + myid + <span class="hljs-string">&quot; not in the peer list&quot;</span>);<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 恢复本地数据 并对数据一致性做本地校验</span><br><span class="hljs-comment">         * 比较单机启动和集群启动</span><br><span class="hljs-comment">         *   - 单机启动</span><br><span class="hljs-comment">         *     - 恢复本地数据</span><br><span class="hljs-comment">         *   - 集群启动</span><br><span class="hljs-comment">         *     - 恢复本地数据</span><br><span class="hljs-comment">         *     - 校验currentEpoch</span><br><span class="hljs-comment">         *     - 校验acceptedEpoch</span><br><span class="hljs-comment">         */</span><br>    loadDataBase();<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 这个地方和单机启动是一样的</span><br><span class="hljs-comment">         * 通过通信工厂创建网络通信具体实现</span><br><span class="hljs-comment">         *   - NioServerCnxnFactory-&gt;创建NioServerCnxn实例</span><br><span class="hljs-comment">         *   - NettyServerCnxnFactory-&gt;创建NettyServerCnxn实例</span><br><span class="hljs-comment">         */</span><br>    startServerCnxnFactory();<br>    <span class="hljs-keyword">try</span> &#123;<br>        adminServer.start();<br>    &#125; <span class="hljs-keyword">catch</span> (AdminServerException e) &#123;<br>        LOG.warn(<span class="hljs-string">&quot;Problem starting AdminServer&quot;</span>, e);<br>    &#125;<br>    <span class="hljs-comment">// 选主</span><br>    startLeaderElection();<br>    startJvmPauseMonitor();<br>    <span class="hljs-comment">// 该类是Thread的派生 调用父类的start方法 再回调run()方法的实现</span><br>    <span class="hljs-built_in">super</span>.start();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>带着这些问题重点关注集群启动过程。</p>
+<p>从代码可以看出：</p>
+<ul>
+<li>集群模式中核心类是QuorumPeer，不再是ZooKeeperServer</li>
+<li>依然要先加载恢复内存数据<ul>
+<li>额外多了一些校验</li>
+<li>epoch是配合集群Master角色出现的机制</li>
+</ul>
+</li>
+<li>对外客户端提供服务都是走网络，因此要前置化启动网络通信，网络通信组件依然以Netty的实现NettyServerCnxn为例，这儿监听的是2181对外暴露的端口，不是给内部节点使用的</li>
+<li>选主</li>
+</ul>
+<p>这些组件的使用几乎与之前分析过的一样，不一样的地方也可以直接跳过，不是重点，下面开始跟进<code>startLeaderElection()</code>方法。</p>
+<h3 id="3-3-startLeaderElection-方法"><a href="#3-3-startLeaderElection-方法" class="headerlink" title="3.3 startLeaderElection()方法"></a>3.3 startLeaderElection()方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 2个作用</span><br><span class="hljs-comment">     *   - 制作了一个投票 投自己为Leader</span><br><span class="hljs-comment">     *   - 启动了FastLeaderElection投票算法</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">startLeaderElection</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 当前服务器处于寻主状态 就制作一个投票票</span><br><span class="hljs-comment">             * 集群节点初始化就是寻主状态</span><br><span class="hljs-comment">             */</span><br>        <span class="hljs-keyword">if</span> (getPeerState() == ServerState.LOOKING) &#123;<br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 制作一个投票</span><br><span class="hljs-comment">                 * 投票的语义是选举谁当集群的Leader</span><br><span class="hljs-comment">                 * 每个节点肯定都会先给自己来一票</span><br><span class="hljs-comment">                 * 然后交叉比较</span><br><span class="hljs-comment">                 *   - 留着自己拿着这个投票和别人的pk</span><br><span class="hljs-comment">                 *   - 给别人让他们拿着自己的和这个pk</span><br><span class="hljs-comment">                 */</span><br>            currentVote = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Vote</span>(myid, getLastLoggedZxid(), getCurrentEpoch());<br>        &#125;<br>    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;<br>        <span class="hljs-type">RuntimeException</span> <span class="hljs-variable">re</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(e.getMessage());<br>        re.setStackTrace(e.getStackTrace());<br>        <span class="hljs-keyword">throw</span> re;<br>    &#125;<br>    <span class="hljs-comment">// electionTpe这个值只能是3 给定的默认值是3 即使在配置文件中配置了其他的值 也会在配置解析阶段抛出异常</span><br>    <span class="hljs-built_in">this</span>.electionAlg = createElectionAlgorithm(electionType);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 网络通信组件</span><br><span class="hljs-comment">             * 负责选主投票通信</span><br><span class="hljs-comment">             */</span><br><span class="hljs-type">QuorumCnxManager</span> <span class="hljs-variable">qcm</span> <span class="hljs-operator">=</span> createCnxnManager();<br><span class="hljs-type">QuorumCnxManager</span> <span class="hljs-variable">oldQcm</span> <span class="hljs-operator">=</span> qcmRef.getAndSet(qcm); <span class="hljs-comment">// 已经在选举中了停止之前的选举</span><br><span class="hljs-keyword">if</span> (oldQcm != <span class="hljs-literal">null</span>) &#123;<br>    LOG.warn(<span class="hljs-string">&quot;Clobbering already-set QuorumCnxManager (restarting leader election?)&quot;</span>);<br>    oldQcm.halt(); <span class="hljs-comment">// 停止选举</span><br>&#125;<br>QuorumCnxManager.<span class="hljs-type">Listener</span> <span class="hljs-variable">listener</span> <span class="hljs-operator">=</span> qcm.listener; <span class="hljs-comment">// QuorumCnxManager构造时候实例化了listener线程</span><br><span class="hljs-keyword">if</span> (listener != <span class="hljs-literal">null</span>) &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 监听在投票端口</span><br><span class="hljs-comment">                 * 负责接收投票</span><br><span class="hljs-comment">                 */</span><br>    listener.start();<br>    <span class="hljs-comment">// 快速选举算法</span><br>    <span class="hljs-type">FastLeaderElection</span> <span class="hljs-variable">fle</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">FastLeaderElection</span>(<span class="hljs-built_in">this</span>, qcm);<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 启动messenger中的两个线程</span><br><span class="hljs-comment">                 *   - ws</span><br><span class="hljs-comment">                 *   - wr</span><br><span class="hljs-comment">                 */</span><br>    fle.start(); <span class="hljs-comment">// 启动选举</span><br></code></pre></td></tr></table></figure>
+
+<p>这个地方出现了3个组件：</p>
+<ul>
+<li><a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" title="ZK@3.8源码-11-QuorumCnxManager组件">QuorumCnxManager</a>
+<ul>
+<li>核心组件</li>
+<li>负责整个选主过程的网络通信</li>
+</ul>
+</li>
+<li><a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" title="ZK@3.8源码-11-QuorumCnxManager组件">Listener</a>
+<ul>
+<li>是Thread的派生，本质是个线程</li>
+<li>在run()方法中负责监听投票端口</li>
+</ul>
+</li>
+<li><a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-12-FastLeaderElection%E7%BB%84%E4%BB%B6/" title="ZK@3.8源码-12-FastLeaderElection组件">FastLeaderElection</a>
+<ul>
+<li>选主算法</li>
+<li>启动开始进行投票选主</li>
+<li>上面Listener组件已经监听等待Socket的连接和发送，这边负责启动Socket的连接和发送</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-4-run-方法"><a href="#3-4-run-方法" class="headerlink" title="3.4 run()方法"></a>3.4 run()方法</h3><p>先只关注集群启动时候，当前服务器还是LOOKING状态，触发上面组件<code>FastLeaderElection</code>进行选主。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">case</span> LOOKING: <span class="hljs-comment">// 寻主状态</span><br>                    LOG.info(<span class="hljs-string">&quot;LOOKING&quot;</span>);<br>                    ServerMetrics.getMetrics().LOOKING_COUNT.add(<span class="hljs-number">1</span>);<br>                    <span class="hljs-comment">// ....</span><br>                        <span class="hljs-keyword">try</span> &#123;<br>                            reconfigFlagClear();<br>                            <span class="hljs-keyword">if</span> (shuttingDownLE) &#123;<br>                                shuttingDownLE = <span class="hljs-literal">false</span>;<br>                                startLeaderElection();<br>                            &#125;<br>                            <span class="hljs-comment">// 设置当前投票 进行新一轮的选举</span><br>                            setCurrentVote(makeLEStrategy().lookForLeader());<br>                        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                            LOG.warn(<span class="hljs-string">&quot;Unexpected exception&quot;</span>, e);<br>                            setPeerState(ServerState.LOOKING);<br>                        &#125;<br>                    <br>                    <span class="hljs-keyword">break</span>;<br></code></pre></td></tr></table></figure>
+
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ZooKeeper/" class="category-chain-item">ZooKeeper</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/ZK-3-8/" class="print-no-link">#ZK@3.8</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ZK@3.8源码-10-集群模式</div>
+      <div>https://bannirui.github.io/2023/03/08/ZK-3-8源码-10-集群模式/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/09/ZK-3-8%E6%BA%90%E7%A0%81-11-QuorumCnxManager%E7%BB%84%E4%BB%B6/" title="ZK@3.8源码-11-QuorumCnxManager组件">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">ZK@3.8源码-11-QuorumCnxManager组件</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/08/ZK-3-8%E6%BA%90%E7%A0%81-09-%E5%8D%95%E6%9C%BA%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%B1%87%E6%80%BB/" title="ZK@3.8源码-09-单机启动流程汇总">
+                        <span class="hidden-mobile">ZK@3.8源码-09-单机启动流程汇总</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'b1be29969bb578cb9160286246934587'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1158 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo解析主机名或服务，并为套接字分配地址信息 这个库函数有4个参数  hostname 主机名或ip地址  servername 服务名或者端口号  hints 解析提示  serverinfo 该库函数的解析结果 是个数组   1.1 解析提示解析提示的作用是提供一个模板给getaddrinfo  一方面预填充信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x10-socket编程">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/15/Redis/Redis-0x10-socket%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="socket相关的体系太庞杂了，这里就遇到一个记录一个。 1 getaddrinfo解析主机名或服务，并为套接字分配地址信息 这个库函数有4个参数  hostname 主机名或ip地址  servername 服务名或者端口号  hints 解析提示  serverinfo 该库函数的解析结果 是个数组   1.1 解析提示解析提示的作用是提供一个模板给getaddrinfo  一方面预填充信息">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-15T12:00:49.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.490Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x10-socket编程 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x10-socket编程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-15 20:00" pubdate>
+          2024年4月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(52)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x10-socket编程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>socket相关的体系太庞杂了，这里就遇到一个记录一个。</p>
+<h2 id="1-getaddrinfo"><a href="#1-getaddrinfo" class="headerlink" title="1 getaddrinfo"></a>1 getaddrinfo</h2><p>解析主机名或服务，并为套接字分配地址信息</p>
+<p>这个库函数有4个参数</p>
+<ul>
+<li><p>hostname 主机名或ip地址</p>
+</li>
+<li><p>servername 服务名或者端口号</p>
+</li>
+<li><p>hints 解析提示</p>
+</li>
+<li><p>serverinfo 该库函数的解析结果 是个数组</p>
+</li>
+</ul>
+<h3 id="1-1-解析提示"><a href="#1-1-解析提示" class="headerlink" title="1.1 解析提示"></a>1.1 解析提示</h3><p>解析提示的作用是提供一个模板给<code>getaddrinfo</code></p>
+<ul>
+<li><p>一方面预填充信息 将来库函数可以直接拷贝到返回值里面</p>
+</li>
+<li><p>再者 告知了库函数需要的套接字地址结构的某些限定 比如</p>
+<ul>
+<li><p>协议族是IPv4或者IPv6</p>
+</li>
+<li><p>套接字类型是TCP套接字或者UDP套接字</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>解析提示的使用方式如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 提供解析提示</span><br>   <span class="hljs-built_in">memset</span>(&amp;hints,<span class="hljs-number">0</span>,<span class="hljs-keyword">sizeof</span>(hints));<br><span class="hljs-comment">// 协议族 适用于IPv4和IPv6</span><br>   hints.ai_family = AF_UNSPEC;<br><span class="hljs-comment">// 套接字类型 TCP套接字</span><br>   hints.ai_socktype = SOCK_STREAM;<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-2-参数举例"><a href="#1-2-参数举例" class="headerlink" title="1.2 参数举例"></a>1.2 参数举例</h3><table>
+<thead>
+<tr>
+<th>hostname</th>
+<th>servername</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></td>
+<td>http</td>
+</tr>
+<tr>
+<td>localhost</td>
+<td>8080</td>
+</tr>
+</tbody></table>
+<h2 id="2-fcntl"><a href="#2-fcntl" class="headerlink" title="2 fcntl"></a>2 fcntl</h2><p>之前看过这个系统调用的文档<a href="/2024/04/15/Redis/Redis-0x11-%E5%BA%93%E5%87%BD%E6%95%B0fcntl/" title="Redis-0x11-库函数fcntl">Redis-0x11-库函数fcntl</a></p>
+<p>通过该系统调用读取和设置文件描述符的标志位</p>
+<h3 id="2-1-设置socket的非阻塞模式"><a href="#2-1-设置socket的非阻塞模式" class="headerlink" title="2.1 设置socket的非阻塞模式"></a>2.1 设置socket的非阻塞模式</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置socket的阻塞模式</span><br><span class="hljs-comment"> * 设置成阻塞或者非阻塞的</span><br><span class="hljs-comment"> * @param fd socket的fd</span><br><span class="hljs-comment"> * @param non_block 想要把fd设置成什么阻塞模式</span><br><span class="hljs-comment"> *                  &lt;ul&gt;</span><br><span class="hljs-comment"> *                    &lt;li&gt;非0 想要socket是非阻塞的&lt;/li&gt;</span><br><span class="hljs-comment"> *                    &lt;li&gt;0 想要socket是阻塞的&lt;/li&gt;</span><br><span class="hljs-comment"> *                  &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetSetBlock</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">int</span> non_block)</span> &#123;<br>    <span class="hljs-type">int</span> flags;<br><br>    <span class="hljs-comment">/* Set the socket blocking (if non_block is zero) or non-blocking.</span><br><span class="hljs-comment">     * Note that fcntl(2) for F_GETFL and F_SETFL can&#x27;t be</span><br><span class="hljs-comment">     * interrupted by a signal. */</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 获取socket的fd状态标志</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> ((flags = fcntl(fd, F_GETFL)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;fcntl(F_GETFL): %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br><br>    <span class="hljs-comment">/* Check if this flag has been set or unset, if so, </span><br><span class="hljs-comment">     * then there is no need to call fcntl to set/unset it again. */</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 判定fd的阻塞状态 已经是想要的效果了就ASAP地退出</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (!!(flags &amp; O_NONBLOCK) == !!non_block)<br>        <span class="hljs-keyword">return</span> ANET_OK;<br><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * &lt;ul&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;想要socket是非阻塞的 就把描述符状态标志低位第2位设置成1&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;想要socket是阻塞的 就把描述符状态标志低位第2位设置成0&lt;/li&gt;</span><br><span class="hljs-comment">	 * &lt;/ul&gt;</span><br><span class="hljs-comment">	 * 然后再把新的描述符状态标志设置给socket</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (non_block)<br>        flags |= O_NONBLOCK;<br>    <span class="hljs-keyword">else</span><br>        flags &amp;= ~O_NONBLOCK;<br><br>	<span class="hljs-comment">// 设置新的描述符状态标志给socket</span><br>    <span class="hljs-keyword">if</span> (fcntl(fd, F_SETFL, flags) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;fcntl(F_SETFL,O_NONBLOCK): %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-设置close-on-exec"><a href="#2-2-设置close-on-exec" class="headerlink" title="2.2 设置close-on-exec"></a>2.2 设置close-on-exec</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 在fd上设置close-on-exec标志</span><br><span class="hljs-comment"> * 作用是一个文件描述符fd被标记为FD_CLOEXEC时 当进程通过exec系列函数(比如execve()和execvp())执行新程序时 该fd会被自动关闭</span><br><span class="hljs-comment"> * @return fcntl系统调用的返回值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetCloexec</span><span class="hljs-params">(<span class="hljs-type">int</span> fd)</span> &#123;<br>    <span class="hljs-type">int</span> r;<br>    <span class="hljs-type">int</span> flags;<br><br>    <span class="hljs-keyword">do</span> &#123;<br>	    <span class="hljs-comment">// 读取socket的fd标志</span><br>        r = fcntl(fd, F_GETFD);<br>    &#125; <span class="hljs-keyword">while</span> (r == <span class="hljs-number">-1</span> &amp;&amp; errno == EINTR);<br><br>	<span class="hljs-comment">// 看看标志位上是不是已经有了FD_CLOEXEC标志</span><br>    <span class="hljs-keyword">if</span> (r == <span class="hljs-number">-1</span> || (r &amp; FD_CLOEXEC))<br>        <span class="hljs-keyword">return</span> r;<br><br>	<span class="hljs-comment">// 在标志上打上FD_CLOEXEC</span><br>    flags = r | FD_CLOEXEC;<br><br>    <span class="hljs-keyword">do</span> &#123;<br>	    <span class="hljs-comment">// 将新的socket描述符标志设置给socket</span><br>        r = fcntl(fd, F_SETFD, flags);<br>    &#125; <span class="hljs-keyword">while</span> (r == <span class="hljs-number">-1</span> &amp;&amp; errno == EINTR);<br><br>    <span class="hljs-keyword">return</span> r;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-setsockopt"><a href="#3-setsockopt" class="headerlink" title="3 setsockopt"></a>3 setsockopt</h2><p>设置socket</p>
+<p>这个库函数5个形参</p>
+<ul>
+<li><p>sockfd 是指向套接字实例的文件描述符</p>
+</li>
+<li><p>level 设置项是针对什么级别进行设置的</p>
+<ul>
+<li><p>SOL_SOCKET 表示设置的是套接字级别</p>
+</li>
+<li><p>IPPROTO_TCP 标识设置的是TCP协议</p>
+</li>
+</ul>
+</li>
+<li><p>optname 设置项名称</p>
+<ul>
+<li><p>SO_REUSEADDR 一般用来在服务端设置端口复用</p>
+</li>
+<li><p>SO_KEEPALIVE 设置keepalive</p>
+</li>
+</ul>
+</li>
+<li><p>optval 设置的值</p>
+</li>
+<li><p>optval 指针指向变量的大小</p>
+</li>
+</ul>
+<h3 id="3-1-设置SO-KEEPALIVE"><a href="#3-1-设置SO-KEEPALIVE" class="headerlink" title="3.1 设置SO_KEEPALIVE"></a>3.1 设置SO_KEEPALIVE</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 开启socket的keepalive功能</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) == <span class="hljs-number">-1</span>)<br>   &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_KEEPALIVE: %s&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-TCP-KEEPIDLE"><a href="#3-2-TCP-KEEPIDLE" class="headerlink" title="3.2 TCP_KEEPIDLE"></a>3.2 TCP_KEEPIDLE</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * TCP_KEEPIDLE是用于设置TCP的keepalive开始发送探测报文之前的空闲时间的选项</span><br><span class="hljs-comment"> * 一旦TCP的keepalive功能被启用 系统将会在连接空闲一段时间后开始发送探测报文以检测连接的存活性</span><br><span class="hljs-comment"> * TCP_KEEPIDLE选项允许指定在开始发送探测报文之前允许的最大空闲时间</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) &lt; <span class="hljs-number">0</span>) &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_KEEPIDLE: %s\n&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-3-TCP-KEEPINTVL"><a href="#3-3-TCP-KEEPINTVL" class="headerlink" title="3.3 TCP_KEEPINTVL"></a>3.3 TCP_KEEPINTVL</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * TCP_KEEPINTVL是用于设置TCP的keepalive探测间隔的选项</span><br><span class="hljs-comment"> * 一旦TCP的keepalive功能被启用 系统将会定期发送探测报文以检测连接的存活性</span><br><span class="hljs-comment"> * TCP_KEEPINTVL选项允许指定探测报文之间的时间间隔</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) &lt; <span class="hljs-number">0</span>) &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_KEEPINTVL: %s\n&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-4-TCP-KEEPCNT"><a href="#3-4-TCP-KEEPCNT" class="headerlink" title="3.4 TCP_KEEPCNT"></a>3.4 TCP_KEEPCNT</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 用于设置TCP的keepalive探测尝试次数的选项</span><br><span class="hljs-comment"> * 当TCP的keepalive功能被启用时 系统将会定期发送探测报文以检测连接的存活性</span><br><span class="hljs-comment"> * TCP_KEEPCNT选项允许指定在关闭连接之前允许的最大探测失败次数</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) &lt; <span class="hljs-number">0</span>) &#123;<br>       anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_KEEPCNT: %s\n&quot;</span>, strerror(errno));<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-5-TCP-NODELAY"><a href="#3-5-TCP-NODELAY" class="headerlink" title="3.5 TCP_NODELAY"></a>3.5 TCP_NODELAY</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置是否开启Nagle算法</span><br><span class="hljs-comment"> * @param val 开启还是关闭延迟算法 1表示关闭延迟算法 0表示不关闭延迟算法</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">anetSetTcpNoDelay</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">int</span> val)</span><br>&#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * TCP_NODELAY是用于设置TCP的Nagle算法的选项</span><br><span class="hljs-comment">     * Nagle算法是一种优化TCP传输的算法 它通过在发送数据时进行缓冲 将多个小数据包合并成一个大数据包 从而减少网络上的数据包数量 提高传输效率</span><br><span class="hljs-comment">     * 在某些情况下 例如实时通信或者需要快速响应的应用中 这种缓冲可能会引入延迟，因此需要禁用Nagle算法</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &amp;val, <span class="hljs-keyword">sizeof</span>(val)) == <span class="hljs-number">-1</span>)<br>    &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt TCP_NODELAY: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-6-SO-SNDTIMEO"><a href="#3-6-SO-SNDTIMEO" class="headerlink" title="3.6 SO_SNDTIMEO"></a>3.6 SO_SNDTIMEO</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设置socket的发送超时时间</span><br><span class="hljs-comment"> * @param ms 超时时间设置多少毫秒</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetSendTimeout</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">long</span> <span class="hljs-type">long</span> ms)</span> &#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">timeval</span> <span class="hljs-title">tv</span>;</span><br><br>    tv.tv_sec = ms/<span class="hljs-number">1000</span>;<br>    tv.tv_usec = (ms%<span class="hljs-number">1000</span>)*<span class="hljs-number">1000</span>;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * SO_SNDTIMEO是用于设置发送操作超时时间的选项</span><br><span class="hljs-comment">	 * 它允许设置在发送数据时等待的最大时间 如果在此时间内无法完成发送操作 则发送操作将被中断并返回错误</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &amp;tv, <span class="hljs-keyword">sizeof</span>(tv)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_SNDTIMEO: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-7-SO-RCVTIMEO"><a href="#3-7-SO-RCVTIMEO" class="headerlink" title="3.7 SO_RCVTIMEO"></a>3.7 SO_RCVTIMEO</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * socket在接收数据时最大的等待时长</span><br><span class="hljs-comment"> * @param ms 等待时长 毫秒</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetRecvTimeout</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> fd, <span class="hljs-type">long</span> <span class="hljs-type">long</span> ms)</span> &#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">timeval</span> <span class="hljs-title">tv</span>;</span><br><br>    tv.tv_sec = ms/<span class="hljs-number">1000</span>;<br>    tv.tv_usec = (ms%<span class="hljs-number">1000</span>)*<span class="hljs-number">1000</span>;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * SO_RCVTIMEO选项用于设置接收操作的超时时间</span><br><span class="hljs-comment">	 * 它允许指定在接收数据时等待的最大时间 如果在此时间内未接收到数据 则接收操作将被中断并返回错误</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &amp;tv, <span class="hljs-keyword">sizeof</span>(tv)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_RCVTIMEO: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-8-SO-REUSEADDR"><a href="#3-8-SO-REUSEADDR" class="headerlink" title="3.8 SO_REUSEADDR"></a>3.8 SO_REUSEADDR</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &amp;yes, <span class="hljs-keyword">sizeof</span>(yes)) == <span class="hljs-number">-1</span>) &#123;<br>    anetSetError(err, <span class="hljs-string">&quot;setsockopt SO_REUSEADDR: %s&quot;</span>, strerror(errno));<br>    <span class="hljs-keyword">return</span> ANET_ERR;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="4-inet-ntop"><a href="#4-inet-ntop" class="headerlink" title="4 inet_ntop"></a>4 inet_ntop</h2><p>库函数原型为<code>const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);</code></p>
+<p>作用是将套接字的二进制格式的地址解析成字符串格式</p>
+<p>参数为</p>
+<ul>
+<li><p>af 要解析的套接字地址的协议族</p>
+<ul>
+<li><p>AF_INET表示IPv4</p>
+</li>
+<li><p>AF_INET6表示IPv6.</p>
+</li>
+</ul>
+</li>
+<li><p>src 要解析的套接字地址</p>
+</li>
+<li><p>dst 解析结果是字符串 存到什么地方</p>
+</li>
+<li><p>size dst字符串的长度</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 主机名解析成ip地址</span><br><span class="hljs-comment"> * 将二进制格式转换为字符串格式</span><br><span class="hljs-comment"> * @param err 上抛异常信息</span><br><span class="hljs-comment"> * @param host 要解析的主机名</span><br><span class="hljs-comment"> * @param ipbuf 解析出来的ip地址结果是字符串格式 放到这个char数组里面</span><br><span class="hljs-comment"> * @param ipbuf_len char数组的长度</span><br><span class="hljs-comment"> * @param flags</span><br><span class="hljs-comment"> * @return &lt;ul&gt;状态码</span><br><span class="hljs-comment"> *           &lt;li&gt;-1 失败&lt;/li&gt;</span><br><span class="hljs-comment"> *           &lt;li&gt;0 成功&lt;/li&gt;</span><br><span class="hljs-comment"> *         &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">anetResolve</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">char</span> *host, <span class="hljs-type">char</span> *ipbuf, <span class="hljs-type">size_t</span> ipbuf_len,</span><br><span class="hljs-params">                       <span class="hljs-type">int</span> flags)</span><br>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">addrinfo</span> <span class="hljs-title">hints</span>, *<span class="hljs-title">info</span>;</span><br>    <span class="hljs-type">int</span> rv;<br><br>	<span class="hljs-comment">// 提供解析提示</span><br>    <span class="hljs-built_in">memset</span>(&amp;hints,<span class="hljs-number">0</span>,<span class="hljs-keyword">sizeof</span>(hints));<br>    <span class="hljs-keyword">if</span> (flags &amp; ANET_IP_ONLY) hints.ai_flags = AI_NUMERICHOST;<br>	<span class="hljs-comment">// 协议族 适用于IPv4或者IPv6</span><br>    hints.ai_family = AF_UNSPEC;<br>	<span class="hljs-comment">// 套接字类型是TCP套接字</span><br>    hints.ai_socktype = SOCK_STREAM;  <span class="hljs-comment">/* specify socktype to avoid dups */</span><br><br>    <span class="hljs-keyword">if</span> ((rv = getaddrinfo(host, <span class="hljs-literal">NULL</span>, &amp;hints, &amp;info)) != <span class="hljs-number">0</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;%s&quot;</span>, gai_strerror(rv));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (info-&gt;ai_family == AF_INET) &#123;<br>	    <span class="hljs-comment">// 解析结果的协议族是IPv4</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sockaddr_in</span> *<span class="hljs-title">sa</span> =</span> (<span class="hljs-keyword">struct</span> sockaddr_in *)info-&gt;ai_addr;<br>		<span class="hljs-comment">// IPv4类型的ip地址放到ipbuf上</span><br>        inet_ntop(AF_INET, &amp;(sa-&gt;sin_addr), ipbuf, ipbuf_len);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>	    <span class="hljs-comment">// 解析结果的协议族是IPv6</span><br>        <span class="hljs-keyword">struct</span> sockaddr_in6 *sa = (<span class="hljs-keyword">struct</span> sockaddr_in6 *)info-&gt;ai_addr;<br>		<span class="hljs-comment">// IPv6类型的ip地址放到ipbuf上</span><br>        inet_ntop(AF_INET6, &amp;(sa-&gt;sin6_addr), ipbuf, ipbuf_len);<br>    &#125;<br><br>    freeaddrinfo(info);<br>    <span class="hljs-keyword">return</span> ANET_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-socket"><a href="#5-socket" class="headerlink" title="5 socket"></a>5 socket</h2><p>创建socket套接字实例</p>
+<ul>
+<li><p>domain 指定通信的地址族 无非就是网络通信或者本地通信</p>
+<ul>
+<li><p>网络通信</p>
+<ul>
+<li><p>AF_INET 表示IPv4地址族</p>
+</li>
+<li><p>AF_INET6 表示IPv6地址族</p>
+</li>
+</ul>
+</li>
+<li><p>本地通信 AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快</p>
+</li>
+</ul>
+</li>
+<li><p>type 指定套接字类型 对应的是运输层的协议类型</p>
+<ul>
+<li><p>SOCK_STREAM表示面向连接的流套接字</p>
+</li>
+<li><p>SOCK_DGRAM表示无连接的数据报套接字</p>
+</li>
+</ul>
+</li>
+<li><p>protocol 使用的协议 通常使用默认的协议 即0</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 创建TCP套接字</span><br><span class="hljs-comment"> * 并且将其设置socket端口重用</span><br><span class="hljs-comment"> * @param domain 指定socket的协议族 &lt;ul&gt;</span><br><span class="hljs-comment"> *                                  &lt;li&gt;AF_INET 表示IPv4地址族&lt;/li&gt;</span><br><span class="hljs-comment"> *                                  &lt;li&gt;AF_INET6 表示IPv6地址族&lt;/li&gt;</span><br><span class="hljs-comment"> *                                  &lt;li&gt;AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快&lt;/li&gt;</span><br><span class="hljs-comment"> *                                &lt;/ul&gt;</span><br><span class="hljs-comment"> * @return &lt;ul&gt;</span><br><span class="hljs-comment"> *           &lt;li&gt;-1 标识错误码&lt;/li&gt;</span><br><span class="hljs-comment"> *           &lt;li&gt;非-1 表示socket的fd&lt;/li&gt;</span><br><span class="hljs-comment"> *         &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">anetCreateSocket</span><span class="hljs-params">(<span class="hljs-type">char</span> *err, <span class="hljs-type">int</span> domain)</span> &#123;<br>    <span class="hljs-type">int</span> s;<br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 系统调用创建socket实例</span><br><span class="hljs-comment">	 * &lt;ul&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;domain 指定通信的地址族&lt;ul&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;AF_INET 表示IPv4地址族&lt;/li&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;AF_INET6 表示IPv6地址族&lt;/li&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;AF_LOCAL 表示本地(Unix域)套接字 用于在同一台计算机上不同进程间进行本地通信 而不通过网络 因为不需要经过网络协议栈 因此开销小 速度快&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;/ul&gt;&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;type 指定套接字类型&lt;ul&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;SOCK_STREAM表示面向连接的流套接字&lt;/li&gt;</span><br><span class="hljs-comment">	 *     &lt;li&gt;SOCK_DGRAM表示无连接的数据报套接字&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;/ul&gt;&lt;/li&gt;</span><br><span class="hljs-comment">	 *   &lt;li&gt;protocol 使用的协议 通常使用默认的协议 即0&lt;/li&gt;</span><br><span class="hljs-comment">	 * &lt;/ul&gt;</span><br><span class="hljs-comment">	 */</span><br>    <span class="hljs-keyword">if</span> ((s = socket(domain, SOCK_STREAM, <span class="hljs-number">0</span>)) == <span class="hljs-number">-1</span>) &#123;<br>        anetSetError(err, <span class="hljs-string">&quot;creating socket: %s&quot;</span>, strerror(errno));<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br><br>    <span class="hljs-comment">/* Make sure connection-intensive things like the redis benchmark</span><br><span class="hljs-comment">     * will be able to close/open sockets a zillion of times */</span><br>	<span class="hljs-comment">// 这是reids的服务端 将socket设置为端口重用</span><br>    <span class="hljs-keyword">if</span> (anetSetReuseAddr(err,s) == ANET_ERR) &#123;<br>        close(s);<br>        <span class="hljs-keyword">return</span> ANET_ERR;<br>    &#125;<br>    <span class="hljs-keyword">return</span> s;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="6-connect"><a href="#6-connect" class="headerlink" title="6 connect"></a>6 connect</h2><p>连接到服务器的套接字</p>
+<ul>
+<li><p>sockfd 客户端socket 去连向服务器的套接字</p>
+</li>
+<li><p>addr 指向<code>sockaddr</code>结构体的指针 包含着服务器地址和端口信息</p>
+</li>
+<li><p>addrlen <code>addr</code>结构体的大小</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 让s这个套接字连接到服务器的套接字</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;s 客户端的套接字&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;sa sockaddr结构体的指针 包含着服务端地址和端口信息&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;sa大小&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br>   <span class="hljs-keyword">if</span> (connect(s,(<span class="hljs-keyword">struct</span> sockaddr*)&amp;sa,<span class="hljs-keyword">sizeof</span>(sa)) == <span class="hljs-number">-1</span>) &#123;<br>       <span class="hljs-keyword">if</span> (errno == EINPROGRESS &amp;&amp;<br>           flags &amp; ANET_CONNECT_NONBLOCK)<br>           <span class="hljs-keyword">return</span> s;<br><br>       anetSetError(err, <span class="hljs-string">&quot;connect: %s&quot;</span>, strerror(errno));<br>       close(s);<br>       <span class="hljs-keyword">return</span> ANET_ERR;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="7-bind"><a href="#7-bind" class="headerlink" title="7 bind"></a>7 bind</h2><p>将套接字绑定到一个特定的地址和端口上，这一步对服务端程序尤为重要</p>
+<p>服务器需要在一个固定的地址和端口上监听客户端的连接请求</p>
+<ul>
+<li><p>sockfd 由socket函数返回的套接字文件描述符</p>
+</li>
+<li><p>addr 指向sockaddr结构的指针 包含要绑定的地址和端口信息</p>
+</li>
+<li><p>addrlen addr结构的大小</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (bind(s,sa,len) == <span class="hljs-number">-1</span>) &#123;<br>    anetSetError(err, <span class="hljs-string">&quot;bind: %s&quot;</span>, strerror(errno));<br>    close(s);<br>    <span class="hljs-keyword">return</span> ANET_ERR;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="8-listen"><a href="#8-listen" class="headerlink" title="8 listen"></a>8 listen</h2><p>将套接字设置为被动模式，以便接收来自客户端的请求</p>
+<ul>
+<li><p>sockfd 由<code>socket</code>函数返回的套接字文件描述符</p>
+</li>
+<li><p>backlog 指定挂起连接队列的最大长度 未处理的连接请求将保存在这个队列中 直到用<code>accept</code>系统调用进行处理</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (listen(s, backlog) == <span class="hljs-number">-1</span>) &#123;<br>    anetSetError(err, <span class="hljs-string">&quot;listen: %s&quot;</span>, strerror(errno));<br>    close(s);<br>    <span class="hljs-keyword">return</span> ANET_ERR;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="9-accept"><a href="#9-accept" class="headerlink" title="9 accept"></a>9 accept</h2><p>接受连接请求，并在网络服务器编程中扮演关键角色<br>它从监听套接字队列中获取一个待处理的连接，并返回一个新的套接字文件描述符，用于与客户端进行通信</p>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><p>sockfd 监听套接字文件描述符，它是通过<code>socket</code>和<code>bind</code>以及<code>listen</code>配置好的</p>
+</li>
+<li><p>addr 指向<code>sockaddr</code>结构体的指针，用于存储客户端的地址信息。可以为 NULL，这时不获取客户端地址信息</p>
+</li>
+</ul>
+</li>
+<li><p>返回值</p>
+</li>
+<li><p>成功时，返回新的套接字文件描述符，用于与客户端进行通信</p>
+</li>
+<li><p>失败时，返回-1，并设置<code>errno</code>以指示错误</p>
+</li>
+</ul>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x10-socket编程</div>
+      <div>https://bannirui.github.io/2024/04/15/Redis/Redis-0x10-socket编程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/04/15/Redis/Redis-0x11-%E5%BA%93%E5%87%BD%E6%95%B0fcntl/" title="Redis-0x11-库函数fcntl">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x11-库函数fcntl</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue">
+                        <span class="hidden-mobile">Redis-0x0E-多路复用器Kqueue</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '0599cdd4d153508bcb73fdbeea051901'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

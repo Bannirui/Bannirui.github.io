@@ -1,0 +1,856 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 宿主机目录12345cd &#x2F;Users&#x2F;dingrui&#x2F;MyApp&#x2F;docker-app&#x2F;zkmkdir zk1mkdir zk2mkdir zk3touch docker-compose.yml  2 docker compose2.1 单机123456789101112# zk单机services:  zk1:    image: zookeeper:3.9    hostname: zk">
+<meta property="og:type" content="article">
+<meta property="og:title" content="部署zk">
+<meta property="og:url" content="https://bannirui.github.io/2025/01/23/Docker/%E9%83%A8%E7%BD%B2zk/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="1 宿主机目录12345cd &#x2F;Users&#x2F;dingrui&#x2F;MyApp&#x2F;docker-app&#x2F;zkmkdir zk1mkdir zk2mkdir zk3touch docker-compose.yml  2 docker compose2.1 单机123456789101112# zk单机services:  zk1:    image: zookeeper:3.9    hostname: zk">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2025/01/23/Docker/%E9%83%A8%E7%BD%B2zk/1737639051.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/01/23/Docker/%E9%83%A8%E7%BD%B2zk/1737907610.png">
+<meta property="article:published_time" content="2025-01-23T09:14:25.000Z">
+<meta property="article:modified_time" content="2025-01-26T16:07:35.955Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="zk">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2025/01/23/Docker/%E9%83%A8%E7%BD%B2zk/1737639051.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>部署zk - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="部署zk"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-01-23 17:14" pubdate>
+          2025年1月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          424 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          4 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Docker"
+        id="heading-c5fd214cdd0d2b3b4272e73b022ba5c2" role="tab" data-toggle="collapse" href="#collapse-c5fd214cdd0d2b3b4272e73b022ba5c2"
+        aria-expanded="true"
+      >
+        Docker
+        <span class="list-group-count">(6)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-c5fd214cdd0d2b3b4272e73b022ba5c2"
+           role="tabpanel" aria-labelledby="heading-c5fd214cdd0d2b3b4272e73b022ba5c2">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/11/19/Docker/%E5%AE%89%E8%A3%85Apollo/" title="安装Apollo"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">安装Apollo</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/11/26/Docker/%E5%AE%89%E8%A3%85Cat/" title="安装Cat"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">安装Cat</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/11/19/Docker/%E5%AE%89%E8%A3%85MySQL/" title="安装MySQL"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">安装MySQL</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/01/13/Docker/%E9%83%A8%E7%BD%B2Kafka/" title="部署Kafka"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">部署Kafka</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/01/09/Docker/%E9%83%A8%E7%BD%B2RocketMQ/" title="部署RocketMQ"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">部署RocketMQ</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/01/23/Docker/%E9%83%A8%E7%BD%B2zk/" title="部署zk"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">部署zk</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">部署zk</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="1-宿主机目录"><a href="#1-宿主机目录" class="headerlink" title="1 宿主机目录"></a>1 宿主机目录</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cd</span> /Users/dingrui/MyApp/docker-app/zk<br><span class="hljs-built_in">mkdir</span> zk1<br><span class="hljs-built_in">mkdir</span> zk2<br><span class="hljs-built_in">mkdir</span> zk3<br><span class="hljs-built_in">touch</span> docker-compose.yml<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-docker-compose"><a href="#2-docker-compose" class="headerlink" title="2 docker compose"></a>2 docker compose</h3><h4 id="2-1-单机"><a href="#2-1-单机" class="headerlink" title="2.1 单机"></a>2.1 单机</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># zk单机</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">zk1:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">zookeeper:3.9</span><br>    <span class="hljs-attr">hostname:</span> <span class="hljs-string">zk1</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">zk1</span><br>    <span class="hljs-comment"># 8080端口是web admin 不要映射</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">2181</span><span class="hljs-string">:2181</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk1/data:/data</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk1/datalog:/datalog</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="2-2-集群"><a href="#2-2-集群" class="headerlink" title="2.2 集群"></a>2.2 集群</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># 给zk集群配置一个网络，网络名为zk-net</span><br><span class="hljs-attr">networks:</span><br>  <span class="hljs-attr">zk-net:</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">zk-net</span><br><br><span class="hljs-comment"># zk集群</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">zk1:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">zookeeper:3.9</span><br>    <span class="hljs-attr">hostname:</span> <span class="hljs-string">zk1</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">zk1</span><br>    <span class="hljs-comment"># 8080端口是web admin 不要映射</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">2181</span><span class="hljs-string">:2181</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-comment"># 当前zk实例的id</span><br>      <span class="hljs-attr">ZOO_MY_ID:</span> <span class="hljs-number">1</span><br>      <span class="hljs-comment"># 整个zk集群的机器、端口列表 2181服务端口开发给客户端程序连接集群 3888选主 2888内部通讯</span><br>      <span class="hljs-attr">ZOO_SERVERS:</span> <span class="hljs-string">server.1=0.0.0.0:2888:3888;2181</span> <span class="hljs-string">server.2=zk2:2888:3888;2181</span> <span class="hljs-string">server.3=zk3:2888:3888;2181</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk1/data:/data</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk1/datalog:/datalog</span><br>    <span class="hljs-comment"># 加入名为zk-net的隔离网络</span><br>    <span class="hljs-attr">networks:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">zk-net</span><br><br>  <span class="hljs-attr">zk2:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">zookeeper:3.9</span><br>    <span class="hljs-attr">hostname:</span> <span class="hljs-string">zk2</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">zk2</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">2182</span><span class="hljs-string">:2181</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-attr">ZOO_MY_ID:</span> <span class="hljs-number">2</span><br>      <span class="hljs-attr">ZOO_SERVERS:</span> <span class="hljs-string">server.1=zk1:2888:3888;2181</span> <span class="hljs-string">server.2=0.0.0.0:2888:3888;2181</span> <span class="hljs-string">server.3=zk3:2888:3888;2181</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk2/data:/data</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk2/datalog:/datalog</span><br>    <span class="hljs-attr">networks:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">zk-net</span><br><br>  <span class="hljs-attr">zk3:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">zookeeper:3.9</span><br>    <span class="hljs-attr">hostname:</span> <span class="hljs-string">zk3</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">zk3</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">2183</span><span class="hljs-string">:2181</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-attr">ZOO_MY_ID:</span> <span class="hljs-number">3</span><br>      <span class="hljs-attr">ZOO_SERVERS:</span> <span class="hljs-string">server.1=zk1:2888:3888;2181</span> <span class="hljs-string">server.2=zk2:2888:3888;2181</span> <span class="hljs-string">server.3=0.0.0.0:2888:3888;2181</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk3/data:/data</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk3/datalog:/datalog</span><br>    <span class="hljs-attr">networks:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">zk-net</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-启动容器"><a href="#3-启动容器" class="headerlink" title="3 启动容器"></a>3 启动容器</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">docker-compose up -d<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-ui管理"><a href="#4-ui管理" class="headerlink" title="4 ui管理"></a>4 ui管理</h3><p><a target="_blank" rel="noopener" href="https://github.com/vran-dev/PrettyZoo/releases">下载安装</a></p>
+<img src="/2025/01/23/Docker/%E9%83%A8%E7%BD%B2zk/1737639051.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>但是这个dmg不支持mac arm架构的处理器，因此要另寻他路，修改上面的脚本</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># zk单机</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">zk1:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">zookeeper:3.9</span><br>    <span class="hljs-attr">hostname:</span> <span class="hljs-string">zk1</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">zk1</span><br>    <span class="hljs-comment"># 8080端口是web admin 不要映射</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">2181</span><span class="hljs-string">:2181</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk1/data:/data</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./zk1/datalog:/datalog</span><br>  <span class="hljs-comment">#连接zk服务端的ui管理后台</span><br>  <span class="hljs-attr">zkui:</span><br>    <span class="hljs-attr">build:</span><br>      <span class="hljs-attr">context:</span> <span class="hljs-string">.</span><br>      <span class="hljs-attr">dockerfile:</span> <span class="hljs-string">Dockerfile</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">on-failure:3</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">zkui</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">9090</span><span class="hljs-string">:9090</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs Dockerfile"><span class="hljs-comment">#FROM arm64v8/openjdk:8-jre</span><br><span class="hljs-keyword">FROM</span> bitnami/java:<span class="hljs-number">1.8</span><br><span class="hljs-keyword">WORKDIR</span><span class="language-bash"> /var/app</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; apt-get install -y git maven </span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> git <span class="hljs-built_in">clone</span> https://github.com/DeemOpen/zkui.git</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> <span class="hljs-built_in">cd</span> zkui &amp;&amp; mvn clean package</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> <span class="hljs-built_in">mv</span> ./zkui/target/zkui-*jar-with-dependencies.jar ./zkui.jar</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> <span class="hljs-built_in">mv</span> ./zkui/config.cfg ./config.cfg</span><br><span class="hljs-comment"># localhost替换host.docker.internal</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> sed -i <span class="hljs-string">&quot;s/localhost/host.docker.internal/g&quot;</span> ./config.cfg</span><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> java -jar zkui.jar</span><br><span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">9090</span><br></code></pre></td></tr></table></figure>
+
+<p>部署好后连接宿主机<code>127.0.0.1:9090</code>即可</p>
+<img src="/2025/01/23/Docker/%E9%83%A8%E7%BD%B2zk/1737907610.png" srcset="/img/loading.gif" lazyload class="">
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Docker/" class="category-chain-item">Docker</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/zk/" class="print-no-link">#zk</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>部署zk</div>
+      <div>https://bannirui.github.io/2025/01/23/Docker/部署zk/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年1月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/01/13/Docker/%E9%83%A8%E7%BD%B2Kafka/" title="部署Kafka">
+                        <span class="hidden-mobile">部署Kafka</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '9fa2ae32190527cdcce44cd12995a130'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

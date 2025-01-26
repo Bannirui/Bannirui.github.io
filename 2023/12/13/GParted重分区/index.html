@@ -1,0 +1,1025 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="今天安装软件的时候报错提示空间不够，df -h如下   可以看到分区&#x2F;dev&#x2F;nvme0n1p2，挂载在家目录&#x2F;下，当初装这个系统是用arch install自动分区的，没注意才分了20G，现在已经快满了，所以要进行重分区。 1 安装GParted12345pacman -Ss gpartedsudo pacman -S gpartedgparted  2 GParted分区扩容  可以看到我总共">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GParted重分区">
+<meta property="og:url" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="今天安装软件的时候报错提示空间不够，df -h如下   可以看到分区&#x2F;dev&#x2F;nvme0n1p2，挂载在家目录&#x2F;下，当初装这个系统是用arch install自动分区的，没注意才分了20G，现在已经快满了，所以要进行重分区。 1 安装GParted12345pacman -Ss gpartedsudo pacman -S gpartedgparted  2 GParted分区扩容  可以看到我总共">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702465863.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702468339.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702469551.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702470022.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702470175.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702470691.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702474800.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702474984.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475240.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475384.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475437.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475885.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475992.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476195.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476251.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476411.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476559.jpg">
+<meta property="og:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476609.jpg">
+<meta property="article:published_time" content="2023-12-13T11:08:43.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.225Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702465863.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>GParted重分区 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="GParted重分区"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-13 19:08" pubdate>
+          2023年12月13日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          875 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Linux"
+        id="heading-edc9f0a5a5d57797bf68e37364743831" role="tab" data-toggle="collapse" href="#collapse-edc9f0a5a5d57797bf68e37364743831"
+        aria-expanded="true"
+      >
+        Linux
+        <span class="list-group-count">(17)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-edc9f0a5a5d57797bf68e37364743831"
+           role="tabpanel" aria-labelledby="heading-edc9f0a5a5d57797bf68e37364743831">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/12/31/ArchLinux%E5%AE%89%E8%A3%85%E8%93%9D%E7%89%99%E6%A8%A1%E5%9D%97/" title="ArchLinux安装蓝牙模块"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ArchLinux安装蓝牙模块</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Linux/ArchLinux%E7%8E%AF%E5%A2%83/" title="ArchLinux环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ArchLinux环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/" title="GParted重分区"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">GParted重分区</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/11/Linux%E5%AE%89%E8%A3%85FreeCAD/" title="Linux安装FreeCAD"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Linux安装FreeCAD</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/03/Linux/Linux%E5%AE%89%E8%A3%85Qt%E7%8E%AF%E5%A2%83/" title="Linux安装Qt环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Linux安装Qt环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Linux/Mac%E7%8E%AF%E5%A2%83/" title="Mac环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Mac环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Linux/Ubuntu%E7%8E%AF%E5%A2%83/" title="Ubuntu环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Ubuntu环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/04/Linux/apt%E5%91%BD%E4%BB%A4/" title="apt命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">apt命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/02/28/archlinux%E7%BC%96%E8%AF%91bochs/" title="archlinux编译bochs"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">archlinux编译bochs</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/02/23/archlinux%E7%BC%96%E8%AF%91kvmtool/" title="archlinux编译kvmtool"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">archlinux编译kvmtool</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/24/ffmpeg%E5%B7%A5%E5%85%B7/" title="ffmpeg工具"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ffmpeg工具</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/09/28/Linux/mac%E9%80%9A%E8%BF%87%E7%BD%91%E7%BA%BF%E5%85%B1%E4%BA%ABwifi/" title="mac通过网线共享wifi"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">mac通过网线共享wifi</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/25/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/" title="ssh远程主机"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ssh远程主机</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/09/21/Linux/ssh%E8%BF%9E%E6%8E%A5windows%E7%9A%84wsl/" title="ssh连接到windows的wsl"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ssh连接到windows的wsl</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/25/systemctl%E5%91%BD%E4%BB%A4/" title="systemctl命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">systemctl命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/11/yay%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="yay常用命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">yay常用命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/08/17/Linux/yt-dlp%E4%B8%8B%E8%BD%BD%E5%99%A8%E5%AE%89%E8%A3%85/" title="yt-dlp下载器安装"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">yt-dlp下载器安装</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">GParted重分区</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>今天安装软件的时候报错提示空间不够，<code>df -h</code>如下</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702465863.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<p>可以看到分区<code>/dev/nvme0n1p2</code>，挂载在家目录<code>/</code>下，当初装这个系统是用<code>arch install</code>自动分区的，没注意才分了20G，现在已经快满了，所以要进行重分区。</p>
+<h2 id="1-安装GParted"><a href="#1-安装GParted" class="headerlink" title="1 安装GParted"></a>1 安装GParted</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">pacman -Ss gparted<br><br>sudo pacman -S gparted<br><br>gparted<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-GParted分区扩容"><a href="#2-GParted分区扩容" class="headerlink" title="2 GParted分区扩容"></a>2 GParted分区扩容</h2><img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702468339.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<p>可以看到我总共就3个分区，除去启动盘，我只要将分区3缩容让出左边一些空间，然后对分区2进行扩容用上刚才让出来的空间。<br>但是可惜的是分区右边都有一把锁的标识，并且无法<code>unmount</code>分区。这3个分区都是我挂在根区下的使用着的分区，肯定不能<code>unmount</code>的，但凡其中一个能被卸载，电脑都不能正常工作了，因此也算是一种保护。</p>
+<h2 id="3-GParted-Live"><a href="#3-GParted-Live" class="headerlink" title="3 GParted Live"></a>3 GParted Live</h2><img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702469551.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>在<a target="_blank" rel="noopener" href="https://gparted.org/livecd.php">官网</a>上看到可以把<code>GParted Live</code>镜像烧录到U盘做成启动盘，然后用启动盘重分区。</p>
+<p>官网的文档极其详尽，跟着操作就行了。</p>
+<h3 id="3-1-下载镜像"><a href="#3-1-下载镜像" class="headerlink" title="3.1 下载镜像"></a>3.1 <a target="_blank" rel="noopener" href="https://gparted.org/download.php">下载镜像</a></h3><img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702470022.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="3-2-烧录U盘"><a href="#3-2-烧录U盘" class="headerlink" title="3.2 烧录U盘"></a>3.2 烧录U盘</h3><p>只介绍了2种烧录方式</p>
+<ul>
+<li>windows</li>
+<li><a target="_blank" rel="noopener" href="https://gparted.org/liveusb.php#linux-method-d">linux</a></li>
+</ul>
+<p>linux下用<code>Tuxboot</code>烧录最为简单</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702470175.png" srcset="/img/loading.gif" lazyload class="">
+
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702470691.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>我手边的这个U盘还是之前用来做Ubuntu的系统启动盘，现在要另作他用了。<br>其次<code>tuxboot</code>这个工具还必须得用yay来安装。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">yay -Ss tuxboot<br><br>yay -S tuxboot<br></code></pre></td></tr></table></figure>
+
+<p>这个软件是qt写的，所以可想而知是个比较大的工程，下载编译安装比较耗时(30min)。可惜的是安装好后运行<code>sudo tuxboot</code>先是提示缺失<code>7z</code>，安装好依赖之后，界面显示不出来相应的工作区，应该是我的系统缺少一些动态库。</p>
+<p>于是转而换个工具<code>unetbootin</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">pacman -Ss unetbootin<br><br>yay -Ss unetbootin<br><br>yay -S unetbootin<br><br>sudo unetbootin<br></code></pre></td></tr></table></figure>
+
+<p>将iso镜像烧写到u盘中即可，u盘这儿不是显示的名称，而是盘符名字，只要在终端<code>df -h</code>即可看到u盘的盘符名字，不要选错。</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702474800.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<p>在烧写过程中会有进度条提示</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702474984.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="3-2-U盘启动盘"><a href="#3-2-U盘启动盘" class="headerlink" title="3.2  U盘启动盘"></a>3.2  U盘启动盘</h3><p>每个人进BIOS不尽相同，选择U盘启动即可。</p>
+<h4 id="3-2-1-gparted-live模式"><a href="#3-2-1-gparted-live模式" class="headerlink" title="3.2.1 gparted live模式"></a>3.2.1 gparted live模式</h4><p>不用改变，默认选择即可，n秒不操作键鼠之后会根据默认第一项进入</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475240.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-2-2-快捷键映射"><a href="#3-2-2-快捷键映射" class="headerlink" title="3.2.2 快捷键映射"></a>3.2.2 快捷键映射</h4><p>选择第2项目<code>do not touch keymap</code></p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475384.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-2-2-语言"><a href="#3-2-2-语言" class="headerlink" title="3.2.2 语言"></a>3.2.2 语言</h4><p>左下角提示选择语言，输入26，选择汉语</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475437.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-2-3-启动模式"><a href="#3-2-3-启动模式" class="headerlink" title="3.2.3 启动模式"></a>3.2.3 启动模式</h4><p>默认是0，应该是基于x框架的gui，直接按enter即可。</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475885.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-2-4-gparted分区"><a href="#3-2-4-gparted分区" class="headerlink" title="3.2.4 gparted分区"></a>3.2.4 gparted分区</h4><p>进入系统，默认会打开gparted工具，如果没有就鼠标双击方式自己打开软件。此时可以看到分区上是没有锁的标志的，之后的操作就是gparted了，比如我现在分区2是20G，我想扩到100G。</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702475992.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<p>因此</p>
+<ul>
+<li>先resize分区3，减少80G，将分区3右侧让出空闲80G</li>
+<li>移动分区3，将分区3移动到最右侧，此时分区2和分区3之间有80G的未分配区</li>
+<li>最后，resize分区2，将分区2大小扩大80G</li>
+</ul>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476195.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<p>之后有是一段比较耗时的过程，静静等待即可</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476251.jpg" srcset="/img/loading.gif" lazyload class="">
+
+
+<h4 id="3-2-5-重启"><a href="#3-2-5-重启" class="headerlink" title="3.2.5 重启"></a>3.2.5 重启</h4><p>之后关闭gparted，双击屏幕的<code>Exit</code>图标即可</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476411.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<p>随后根据提示，选择<code>reboot</code>重启电脑，重启之前拔掉U盘，因为此时BIOS还是设置的U盘启动盘为第一优先级。</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476559.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-2-6-完成分区扩容"><a href="#3-2-6-完成分区扩容" class="headerlink" title="3.2.6 完成分区扩容"></a>3.2.6 完成分区扩容</h4><p>此时再看分区情况，分区2已经如愿以偿从20G扩到了100G。</p>
+<img src="/2023/12/13/GParted%E9%87%8D%E5%88%86%E5%8C%BA/1702476609.jpg" srcset="/img/loading.gif" lazyload class="">
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>GParted重分区</div>
+      <div>https://bannirui.github.io/2023/12/13/GParted重分区/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/12/13/%E5%AE%89%E8%A3%85KiCad/" title="安装KiCad">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">安装KiCad</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/12/pyocd%E4%BD%BF%E7%94%A8/" title="pyocd使用">
+                        <span class="hidden-mobile">pyocd使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '31573166dcdf5cba962ee3d0cba97f7a'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

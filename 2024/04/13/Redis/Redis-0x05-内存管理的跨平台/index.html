@@ -1,0 +1,1099 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统1234567891011121314151617#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;#i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x05-内存管理的跨平台">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="1 操作系统的内存分配一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。 我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。 1.1 linux系统1234567891011121314151617#include &lt;stdio.h&gt;#include &lt;malloc.h&gt;#i">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-36.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_15-43-29.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_18-28-03.png">
+<meta property="article:published_time" content="2024-04-13T14:18:55.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.478Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x05-内存管理的跨平台 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x05-内存管理的跨平台"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-13 22:18" pubdate>
+          2024年4月13日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(52)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x05-内存管理的跨平台</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-操作系统的内存分配"><a href="#1-操作系统的内存分配" class="headerlink" title="1 操作系统的内存分配"></a>1 操作系统的内存分配</h2><p>一个基本的事实是不同的操作系统可能有不同的内存分配器实现，函数原型、执行效率、内存碎片等等或多或少存在着差异。</p>
+<p>我自己的主力机只有一台mac和一台linux的迷你机，因此只能查阅这两个系统相关的库函数。</p>
+<h3 id="1-1-linux系统"><a href="#1-1-linux系统" class="headerlink" title="1.1 linux系统"></a>1.1 linux系统</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">test_malloc_usable_size</span> <span class="hljs-params">(<span class="hljs-type">int</span> cnt)</span><br>&#123;<br>  <span class="hljs-type">int</span> *p = <span class="hljs-built_in">malloc</span> (cnt * <span class="hljs-keyword">sizeof</span> (<span class="hljs-type">int</span>));<br>  <span class="hljs-type">size_t</span> sz = malloc_usable_size (p);<br>  <span class="hljs-built_in">free</span> (p);<br>  <span class="hljs-built_in">printf</span> (<span class="hljs-string">&quot;%d*size=%zu\n&quot;</span>, cnt, sz);<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span> <span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>  test_malloc_usable_size (<span class="hljs-number">2</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-2-mac系统"><a href="#1-2-mac系统" class="headerlink" title="1.2 mac系统"></a>1.2 mac系统</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc/malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">test_malloc_size</span> <span class="hljs-params">(<span class="hljs-type">int</span> cnt)</span><br>&#123;<br>  <span class="hljs-type">int</span> *p = (<span class="hljs-type">int</span> *)<span class="hljs-built_in">malloc</span> (cnt * <span class="hljs-keyword">sizeof</span> (<span class="hljs-type">int</span>));<br>  <span class="hljs-type">size_t</span> ret = malloc_size (p);<br>  <span class="hljs-built_in">printf</span> (<span class="hljs-string">&quot;%d*(int), ret=%zu\n&quot;</span>, cnt, ret);<br>  <span class="hljs-built_in">free</span> (p);<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span> <span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>  test_malloc_size (<span class="hljs-number">1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>从上面的示例代码可以看出：</p>
+<ul>
+<li><p>虽然macos和linux都实现了<code>malloc</code>函数，但是二者的头文件路径并不一样，对于开发者而言在使用的时候就需要根据实际情况引入头文件</p>
+</li>
+<li><p>两个平台都提供了查询动态内容实际分配的内存大小的功能，但是函数原型并不一样，在mac上是<code>malloc_size(...)</code>，在linux上是<code>malloc_usable_size(...)</code></p>
+</li>
+</ul>
+<p>关于库函数的手册说明，如下：</p>
+<ul>
+<li><p>mac的malloc_size</p>
+  <img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-35.png" srcset="/img/loading.gif" lazyload class="">
+</li>
+<li><p>linux的malloc_usable_size</p>
+  <img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_13-58-36.png" srcset="/img/loading.gif" lazyload class=""></li>
+</ul>
+<h2 id="2-zmalloc分配器"><a href="#2-zmalloc分配器" class="headerlink" title="2 zmalloc分配器"></a>2 zmalloc分配器</h2><p>基于上述，redis想要做到跨平台的话，就要在各个系统提供的库函数之上，封装统一的api。再者，如果有了统一封装，又可以更方便定制化进行内存管理，即在用户进程和OS之间扮演了中介的角色。</p>
+<img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_15-43-29.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>那么，zmalloc要关注的几个实现可能如下：</p>
+<ul>
+<li><p>统一的<code>malloc</code>系列函数</p>
+</li>
+<li><p>统一的<code>free</code>系列函数</p>
+</li>
+<li><p>记录用户进程向OS申请的内存，用于量化指标统计</p>
+</li>
+<li><p>分析内存碎片和使用率等情况，合理地交互OS以达到内存管理</p>
+</li>
+</ul>
+<p>目前为止看到的分配器的实现就3大类，tcmalloc实现、jemalloc实现、libc实现，而对标准库的实现依赖平台，我只熟悉mac和linux，姑且将OS分为3种：mac、linux和其他。即如下：</p>
+<ul>
+<li><p>tcmalloc内存分配器</p>
+</li>
+<li><p>jemalloc内存分配器</p>
+</li>
+<li><p>libc内存分配器</p>
+<ul>
+<li><p>linux的glibc内存分配器</p>
+</li>
+<li><p>mac的内存分配器</p>
+</li>
+<li><p>其他OS的内存分配器</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-内存分配器编译选项"><a href="#3-内存分配器编译选项" class="headerlink" title="3 内存分配器编译选项"></a>3 内存分配器编译选项</h2><p>编译选项需要从Makefile中看，3个选项</p>
+<ul>
+<li><p>tcmalloc</p>
+</li>
+<li><p>jemalloc</p>
+</li>
+<li><p>libc</p>
+</li>
+</ul>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs Makefile"><span class="hljs-comment"># Default allocator defaults to Jemalloc if it&#x27;s not an ARM</span><br><span class="hljs-comment"># 指定内存分配器 linux操作系统上redis默认使用的是jemalloc适配器</span><br>MALLOC=libc<br><span class="hljs-keyword">ifneq</span> (<span class="hljs-variable">$(uname_M)</span>,armv6l)<br><span class="hljs-keyword">ifneq</span> (<span class="hljs-variable">$(uname_M)</span>,armv7l)<br><span class="hljs-keyword">ifeq</span> (<span class="hljs-variable">$(uname_S)</span>,Linux)<br>	MALLOC=jemalloc<br><span class="hljs-keyword">endif</span><br><span class="hljs-keyword">endif</span><br><span class="hljs-keyword">endif</span><br><br><span class="hljs-comment"># 将tcmalloc分配器编译到项目中</span><br><span class="hljs-keyword">ifeq</span> (<span class="hljs-variable">$(MALLOC)</span>,tcmalloc)<br>	FINAL_CFLAGS+= -DUSE_TCMALLOC<br>	FINAL_LIBS+= -ltcmalloc<br><span class="hljs-keyword">endif</span><br><br><span class="hljs-comment"># MALLOC变量默认是libc也就是说默认使用系统自带的内存分配实现</span><br><span class="hljs-comment"># linux系统下会将MALLOC赋值为jemalloc 编译选项中通过宏定义USE_JEMALLOC标识使用了jemalloc内存分配器</span><br><span class="hljs-comment"># 将jemalloc分配器编译到项目中</span><br><span class="hljs-keyword">ifeq</span> (<span class="hljs-variable">$(MALLOC)</span>,jemalloc)<br>	DEPENDENCY_TARGETS+= jemalloc<br>	FINAL_CFLAGS+= -DUSE_JEMALLOC -I../deps/jemalloc/<span class="hljs-keyword">include</span><br>	FINAL_LIBS := ../deps/jemalloc/lib/libjemalloc.a <span class="hljs-variable">$(FINAL_LIBS)</span><br><span class="hljs-keyword">endif</span><br></code></pre></td></tr></table></figure>
+
+<p>使用哪个内存分配器是在编译的时候通过-D宏参数定义的</p>
+<ul>
+<li><p>-DUSE_TCMALLOC 使用tcmalloc分配器</p>
+</li>
+<li><p>-DUSE_JEMALLOC 使用jemalloc分配器</p>
+</li>
+<li><p>没有指定上述二者 就使用libc 即系统自带的默认分配器实现</p>
+</li>
+</ul>
+<h2 id="4-zmalloc和zmalloc-size的封装"><a href="#4-zmalloc和zmalloc-size的封装" class="headerlink" title="4 zmalloc和zmalloc_size的封装"></a>4 zmalloc和zmalloc_size的封装</h2><p>统一封装api，要做的就是</p>
+<ul>
+<li><p>底层依赖的头文件</p>
+</li>
+<li><p>底层函数封装</p>
+<ul>
+<li><p>封装为zmalloc</p>
+</li>
+<li><p>封装为zmalloc_size</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-1-tcmalloc分配器"><a href="#4-1-tcmalloc分配器" class="headerlink" title="4.1 tcmalloc分配器"></a>4.1 tcmalloc分配器</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 编译参数-DUSE_TCMALLOC指定了使用tcmalloc分配器</span><br><span class="hljs-comment"> * 该分配器实现并不是每个版本都支持malloc_size</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;版本&lt;1.6 不支持malloc_size&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;版本&gt;=1.6 支持malloc_size&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * 将tc_malloc_size(...)封装成zmalloc_size(...)</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> defined(USE_TCMALLOC)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZMALLOC_LIB (<span class="hljs-string">&quot;tcmalloc-&quot;</span> __xstr(TC_VERSION_MAJOR) <span class="hljs-string">&quot;.&quot;</span> __xstr(TC_VERSION_MINOR))</span><br><span class="hljs-comment">/* tcmalloc头文件 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;google/tcmalloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> (TC_VERSION_MAJOR == 1 &amp;&amp; TC_VERSION_MINOR &gt;= 6) || (TC_VERSION_MAJOR &gt; 1)</span><br><span class="hljs-comment">/* tcmalloc版本&gt;=1.6支持malloc_size 将其提供的tc_malloc_size(...)函数封装为统一的zmalloc_size(...) */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> HAVE_MALLOC_SIZE 1</span><br><span class="hljs-comment">/* zmalloc_size(...)封装 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> zmalloc_size(p) tc_malloc_size(p)</span><br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br><span class="hljs-comment">/* tcmaloc版本&lt;1.6不支持malloc_size */</span><br><span class="hljs-meta">#<span class="hljs-keyword">error</span> <span class="hljs-string">&quot;Newer version of tcmalloc required&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">if</span> defined(USE_TCMALLOC)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> malloc(size) tc_malloc(size)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> calloc(count,size) tc_calloc(count,size)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> realloc(ptr,size) tc_realloc(ptr,size)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> free(ptr) tc_free(ptr)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-jemalloc分配器"><a href="#4-2-jemalloc分配器" class="headerlink" title="4.2 jemalloc分配器"></a>4.2 jemalloc分配器</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 编译参数-DUSE_JEMALLOC指定了使用jemalloc分配器</span><br><span class="hljs-comment"> * 该分配器实现并不是每个版本都支持malloc_size</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;版本&lt;2.1 不支持malloc_size&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;版本&gt;=2.1 支持malloc_size&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * 将je_malloc_usable_size(...)封装成zmalloc_size(...)</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">elif</span> defined(USE_JEMALLOC)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZMALLOC_LIB (<span class="hljs-string">&quot;jemalloc-&quot;</span> __xstr(JEMALLOC_VERSION_MAJOR) <span class="hljs-string">&quot;.&quot;</span> __xstr(JEMALLOC_VERSION_MINOR) <span class="hljs-string">&quot;.&quot;</span> __xstr(JEMALLOC_VERSION_BUGFIX))</span><br><span class="hljs-comment">/* jemalloc头文件 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;jemalloc/jemalloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> (JEMALLOC_VERSION_MAJOR == 2 &amp;&amp; JEMALLOC_VERSION_MINOR &gt;= 1) || (JEMALLOC_VERSION_MAJOR &gt; 2)</span><br><span class="hljs-comment">/* jemalloc版本&gt;=2.1支持malloc_size 将其提供的je_malloc_size(...)函数封装为统一的zmalloc_size(...) */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> HAVE_MALLOC_SIZE 1</span><br><span class="hljs-comment">/* zmalloc_size(...)封装 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> zmalloc_size(p) je_malloc_usable_size(p)</span><br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br><span class="hljs-comment">/* jemalloc版本&lt;2.1不支持malloc_size */</span><br><span class="hljs-meta">#<span class="hljs-keyword">error</span> <span class="hljs-string">&quot;Newer version of jemalloc required&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">elif</span> defined(USE_JEMALLOC)</span><br> <span class="hljs-comment">/* jemalloc分配器的函数封装 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> malloc(size) je_malloc(size)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> calloc(count,size) je_calloc(count,size)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> realloc(ptr,size) je_realloc(ptr,size)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> free(ptr) je_free(ptr)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> mallocx(size,flags) je_mallocx(size,flags)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> dallocx(ptr,flags) je_dallocx(ptr,flags)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="4-3-libc"><a href="#4-3-libc" class="headerlink" title="4.3 libc"></a>4.3 libc</h3><p>因为是c标准库，相当于libc于OS是顶层抽象，所以他们的malloc函数的prototype都是一样的。但是<code>malloc_size</code>不同，所以只需要跨平台封装<code>zmalloc_size(...)</code>函数即可。</p>
+<h4 id="4-3-1-mac"><a href="#4-3-1-mac" class="headerlink" title="4.3.1 mac"></a>4.3.1 mac</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 没有通过编译参数指定具体的内存分配器</span><br><span class="hljs-comment"> * 就用系统libc自带的默认实现</span><br><span class="hljs-comment"> * 我常用的系统就macos和linux这两个 二者对c标准库的实现不同</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;头文件</span><br><span class="hljs-comment"> *     &lt;ul&gt;</span><br><span class="hljs-comment"> *       &lt;li&gt;mac头文件为&lt;malloc/malloc.h&gt;&lt;/li&gt;</span><br><span class="hljs-comment"> *       &lt;li&gt;linux头文件为&lt;malloc.h&gt;&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;/ul&gt;</span><br><span class="hljs-comment"> *   &lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;malloc_size的支持</span><br><span class="hljs-comment"> *     &lt;ul&gt;</span><br><span class="hljs-comment"> *       &lt;li&gt;mac的库函数为malloc_size(...)&lt;/li&gt;</span><br><span class="hljs-comment"> *       &lt;li&gt;linux的库函数为malloc_usable_size(...)&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;/ul&gt;</span><br><span class="hljs-comment"> *   &lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">elif</span> defined(__APPLE__)</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * mac平台</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;malloc系列头文件为&lt;malloc/malloc.h&gt;&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;有malloc_size支持&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;malloc_size实现为malloc_size(...)，将其封装为zmalloc_size(...)&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br> <span class="hljs-comment">/* mac下libc头文件 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc/malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> HAVE_MALLOC_SIZE 1</span><br><span class="hljs-comment">/* zmalloc_size(...)函数封装 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> zmalloc_size(p) malloc_size(p)</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+
+<h4 id="4-3-2-linux"><a href="#4-3-2-linux" class="headerlink" title="4.3.2 linux"></a>4.3.2 linux</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * linux平台的libc实现为glibc</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;malloc系列头文件为&lt;malloc.h&gt;&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;有malloc_size支持&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;malloc_size实现为malloc_usable_size(...)，将其封装为zmalloc_size(...)&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-comment">/* linux下libc头文件 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> HAVE_MALLOC_SIZE 1</span><br><span class="hljs-comment">/* zmalloc_size(...)函数封装 */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> zmalloc_size(p) malloc_usable_size(p)</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="5-再看malloc-size"><a href="#5-再看malloc-size" class="headerlink" title="5 再看malloc_size"></a>5 再看malloc_size</h2><p>以mac的手册为例，再看一下<code>malloc_size</code>的描述</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">DESCRIPTION<br>     The malloc_size() function returns the size of the memory block that backs the allocation pointed to by ptr.  The memory block size<br>     is always at least as large as the allocation it backs, and may be larger.<br></code></pre></td></tr></table></figure>
+
+<p>即通过函数<code>malloc(...)</code>申请了动态内存，返回的结果是指针<code>ptr</code>，<code>malloc_size(...)</code>函数返回的就是<code>ptr</code>指针指向的这个内存块的大小，通常这个内存块大小都是比申请的更大的。</p>
+<img src="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/2023-11-08_18-28-03.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>对于内存分配我的理解如上图所示</p>
+<ul>
+<li><p>首先OS中的内存可能本身就不连续，因此需要额外域记录着彼此的关联关系</p>
+</li>
+<li><p>再者将来负责释放内存是通过<code>free(...)</code>函数，因此要在内存块中记录要回收的大小</p>
+</li>
+<li><p>还可能为了考虑效率之类的，进行机器字长对齐</p>
+</li>
+<li><p>所以相当于OS给用户进程的内存大小不仅要满足期望的需求大小，在此基础之上还需要额外的空间</p>
+</li>
+<li><p>比如一个用户进程向系统申请3个单位的内存空间，此时OS有内存碎片，组合之后总共给了用户4个单位的内存空间，其中前1个单位用来存储meta信息，ptr指向的是起始地址是真正给用户进程读写的。</p>
+</li>
+</ul>
+<p>因此可以通过<code>malloc_size</code>这个函数来知道真正向系统申请了多少的内存。</p>
+<p>那么这个内存值的意义是什么呢，我觉得可能的用处有</p>
+<ul>
+<li><p>明确知道了某个系统\服务\进程向系统申请了多少的内存，即内存使用情况</p>
+</li>
+<li><p>如果此时能够通过某个系统调用知道OS内存的真实分配情况，二者一比较就能知道当前内存使用率</p>
+</li>
+<li><p>基于对内存碎片率的量化，拟定一个指标，如果恰好有一个系统调用触发内存回收，便可以有效控制内存的使用</p>
+</li>
+</ul>
+<p>前文看到的tcmalloc、jemalloc、mac的libc、linux的libc都是提供了对malloc_size的支持，如果恰好有一个内存分配器的实现没有对这个函数的提供，redis就要自己再额外的花费一定的开销用来记录内存大小了。假设约定用x个byte空间来记录大小，期望申请n个byte，实际申请N个byte，实际分配M个byte，那么可以想象此时记录的内存大小&#x3D;n+N，而大部分情况下M&gt;&#x3D;N，因此一旦分配器没有提供这样一个函数支持，那么记录的内存大小是不准确的，更逼近于申请大小，而不是对实际分配大小的记录。</p>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x05-内存管理的跨平台</div>
+      <div>https://bannirui.github.io/2024/04/13/Redis/Redis-0x05-内存管理的跨平台/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x06-zmalloc的实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目">
+                        <span class="hidden-mobile">Redis-0x04-用cmake构建项目</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '224dedc24e6a7b276ab260a05aaaa308'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

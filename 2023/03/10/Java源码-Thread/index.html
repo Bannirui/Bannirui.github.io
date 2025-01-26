@@ -1,0 +1,1005 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 Demo1234567public class ThreadTest00 &amp;#123;    public static void main(String[] args) &amp;#123;        Thread t0 &#x3D; new Thread(() -&gt; System.out.println(&quot;biz thread...&quot;), &quot;t0&quot;); &#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java源码-Thread">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/10/Java%E6%BA%90%E7%A0%81-Thread/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="1 Demo1234567public class ThreadTest00 &amp;#123;    public static void main(String[] args) &amp;#123;        Thread t0 &#x3D; new Thread(() -&gt; System.out.println(&quot;biz thread...&quot;), &quot;t0&quot;); &#x2F;&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-10T15:40:12.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.308Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="Java@15">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Java源码-Thread - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java源码-Thread"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-10 23:40" pubdate>
+          2023年3月10日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Java"
+        id="heading-d52387880e1ea22817a72d3759213819" role="tab" data-toggle="collapse" href="#collapse-d52387880e1ea22817a72d3759213819"
+        aria-expanded="true"
+      >
+        Java
+        <span class="list-group-count">(17)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-d52387880e1ea22817a72d3759213819"
+           role="tabpanel" aria-labelledby="heading-d52387880e1ea22817a72d3759213819">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/05/14/JNI%E4%BD%BF%E7%94%A8/" title="JNI使用"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JNI使用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/" title="Java源码-0x00-编译openjdk"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x00-编译openjdk</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="Java源码-0x01-源码阅读清单"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x01-源码阅读清单</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/" title="Java源码-0x02-Object"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x02-Object</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="Java源码-0x03-MarkWord"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x03-MarkWord</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="Java源码-0x04-biasedLocking"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x04-biasedLocking</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/10/Java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="Java源码-0x05-宏定义"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x05-宏定义</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" title="Java源码-AQS"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-AQS</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" title="Java源码-ArrayBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-ArrayBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-COW/" title="Java源码-COW"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-COW</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" title="Java源码-LinkedBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-LinkedBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" title="Java源码-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Selector</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" title="Java源码-SynchronousQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-SynchronousQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-Thread/" title="Java源码-Thread"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Java源码-Thread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" title="Java源码-ThreadPoolExecutor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-ThreadPoolExecutor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/04/Java%E6%BA%90%E7%A0%81-Timer/" title="Java源码-Timer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Timer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-synchronized/" title="Java源码-synchronized"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-synchronized</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java源码-Thread</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-Demo"><a href="#1-Demo" class="headerlink" title="1 Demo"></a>1 Demo</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThreadTest00</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">Thread</span> <span class="hljs-variable">t0</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(() -&gt; System.out.println(<span class="hljs-string">&quot;biz thread...&quot;</span>), <span class="hljs-string">&quot;t0&quot;</span>); <span class="hljs-comment">// 仅设置了一些参数 没有开辟创建线程的资源</span><br>        t0.start(); <span class="hljs-comment">// 创建线程 回调run实现</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-Thread构造方法"><a href="#2-Thread构造方法" class="headerlink" title="2 Thread构造方法"></a>2 Thread构造方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Thread.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">native</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerNatives</span><span class="hljs-params">()</span>; <span class="hljs-comment">// 本地方法 通过JNI方式调用 但是提供的声明做了一个转换 比如Java调用本地方法a 这个本地方法在源码中声明为a 但是没有直接提供a的定义 而是提供了声明b和定义b 然后将a映射到b</span><br>    <span class="hljs-keyword">static</span> &#123;<br>        registerNatives();<br>    &#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-title function_">Thread</span><span class="hljs-params">(Runnable target, String name)</span> &#123; <span class="hljs-comment">// 整个构造方法都不重要 仅仅是做了一些属性赋值工作 没有任何涉及资源开辟</span><br>        <span class="hljs-built_in">this</span>(<span class="hljs-literal">null</span>, target, name, <span class="hljs-number">0</span>);<br>    &#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-title function_">Thread</span><span class="hljs-params">(ThreadGroup group, Runnable target, String name,</span><br><span class="hljs-params">                  <span class="hljs-type">long</span> stackSize)</span> &#123;<br>        <span class="hljs-built_in">this</span>(group, target, name, stackSize, <span class="hljs-literal">null</span>, <span class="hljs-literal">true</span>);<br>    &#125;<br><br><span class="hljs-keyword">private</span> <span class="hljs-title function_">Thread</span><span class="hljs-params">(ThreadGroup g, Runnable target, String name,</span><br><span class="hljs-params">                   <span class="hljs-type">long</span> stackSize, AccessControlContext acc,</span><br><span class="hljs-params">                   <span class="hljs-type">boolean</span> inheritThreadLocals)</span> &#123;<br>        <span class="hljs-keyword">if</span> (name == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullPointerException</span>(<span class="hljs-string">&quot;name cannot be null&quot;</span>);<br>        &#125;<br><br>        <span class="hljs-built_in">this</span>.name = name;<br><br>        <span class="hljs-type">Thread</span> <span class="hljs-variable">parent</span> <span class="hljs-operator">=</span> currentThread(); <span class="hljs-comment">// 创建线程的线程 谁发起创建线程请求的</span><br>        <span class="hljs-type">SecurityManager</span> <span class="hljs-variable">security</span> <span class="hljs-operator">=</span> System.getSecurityManager();<br>        <span class="hljs-keyword">if</span> (g == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-comment">/* Determine if it&#x27;s an applet or not */</span><br><br>            <span class="hljs-comment">/* If there is a security manager, ask the security manager</span><br><span class="hljs-comment">               what to do. */</span><br>            <span class="hljs-keyword">if</span> (security != <span class="hljs-literal">null</span>) &#123;<br>                g = security.getThreadGroup();<br>            &#125;<br><br>            <span class="hljs-comment">/* If the security manager doesn&#x27;t have a strong opinion</span><br><span class="hljs-comment">               on the matter, use the parent thread group. */</span><br>            <span class="hljs-keyword">if</span> (g == <span class="hljs-literal">null</span>) &#123;<br>                g = parent.getThreadGroup();<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-comment">/* checkAccess regardless of whether or not threadgroup is</span><br><span class="hljs-comment">           explicitly passed in. */</span><br>        g.checkAccess();<br><br>        <span class="hljs-comment">/*</span><br><span class="hljs-comment">         * Do we have the required permissions?</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">if</span> (security != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">if</span> (isCCLOverridden(getClass())) &#123;<br>                security.checkPermission(<br>                        SecurityConstants.SUBCLASS_IMPLEMENTATION_PERMISSION);<br>            &#125;<br>        &#125;<br><br>        g.addUnstarted();<br><br>        <span class="hljs-built_in">this</span>.group = g;<br>        <span class="hljs-built_in">this</span>.daemon = parent.isDaemon();<br>        <span class="hljs-built_in">this</span>.priority = parent.getPriority();<br>        <span class="hljs-keyword">if</span> (security == <span class="hljs-literal">null</span> || isCCLOverridden(parent.getClass()))<br>            <span class="hljs-built_in">this</span>.contextClassLoader = parent.getContextClassLoader();<br>        <span class="hljs-keyword">else</span><br>            <span class="hljs-built_in">this</span>.contextClassLoader = parent.contextClassLoader;<br>        <span class="hljs-built_in">this</span>.inheritedAccessControlContext =<br>                acc != <span class="hljs-literal">null</span> ? acc : AccessController.getContext();<br>        <span class="hljs-built_in">this</span>.target = target;<br>        setPriority(priority);<br>        <span class="hljs-keyword">if</span> (inheritThreadLocals &amp;&amp; parent.inheritableThreadLocals != <span class="hljs-literal">null</span>)<br>            <span class="hljs-built_in">this</span>.inheritableThreadLocals =<br>                ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);<br>        <span class="hljs-comment">/* Stash the specified stack size in case the VM cares */</span><br>        <span class="hljs-built_in">this</span>.stackSize = stackSize;<br><br>        <span class="hljs-comment">/* Set thread ID */</span><br>        <span class="hljs-built_in">this</span>.tid = nextThreadID();<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>registerNatives是Java声明的一个本地方法，通过static代码块保证了在构造方法调用时先执行，通过JNI调用在Cpp中的实现。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// Thread.c</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ARRAY_LENGTH(a) (sizeof(a)/sizeof(a[0])) <span class="hljs-comment">// 计算数组a长度</span></span><br><br><span class="hljs-type">static</span> JNINativeMethod methods[] = &#123;<br>    &#123;<span class="hljs-string">&quot;start0&quot;</span>,           <span class="hljs-string">&quot;()V&quot;</span>,        (<span class="hljs-type">void</span> *)&amp;JVM_StartThread&#125;,<br>    &#123;<span class="hljs-string">&quot;stop0&quot;</span>,            <span class="hljs-string">&quot;(&quot;</span> OBJ <span class="hljs-string">&quot;)V&quot;</span>, (<span class="hljs-type">void</span> *)&amp;JVM_StopThread&#125;,<br>    &#123;<span class="hljs-string">&quot;isAlive&quot;</span>,          <span class="hljs-string">&quot;()Z&quot;</span>,        (<span class="hljs-type">void</span> *)&amp;JVM_IsThreadAlive&#125;,<br>    &#123;<span class="hljs-string">&quot;suspend0&quot;</span>,         <span class="hljs-string">&quot;()V&quot;</span>,        (<span class="hljs-type">void</span> *)&amp;JVM_SuspendThread&#125;,<br>    &#123;<span class="hljs-string">&quot;resume0&quot;</span>,          <span class="hljs-string">&quot;()V&quot;</span>,        (<span class="hljs-type">void</span> *)&amp;JVM_ResumeThread&#125;,<br>    &#123;<span class="hljs-string">&quot;setPriority0&quot;</span>,     <span class="hljs-string">&quot;(I)V&quot;</span>,       (<span class="hljs-type">void</span> *)&amp;JVM_SetThreadPriority&#125;,<br>    &#123;<span class="hljs-string">&quot;yield&quot;</span>,            <span class="hljs-string">&quot;()V&quot;</span>,        (<span class="hljs-type">void</span> *)&amp;JVM_Yield&#125;,<br>    &#123;<span class="hljs-string">&quot;sleep&quot;</span>,            <span class="hljs-string">&quot;(J)V&quot;</span>,       (<span class="hljs-type">void</span> *)&amp;JVM_Sleep&#125;,<br>    &#123;<span class="hljs-string">&quot;currentThread&quot;</span>,    <span class="hljs-string">&quot;()&quot;</span> THD,     (<span class="hljs-type">void</span> *)&amp;JVM_CurrentThread&#125;,<br>    &#123;<span class="hljs-string">&quot;countStackFrames&quot;</span>, <span class="hljs-string">&quot;()I&quot;</span>,        (<span class="hljs-type">void</span> *)&amp;JVM_CountStackFrames&#125;,<br>    &#123;<span class="hljs-string">&quot;interrupt0&quot;</span>,       <span class="hljs-string">&quot;()V&quot;</span>,        (<span class="hljs-type">void</span> *)&amp;JVM_Interrupt&#125;,<br>    &#123;<span class="hljs-string">&quot;isInterrupted&quot;</span>,    <span class="hljs-string">&quot;(Z)Z&quot;</span>,       (<span class="hljs-type">void</span> *)&amp;JVM_IsInterrupted&#125;,<br>    &#123;<span class="hljs-string">&quot;holdsLock&quot;</span>,        <span class="hljs-string">&quot;(&quot;</span> OBJ <span class="hljs-string">&quot;)Z&quot;</span>, (<span class="hljs-type">void</span> *)&amp;JVM_HoldsLock&#125;,<br>    &#123;<span class="hljs-string">&quot;getThreads&quot;</span>,        <span class="hljs-string">&quot;()[&quot;</span> THD,   (<span class="hljs-type">void</span> *)&amp;JVM_GetAllThreads&#125;,<br>    &#123;<span class="hljs-string">&quot;dumpThreads&quot;</span>,      <span class="hljs-string">&quot;([&quot;</span> THD <span class="hljs-string">&quot;)[[&quot;</span> STE, (<span class="hljs-type">void</span> *)&amp;JVM_DumpThreads&#125;,<br>    &#123;<span class="hljs-string">&quot;setNativeName&quot;</span>,    <span class="hljs-string">&quot;(&quot;</span> STR <span class="hljs-string">&quot;)V&quot;</span>, (<span class="hljs-type">void</span> *)&amp;JVM_SetNativeThreadName&#125;,<br>&#125;;<br><br><span class="hljs-function">JNIEXPORT <span class="hljs-type">void</span> JNICALL</span><br><span class="hljs-function"><span class="hljs-title">Java_java_lang_Thread_registerNatives</span><span class="hljs-params">(JNIEnv *env, jclass cls)</span></span><br><span class="hljs-function"></span>&#123; <span class="hljs-comment">// JNI默认的两个参数env和cls</span><br>    (*env)-&gt;<span class="hljs-built_in">RegisterNatives</span>(env, cls, methods, <span class="hljs-built_in">ARRAY_LENGTH</span>(methods)); <span class="hljs-comment">// methods已经映射表中有多少个</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// jni.cpp</span><br><span class="hljs-built_in">JNI_ENTRY</span>(jint, <span class="hljs-built_in">jni_RegisterNatives</span>(JNIEnv *env, jclass clazz,<br>                                    <span class="hljs-type">const</span> JNINativeMethod *methods,<br>                                    jint nMethods))<br>  <span class="hljs-built_in">JNIWrapper</span>(<span class="hljs-string">&quot;RegisterNatives&quot;</span>);<br>  <span class="hljs-built_in">HOTSPOT_JNI_REGISTERNATIVES_ENTRY</span>(env, clazz, (<span class="hljs-type">void</span> *) methods, nMethods);<br>  jint ret = <span class="hljs-number">0</span>;<br>  <span class="hljs-built_in">DT_RETURN_MARK</span>(RegisterNatives, jint, (<span class="hljs-type">const</span> jint&amp;)ret);<br><br>  Klass* k = java_lang_Class::<span class="hljs-built_in">as_Klass</span>(JNIHandles::<span class="hljs-built_in">resolve_non_null</span>(clazz));<br><br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> index = <span class="hljs-number">0</span>; index &lt; nMethods; index++) &#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* meth_name = methods[index].name;<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* meth_sig = methods[index].signature;<br>    <span class="hljs-type">int</span> meth_name_len = (<span class="hljs-type">int</span>)<span class="hljs-built_in">strlen</span>(meth_name);<br><br>    <span class="hljs-comment">// The class should have been loaded (we have an instance of the class</span><br>    <span class="hljs-comment">// passed in) so the method and signature should already be in the symbol</span><br>    <span class="hljs-comment">// table.  If they&#x27;re not there, the method doesn&#x27;t exist.</span><br>    TempNewSymbol  name = SymbolTable::<span class="hljs-built_in">probe</span>(meth_name, meth_name_len);<br>    TempNewSymbol  signature = SymbolTable::<span class="hljs-built_in">probe</span>(meth_sig, (<span class="hljs-type">int</span>)<span class="hljs-built_in">strlen</span>(meth_sig));<br><br>    <span class="hljs-keyword">if</span> (name == <span class="hljs-literal">NULL</span> || signature == <span class="hljs-literal">NULL</span>) &#123;<br>      ResourceMark rm;<br>      stringStream st;<br>      st.<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Method %s.%s%s not found&quot;</span>, k-&gt;<span class="hljs-built_in">external_name</span>(), meth_name, meth_sig);<br>      <span class="hljs-comment">// Must return negative value on failure</span><br>      <span class="hljs-built_in">THROW_MSG_</span>(vmSymbols::<span class="hljs-built_in">java_lang_NoSuchMethodError</span>(), st.<span class="hljs-built_in">as_string</span>(), <span class="hljs-number">-1</span>);<br>    &#125;<br><br>    <span class="hljs-type">bool</span> res = <span class="hljs-built_in">register_native</span>(k, name, signature,<br>                               (address) methods[index].fnPtr, THREAD);<br>    <span class="hljs-keyword">if</span> (!res) &#123;<br>      ret = <span class="hljs-number">-1</span>;<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> ret;<br>JNI_END<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// jni.cpp</span><br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">bool</span> <span class="hljs-title">register_native</span><span class="hljs-params">(Klass* k, Symbol* name, Symbol* signature, address entry, TRAPS)</span> </span>&#123;<br>  Method* method = k-&gt;<span class="hljs-built_in">lookup_method</span>(name, signature);<br>  <span class="hljs-keyword">if</span> (method == <span class="hljs-literal">NULL</span>) &#123;<br>    ResourceMark rm;<br>    stringStream st;<br>    st.<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Method %s name or signature does not match&quot;</span>,<br>             Method::<span class="hljs-built_in">name_and_sig_as_C_string</span>(k, name, signature));<br>    <span class="hljs-built_in">THROW_MSG_</span>(vmSymbols::<span class="hljs-built_in">java_lang_NoSuchMethodError</span>(), st.<span class="hljs-built_in">as_string</span>(), <span class="hljs-literal">false</span>);<br>  &#125;<br>  <span class="hljs-keyword">if</span> (!method-&gt;<span class="hljs-built_in">is_native</span>()) &#123;<br>    <span class="hljs-comment">// trying to register to a non-native method, see if a JVM TI agent has added prefix(es)</span><br>    method = <span class="hljs-built_in">find_prefixed_native</span>(k, name, signature, THREAD);<br>    <span class="hljs-keyword">if</span> (method == <span class="hljs-literal">NULL</span>) &#123;<br>      ResourceMark rm;<br>      stringStream st;<br>      st.<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Method %s is not declared as native&quot;</span>,<br>               Method::<span class="hljs-built_in">name_and_sig_as_C_string</span>(k, name, signature));<br>      <span class="hljs-built_in">THROW_MSG_</span>(vmSymbols::<span class="hljs-built_in">java_lang_NoSuchMethodError</span>(), st.<span class="hljs-built_in">as_string</span>(), <span class="hljs-literal">false</span>);<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-keyword">if</span> (entry != <span class="hljs-literal">NULL</span>) &#123;<br>    method-&gt;<span class="hljs-built_in">set_native_function</span>(entry,<br>      Method::native_bind_event_is_interesting);<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    method-&gt;<span class="hljs-built_in">clear_native_function</span>();<br>  &#125;<br>  <span class="hljs-keyword">if</span> (PrintJNIResolving) &#123;<br>    <span class="hljs-function">ResourceMark <span class="hljs-title">rm</span><span class="hljs-params">(THREAD)</span></span>;<br>    tty-&gt;<span class="hljs-built_in">print_cr</span>(<span class="hljs-string">&quot;[Registering JNI native method %s.%s]&quot;</span>,<br>      method-&gt;<span class="hljs-built_in">method_holder</span>()-&gt;<span class="hljs-built_in">external_name</span>(),<br>      method-&gt;<span class="hljs-built_in">name</span>()-&gt;<span class="hljs-built_in">as_C_string</span>());<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>就是把.java文件中的那些native声明的本地方法跟.cpp文件中的定义映射起来，将来有人调用本地方法，就通过JNI方式调用到cpp中的方法。</p>
+<h2 id="3-Thread的start方法"><a href="#3-Thread的start方法" class="headerlink" title="3 Thread的start方法"></a>3 Thread的start方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Thread.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">start</span><span class="hljs-params">()</span> &#123; <span class="hljs-comment">// 启动线程 让线程处于就绪状态 等待被CPU调度</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * This method is not invoked for the main method thread or &quot;system&quot;</span><br><span class="hljs-comment">         * group threads created/set up by the VM. Any new functionality added</span><br><span class="hljs-comment">         * to this method in the future may have to also be added to the VM.</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * A zero status value corresponds to state &quot;NEW&quot;.</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">if</span> (threadStatus != <span class="hljs-number">0</span>) <span class="hljs-comment">// 一个线程只能启动一次</span><br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalThreadStateException</span>();<br><br>        <span class="hljs-comment">/* Notify the group that this thread is about to be started</span><br><span class="hljs-comment">         * so that it can be added to the group&#x27;s list of threads</span><br><span class="hljs-comment">         * and the group&#x27;s unstarted count can be decremented. */</span><br>        group.add(<span class="hljs-built_in">this</span>);<br><br>        <span class="hljs-type">boolean</span> <span class="hljs-variable">started</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br>        <span class="hljs-keyword">try</span> &#123;<br>            start0(); <span class="hljs-comment">// JNI调用 创建线程 回调run方法的实现</span><br>            started = <span class="hljs-literal">true</span>;<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-keyword">if</span> (!started) &#123;<br>                    group.threadStartFailed(<span class="hljs-built_in">this</span>);<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Throwable ignore) &#123;<br>                <span class="hljs-comment">/* do nothing. If start0 threw a Throwable then</span><br><span class="hljs-comment">                  it will be passed up the call stack */</span><br>            &#125;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Thread.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">native</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">start0</span><span class="hljs-params">()</span>;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// Thread.c</span><br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Class:     java_lang_Thread</span><br><span class="hljs-comment"> * Method:    start0</span><br><span class="hljs-comment"> * Signature: ()V</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function">JNIEXPORT <span class="hljs-type">void</span> JNICALL <span class="hljs-title">Java_java_lang_Thread_start0</span></span><br><span class="hljs-function">  <span class="hljs-params">(JNIEnv *, jobject)</span></span>;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// jvm.h</span><br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * java.lang.Thread</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function">JNIEXPORT <span class="hljs-type">void</span> JNICALL</span><br><span class="hljs-function"><span class="hljs-title">JVM_StartThread</span><span class="hljs-params">(JNIEnv *env, jobject thread)</span></span>;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// jvm.cpp</span><br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">thread_entry</span><span class="hljs-params">(JavaThread* thread, TRAPS)</span> </span>&#123;<br>  <span class="hljs-function">HandleMark <span class="hljs-title">hm</span><span class="hljs-params">(THREAD)</span></span>;<br>  <span class="hljs-function">Handle <span class="hljs-title">obj</span><span class="hljs-params">(THREAD, thread-&gt;threadObj())</span></span>;<br>  <span class="hljs-function">JavaValue <span class="hljs-title">result</span><span class="hljs-params">(T_VOID)</span></span>;<br>  JavaCalls::<span class="hljs-built_in">call_virtual</span>(&amp;result,<br>                          obj,<br>                          SystemDictionary::<span class="hljs-built_in">Thread_klass</span>(),<br>                          vmSymbols::<span class="hljs-built_in">run_method_name</span>(),<br>                          vmSymbols::<span class="hljs-built_in">void_method_signature</span>(),<br>                          THREAD); <span class="hljs-comment">// 线程被调度后要回调Java中的方法(Runnable的run方法)</span><br>&#125;<br><br><br><span class="hljs-built_in">JVM_ENTRY</span>(<span class="hljs-type">void</span>, <span class="hljs-built_in">JVM_StartThread</span>(JNIEnv* env, jobject jthread))<br>  <span class="hljs-built_in">JVMWrapper</span>(<span class="hljs-string">&quot;JVM_StartThread&quot;</span>);<br>  JavaThread *native_thread = <span class="hljs-literal">NULL</span>; <span class="hljs-comment">// cpp级别的线程 里面封装了OS的线程</span><br><br>  <span class="hljs-comment">// We cannot hold the Threads_lock when we throw an exception,</span><br>  <span class="hljs-comment">// due to rank ordering issues. Example:  we might need to grab the</span><br>  <span class="hljs-comment">// Heap_lock while we construct the exception.</span><br>  <span class="hljs-type">bool</span> throw_illegal_thread_state = <span class="hljs-literal">false</span>;<br><br>  <span class="hljs-comment">// We must release the Threads_lock before we can post a jvmti event</span><br>  <span class="hljs-comment">// in Thread::start.</span><br>  &#123;<br>    <span class="hljs-comment">// Ensure that the C++ Thread and OSThread structures aren&#x27;t freed before</span><br>    <span class="hljs-comment">// we operate.</span><br>    <span class="hljs-function">MutexLocker <span class="hljs-title">mu</span><span class="hljs-params">(Threads_lock)</span></span>;<br><br>    <span class="hljs-comment">// Since JDK 5 the java.lang.Thread threadStatus is used to prevent</span><br>    <span class="hljs-comment">// re-starting an already started thread, so we should usually find</span><br>    <span class="hljs-comment">// that the JavaThread is null. However for a JNI attached thread</span><br>    <span class="hljs-comment">// there is a small window between the Thread object being created</span><br>    <span class="hljs-comment">// (with its JavaThread set) and the update to its threadStatus, so we</span><br>    <span class="hljs-comment">// have to check for this</span><br>    <span class="hljs-keyword">if</span> (java_lang_Thread::<span class="hljs-built_in">thread</span>(JNIHandles::<span class="hljs-built_in">resolve_non_null</span>(jthread)) != <span class="hljs-literal">NULL</span>) &#123;<br>      throw_illegal_thread_state = <span class="hljs-literal">true</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-comment">// We could also check the stillborn flag to see if this thread was already stopped, but</span><br>      <span class="hljs-comment">// for historical reasons we let the thread detect that itself when it starts running</span><br><br>      jlong size =<br>             java_lang_Thread::<span class="hljs-built_in">stackSize</span>(JNIHandles::<span class="hljs-built_in">resolve_non_null</span>(jthread));<br>      <span class="hljs-comment">// Allocate the C++ Thread structure and create the native thread.  The</span><br>      <span class="hljs-comment">// stack size retrieved from java is 64-bit signed, but the constructor takes</span><br>      <span class="hljs-comment">// size_t (an unsigned type), which may be 32 or 64-bit depending on the platform.</span><br>      <span class="hljs-comment">//  - Avoid truncating on 32-bit platforms if size is greater than UINT_MAX.</span><br>      <span class="hljs-comment">//  - Avoid passing negative values which would result in really large stacks.</span><br>      <span class="hljs-built_in">NOT_LP64</span>(<span class="hljs-keyword">if</span> (size &gt; SIZE_MAX) size = SIZE_MAX;)<br>      <span class="hljs-type">size_t</span> sz = size &gt; <span class="hljs-number">0</span> ? (<span class="hljs-type">size_t</span>) size : <span class="hljs-number">0</span>;<br>      native_thread = <span class="hljs-keyword">new</span> <span class="hljs-built_in">JavaThread</span>(&amp;thread_entry, sz); <span class="hljs-comment">// 发生一次系统调用pthread_create 告知OS创建新的线程要执行的函数(thread_entry) 将OS线程封装在cpp线程中</span><br><br>      <span class="hljs-comment">// At this point it may be possible that no osthread was created for the</span><br>      <span class="hljs-comment">// JavaThread due to lack of memory. Check for this situation and throw</span><br>      <span class="hljs-comment">// an exception if necessary. Eventually we may want to change this so</span><br>      <span class="hljs-comment">// that we only grab the lock if the thread was created successfully -</span><br>      <span class="hljs-comment">// then we can also do this check and throw the exception in the</span><br>      <span class="hljs-comment">// JavaThread constructor.</span><br>      <span class="hljs-keyword">if</span> (native_thread-&gt;<span class="hljs-built_in">osthread</span>() != <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-comment">// Note: the current thread is not being used within &quot;prepare&quot;.</span><br>        native_thread-&gt;<span class="hljs-built_in">prepare</span>(jthread);<br>      &#125;<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-keyword">if</span> (throw_illegal_thread_state) &#123;<br>    <span class="hljs-built_in">THROW</span>(vmSymbols::<span class="hljs-built_in">java_lang_IllegalThreadStateException</span>());<br>  &#125;<br><br>  <span class="hljs-built_in">assert</span>(native_thread != <span class="hljs-literal">NULL</span>, <span class="hljs-string">&quot;Starting null thread?&quot;</span>);<br><br>  <span class="hljs-keyword">if</span> (native_thread-&gt;<span class="hljs-built_in">osthread</span>() == <span class="hljs-literal">NULL</span>) &#123;<br>    <span class="hljs-comment">// No one should hold a reference to the &#x27;native_thread&#x27;.</span><br>    native_thread-&gt;<span class="hljs-built_in">smr_delete</span>();<br>    <span class="hljs-keyword">if</span> (JvmtiExport::<span class="hljs-built_in">should_post_resource_exhausted</span>()) &#123;<br>      JvmtiExport::<span class="hljs-built_in">post_resource_exhausted</span>(<br>        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_THREADS,<br>        os::<span class="hljs-built_in">native_thread_creation_failed_msg</span>());<br>    &#125;<br>    <span class="hljs-built_in">THROW_MSG</span>(vmSymbols::<span class="hljs-built_in">java_lang_OutOfMemoryError</span>(),<br>              os::<span class="hljs-built_in">native_thread_creation_failed_msg</span>());<br>  &#125;<br><br>  Thread::<span class="hljs-built_in">start</span>(native_thread);<br><br>JVM_END<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-1-创建系统线程"><a href="#3-1-创建系统线程" class="headerlink" title="3.1 创建系统线程"></a>3.1 创建系统线程</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// thread.cpp</span><br>JavaThread::<span class="hljs-built_in">JavaThread</span>(ThreadFunction entry_point, <span class="hljs-type">size_t</span> stack_sz) :<br>                       <span class="hljs-built_in">Thread</span>() &#123; <span class="hljs-comment">// Cpp级别的线程封装 entry_point新线程被调度起来要执行的函数(Java中Thread的run方法)</span><br>  <span class="hljs-built_in">initialize</span>();<br>  _jni_attach_state = _not_attaching_via_jni;<br>  <span class="hljs-built_in">set_entry_point</span>(entry_point); <span class="hljs-comment">// 设置Cpp线程要回调的方法(定义在Java中Runnable的run方法)</span><br>  <span class="hljs-comment">// Create the native thread itself.</span><br>  <span class="hljs-comment">// %note runtime_23</span><br>  os::ThreadType thr_type = os::java_thread;<br>  thr_type = entry_point == &amp;compiler_thread_entry ? os::compiler_thread :<br>                                                     os::java_thread;<br>  os::<span class="hljs-built_in">create_thread</span>(<span class="hljs-keyword">this</span>, thr_type, stack_sz); <span class="hljs-comment">// 发生一次系统调用pthread_create 将entry_point要新建线程开始执行的函数传给了OS 将OS系统级别的线程设置在os_thread中</span><br>  <span class="hljs-comment">// The _osthread may be NULL here because we ran out of memory (too many threads active).</span><br>  <span class="hljs-comment">// We need to throw and OutOfMemoryError - however we cannot do this here because the caller</span><br>  <span class="hljs-comment">// may hold a lock and all locks must be unlocked before throwing the exception (throwing</span><br>  <span class="hljs-comment">// the exception consists of creating the exception object &amp; initializing it, initialization</span><br>  <span class="hljs-comment">// will leave the VM via a JavaCall and then all locks must be unlocked).</span><br>  <span class="hljs-comment">//</span><br>  <span class="hljs-comment">// The thread is still suspended when we reach here. Thread must be explicit started</span><br>  <span class="hljs-comment">// by creator! Furthermore, the thread must also explicitly be added to the Threads list</span><br>  <span class="hljs-comment">// by calling Threads:add. The reason why this is not done here, is because the thread</span><br>  <span class="hljs-comment">// object must be fully initialized (take a look at JVM_Start)</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// os_bsd.cpp</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">os::create_thread</span><span class="hljs-params">(Thread* thread, ThreadType thr_type,</span></span><br><span class="hljs-params"><span class="hljs-function">                       <span class="hljs-type">size_t</span> req_stack_size)</span> </span>&#123; <span class="hljs-comment">// thread=Cpp级别的线程 封装着要回调的Java方法(Runnable的run方法) 就是OS系统创建的线程需要执行的函数的实参 调用pthread_create系统调用 将OS线程设置到thread中</span><br>  <span class="hljs-built_in">assert</span>(thread-&gt;<span class="hljs-built_in">osthread</span>() == <span class="hljs-literal">NULL</span>, <span class="hljs-string">&quot;caller responsible&quot;</span>);<br><br>  <span class="hljs-comment">// Allocate the OSThread object</span><br>  OSThread* osthread = <span class="hljs-keyword">new</span> <span class="hljs-built_in">OSThread</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>); <span class="hljs-comment">// 封装OS系统的线程 里面包裹着真正的线程</span><br>  <span class="hljs-keyword">if</span> (osthread == <span class="hljs-literal">NULL</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>  &#125;<br><br>  <span class="hljs-comment">// set the correct thread state</span><br>  osthread-&gt;<span class="hljs-built_in">set_thread_type</span>(thr_type);<br><br>  <span class="hljs-comment">// Initial state is ALLOCATED but not INITIALIZED</span><br>  osthread-&gt;<span class="hljs-built_in">set_state</span>(ALLOCATED);<br><br>  thread-&gt;<span class="hljs-built_in">set_osthread</span>(osthread); <span class="hljs-comment">// osthread中维护着真正的系统级别线程的id</span><br><br>  <span class="hljs-comment">// init thread attributes</span><br>  <span class="hljs-type">pthread_attr_t</span> attr; <span class="hljs-comment">// pthread_create系统调用创建线程需要指定线程属性 为空就使用默认 线程创建好后再修改属性线程不受影响</span><br>  <span class="hljs-built_in">pthread_attr_init</span>(&amp;attr);<br>  <span class="hljs-built_in">pthread_attr_setdetachstate</span>(&amp;attr, PTHREAD_CREATE_DETACHED);<br><br>  <span class="hljs-comment">// calculate stack size if it&#x27;s not specified by caller</span><br>  <span class="hljs-type">size_t</span> stack_size = os::Posix::<span class="hljs-built_in">get_initial_stack_size</span>(thr_type, req_stack_size);<br>  <span class="hljs-type">int</span> status = <span class="hljs-built_in">pthread_attr_setstacksize</span>(&amp;attr, stack_size);<br>  <span class="hljs-built_in">assert_status</span>(status == <span class="hljs-number">0</span>, status, <span class="hljs-string">&quot;pthread_attr_setstacksize&quot;</span>);<br><br>  ThreadState state;<br><br>  &#123;<br>    <span class="hljs-type">pthread_t</span> tid; <span class="hljs-comment">// pthread_create系统调用创建好线程的id</span><br>    <span class="hljs-type">int</span> ret = <span class="hljs-built_in">pthread_create</span>(&amp;tid, &amp;attr, (<span class="hljs-type">void</span>* (*)(<span class="hljs-type">void</span>*)) thread_native_entry, thread); <span class="hljs-comment">// pthread_create系统调用创建线程成功返回0 thread_native_entry=新建线程要执行的函数 thread=thread_native_entry函数的的实参</span><br><br>    <span class="hljs-type">char</span> buf[<span class="hljs-number">64</span>];<br>    <span class="hljs-keyword">if</span> (ret == <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-built_in">log_info</span>(os, thread)(<span class="hljs-string">&quot;Thread started (pthread id: &quot;</span> UINTX_FORMAT <span class="hljs-string">&quot;, attributes: %s). &quot;</span>,<br>        (uintx) tid, os::Posix::<span class="hljs-built_in">describe_pthread_attr</span>(buf, <span class="hljs-built_in">sizeof</span>(buf), &amp;attr));<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-built_in">log_warning</span>(os, thread)(<span class="hljs-string">&quot;Failed to start thread - pthread_create failed (%s) for attributes: %s.&quot;</span>,<br>        os::<span class="hljs-built_in">errno_name</span>(ret), os::Posix::<span class="hljs-built_in">describe_pthread_attr</span>(buf, <span class="hljs-built_in">sizeof</span>(buf), &amp;attr));<br>    &#125;<br><br>    <span class="hljs-built_in">pthread_attr_destroy</span>(&amp;attr);<br><br>    <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-comment">// Need to clean up stuff we&#x27;ve allocated so far</span><br>      thread-&gt;<span class="hljs-built_in">set_osthread</span>(<span class="hljs-literal">NULL</span>);<br>      <span class="hljs-keyword">delete</span> osthread;<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// Store pthread info into the OSThread</span><br>    osthread-&gt;<span class="hljs-built_in">set_pthread_id</span>(tid); <span class="hljs-comment">// 将OS线程设置给osthread thread中持有osthread 这时候thread也就设置好了OS线程</span><br><br>    <span class="hljs-comment">// Wait until child thread is either initialized or aborted</span><br>    &#123;<br>      Monitor* sync_with_child = osthread-&gt;<span class="hljs-built_in">startThread_lock</span>();<br>      <span class="hljs-function">MutexLockerEx <span class="hljs-title">ml</span><span class="hljs-params">(sync_with_child, Mutex::_no_safepoint_check_flag)</span></span>;<br>      <span class="hljs-keyword">while</span> ((state = osthread-&gt;<span class="hljs-built_in">get_state</span>()) == ALLOCATED) &#123;<br>        sync_with_child-&gt;<span class="hljs-built_in">wait</span>(Mutex::_no_safepoint_check_flag);<br>      &#125;<br>    &#125;<br><br>  &#125;<br><br>  <span class="hljs-comment">// Aborted due to thread limit being reached</span><br>  <span class="hljs-keyword">if</span> (state == ZOMBIE) &#123;<br>    thread-&gt;<span class="hljs-built_in">set_osthread</span>(<span class="hljs-literal">NULL</span>);<br>    <span class="hljs-keyword">delete</span> osthread;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>  &#125;<br><br>  <span class="hljs-comment">// The thread is returned suspended (in state INITIALIZED),</span><br>  <span class="hljs-comment">// and is started higher up in the call chain</span><br>  <span class="hljs-built_in">assert</span>(state == INITIALIZED, <span class="hljs-string">&quot;race condition&quot;</span>);<br>  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-线程启动"><a href="#3-2-线程启动" class="headerlink" title="3.2 线程启动"></a>3.2 线程启动</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// thread.cpp</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Thread::start</span><span class="hljs-params">(Thread* thread)</span> </span>&#123; <span class="hljs-comment">// thread是Cpp线程 封装着OS的线程 Java要线程执行的回调</span><br>  <span class="hljs-comment">// Start is different from resume in that its safety is guaranteed by context or</span><br>  <span class="hljs-comment">// being called from a Java method synchronized on the Thread object.</span><br>  <span class="hljs-keyword">if</span> (!DisableStartThread) &#123;<br>    <span class="hljs-keyword">if</span> (thread-&gt;<span class="hljs-built_in">is_Java_thread</span>()) &#123; <span class="hljs-comment">// true</span><br>      <span class="hljs-comment">// Initialize the thread state to RUNNABLE before starting this thread.</span><br>      <span class="hljs-comment">// Can not set it after the thread started because we do not know the</span><br>      <span class="hljs-comment">// exact thread state at that time. It could be in MONITOR_WAIT or</span><br>      <span class="hljs-comment">// in SLEEPING or some other state.</span><br>      java_lang_Thread::<span class="hljs-built_in">set_thread_status</span>(((JavaThread*)thread)-&gt;<span class="hljs-built_in">threadObj</span>(),<br>                                          java_lang_Thread::RUNNABLE);<br>    &#125;<br>    os::<span class="hljs-built_in">start_thread</span>(thread);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// os.cpp</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">os::start_thread</span><span class="hljs-params">(Thread* thread)</span> </span>&#123; <span class="hljs-comment">// Cpp线程(封装着OS线程+Java要回调的方法)</span><br>  <span class="hljs-comment">// guard suspend/resume</span><br>  <span class="hljs-function">MutexLockerEx <span class="hljs-title">ml</span><span class="hljs-params">(thread-&gt;SR_lock(), Mutex::_no_safepoint_check_flag)</span></span>;<br>  OSThread* osthread = thread-&gt;<span class="hljs-built_in">osthread</span>(); <span class="hljs-comment">// OS线程</span><br>  osthread-&gt;<span class="hljs-built_in">set_state</span>(RUNNABLE);<br>  <span class="hljs-built_in">pd_start_thread</span>(thread);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// os_bsd.cpp</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">os::pd_start_thread</span><span class="hljs-params">(Thread* thread)</span> </span>&#123; <span class="hljs-comment">// Cpp线程(封装着OS线程+Java要回调的方法)</span><br>  OSThread * osthread = thread-&gt;<span class="hljs-built_in">osthread</span>(); <span class="hljs-comment">// OS线程</span><br>  <span class="hljs-built_in">assert</span>(osthread-&gt;<span class="hljs-built_in">get_state</span>() != INITIALIZED, <span class="hljs-string">&quot;just checking&quot;</span>);<br>  Monitor* sync_with_child = osthread-&gt;<span class="hljs-built_in">startThread_lock</span>();<br>  <span class="hljs-function">MutexLockerEx <span class="hljs-title">ml</span><span class="hljs-params">(sync_with_child, Mutex::_no_safepoint_check_flag)</span></span>;<br>  sync_with_child-&gt;<span class="hljs-built_in">notify</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-3-线程回调Java"><a href="#3-3-线程回调Java" class="headerlink" title="3.3 线程回调Java"></a>3.3 线程回调Java</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// os_bsd.cpp</span><br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> *<span class="hljs-title">thread_native_entry</span><span class="hljs-params">(Thread *thread)</span> </span>&#123; <span class="hljs-comment">// thread=Cpp线程 初始化的时候封装了要回调执行的Java函数 pthread_create创建线程之后又封装了OS线程 OS线程被CPU调度后执行pthread_create创建时候定义好的执行函数</span><br>  <span class="hljs-comment">// Try to randomize the cache line index of hot stack frames.</span><br>  <span class="hljs-comment">// This helps when threads of the same stack traces evict each other&#x27;s</span><br>  <span class="hljs-comment">// cache lines. The threads can be either from the same JVM instance, or</span><br>  <span class="hljs-comment">// from different JVM instances. The benefit is especially true for</span><br>  <span class="hljs-comment">// processors with hyperthreading technology.</span><br>  <span class="hljs-type">static</span> <span class="hljs-type">int</span> counter = <span class="hljs-number">0</span>;<br>  <span class="hljs-type">int</span> pid = os::<span class="hljs-built_in">current_process_id</span>();<br>  <span class="hljs-built_in">alloca</span>(((pid ^ counter++) &amp; <span class="hljs-number">7</span>) * <span class="hljs-number">128</span>);<br><br>  thread-&gt;<span class="hljs-built_in">initialize_thread_current</span>();<br><br>  OSThread* osthread = thread-&gt;<span class="hljs-built_in">osthread</span>();<br>  Monitor* sync = osthread-&gt;<span class="hljs-built_in">startThread_lock</span>();<br><br>  osthread-&gt;<span class="hljs-built_in">set_thread_id</span>(os::Bsd::<span class="hljs-built_in">gettid</span>());<br><br>  <span class="hljs-built_in">log_info</span>(os, thread)(<span class="hljs-string">&quot;Thread is alive (tid: &quot;</span> UINTX_FORMAT <span class="hljs-string">&quot;, pthread id: &quot;</span> UINTX_FORMAT <span class="hljs-string">&quot;).&quot;</span>,<br>    os::<span class="hljs-built_in">current_thread_id</span>(), (uintx) <span class="hljs-built_in">pthread_self</span>());<br><br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> __APPLE__</span><br>  <span class="hljs-type">uint64_t</span> unique_thread_id = <span class="hljs-built_in">locate_unique_thread_id</span>(osthread-&gt;<span class="hljs-built_in">thread_id</span>());<br>  <span class="hljs-built_in">guarantee</span>(unique_thread_id != <span class="hljs-number">0</span>, <span class="hljs-string">&quot;unique thread id was not found&quot;</span>);<br>  osthread-&gt;<span class="hljs-built_in">set_unique_thread_id</span>(unique_thread_id);<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>  <span class="hljs-comment">// initialize signal mask for this thread</span><br>  os::Bsd::<span class="hljs-built_in">hotspot_sigmask</span>(thread);<br><br>  <span class="hljs-comment">// initialize floating point control register</span><br>  os::Bsd::<span class="hljs-built_in">init_thread_fpu_state</span>();<br><br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> __APPLE__</span><br>  <span class="hljs-comment">// register thread with objc gc</span><br>  <span class="hljs-keyword">if</span> (objc_registerThreadWithCollectorFunction != <span class="hljs-literal">NULL</span>) &#123;<br>    <span class="hljs-built_in">objc_registerThreadWithCollectorFunction</span>();<br>  &#125;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>  <span class="hljs-comment">// handshaking with parent thread</span><br>  &#123;<br>    <span class="hljs-function">MutexLockerEx <span class="hljs-title">ml</span><span class="hljs-params">(sync, Mutex::_no_safepoint_check_flag)</span></span>;<br><br>    <span class="hljs-comment">// notify parent thread</span><br>    osthread-&gt;<span class="hljs-built_in">set_state</span>(INITIALIZED);<br>    sync-&gt;<span class="hljs-built_in">notify_all</span>();<br><br>    <span class="hljs-comment">// wait until os::start_thread()</span><br>    <span class="hljs-keyword">while</span> (osthread-&gt;<span class="hljs-built_in">get_state</span>() == INITIALIZED) &#123;<br>      sync-&gt;<span class="hljs-built_in">wait</span>(Mutex::_no_safepoint_check_flag);<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-comment">// call one more level start routine</span><br>  thread-&gt;<span class="hljs-built_in">run</span>(); <span class="hljs-comment">// thread是Cpp线程 构造完就赋值了要回调的Java代码 现在回调</span><br><br>  <span class="hljs-built_in">log_info</span>(os, thread)(<span class="hljs-string">&quot;Thread finished (tid: &quot;</span> UINTX_FORMAT <span class="hljs-string">&quot;, pthread id: &quot;</span> UINTX_FORMAT <span class="hljs-string">&quot;).&quot;</span>,<br>    os::<span class="hljs-built_in">current_thread_id</span>(), (uintx) <span class="hljs-built_in">pthread_self</span>());<br><br>  <span class="hljs-comment">// If a thread has not deleted itself (&quot;delete this&quot;) as part of its</span><br>  <span class="hljs-comment">// termination sequence, we have to ensure thread-local-storage is</span><br>  <span class="hljs-comment">// cleared before we actually terminate. No threads should ever be</span><br>  <span class="hljs-comment">// deleted asynchronously with respect to their termination.</span><br>  <span class="hljs-keyword">if</span> (Thread::<span class="hljs-built_in">current_or_null_safe</span>() != <span class="hljs-literal">NULL</span>) &#123;<br>    <span class="hljs-built_in">assert</span>(Thread::<span class="hljs-built_in">current_or_null_safe</span>() == thread, <span class="hljs-string">&quot;current thread is wrong&quot;</span>);<br>    thread-&gt;<span class="hljs-built_in">clear_thread_current</span>();<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// thread.cpp</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">JavaThread::run</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-comment">// Cpp线程的run方法</span><br>  <span class="hljs-comment">// initialize thread-local alloc buffer related fields</span><br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">initialize_tlab</span>();<br><br>  <span class="hljs-comment">// used to test validity of stack trace backs</span><br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">record_base_of_stack_pointer</span>();<br><br>  <span class="hljs-comment">// Record real stack base and size.</span><br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">record_stack_base_and_size</span>();<br><br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">create_stack_guard_pages</span>();<br><br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">cache_global_variables</span>();<br><br>  <span class="hljs-comment">// Thread is now sufficient initialized to be handled by the safepoint code as being</span><br>  <span class="hljs-comment">// in the VM. Change thread state from _thread_new to _thread_in_vm</span><br>  ThreadStateTransition::<span class="hljs-built_in">transition_and_fence</span>(<span class="hljs-keyword">this</span>, _thread_new, _thread_in_vm);<br><br>  <span class="hljs-built_in">assert</span>(JavaThread::<span class="hljs-built_in">current</span>() == <span class="hljs-keyword">this</span>, <span class="hljs-string">&quot;sanity check&quot;</span>);<br>  <span class="hljs-built_in">assert</span>(!Thread::<span class="hljs-built_in">current</span>()-&gt;<span class="hljs-built_in">owns_locks</span>(), <span class="hljs-string">&quot;sanity check&quot;</span>);<br><br>  <span class="hljs-built_in">DTRACE_THREAD_PROBE</span>(start, <span class="hljs-keyword">this</span>);<br><br>  <span class="hljs-comment">// This operation might block. We call that after all safepoint checks for a new thread has</span><br>  <span class="hljs-comment">// been completed.</span><br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">set_active_handles</span>(JNIHandleBlock::<span class="hljs-built_in">allocate_block</span>());<br><br>  <span class="hljs-keyword">if</span> (JvmtiExport::<span class="hljs-built_in">should_post_thread_life</span>()) &#123;<br>    JvmtiExport::<span class="hljs-built_in">post_thread_start</span>(<span class="hljs-keyword">this</span>);<br>  &#125;<br><br>  EventThreadStart event;<br>  <span class="hljs-keyword">if</span> (event.<span class="hljs-built_in">should_commit</span>()) &#123;<br>    event.<span class="hljs-built_in">set_thread</span>(<span class="hljs-built_in">JFR_THREAD_ID</span>(<span class="hljs-keyword">this</span>));<br>    event.<span class="hljs-built_in">commit</span>();<br>  &#125;<br><br>  <span class="hljs-comment">// We call another function to do the rest so we are sure that the stack addresses used</span><br>  <span class="hljs-comment">// from there will be lower than the stack base just computed</span><br>  <span class="hljs-built_in">thread_main_inner</span>(); <span class="hljs-comment">// 在thread_main_inner()方法中回调Java的Thread定义的run方法</span><br><br>  <span class="hljs-comment">// Note, thread is no longer valid at this point!</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// thread.cpp</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">JavaThread::thread_main_inner</span><span class="hljs-params">()</span> </span>&#123;<br>  <span class="hljs-built_in">assert</span>(JavaThread::<span class="hljs-built_in">current</span>() == <span class="hljs-keyword">this</span>, <span class="hljs-string">&quot;sanity check&quot;</span>);<br>  <span class="hljs-built_in">assert</span>(<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">threadObj</span>() != <span class="hljs-literal">NULL</span>, <span class="hljs-string">&quot;just checking&quot;</span>);<br><br>  <span class="hljs-comment">// Execute thread entry point unless this thread has a pending exception</span><br>  <span class="hljs-comment">// or has been stopped before starting.</span><br>  <span class="hljs-comment">// Note: Due to JVM_StopThread we can have pending exceptions already!</span><br>  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">has_pending_exception</span>() &amp;&amp;<br>      !java_lang_Thread::<span class="hljs-built_in">is_stillborn</span>(<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">threadObj</span>())) &#123;<br>    &#123;<br>      <span class="hljs-function">ResourceMark <span class="hljs-title">rm</span><span class="hljs-params">(<span class="hljs-keyword">this</span>)</span></span>;<br>      <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">set_native_thread_name</span>(<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">get_thread_name</span>());<br>    &#125;<br>    <span class="hljs-function">HandleMark <span class="hljs-title">hm</span><span class="hljs-params">(<span class="hljs-keyword">this</span>)</span></span>;<br>    <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">entry_point</span>()(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>); <span class="hljs-comment">// JavaThread是Cpp级别的线程 封装了线程回调Java的逻辑 现在触发回调</span><br>  &#125;<br><br>  <span class="hljs-built_in">DTRACE_THREAD_PROBE</span>(stop, <span class="hljs-keyword">this</span>);<br><br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">exit</span>(<span class="hljs-literal">false</span>);<br>  <span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">smr_delete</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java-15/" class="print-no-link">#Java@15</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java源码-Thread</div>
+      <div>https://bannirui.github.io/2023/03/10/Java源码-Thread/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/10/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring源码-00-环境搭建">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Spring源码-00-环境搭建</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/" title="Java源码-0x00-编译openjdk">
+                        <span class="hidden-mobile">Java源码-0x00-编译openjdk</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '3c3080244fef6236e47b2da7974d5422'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

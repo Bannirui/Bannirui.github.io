@@ -1,0 +1,983 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="将配置项赋值给redisServer实例的字段，用于后面的服务端启动。配置无非就来自2个地方：  服务启动参数指定的配置文件redis.conf 服务启动参数指定的配置项  1 汇总配置内容1234567891011121314151617181920212223242526272829303132333435363738394041424344&#x2F;** * @brief 将指定配置地方的配置内容都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x16-加载配置文件">
+<meta property="og:url" content="https://bannirui.github.io/2023/04/12/Redis-0x16-%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="将配置项赋值给redisServer实例的字段，用于后面的服务端启动。配置无非就来自2个地方：  服务启动参数指定的配置文件redis.conf 服务启动参数指定的配置项  1 汇总配置内容1234567891011121314151617181920212223242526272829303132333435363738394041424344&#x2F;** * @brief 将指定配置地方的配置内容都">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-12T01:45:25.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.466Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="Redis@6.2">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x16-加载配置文件 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x16-加载配置文件"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-12 09:45" pubdate>
+          2023年4月12日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          12 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(52)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x16-加载配置文件</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>将配置项赋值给redisServer实例的字段，用于后面的服务端启动。配置无非就来自2个地方：</p>
+<ul>
+<li>服务启动参数指定的配置文件redis.conf</li>
+<li>服务启动参数指定的配置项</li>
+</ul>
+<h2 id="1-汇总配置内容"><a href="#1-汇总配置内容" class="headerlink" title="1 汇总配置内容"></a>1 汇总配置内容</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief 将指定配置地方的配置内容都读取到sds中 然后统一将配置内容加载到redisServer实例的字段中</span><br><span class="hljs-comment"> * @param filename 配置来源-文件</span><br><span class="hljs-comment"> * @param config_from_stdin 配置来源-命令行标准输入</span><br><span class="hljs-comment"> * @param options 配置来源-字符串</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">loadServerConfig</span><span class="hljs-params">(<span class="hljs-type">char</span> *filename, <span class="hljs-type">char</span> config_from_stdin, <span class="hljs-type">char</span> *options)</span> &#123;<br>    <span class="hljs-comment">// 缓存配置内容</span><br>    sds config = sdsempty();<br>    <span class="hljs-type">char</span> buf[CONFIG_MAX_LINE+<span class="hljs-number">1</span>];<br>    FILE *fp;<br><br>    <span class="hljs-comment">/* Load the file content */</span><br>    <span class="hljs-comment">// 文件中配置项读取到config中</span><br>    <span class="hljs-keyword">if</span> (filename) &#123;<br>        <span class="hljs-keyword">if</span> ((fp = fopen(filename,<span class="hljs-string">&quot;r&quot;</span>)) == <span class="hljs-literal">NULL</span>) &#123;<br>            serverLog(LL_WARNING,<br>                    <span class="hljs-string">&quot;Fatal error, can&#x27;t open config file &#x27;%s&#x27;: %s&quot;</span>,<br>                    filename, strerror(errno));<br>            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>        &#125;<br>        <span class="hljs-keyword">while</span>(fgets(buf,CONFIG_MAX_LINE+<span class="hljs-number">1</span>,fp) != <span class="hljs-literal">NULL</span>)<br>            config = sdscat(config,buf);<br>        fclose(fp);<br>    &#125;<br>    <span class="hljs-comment">/* Append content from stdin */</span><br>    <span class="hljs-comment">// 命令行配置读取到config中</span><br>    <span class="hljs-keyword">if</span> (config_from_stdin) &#123;<br>        serverLog(LL_WARNING,<span class="hljs-string">&quot;Reading config from stdin&quot;</span>);<br>        fp = <span class="hljs-built_in">stdin</span>;<br>        <span class="hljs-keyword">while</span>(fgets(buf,CONFIG_MAX_LINE+<span class="hljs-number">1</span>,fp) != <span class="hljs-literal">NULL</span>)<br>            config = sdscat(config,buf);<br>    &#125;<br><br>    <span class="hljs-comment">/* Append the additional options */</span><br>    <span class="hljs-comment">// options的字符串内容读取到config中</span><br>    <span class="hljs-keyword">if</span> (options) &#123;<br>        config = sdscat(config,<span class="hljs-string">&quot;\n&quot;</span>);<br>        config = sdscat(config,options);<br>    &#125;<br>    <span class="hljs-comment">// 尝试将配置加载到redisServer实例字段中</span><br>    loadServerConfigFromString(config);<br>    sdsfree(config);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-redisServer赋值"><a href="#2-redisServer赋值" class="headerlink" title="2 redisServer赋值"></a>2 redisServer赋值</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief 解析配置内容 加载到redisServer实例字段中</span><br><span class="hljs-comment"> * @param config sds实例 指针指向的是sds的buf数组</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">loadServerConfigFromString</span><span class="hljs-params">(<span class="hljs-type">char</span> *config)</span> &#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span> *err = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-type">int</span> linenum = <span class="hljs-number">0</span>, totlines, i;<br>    <span class="hljs-type">int</span> slaveof_linenum = <span class="hljs-number">0</span>;<br>    sds *lines;<br>    <span class="hljs-type">int</span> save_loaded = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 以换行符为切割符切割config配置内容</span><br><span class="hljs-comment">     *   - 切割的子串结果放在lines这个数组里面</span><br><span class="hljs-comment">     *   - 切割的子串数量放在totlines中</span><br><span class="hljs-comment">     */</span><br>    lines = sdssplitlen(config,<span class="hljs-built_in">strlen</span>(config),<span class="hljs-string">&quot;\n&quot;</span>,<span class="hljs-number">1</span>,&amp;totlines);<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; totlines; i++) &#123;<br>        sds *argv;<br>        <span class="hljs-type">int</span> argc;<br><br>        linenum = i+<span class="hljs-number">1</span>;<br>        lines[i] = sdstrim(lines[i],<span class="hljs-string">&quot; \t\r\n&quot;</span>);<br><br>        <span class="hljs-comment">/* Skip comments and blank lines */</span><br>        <span class="hljs-keyword">if</span> (lines[i][<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;#&#x27;</span> || lines[i][<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;\0&#x27;</span>) <span class="hljs-keyword">continue</span>;<br><br>        <span class="hljs-comment">/* Split into arguments */</span><br>        argv = sdssplitargs(lines[i],&amp;argc);<br>        <span class="hljs-keyword">if</span> (argv == <span class="hljs-literal">NULL</span>) &#123;<br>            err = <span class="hljs-string">&quot;Unbalanced quotes in configuration line&quot;</span>;<br>            <span class="hljs-keyword">goto</span> loaderr;<br>        &#125;<br><br>        <span class="hljs-comment">/* Skip this line if the resulting command vector is empty. */</span><br>        <span class="hljs-keyword">if</span> (argc == <span class="hljs-number">0</span>) &#123;<br>            sdsfreesplitres(argv,argc);<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br>        sdstolower(argv[<span class="hljs-number">0</span>]);<br><br>        <span class="hljs-comment">/* Iterate the configs that are standard */</span><br>        <span class="hljs-type">int</span> match = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (standardConfig *config = configs; config-&gt;name != <span class="hljs-literal">NULL</span>; config++) &#123;<br>            <span class="hljs-keyword">if</span> ((!strcasecmp(argv[<span class="hljs-number">0</span>],config-&gt;name) ||<br>                (config-&gt;alias &amp;&amp; !strcasecmp(argv[<span class="hljs-number">0</span>],config-&gt;alias))))<br>            &#123;<br>                <span class="hljs-keyword">if</span> (argc != <span class="hljs-number">2</span>) &#123;<br>                    err = <span class="hljs-string">&quot;wrong number of arguments&quot;</span>;<br>                    <span class="hljs-keyword">goto</span> loaderr;<br>                &#125;<br>                <span class="hljs-keyword">if</span> (!config-&gt;interface.<span class="hljs-built_in">set</span>(config-&gt;data, argv[<span class="hljs-number">1</span>], <span class="hljs-number">0</span>, &amp;err)) &#123;<br>                    <span class="hljs-keyword">goto</span> loaderr;<br>                &#125;<br><br>                match = <span class="hljs-number">1</span>;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (match) &#123;<br>            sdsfreesplitres(argv,argc);<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br><br>        <span class="hljs-comment">/* Execute config directives */</span><br>        <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;bind&quot;</span>) &amp;&amp; argc &gt;= <span class="hljs-number">2</span>) &#123;<br>            <span class="hljs-type">int</span> j, addresses = argc<span class="hljs-number">-1</span>;<br><br>            <span class="hljs-keyword">if</span> (addresses &gt; CONFIG_BINDADDR_MAX) &#123;<br>                err = <span class="hljs-string">&quot;Too many bind addresses specified&quot;</span>; <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br>            <span class="hljs-comment">/* Free old bind addresses */</span><br>            <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; server.bindaddr_count; j++) &#123;<br>                zfree(server.bindaddr[j]);<br>            &#125;<br>            <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; addresses; j++)<br>                server.bindaddr[j] = zstrdup(argv[j+<span class="hljs-number">1</span>]);<br>            server.bindaddr_count = addresses;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;unixsocketperm&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>) &#123;<br>            errno = <span class="hljs-number">0</span>;<br>            server.unixsocketperm = (<span class="hljs-type">mode_t</span>)strtol(argv[<span class="hljs-number">1</span>], <span class="hljs-literal">NULL</span>, <span class="hljs-number">8</span>);<br>            <span class="hljs-keyword">if</span> (errno || server.unixsocketperm &gt; <span class="hljs-number">0777</span>) &#123;<br>                err = <span class="hljs-string">&quot;Invalid socket file permissions&quot;</span>; <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;save&quot;</span>)) &#123;<br>            <span class="hljs-comment">/* We don&#x27;t reset save params before loading, because if they&#x27;re not part</span><br><span class="hljs-comment">             * of the file the defaults should be used.</span><br><span class="hljs-comment">             */</span><br>            <span class="hljs-keyword">if</span> (!save_loaded) &#123;<br>                save_loaded = <span class="hljs-number">1</span>;<br>                resetServerSaveParams();<br>            &#125;<br><br>            <span class="hljs-keyword">if</span> (argc == <span class="hljs-number">3</span>) &#123;<br>                <span class="hljs-type">int</span> seconds = atoi(argv[<span class="hljs-number">1</span>]);<br>                <span class="hljs-type">int</span> changes = atoi(argv[<span class="hljs-number">2</span>]);<br>                <span class="hljs-keyword">if</span> (seconds &lt; <span class="hljs-number">1</span> || changes &lt; <span class="hljs-number">0</span>) &#123;<br>                    err = <span class="hljs-string">&quot;Invalid save parameters&quot;</span>; <span class="hljs-keyword">goto</span> loaderr;<br>                &#125;<br>                appendServerSaveParams(seconds,changes);<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (argc == <span class="hljs-number">2</span> &amp;&amp; !strcasecmp(argv[<span class="hljs-number">1</span>],<span class="hljs-string">&quot;&quot;</span>)) &#123;<br>                resetServerSaveParams();<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;dir&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>) &#123;<br>            <span class="hljs-keyword">if</span> (chdir(argv[<span class="hljs-number">1</span>]) == <span class="hljs-number">-1</span>) &#123;<br>                serverLog(LL_WARNING,<span class="hljs-string">&quot;Can&#x27;t chdir to &#x27;%s&#x27;: %s&quot;</span>,<br>                    argv[<span class="hljs-number">1</span>], strerror(errno));<br>                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;logfile&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>) &#123;<br>            FILE *logfp;<br><br>            zfree(server.logfile);<br>            server.logfile = zstrdup(argv[<span class="hljs-number">1</span>]);<br>            <span class="hljs-keyword">if</span> (server.logfile[<span class="hljs-number">0</span>] != <span class="hljs-string">&#x27;\0&#x27;</span>) &#123;<br>                <span class="hljs-comment">/* Test if we are able to open the file. The server will not</span><br><span class="hljs-comment">                 * be able to abort just for this problem later... */</span><br>                logfp = fopen(server.logfile,<span class="hljs-string">&quot;a&quot;</span>);<br>                <span class="hljs-keyword">if</span> (logfp == <span class="hljs-literal">NULL</span>) &#123;<br>                    err = sdscatprintf(sdsempty(),<br>                        <span class="hljs-string">&quot;Can&#x27;t open the log file: %s&quot;</span>, strerror(errno));<br>                    <span class="hljs-keyword">goto</span> loaderr;<br>                &#125;<br>                fclose(logfp);<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;include&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>) &#123;<br>            loadServerConfig(argv[<span class="hljs-number">1</span>], <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;slaveof&quot;</span>) ||<br>                    !strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;replicaof&quot;</span>)) &amp;&amp; argc == <span class="hljs-number">3</span>) &#123;<br>            slaveof_linenum = linenum;<br>            sdsfree(server.masterhost);<br>            <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">1</span>], <span class="hljs-string">&quot;no&quot;</span>) &amp;&amp; !strcasecmp(argv[<span class="hljs-number">2</span>], <span class="hljs-string">&quot;one&quot;</span>)) &#123;<br>                server.masterhost = <span class="hljs-literal">NULL</span>;<br>                <span class="hljs-keyword">continue</span>;<br>            &#125;<br>            server.masterhost = sdsnew(argv[<span class="hljs-number">1</span>]);<br>            <span class="hljs-type">char</span> *ptr;<br>            server.masterport = strtol(argv[<span class="hljs-number">2</span>], &amp;ptr, <span class="hljs-number">10</span>);<br>            <span class="hljs-keyword">if</span> (server.masterport &lt; <span class="hljs-number">0</span> || server.masterport &gt; <span class="hljs-number">65535</span> || *ptr != <span class="hljs-string">&#x27;\0&#x27;</span>) &#123;<br>                err = <span class="hljs-string">&quot;Invalid master port&quot;</span>; <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br>            server.repl_state = REPL_STATE_CONNECT;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;list-max-ziplist-entries&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>)&#123;<br>            <span class="hljs-comment">/* DEAD OPTION */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;list-max-ziplist-value&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>) &#123;<br>            <span class="hljs-comment">/* DEAD OPTION */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;rename-command&quot;</span>) &amp;&amp; argc == <span class="hljs-number">3</span>) &#123;<br>            <span class="hljs-keyword">struct</span> redisCommand *cmd = lookupCommand(argv[<span class="hljs-number">1</span>]);<br>            <span class="hljs-type">int</span> retval;<br><br>            <span class="hljs-keyword">if</span> (!cmd) &#123;<br>                err = <span class="hljs-string">&quot;No such command in rename-command&quot;</span>;<br>                <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br><br>            <span class="hljs-comment">/* If the target command name is the empty string we just</span><br><span class="hljs-comment">             * remove it from the command table. */</span><br>            retval = dictDelete(server.commands, argv[<span class="hljs-number">1</span>]);<br>            serverAssert(retval == DICT_OK);<br><br>            <span class="hljs-comment">/* Otherwise we re-add the command under a different name. */</span><br>            <span class="hljs-keyword">if</span> (sdslen(argv[<span class="hljs-number">2</span>]) != <span class="hljs-number">0</span>) &#123;<br>                sds copy = sdsdup(argv[<span class="hljs-number">2</span>]);<br><br>                retval = dictAdd(server.commands, copy, cmd);<br>                <span class="hljs-keyword">if</span> (retval != DICT_OK) &#123;<br>                    sdsfree(copy);<br>                    err = <span class="hljs-string">&quot;Target command name already exists&quot;</span>; <span class="hljs-keyword">goto</span> loaderr;<br>                &#125;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;cluster-config-file&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>) &#123;<br>            zfree(server.cluster_configfile);<br>            server.cluster_configfile = zstrdup(argv[<span class="hljs-number">1</span>]);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;client-output-buffer-limit&quot;</span>) &amp;&amp;<br>                   argc == <span class="hljs-number">5</span>)<br>        &#123;<br>            <span class="hljs-type">int</span> class = getClientTypeByName(argv[<span class="hljs-number">1</span>]);<br>            <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> hard, soft;<br>            <span class="hljs-type">int</span> soft_seconds;<br><br>            <span class="hljs-keyword">if</span> (class == <span class="hljs-number">-1</span> || class == CLIENT_TYPE_MASTER) &#123;<br>                err = <span class="hljs-string">&quot;Unrecognized client limit class: the user specified &quot;</span><br>                <span class="hljs-string">&quot;an invalid one, or &#x27;master&#x27; which has no buffer limits.&quot;</span>;<br>                <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br>            hard = memtoll(argv[<span class="hljs-number">2</span>],<span class="hljs-literal">NULL</span>);<br>            soft = memtoll(argv[<span class="hljs-number">3</span>],<span class="hljs-literal">NULL</span>);<br>            soft_seconds = atoi(argv[<span class="hljs-number">4</span>]);<br>            <span class="hljs-keyword">if</span> (soft_seconds &lt; <span class="hljs-number">0</span>) &#123;<br>                err = <span class="hljs-string">&quot;Negative number of seconds in soft limit is invalid&quot;</span>;<br>                <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br>            server.client_obuf_limits[<span class="hljs-class"><span class="hljs-keyword">class</span>].<span class="hljs-title">hard_limit_bytes</span> =</span> hard;<br>            server.client_obuf_limits[<span class="hljs-class"><span class="hljs-keyword">class</span>].<span class="hljs-title">soft_limit_bytes</span> =</span> soft;<br>            server.client_obuf_limits[<span class="hljs-class"><span class="hljs-keyword">class</span>].<span class="hljs-title">soft_limit_seconds</span> =</span> soft_seconds;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;oom-score-adj-values&quot;</span>) &amp;&amp; argc == <span class="hljs-number">1</span> + CONFIG_OOM_COUNT) &#123;<br>            <span class="hljs-keyword">if</span> (updateOOMScoreAdjValues(&amp;argv[<span class="hljs-number">1</span>], &amp;err, <span class="hljs-number">0</span>) == C_ERR) <span class="hljs-keyword">goto</span> loaderr;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;notify-keyspace-events&quot;</span>) &amp;&amp; argc == <span class="hljs-number">2</span>) &#123;<br>            <span class="hljs-type">int</span> flags = keyspaceEventsStringToFlags(argv[<span class="hljs-number">1</span>]);<br><br>            <span class="hljs-keyword">if</span> (flags == <span class="hljs-number">-1</span>) &#123;<br>                err = <span class="hljs-string">&quot;Invalid event class character. Use &#x27;g$lshzxeA&#x27;.&quot;</span>;<br>                <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br>            server.notify_keyspace_events = flags;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;user&quot;</span>) &amp;&amp; argc &gt;= <span class="hljs-number">2</span>) &#123;<br>            <span class="hljs-type">int</span> argc_err;<br>            <span class="hljs-keyword">if</span> (ACLAppendUserForLoading(argv,argc,&amp;argc_err) == C_ERR) &#123;<br>                <span class="hljs-type">char</span> buf[<span class="hljs-number">1024</span>];<br>                <span class="hljs-type">const</span> <span class="hljs-type">char</span> *errmsg = ACLSetUserStringError();<br>                <span class="hljs-built_in">snprintf</span>(buf,<span class="hljs-keyword">sizeof</span>(buf),<span class="hljs-string">&quot;Error in user declaration &#x27;%s&#x27;: %s&quot;</span>,<br>                    argv[argc_err],errmsg);<br>                err = buf;<br>                <span class="hljs-keyword">goto</span> loaderr;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;loadmodule&quot;</span>) &amp;&amp; argc &gt;= <span class="hljs-number">2</span>) &#123;<br>            queueLoadModule(argv[<span class="hljs-number">1</span>],&amp;argv[<span class="hljs-number">2</span>],argc<span class="hljs-number">-2</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(argv[<span class="hljs-number">0</span>],<span class="hljs-string">&quot;sentinel&quot;</span>)) &#123;<br>            <span class="hljs-comment">/* argc == 1 is handled by main() as we need to enter the sentinel</span><br><span class="hljs-comment">             * mode ASAP. */</span><br>            <span class="hljs-keyword">if</span> (argc != <span class="hljs-number">1</span>) &#123;<br>                <span class="hljs-keyword">if</span> (!server.sentinel_mode) &#123;<br>                    err = <span class="hljs-string">&quot;sentinel directive while not in sentinel mode&quot;</span>;<br>                    <span class="hljs-keyword">goto</span> loaderr;<br>                &#125;<br>                queueSentinelConfig(argv+<span class="hljs-number">1</span>,argc<span class="hljs-number">-1</span>,linenum,lines[i]);<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            err = <span class="hljs-string">&quot;Bad directive or wrong number of arguments&quot;</span>; <span class="hljs-keyword">goto</span> loaderr;<br>        &#125;<br>        sdsfreesplitres(argv,argc);<br>    &#125;<br><br>    <span class="hljs-comment">/* Sanity checks. */</span><br>    <span class="hljs-keyword">if</span> (server.cluster_enabled &amp;&amp; server.masterhost) &#123;<br>        linenum = slaveof_linenum;<br>        i = linenum<span class="hljs-number">-1</span>;<br>        err = <span class="hljs-string">&quot;replicaof directive not allowed in cluster mode&quot;</span>;<br>        <span class="hljs-keyword">goto</span> loaderr;<br>    &#125;<br><br>    <span class="hljs-comment">/* To ensure backward compatibility and work while hz is out of range */</span><br>    <span class="hljs-keyword">if</span> (server.config_hz &lt; CONFIG_MIN_HZ) server.config_hz = CONFIG_MIN_HZ;<br>    <span class="hljs-keyword">if</span> (server.config_hz &gt; CONFIG_MAX_HZ) server.config_hz = CONFIG_MAX_HZ;<br><br>    sdsfreesplitres(lines,totlines);<br>    <span class="hljs-keyword">return</span>;<br><br>loaderr:<br>    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;\n*** FATAL CONFIG FILE ERROR (Redis %s) ***\n&quot;</span>,<br>        REDIS_VERSION);<br>    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Reading the configuration file, at line %d\n&quot;</span>, linenum);<br>    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;&gt;&gt;&gt; &#x27;%s&#x27;\n&quot;</span>, lines[i]);<br>    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;%s\n&quot;</span>, err);<br>    <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Redis-6-2/" class="print-no-link">#Redis@6.2</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x16-加载配置文件</div>
+      <div>https://bannirui.github.io/2023/04/12/Redis-0x16-加载配置文件/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/12/Redis-0x17-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" title="Redis-0x17-守护进程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x17-守护进程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/11/Redis-0x15-%E5%88%9D%E5%A7%8B%E5%8C%96server%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE/" title="Redis-0x15-初始化server服务配置">
+                        <span class="hidden-mobile">Redis-0x15-初始化server服务配置</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '1f5541f2a536644386e7e80f80b12b43'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

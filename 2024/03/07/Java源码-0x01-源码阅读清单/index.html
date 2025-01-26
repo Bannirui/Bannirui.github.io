@@ -1,0 +1,1354 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="整体计划是将Java的源码事无巨细地过一遍  一是弥补一下认知缺陷  二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难  在此过程中完善对计算机OS的知识体系建立   难度很大，过程很大，工程很大，所以能否完结也是待定 阅读顺序   1 java.lang    2 java.util    3 java.util.concurrent    4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java源码-0x01-源码阅读清单">
+<meta property="og:url" content="https://bannirui.github.io/2024/03/07/Java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="整体计划是将Java的源码事无巨细地过一遍  一是弥补一下认知缺陷  二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难  在此过程中完善对计算机OS的知识体系建立   难度很大，过程很大，工程很大，所以能否完结也是待定 阅读顺序   1 java.lang    2 java.util    3 java.util.concurrent    4">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-03-07T04:19:28.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.288Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="Java@15">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Java源码-0x01-源码阅读清单 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java源码-0x01-源码阅读清单"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-07 12:19" pubdate>
+          2024年3月7日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          175 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          2 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Java"
+        id="heading-d52387880e1ea22817a72d3759213819" role="tab" data-toggle="collapse" href="#collapse-d52387880e1ea22817a72d3759213819"
+        aria-expanded="true"
+      >
+        Java
+        <span class="list-group-count">(17)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-d52387880e1ea22817a72d3759213819"
+           role="tabpanel" aria-labelledby="heading-d52387880e1ea22817a72d3759213819">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/05/14/JNI%E4%BD%BF%E7%94%A8/" title="JNI使用"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JNI使用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-0x00-%E7%BC%96%E8%AF%91openjdk/" title="Java源码-0x00-编译openjdk"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x00-编译openjdk</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="Java源码-0x01-源码阅读清单"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Java源码-0x01-源码阅读清单</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/" title="Java源码-0x02-Object"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x02-Object</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="Java源码-0x03-MarkWord"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x03-MarkWord</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/Java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="Java源码-0x04-biasedLocking"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x04-biasedLocking</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/10/Java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="Java源码-0x05-宏定义"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-0x05-宏定义</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-AQS/" title="Java源码-AQS"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-AQS</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ArrayBlockingQueue/" title="Java源码-ArrayBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-ArrayBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-COW/" title="Java源码-COW"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-COW</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-LinkedBlockingQueue/" title="Java源码-LinkedBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-LinkedBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" title="Java源码-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Selector</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-SynchronousQueue/" title="Java源码-SynchronousQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-SynchronousQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/Java%E6%BA%90%E7%A0%81-Thread/" title="Java源码-Thread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Thread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-ThreadPoolExecutor/" title="Java源码-ThreadPoolExecutor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-ThreadPoolExecutor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/04/Java%E6%BA%90%E7%A0%81-Timer/" title="Java源码-Timer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-Timer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Java%E6%BA%90%E7%A0%81-synchronized/" title="Java源码-synchronized"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Java源码-synchronized</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java源码-0x01-源码阅读清单</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>整体计划是将Java的源码事无巨细地过一遍</p>
+<ul>
+<li><p>一是弥补一下认知缺陷</p>
+</li>
+<li><p>二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难</p>
+</li>
+<li><p>在此过程中完善对计算机OS的知识体系建立</p>
+</li>
+</ul>
+<p>难度很大，过程很大，工程很大，所以能否完结也是待定</p>
+<h3 id="阅读顺序"><a href="#阅读顺序" class="headerlink" title="阅读顺序"></a>阅读顺序</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#1">1 java.lang</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#2">2 java.util</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#3">3 java.util.concurrent</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#4">4 java.util.concurrent.atomic</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#5">5 java.lang.reflect</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#6">6 java.lang.annotation</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#7">7 java.util.concurrent.locks</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#8">8 java.io</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#9">9 java.nio</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#10">10 java.sql</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#11">11 java.net</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#12">12 java.math</a></p>
+</li>
+</ul>
+<h4 id="1-java-lang"><a href="#1-java-lang" class="headerlink" title="1 java.lang"></a><a id="1">1 java.lang</a></h4><ul>
+<li><a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/" title="Java源码-0x02-Object">Object</a>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+String</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractStringBuilder</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+StringBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+StringBuilder</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Boolean</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Byte</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Double</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Float</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Integer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Long</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Short</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Thread</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ThreadLocal</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Enum</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Throwable</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Error</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Exception</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Class</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ClassLoader</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Compiler</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+System</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Package</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Void</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Number</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Math</p>
+</li>
+</ul>
+<h4 id="2-java-util"><a href="#2-java-util" class="headerlink" title="2 java.util"></a><a id="2">2 java.util</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+AbstractList</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractSet </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ArrayList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedList</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+HashMap </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Hashtable</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+HashSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedHashMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedHashSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+TreeMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+TreeSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Vector</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Queue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Stack</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SortedMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SortedSet </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Collections</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Arrays</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Comparator</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Iterator</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Base64 </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Date</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+EventListener</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Random </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SubList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Timer </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+UUID </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+WeakHashMap</p>
+</li>
+</ul>
+<h4 id="3-java-util-concurrent"><a href="#3-java-util-concurrent" class="headerlink" title="3 java.util.concurrent"></a><a id="3">3 java.util.concurrent</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+ConcurrentHashMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Executor</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractExecutorService </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ExecutorService </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ThreadPoolExecutor</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BlockingQueue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractQueuedSynchronizer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CountDownLatch</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+FutureTask</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Semaphore</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CyclicBarrier</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CopyOnWriteArrayList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SynchronousQueue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BlockingDeque </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Callable</p>
+</li>
+</ul>
+<h4 id="4-java-util-concurrent-atomic"><a href="#4-java-util-concurrent-atomic" class="headerlink" title="4 java.util.concurrent.atomic"></a><a id="4">4 java.util.concurrent.atomic</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+AtomicBoolean</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicInteger</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicLong </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicReference</p>
+</li>
+</ul>
+<h4 id="5-java-lang-reflect"><a href="#5-java-lang-reflect" class="headerlink" title="5 java.lang.reflect"></a><a id="5">5 java.lang.reflect</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Field</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Method</p>
+</li>
+</ul>
+<h4 id="6-java-lang-annotation"><a href="#6-java-lang-annotation" class="headerlink" title="6 java.lang.annotation"></a><a id="6">6 java.lang.annotation</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Annotation</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Target</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Inherited</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Retention</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Documented</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ElementType</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Native </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Repeatable</p>
+</li>
+</ul>
+<h4 id="7-java-util-concurrent-locks"><a href="#7-java-util-concurrent-locks" class="headerlink" title="7 java.util.concurrent.locks"></a><a id="7">7 java.util.concurrent.locks</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Lock </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Condition</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ReentrantLock</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ReentrantReadWriteLock</p>
+</li>
+</ul>
+<h4 id="8-java-io"><a href="#8-java-io" class="headerlink" title="8 java.io"></a><a id="8">8 java.io</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+File</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+InputStream</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+OutputStream</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Reader</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Writer</p>
+</li>
+</ul>
+<h4 id="9-java-nio"><a href="#9-java-nio" class="headerlink" title="9 java.nio"></a><a id="9">9 java.nio</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Buffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ByteBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CharBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+DoubleBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+FloatBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+IntBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LongBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ShortBuffer</p>
+</li>
+</ul>
+<h4 id="10-java-sql"><a href="#10-java-sql" class="headerlink" title="10 java.sql"></a><a id="10">10 java.sql</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Connection</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Driver </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+DriverManager </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+JDBCType </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ResultSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Statement</p>
+</li>
+</ul>
+<h4 id="11-java-net"><a href="#11-java-net" class="headerlink" title="11 java.net"></a><a id="11">11 java.net</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Socket </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ServerSocket </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URI </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URL</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URLEncoder</p>
+</li>
+</ul>
+<h4 id="12-java-math"><a href="#12-java-math" class="headerlink" title="12 java.math"></a><a id="12">12 java.math</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+BigDecimal</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BigInteger</p>
+</li>
+</ul>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java-15/" class="print-no-link">#Java@15</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java源码-0x01-源码阅读清单</div>
+      <div>https://bannirui.github.io/2024/03/07/Java源码-0x01-源码阅读清单/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/03/07/Java%E6%BA%90%E7%A0%81-0x02-Object/" title="Java源码-0x02-Object">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Java源码-0x02-Object</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/03/Hexo%E4%B8%BB%E9%A2%98-Fluid/" title="Hexo主题-Fluid">
+                        <span class="hidden-mobile">Hexo主题-Fluid</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'aec723be023994e3d692c373f5bcc7e8'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

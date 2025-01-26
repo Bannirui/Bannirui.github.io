@@ -1,0 +1,1032 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Redis项目是通过make构建的，考虑到以下几点，我觉得有必要通过cmake脚本生成MakeFile  cmake的跨平台性  源码的结构自定义组织   但是reids项目本身为了兼容跨平台性以及性能优化，提供了诸多的编译选项，我当前的cmake脚本只关注linux平台  linux系统  jemalloc内存分配器   1 项目结构  项目的构建分为两个部分  依赖的3rd_party编译，将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x04-用cmake构建项目">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="Redis项目是通过make构建的，考虑到以下几点，我觉得有必要通过cmake脚本生成MakeFile  cmake的跨平台性  源码的结构自定义组织   但是reids项目本身为了兼容跨平台性以及性能优化，提供了诸多的编译选项，我当前的cmake脚本只关注linux平台  linux系统  jemalloc内存分配器   1 项目结构  项目的构建分为两个部分  依赖的3rd_party编译，将">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/1708518055.png">
+<meta property="article:published_time" content="2024-04-13T14:07:53.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.477Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/1708518055.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x04-用cmake构建项目 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x04-用cmake构建项目"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-13 22:07" pubdate>
+          2024年4月13日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          824 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(52)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x04-用cmake构建项目</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Redis项目是通过make构建的，考虑到以下几点，我觉得有必要通过cmake脚本生成MakeFile</p>
+<ul>
+<li><p>cmake的跨平台性</p>
+</li>
+<li><p>源码的结构自定义组织</p>
+</li>
+</ul>
+<p>但是reids项目本身为了兼容跨平台性以及性能优化，提供了诸多的编译选项，我当前的cmake脚本只关注linux平台</p>
+<ul>
+<li><p>linux系统</p>
+</li>
+<li><p>jemalloc内存分配器</p>
+</li>
+</ul>
+<h3 id="1-项目结构"><a href="#1-项目结构" class="headerlink" title="1 项目结构"></a>1 项目结构</h3><img src="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/1708518055.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>项目的构建分为两个部分</p>
+<ul>
+<li><p>依赖的3rd_party编译，将其编译位链接库</p>
+</li>
+<li><p>源码，将其编译位可执行程序</p>
+</li>
+</ul>
+<h3 id="2-make"><a href="#2-make" class="headerlink" title="2 make"></a>2 make</h3><p>之前看过了MakeFile的rule</p>
+<h3 id="3-cmake脚本编写"><a href="#3-cmake脚本编写" class="headerlink" title="3 cmake脚本编写"></a>3 cmake脚本编写</h3><p>为了尽可能的简单，因此只关注于linux和mac平台，并且当前只编写了编译redis-server可执行程序的脚本</p>
+<p>从MakeFile中可以看出来redis工程共提供了如下6个可执行程序的编译</p>
+<ul>
+<li><p>redis-server</p>
+</li>
+<li><p>redis-sentinel</p>
+</li>
+<li><p>redis-check-rdb</p>
+</li>
+<li><p>redis-check-aof</p>
+</li>
+<li><p>redis-cli</p>
+</li>
+<li><p>redis-benchmark</p>
+</li>
+</ul>
+<h4 id="3-1-根目录"><a href="#3-1-根目录" class="headerlink" title="3.1 根目录"></a>3.1 根目录</h4><h5 id="3-1-1-CmakeLists-txt文件"><a href="#3-1-1-CmakeLists-txt文件" class="headerlink" title="3.1.1 CmakeLists.txt文件"></a>3.1.1 CmakeLists.txt文件</h5><p>负责源码的编译以及链接库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">cmake_minimum_required(VERSION 3.28.0)<br>project(redis_6.2 C)<br><br>#[[<br>1 redis源码<br>2 前置依赖脚本<br>3 编译成可执行程序redis-server<br>4 依赖3rd库 libhiredis.a liblua.a libjemalloc.a<br>5 系统库<br>6 链接库<br>]]<br><br>#执行shell<br>execute_process(<br>        COMMAND sh $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/src/mkreleasehdr.sh<br>        WORKING_DIRECTORY $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/src<br>)<br><br>#系统库 不同的平台依赖的系统库有差异<br>set(SYS_LIB -lm -ldl -lresolv -lpthread)<br>if (LINUX)<br>    set(SYS_LIB &quot;$&#123;SYS_LIB&#125; -latomic -lnsl -lrt -lcrypt -lbsd&quot;)<br>elseif (APPLE)<br>endif ()<br><br>#redis-server的源码文件<br>set(REDIS_SERVER_SRC<br>        src/adlist.c<br>        src/quicklist.c<br>        src/ae.c<br>        src/anet.c<br>        src/dict.c<br>        src/server.c<br>        src/sds.c<br>        src/zmalloc.c<br>        src/lzf_c.c<br>        src/lzf_d.c<br>        src/pqsort.c<br>        src/zipmap.c<br>        src/sha1.c<br>        src/ziplist.c<br>        src/release.c<br>        src/networking.c<br>        src/util.c<br>        src/object.c<br>        src/db.c<br>        src/replication.c<br>        src/rdb.c<br>        src/t_string.c<br>        src/t_list.c<br>        src/t_set.c<br>        src/t_zset.c<br>        src/t_hash.c<br>        src/config.c<br>        src/aof.c<br>        src/pubsub.c<br>        src/multi.c<br>        src/debug.c<br>        src/sort.c<br>        src/intset.c<br>        src/syncio.c<br>        src/cluster.c<br>        src/crc16.c<br>        src/endianconv.c<br>        src/slowlog.c<br>        src/scripting.c<br>        src/bio.c<br>        src/rio.c<br>        src/rand.c<br>        src/memtest.c<br>        src/crcspeed.c<br>        src/crc64.c<br>        src/bitops.c<br>        src/sentinel.c<br>        src/notify.c<br>        src/setproctitle.c<br>        src/blocked.c<br>        src/hyperloglog.c<br>        src/latency.c<br>        src/sparkline.c<br>        src/redis-check-rdb.c<br>        src/redis-check-aof.c<br>        src/geo.c<br>        src/lazyfree.c<br>        src/module.c<br>        src/evict.c<br>        src/expire.c<br>        src/geohash.c<br>        src/geohash_helper.c<br>        src/childinfo.c<br>        src/defrag.c<br>        src/siphash.c<br>        src/rax.c<br>        src/t_stream.c<br>        src/listpack.c<br>        src/localtime.c<br>        src/lolwut.c<br>        src/lolwut5.c<br>        src/lolwut6.c<br>        src/acl.c<br>        src/gopher.c<br>        src/tracking.c<br>        src/connection.c<br>        src/tls.c<br>        src/sha256.c<br>        src/timeout.c<br>        src/setcpuaffinity.c<br>        src/monotonic.c<br>        src/mt19937-64.c<br>)<br><br>#external 3rd库<br>add_subdirectory(deps)<br><br>#3rd头文件路径<br>set(DEPS_HEADER_PATH $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/deps)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/hdr_histogram)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/hiredis)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/jemalloc/include)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/linenoise)<br>include_directories($&#123;DEPS_HEADER_PATH&#125;/lua/src)<br><br>#3rd库路径<br>set(DEPS_LIB_PATH $&#123;CMAKE_CURRENT_BINARY_DIR&#125;/deps)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/hdr_histogram)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/hiredis)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/jemalloc)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/linenoise)<br>link_directories($&#123;DEPS_LIB_PATH&#125;/lua)<br><br>add_executable(redis-server $&#123;REDIS_SERVER_SRC&#125;)<br><br>#链接库文件<br>target_link_libraries(redis-server<br>        hiredis<br>        lua<br>        $&#123;SYS_LIB&#125;<br>)<br><br># jemalloc三方库只在linux上用<br>if (LINUX)<br>    target_link_libraries(redis-server<br>            jemalloc<br>    )<br>endif ()<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-1-2-configure-sh文件"><a href="#3-1-2-configure-sh文件" class="headerlink" title="3.1.2 configure.sh文件"></a>3.1.2 configure.sh文件</h5><p>执行cmake脚本生成Makefile</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>cmake \<br>  -G &quot;Unix Makefiles&quot; \<br>  -S . \<br>  -B build<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-1-3-build-sh文件"><a href="#3-1-3-build-sh文件" class="headerlink" title="3.1.3 build.sh文件"></a>3.1.3 build.sh文件</h5><p>执行make</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>cd build ; make<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-1-4-run-sh文件"><a href="#3-1-4-run-sh文件" class="headerlink" title="3.1.4 run.sh文件"></a>3.1.4 run.sh文件</h5><p>运行redis-server可执行程序</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>cd build ; ./redis-server<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-2-deps目录"><a href="#3-2-deps目录" class="headerlink" title="3.2 deps目录"></a>3.2 deps目录</h4><p>负责编译3rd_party的依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">add_subdirectory(hdr_histogram)<br>#hiredis是cmake项目<br>add_subdirectory(hiredis)<br>#cmake执行shell脚本<br># jemalloc只在linux才编译<br>if (LINUX)<br>    add_subdirectory(jemalloc)<br>endif ()<br>add_subdirectory(linenoise)<br>add_subdirectory(lua)<br><br></code></pre></td></tr></table></figure>
+
+<h5 id="3-2-1-deps-x2F-hdr-histogram"><a href="#3-2-1-deps-x2F-hdr-histogram" class="headerlink" title="3.2.1 deps&#x2F;hdr_histogram"></a>3.2.1 deps&#x2F;hdr_histogram</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">add_library(hdr_histogram<br>    hdr_histogram.h hdr_histogram.c<br>)<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-2-2-deps-x2F-hiredis"><a href="#3-2-2-deps-x2F-hiredis" class="headerlink" title="3.2.2 deps&#x2F;hiredis"></a>3.2.2 deps&#x2F;hiredis</h5><p>hiredis本身就是cmake项目，因此不需要额外编写cmake脚本</p>
+<h5 id="3-2-3-deps-x2F-jemalloc"><a href="#3-2-3-deps-x2F-jemalloc" class="headerlink" title="3.2.3 deps&#x2F;jemalloc"></a>3.2.3 deps&#x2F;jemalloc</h5><h6 id="3-2-3-1-sh脚本"><a href="#3-2-3-1-sh脚本" class="headerlink" title="3.2.3.1 sh脚本"></a>3.2.3.1 sh脚本</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>./configure --with-version=5.1.0-0-g0 --with-lg-quantum=3 --with-jemalloc-prefix=je_<br>make lib/libjemalloc.a<br></code></pre></td></tr></table></figure>
+
+<h6 id="3-2-3-2-cmake脚本"><a href="#3-2-3-2-cmake脚本" class="headerlink" title="3.2.3.2 cmake脚本"></a>3.2.3.2 cmake脚本</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">execute_process(<br>    COMMAND bash &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/build_jemalloc.sh&quot;<br>    WORKING_DIRECTORY $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;<br>)<br><br>file(COPY lib/libjemalloc.a DESTINATION $&#123;CMAKE_CURRENT_BINARY_DIR&#125;)<br>file(REMOVE lib/libjemalloc.a)<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-2-4-deps-x2F-linenoise"><a href="#3-2-4-deps-x2F-linenoise" class="headerlink" title="3.2.4 deps&#x2F;linenoise"></a>3.2.4 deps&#x2F;linenoise</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">add_library(linenoise linenoise.c)<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-2-5-deps-x2F-lua"><a href="#3-2-5-deps-x2F-lua" class="headerlink" title="3.2.5 deps&#x2F;lua"></a>3.2.5 deps&#x2F;lua</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs CMakeLists">file(GLOB LUA_SRC ./src/*.c)<br>add_library(lua $&#123;LUA_SRC&#125;)<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x04-用cmake构建项目</div>
+      <div>https://bannirui.github.io/2024/04/13/Redis/Redis-0x04-用cmake构建项目/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x05-内存管理的跨平台</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本">
+                        <span class="hidden-mobile">Redis-0x03-Makefile脚本</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '2407754c9ddc872a01fb899fa1d9fc13'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

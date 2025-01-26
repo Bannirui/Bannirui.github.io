@@ -1,0 +1,1051 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="数据类型的编码方式。 1 zipmap数据结构1.1 结构图  1.2 字段解释1.2.1 zipmap   字段 长度 语义    zmlen 1 byte zipmap实例中存储了多少个键值对，也就是entry的数量。   entry ? zipmap中存储的每个键值对。   end 1 byte zipmap的结束标识符。   1.2.2 entry   字段 长度 语义    len 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x06-zipmap">
+<meta property="og:url" content="https://bannirui.github.io/2023/04/01/Redis-0x06-zipmap/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="数据类型的编码方式。 1 zipmap数据结构1.1 结构图  1.2 字段解释1.2.1 zipmap   字段 长度 语义    zmlen 1 byte zipmap实例中存储了多少个键值对，也就是entry的数量。   entry ? zipmap中存储的每个键值对。   end 1 byte zipmap的结束标识符。   1.2.2 entry   字段 长度 语义    len 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/img/Redis-0x06-zipmap.png">
+<meta property="article:published_time" content="2023-04-01T04:10:13.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.450Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="Redis@6.2">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/img/Redis-0x06-zipmap.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x06-zipmap - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x06-zipmap"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-01 12:10" pubdate>
+          2023年4月1日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(52)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x06-zipmap</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>数据类型的编码方式。</p>
+<h2 id="1-zipmap数据结构"><a href="#1-zipmap数据结构" class="headerlink" title="1 zipmap数据结构"></a>1 zipmap数据结构</h2><h3 id="1-1-结构图"><a href="#1-1-结构图" class="headerlink" title="1.1 结构图"></a>1.1 结构图</h3><img src="/2023/04/01/Redis-0x06-zipmap/image-20230401214523205.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="1-2-字段解释"><a href="#1-2-字段解释" class="headerlink" title="1.2 字段解释"></a>1.2 字段解释</h3><h4 id="1-2-1-zipmap"><a href="#1-2-1-zipmap" class="headerlink" title="1.2.1 zipmap"></a>1.2.1 zipmap</h4><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>长度</th>
+<th>语义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zmlen</td>
+<td>1 byte</td>
+<td>zipmap实例中存储了多少个键值对，也就是entry的数量。</td>
+</tr>
+<tr>
+<td>entry</td>
+<td>?</td>
+<td>zipmap中存储的每个键值对。</td>
+</tr>
+<tr>
+<td>end</td>
+<td>1 byte</td>
+<td>zipmap的结束标识符。</td>
+</tr>
+</tbody></table>
+<h4 id="1-2-2-entry"><a href="#1-2-2-entry" class="headerlink" title="1.2.2 entry"></a>1.2.2 entry</h4><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>长度</th>
+<th>语义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>len</td>
+<td>1 byte \ 5bytes</td>
+<td>key的长度，len的编码方式根据key的长度而定。</td>
+</tr>
+<tr>
+<td>key</td>
+<td>?</td>
+<td>键值对key的内容。</td>
+</tr>
+<tr>
+<td>len</td>
+<td>1 byte \ 5bytes</td>
+<td>value的长度，len的编码方式根据value的长度而定。</td>
+</tr>
+<tr>
+<td>free</td>
+<td>1 byte</td>
+<td>空闲空间，分配给value的内容，后来value更新了，可能字符串长度变小了，就空闲出来了一部分空间。</td>
+</tr>
+<tr>
+<td>value</td>
+<td>?</td>
+<td>键值对value的内容。</td>
+</tr>
+</tbody></table>
+<h2 id="2-zipmap实例化"><a href="#2-zipmap实例化" class="headerlink" title="2 zipmap实例化"></a>2 zipmap实例化</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// @return zm实例的地址</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *<span class="hljs-title function_">zipmapNew</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span> &#123;<br>    <span class="hljs-comment">// 申请2个字节 给zipmap填充两个字</span><br>    <span class="hljs-comment">// zmlen end</span><br>    <span class="hljs-comment">// \0x00\0xff</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zm = zmalloc(<span class="hljs-number">2</span>);<br>    <span class="hljs-comment">// zmlen字段 0个键值对</span><br>    zm[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>; <span class="hljs-comment">/* Length */</span><br>    <span class="hljs-comment">// zipmap结束符 0xff</span><br>    zm[<span class="hljs-number">1</span>] = ZIPMAP_END;<br>    <span class="hljs-keyword">return</span> zm;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<img src="/2023/04/01/Redis-0x06-zipmap/image-20230401215341175.png" srcset="/img/loading.gif" lazyload class="">
+
+<h2 id="3-编码entry需要多大内存"><a href="#3-编码entry需要多大内存" class="headerlink" title="3 编码entry需要多大内存"></a>3 编码entry需要多大内存</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 一个entry节点内存布局</span><br><span class="hljs-comment">// \len\key\len\free\value</span><br><span class="hljs-comment">// len-&gt;1个byte或者4个byte 具体根据key和value长度而定</span><br><span class="hljs-comment">// free-&gt;1个byte 并且初始化的时候free上存储的值为0x00</span><br><span class="hljs-comment">// @param klen key的字符串长度</span><br><span class="hljs-comment">// @param vlen value的字符串长度</span><br><span class="hljs-comment">// @return 编码[key, value]键值对需要多大内存</span><br><span class="hljs-type">static</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-title function_">zipmapRequiredLength</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> klen, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> vlen)</span> &#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> l;<br>    <span class="hljs-comment">// key长度+value长度+len至少1个byte+len至少1个byte+free 1个byte</span><br>    l = klen+vlen+<span class="hljs-number">3</span>;<br>    <span class="hljs-comment">// 字符串长度&gt;=0xfe时 len字段需要5个byte</span><br>    <span class="hljs-keyword">if</span> (klen &gt;= ZIPMAP_BIGLEN) l += <span class="hljs-number">4</span>;<br>    <span class="hljs-keyword">if</span> (vlen &gt;= ZIPMAP_BIGLEN) l += <span class="hljs-number">4</span>;<br>    <span class="hljs-keyword">return</span> l;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-entry中len字段"><a href="#4-entry中len字段" class="headerlink" title="4 entry中len字段"></a>4 entry中len字段</h2><h3 id="4-1-len字段读取"><a href="#4-1-len字段读取" class="headerlink" title="4.1 len字段读取"></a>4.1 len字段读取</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 读取zipmap中entry节点的的len字段值</span><br><span class="hljs-comment">// key\value的长度使用len表示 len要么1 byte 要么5 bytes</span><br><span class="hljs-comment">// @param p 指向entry的指针</span><br><span class="hljs-comment">// @return entry中的key或者value的len的值</span><br><span class="hljs-type">static</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">zipmapDecodeLength</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p)</span> &#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> len = *p;<br>    <span class="hljs-comment">// 字符串长度[0...253]通过1个byte表示</span><br>    <span class="hljs-keyword">if</span> (len &lt; ZIPMAP_BIGLEN) <span class="hljs-keyword">return</span> len;<br>    <span class="hljs-comment">// len字段5个byte 第1个byte标识符填充254 字符串长度通过后4 bytes表示</span><br>    <span class="hljs-built_in">memcpy</span>(&amp;len,p+<span class="hljs-number">1</span>,<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>)); <span class="hljs-comment">// 读取后4个bytes上的值</span><br>    memrev32ifbe(&amp;len);<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-len字段编码需要多大内存-amp-amp-len字段写入"><a href="#4-2-len字段编码需要多大内存-amp-amp-len字段写入" class="headerlink" title="4.2 len字段编码需要多大内存 &amp;&amp; len字段写入"></a>4.2 len字段编码需要多大内存 &amp;&amp; len字段写入</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 函数有2个功能</span><br><span class="hljs-comment">//             除非返回编码len需要几个byte之外</span><br><span class="hljs-comment">//             如果给定了entry节点p 还需要对entry的len字段进行编码写入</span><br><span class="hljs-comment">// @param p entry节点</span><br><span class="hljs-comment">// @param len len字段的值</span><br><span class="hljs-comment">// @return len字段几个byte 需要多大内存编码len字段</span><br><span class="hljs-type">static</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">zipmapEncodeLength</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> len)</span> &#123;<br>    <span class="hljs-keyword">if</span> (p == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-keyword">return</span> ZIPMAP_LEN_BYTES(len);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span> (len &lt; ZIPMAP_BIGLEN) &#123;<br>            p[<span class="hljs-number">0</span>] = len;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            p[<span class="hljs-number">0</span>] = ZIPMAP_BIGLEN;<br>            <span class="hljs-built_in">memcpy</span>(p+<span class="hljs-number">1</span>,&amp;len,<span class="hljs-keyword">sizeof</span>(len));<br>            memrev32ifbe(p+<span class="hljs-number">1</span>);<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>+<span class="hljs-keyword">sizeof</span>(len);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-检索key"><a href="#5-检索key" class="headerlink" title="5 检索key"></a>5 检索key</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 遍历zipmap</span><br><span class="hljs-comment">// 不传key 传totlen 则读取出zipmap的zmlen字段 也就是zipmap有多少个字节</span><br><span class="hljs-comment">// 传key 不传totlen 则搜索key 找到了就返回entry节点</span><br><span class="hljs-comment">// 传key 传totlen 则搜索key 找到了就返回entry节点 并且计算zipmap占多少个字节 放到totlen上</span><br><span class="hljs-comment">// @param zm zipmap实例</span><br><span class="hljs-comment">// @param key key字符串</span><br><span class="hljs-comment">// @param klen key的长度</span><br><span class="hljs-comment">// @param totlen 遍历完zipmap可以将zipmap的zmlen值记录在totlen上</span><br><span class="hljs-comment">// @return key所代表的entry的地址</span><br><span class="hljs-type">static</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *<span class="hljs-title function_">zipmapLookupRaw</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zm, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *key, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> klen, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *totlen)</span> &#123;<br>    <span class="hljs-comment">// zm实例地址+1 如果zm中是空的也就是没有entry节点那么p指向end节点 如果zm中有entry节点那么p指向首个entry节点</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p = zm+<span class="hljs-number">1</span>, *k = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> l,llen;<br><br>    <span class="hljs-comment">// 遍历整个zipmap所有的entry节点</span><br>    <span class="hljs-comment">// 遍历entry节点过程中记录搜索到的key对应的节点</span><br>    <span class="hljs-keyword">while</span>(*p != ZIPMAP_END) &#123;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> <span class="hljs-built_in">free</span>;<br><br>        <span class="hljs-comment">/* Match or skip the key */</span><br>        <span class="hljs-comment">// entry节点的key的len字段值 key的字符串长度</span><br>        l = zipmapDecodeLength(p);<br>        <span class="hljs-comment">// key的len字段几个byte 要么1要么5</span><br>        llen = zipmapEncodeLength(<span class="hljs-literal">NULL</span>,l);<br>        <span class="hljs-comment">// memcmp函数比较两个地址开始的l长度 都相同返回0</span><br>        <span class="hljs-comment">// p现在指向entry len字段占用llen个byte</span><br>        <span class="hljs-comment">// p+llen指向字符串key</span><br>        <span class="hljs-keyword">if</span> (key != <span class="hljs-literal">NULL</span> &amp;&amp; k == <span class="hljs-literal">NULL</span> &amp;&amp; l == klen &amp;&amp; !<span class="hljs-built_in">memcmp</span>(p+llen,key,l)) &#123;<br>            <span class="hljs-comment">/* Only return when the user doesn&#x27;t care</span><br><span class="hljs-comment">             * for the total length of the zipmap. */</span><br>            <span class="hljs-comment">// 找到了key的键值对</span><br>            <span class="hljs-keyword">if</span> (totlen != <span class="hljs-literal">NULL</span>) &#123;<br>                k = p;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-keyword">return</span> p;<br>            &#125;<br>        &#125;<br>        p += llen+l; <span class="hljs-comment">// p指向value的len字段</span><br>        <span class="hljs-comment">/* Skip the value as well */</span><br>        l = zipmapDecodeLength(p); <span class="hljs-comment">// value的长度 value的len的值</span><br>        p += zipmapEncodeLength(<span class="hljs-literal">NULL</span>,l); <span class="hljs-comment">// value的len的编码需要几个byte p指针后移到value的free字段</span><br>        <span class="hljs-built_in">free</span> = p[<span class="hljs-number">0</span>]; <span class="hljs-comment">// value的free占1byte 读取free字段的值</span><br>        p += l+<span class="hljs-number">1</span>+<span class="hljs-built_in">free</span>; <span class="hljs-comment">/* +1 to skip the free byte */</span> <span class="hljs-comment">// p后移至下一个entry节点</span><br>    &#125;<br>    <span class="hljs-keyword">if</span> (totlen != <span class="hljs-literal">NULL</span>) *totlen = (<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>)(p-zm)+<span class="hljs-number">1</span>; <span class="hljs-comment">// 整个zipmap占多少个字节 记录在totlen上</span><br>    <span class="hljs-keyword">return</span> k;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="6-新增-更新节点"><a href="#6-新增-更新节点" class="headerlink" title="6 新增\更新节点"></a>6 新增\更新节点</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// [key, value]键值对的设置 可能是新增 可能是更新</span><br><span class="hljs-comment">// @param zm zipmap实例</span><br><span class="hljs-comment">// @param key 字符串key</span><br><span class="hljs-comment">// @param klen 字符串key的长度</span><br><span class="hljs-comment">// @param value 字符串value</span><br><span class="hljs-comment">// @param vlen 字符串value的长度</span><br><span class="hljs-comment">// @param update 标识符 通知给调用方 update不为null就要把key是否存在的情况汇报出去</span><br><span class="hljs-comment">//                                key已经存在 update-&gt;1</span><br><span class="hljs-comment">//                                key不存在 update-&gt;0</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *<span class="hljs-title function_">zipmapSet</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zm, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *key, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> klen, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *val, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> vlen, <span class="hljs-type">int</span> *update)</span> &#123;<br>    <span class="hljs-comment">// zmlen记录zm实例占多少个字节</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> zmlen, offset;<br>    <span class="hljs-comment">// reqlen 一个新的entry需要多少个byte</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> freelen, reqlen = zipmapRequiredLength(klen,vlen);<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> empty, vempty;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p;<br><br>    freelen = reqlen;<br>    <span class="hljs-keyword">if</span> (update) *update = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">// 在zipmap上搜索key的entry节点 并把zipmap的大小记录在zmlen上(zm实例占多少字节)</span><br>    p = zipmapLookupRaw(zm,key,klen,&amp;zmlen);<br>    <span class="hljs-keyword">if</span> (p == <span class="hljs-literal">NULL</span>) &#123; <span class="hljs-comment">// zm实例中没有key 则属于新增entry场景</span><br>        <span class="hljs-comment">/* Key not found: enlarge */</span><br>        <span class="hljs-comment">// 新增一个entry 对zm实例进行扩容 新节点挂到最后</span><br>        zm = zipmapResize(zm, zmlen+reqlen);<br>        <span class="hljs-comment">// 新增节点在新zm实例中地址</span><br>        p = zm+zmlen<span class="hljs-number">-1</span>;<br>        zmlen = zmlen+reqlen; <span class="hljs-comment">// 新zm多大 占用多少字节</span><br><br>        <span class="hljs-comment">/* Increase zipmap length (this is an insert) */</span><br>        <span class="hljs-keyword">if</span> (zm[<span class="hljs-number">0</span>] &lt; ZIPMAP_BIGLEN) zm[<span class="hljs-number">0</span>]++; <span class="hljs-comment">// 新增了1个entry节点 更新zm实例的zmlen字段值 计数加1</span><br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// zm实例中已经存在key 属于更新entry场景</span><br>        <span class="hljs-comment">/* Key found. Is there enough space for the new value? */</span><br>        <span class="hljs-comment">/* Compute the total length: */</span><br>        <span class="hljs-keyword">if</span> (update) *update = <span class="hljs-number">1</span>; <span class="hljs-comment">// 汇报给调用 标识存在key 属于更新行为</span><br>        <span class="hljs-comment">// entry节点p占用的字节数</span><br>        freelen = zipmapRawEntryLength(p);<br>        <span class="hljs-comment">// 当前entry节点p已经占用了freelen个字节 现在要对节点进行更新 更新后的节点需要占用reqlen个字节</span><br>        <span class="hljs-keyword">if</span> (freelen &lt; reqlen) &#123; <span class="hljs-comment">// 需要扩容</span><br>            <span class="hljs-comment">/* Store the offset of this key within the current zipmap, so</span><br><span class="hljs-comment">             * it can be resized. Then, move the tail backwards so this</span><br><span class="hljs-comment">             * pair fits at the current position. */</span><br>            <span class="hljs-comment">// 目标节点在zm实例中相对位置</span><br>            offset = p-zm;<br>            <span class="hljs-comment">// zm实例扩容</span><br>            zm = zipmapResize(zm, zmlen-freelen+reqlen);<br>            <span class="hljs-comment">// 重新定位到目标节点</span><br>            p = zm+offset;<br><br>            <span class="hljs-comment">/* The +1 in the number of bytes to be moved is caused by the</span><br><span class="hljs-comment">             * end-of-zipmap byte. Note: the *original* zmlen is used. */</span><br>            <span class="hljs-comment">// 目标节点上内容复制</span><br>            memmove(p+reqlen, p+freelen, zmlen-(offset+freelen+<span class="hljs-number">1</span>));<br>            zmlen = zmlen-freelen+reqlen; <span class="hljs-comment">// 更新zm实例占用的字节数</span><br>            freelen = reqlen;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">/* We now have a suitable block where the key/value entry can</span><br><span class="hljs-comment">     * be written. If there is too much free space, move the tail</span><br><span class="hljs-comment">     * of the zipmap a few bytes to the front and shrink the zipmap,</span><br><span class="hljs-comment">     * as we want zipmaps to be very space efficient. */</span><br>    empty = freelen-reqlen; <span class="hljs-comment">// entry节点的空闲字节数</span><br>    <span class="hljs-comment">// zipmap的空闲字节数是有优化的 不允许过大的空闲字节 有过大的空闲字节会回收</span><br>    <span class="hljs-keyword">if</span> (empty &gt;= ZIPMAP_VALUE_MAX_FREE) &#123;<br>        <span class="hljs-comment">/* First, move the tail &lt;empty&gt; bytes to the front, then resize</span><br><span class="hljs-comment">         * the zipmap to be &lt;empty&gt; bytes smaller. */</span><br>        offset = p-zm;<br>        memmove(p+reqlen, p+freelen, zmlen-(offset+freelen+<span class="hljs-number">1</span>));<br>        zmlen -= empty;<br>        zm = zipmapResize(zm, zmlen);<br>        p = zm+offset;<br>        vempty = <span class="hljs-number">0</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        vempty = empty;<br>    &#125;<br><br>    <span class="hljs-comment">/* Just write the key + value and we are done. */</span><br>    <span class="hljs-comment">/* Key: */</span><br>    <span class="hljs-comment">// 至此 不管是新增还是更新的场景 现在节点的内存已经准备好 就逐个写字段即可</span><br>    <span class="hljs-comment">// \len\key\len\free\value</span><br>    <span class="hljs-comment">// 向entry中写入key的len字段</span><br>    p += zipmapEncodeLength(p,klen);<br>    <span class="hljs-comment">// 向entry中写入key</span><br>    <span class="hljs-built_in">memcpy</span>(p,key,klen);<br>    p += klen;<br>    <span class="hljs-comment">/* Value: */</span><br>    <span class="hljs-comment">// 向entry中写入value的len字段</span><br>    p += zipmapEncodeLength(p,vlen);<br>    <span class="hljs-comment">// 向entry中写入free字段</span><br>    *p++ = vempty;<br>    <span class="hljs-comment">// 向entry中写入value</span><br>    <span class="hljs-built_in">memcpy</span>(p,val,vlen);<br>    <span class="hljs-keyword">return</span> zm;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Redis-6-2/" class="print-no-link">#Redis@6.2</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x06-zipmap</div>
+      <div>https://bannirui.github.io/2023/04/01/Redis-0x06-zipmap/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x07-t_hash</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist">
+                        <span class="hidden-mobile">Redis-0x05-ziplist</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'c451353f0725741c735535b93f8046f9'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

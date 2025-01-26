@@ -1,0 +1,1040 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="这个方法的体量很大，作用是对redisServer结构体成员进行初始化赋值，通篇大部分都是重复性劳动，比较有意思的是initConfigValues()这个函数。这个函数体现了C语言的封装和多态的实现方式，在正式看源码之前先做一些前置性铺垫。 1 结构体成员赋值结构体中的成员可以在实例化的时候指定要初始化的值，也可以只实例化不做初始化动作。指定初始化的时候可以指定要进行初始化的成员，一个或者多个成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x0C-initServerConfig函数">
+<meta property="og:url" content="https://bannirui.github.io/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="这个方法的体量很大，作用是对redisServer结构体成员进行初始化赋值，通篇大部分都是重复性劳动，比较有意思的是initConfigValues()这个函数。这个函数体现了C语言的封装和多态的实现方式，在正式看源码之前先做一些前置性铺垫。 1 结构体成员赋值结构体中的成员可以在实例化的时候指定要初始化的值，也可以只实例化不做初始化动作。指定初始化的时候可以指定要进行初始化的成员，一个或者多个成">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-15T11:34:19.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.489Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x0C-initServerConfig函数 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x0C-initServerConfig函数"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-15 19:34" pubdate>
+          2024年4月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(52)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/30/Redis-0x05-ziplist/" title="Redis-0x05-ziplist"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-ziplist</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/01/Redis-0x06-zipmap/" title="Redis-0x06-zipmap"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zipmap</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/02/Redis-0x07-t-hash/" title="Redis-0x07-t_hash"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-t_hash</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x08-redisObject/" title="Redis-0x08-redisObject"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-redisObject</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/03/Redis-0x09-t-string/" title="Redis-0x09-t_string"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-t_string</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x0C-initServerConfig函数</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>这个方法的体量很大，作用是对<code>redisServer</code>结构体成员进行初始化赋值，通篇大部分都是重复性劳动，比较有意思的是<code>initConfigValues()</code>这个函数。这个函数体现了C语言的封装和多态的实现方式，在正式看源码之前先做一些前置性铺垫。</p>
+<h2 id="1-结构体成员赋值"><a href="#1-结构体成员赋值" class="headerlink" title="1 结构体成员赋值"></a>1 结构体成员赋值</h2><p>结构体中的成员可以在实例化的时候指定要初始化的值，也可以只实例化不做初始化动作。指定初始化的时候可以指定要进行初始化的成员，一个或者多个成员都可以。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">user</span> &#123;</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> id;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> age;<br>&#125; user;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> PRINT(x) \</span><br><span class="hljs-meta">    do&#123;             \</span><br><span class="hljs-meta">        printf(#x<span class="hljs-string">&quot; id=%d, age=%d\n&quot;</span>, x.id, x.age); \</span><br><span class="hljs-meta">    &#125;while(0);</span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>  user u1;<br>  PRINT(u1)<br>  user u2 = &#123;<span class="hljs-number">0</span>, <span class="hljs-number">1</span>&#125;;<br>  PRINT(u2)<br>  user u3 = &#123;.id=<span class="hljs-number">1</span>, .age=<span class="hljs-number">2</span>&#125;;<br>  PRINT(u3)<br>  user u4 = &#123;.id=<span class="hljs-number">2</span>&#125;;<br>  PRINT(u4)<br>  user u5 = &#123;.age=<span class="hljs-number">5</span>&#125;;<br>  PRINT(u5)<br>  user u6 = &#123;.age=<span class="hljs-number">6</span>, .id=<span class="hljs-number">6</span>&#125;;<br>  PRINT(u6)<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-封装"><a href="#2-封装" class="headerlink" title="2 封装"></a>2 封装</h2><p>封装是有目的的，一般是为了:</p>
+<ul>
+<li>组织代码结构</li>
+<li>屏蔽某些成员</li>
+<li>开放某些成员</li>
+</ul>
+<p>如果要实现继承，我能想到的方式有2种:</p>
+<ul>
+<li>在结构体内存地址底部划分一块区域存放跟基类一样的成员，通过强转指针类型方式访问基类成员</li>
+<li>在结构体中定义基类指针类型成员</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">person</span> &#123;</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> id;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> age;<br>&#125; person;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">male</span> &#123;</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> id;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> age;<br>	<span class="hljs-type">int</span> male_uniq;<br>&#125; male;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">female</span> &#123;</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> id;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> age;<br>	<span class="hljs-type">int</span> female_uniq;<br>&#125; female;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> PRINT(x, id) \</span><br><span class="hljs-meta">    do&#123;             \</span><br><span class="hljs-meta">        printf(<span class="hljs-string">&quot;person%d: id=%d, age=%d\n&quot;</span>,id, x.id, x.age); \</span><br><span class="hljs-meta">    &#125;while(0);</span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">person_fn</span><span class="hljs-params">(person *p, <span class="hljs-type">int</span> id)</span><br>&#123;<br>  PRINT((*p), id)<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>  person *p;<br>  male m1 = &#123;.id=<span class="hljs-number">1</span>, .age=<span class="hljs-number">1</span>, .male_uniq=<span class="hljs-number">1</span>&#125;;<br>  p = (person *) (&amp;m1);<br>  person_fn(p, <span class="hljs-number">1</span>);<br>  female f1 = &#123;.id=<span class="hljs-number">2</span>, .age=<span class="hljs-number">2</span>, .female_uniq=<span class="hljs-number">2</span>&#125;;<br>  p = (person *) (&amp;f1);<br>  person_fn(p, <span class="hljs-number">2</span>);<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-多态"><a href="#3-多态" class="headerlink" title="3 多态"></a>3 多态</h2><p>基于封装，实现运行时行为变化。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-comment">// 前向声明</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">male</span> <span class="hljs-title">male</span>;</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">female</span> <span class="hljs-title">female</span>;</span><br><br><span class="hljs-comment">// 类型不能是结构体 只有前向声明 不知道结构体的成员</span><br><span class="hljs-comment">// 只能定义为结构体指针</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">data</span> &#123;</span><br>	male *m;<br>	female *f;<br>&#125; data;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">male</span> &#123;</span><br>	<span class="hljs-type">int</span> id;<br>	<span class="hljs-type">int</span> age;<br>	<span class="hljs-type">int</span> male_uniq;<br>&#125; male;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">male_fn</span><span class="hljs-params">(<span class="hljs-keyword">union</span> data *d)</span><br>&#123;<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;male: id=%d, age=%d, uniq=%d\n&quot;</span>, d-&gt;m-&gt;id, d-&gt;m-&gt;age, d-&gt;m-&gt;male_uniq);<br>&#125;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">female</span> &#123;</span><br>	<span class="hljs-type">int</span> id;<br>	<span class="hljs-type">int</span> age;<br>	<span class="hljs-type">int</span> female_uniq;<br>&#125; female;<br><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">female_fn</span><span class="hljs-params">(<span class="hljs-keyword">union</span> data *d)</span><br>&#123;<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;female: id=%d, age=%d, uniq=%d\n&quot;</span>, d-&gt;f-&gt;id, d-&gt;f-&gt;age, d-&gt;f-&gt;female_uniq);<br>&#125;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">person</span> &#123;</span><br>	data *data;<br><br>	<span class="hljs-type">void</span> (*interface)(data *);<br>&#125; person;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>  <span class="hljs-comment">// male</span><br>  <span class="hljs-type">int</span> id1 = <span class="hljs-number">111</span>;<br>  <span class="hljs-type">int</span> age1 = <span class="hljs-number">111</span>;<br>  male m = &#123;.id=id1, .age=age1, .male_uniq=id1&#125;;<br>  data data1 = &#123;.m=&amp;m&#125;;<br>  person p1 = &#123;.data=&amp;data1, .interface=&amp;male_fn&#125;;<br>  p1.interface(p1.data);<br><br>  <span class="hljs-type">int</span> id2 = <span class="hljs-number">222</span>;<br>  <span class="hljs-type">int</span> age2 = <span class="hljs-number">222</span>;<br>  female f = &#123;.id=id2, .age=age2, .female_uniq=id2&#125;;<br>  data data2 = &#123;.f=&amp;f&#125;;<br>  person p2 = &#123;.data=&amp;data2, .interface=&amp;female_fn&#125;;<br>  p2.interface(p2.data);<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-initConfigValues"><a href="#4-initConfigValues" class="headerlink" title="4 initConfigValues"></a>4 initConfigValues</h2><p>有了上面内容的铺垫，再来看一下redis中<code>initConfigValues</code>方法的多态实现。</p>
+<h3 id="4-1-configs数组"><a href="#4-1-configs数组" class="headerlink" title="4.1 configs数组"></a>4.1 configs数组</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">standardConfig configs[];<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">standardConfig</span> &#123;</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span> *name; <span class="hljs-comment">/* The user visible name of this config */</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span> *alias; <span class="hljs-comment">/* An alias that can also be used for this config */</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> flags; <span class="hljs-comment">/* Flags for this specific config */</span><br>    typeInterface interface; <span class="hljs-comment">/* The function pointers that define the type interface */</span><br>    typeData data; <span class="hljs-comment">/* The type specific data exposed used by the interface */</span><br>&#125; standardConfig;<br></code></pre></td></tr></table></figure>
+
+<p>声明了数组，数组元素类型是<code>standardConfig</code>，其中成员重要的是<code>typeInterface</code>和<code>typeData</code>，<code>typeData</code>定义了多态实例下的数据，<code>typeInterface</code>定义了多态实例的行为。</p>
+<h3 id="4-2-api"><a href="#4-2-api" class="headerlink" title="4.2 api"></a>4.2 api</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 实例的方法 函数指针 真正实现后面创建实例的时候指定 高级语言的getter/setter</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">typeInterface</span> &#123;</span><br>    <span class="hljs-comment">/* Called on server start, to init the server with default value */</span><br>    <span class="hljs-type">void</span> (*init)(typeData data);<br>    <span class="hljs-comment">/* Called on server startup and CONFIG SET, returns 1 on success, 0 on error</span><br><span class="hljs-comment">     * and can set a verbose err string, update is true when called from CONFIG SET */</span><br>    <span class="hljs-type">int</span> (*<span class="hljs-built_in">set</span>)(typeData data, sds value, <span class="hljs-type">int</span> update, <span class="hljs-type">const</span> <span class="hljs-type">char</span> **err);<br>    <span class="hljs-comment">/* Called on CONFIG GET, required to add output to the client */</span><br>    <span class="hljs-type">void</span> (*get)(client *c, typeData data);<br>    <span class="hljs-comment">/* Called on CONFIG REWRITE, required to rewrite the config state */</span><br>    <span class="hljs-type">void</span> (*rewrite)(typeData data, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *name, <span class="hljs-keyword">struct</span> rewriteConfigState *state);<br>&#125; typeInterface;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-3-实例数据类型"><a href="#4-3-实例数据类型" class="headerlink" title="4.3 实例数据类型"></a>4.3 实例数据类型</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// union共用内存布局 实现多态的关键</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">typeData</span> &#123;</span><br>    boolConfigData yesno;<br>    stringConfigData <span class="hljs-built_in">string</span>;<br>    sdsConfigData sds;<br>    enumConfigData enumd;<br>    numericConfigData numeric;<br>&#125; typeData;<br></code></pre></td></tr></table></figure>
+
+<p>目前一共定义了5种类型的数据，也就意味着需要定义5种数据结构，以及与之配套的api。</p>
+<p>数据类型</p>
+<ul>
+<li>boolConfigData</li>
+<li>stringConfigData</li>
+<li>sdsConfigData</li>
+<li>enumConfigData</li>
+<li>numericConfigData</li>
+</ul>
+<p>行为</p>
+<ul>
+<li>init</li>
+<li>set</li>
+<li>get</li>
+<li>rewrite</li>
+</ul>
+<p>以后如果在此基础上扩展的话就很简单</p>
+<ul>
+<li>首先在<code>typeData</code>这个结构体定义中增加数据类型</li>
+<li>其次定义配套的api</li>
+</ul>
+<h3 id="4-4-以boolConfigData为例的执行流程"><a href="#4-4-以boolConfigData为例的执行流程" class="headerlink" title="4.4 以boolConfigData为例的执行流程"></a>4.4 以<code>boolConfigData</code>为例的执行流程</h3><h4 id="4-4-1-configs数组初始化"><a href="#4-4-1-configs数组初始化" class="headerlink" title="4.4.1 configs数组初始化"></a>4.4.1 <code>configs</code>数组初始化</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c">standardConfig configs[] = &#123;<br>    <span class="hljs-comment">/* Bool configs */</span><br>    createBoolConfig(<span class="hljs-string">&quot;rdbchecksum&quot;</span>, <span class="hljs-literal">NULL</span>, IMMUTABLE_CONFIG, server.rdb_checksum, <span class="hljs-number">1</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>),<br>    ...<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-4-2-为每种类型提供适配的创建方法createxxxConfig"><a href="#4-4-2-为每种类型提供适配的创建方法createxxxConfig" class="headerlink" title="4.4.2 为每种类型提供适配的创建方法createxxxConfig"></a>4.4.2 为每种类型提供适配的创建方法<code>createxxxConfig</code></h4><ul>
+<li>createBoolConfig</li>
+<li>createStringConfig</li>
+<li>createSDSConfig</li>
+<li>createEnumConfig</li>
+<li>createIntConfig</li>
+<li>createUIntConfig</li>
+<li>createULongConfig</li>
+<li>createLongLongConfig</li>
+<li>createULongLongConfig</li>
+<li>createSizeTConfig</li>
+<li>createTimeTConfig</li>
+<li>createOffTConfig</li>
+</ul>
+<p>上述方法的本质就是通过宏定义初始化结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 宏定义函数初始化standardConfig结构体</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> createBoolConfig(name, alias, flags, config_addr, default, is_valid, update) &#123; \</span><br><span class="hljs-meta">    <span class="hljs-comment">/* standardConfig中name alias flags这3个成员赋值 */</span> \</span><br><span class="hljs-meta">    embedCommonConfig(name, alias, flags) \</span><br><span class="hljs-meta">    <span class="hljs-comment">/* 数据实例的方法 对standardConfig中interface成员赋值 */</span> \</span><br><span class="hljs-meta">    embedConfigInterface(boolConfigInit, boolConfigSet, boolConfigGet, boolConfigRewrite) \</span><br><span class="hljs-meta">    <span class="hljs-comment">/* 数据实例 对standardConfig中data成员赋值 */</span> \</span><br><span class="hljs-meta">    .data.yesno = &#123; \</span><br><span class="hljs-meta">        .config = &amp;(config_addr), \</span><br><span class="hljs-meta">        .default_value = (default), \</span><br><span class="hljs-meta">        .is_valid_fn = (is_valid), \</span><br><span class="hljs-meta">        .update_fn = (update), \</span><br><span class="hljs-meta">    &#125; \</span><br><span class="hljs-meta">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="4-4-3-多态执行"><a href="#4-4-3-多态执行" class="headerlink" title="4.4.3 多态执行"></a>4.4.3 多态执行</h4><p>之后就是轮询数组中的<code>standardConfig</code>元素进行多态执行。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">initConfigValues</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">for</span> (standardConfig *config = configs; config-&gt;name != <span class="hljs-literal">NULL</span>; config++) &#123;<br>	    <span class="hljs-comment">// 实现多态调用</span><br>        config-&gt;interface.init(config-&gt;data);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-4-4-init方法"><a href="#4-4-4-init方法" class="headerlink" title="4.4.4 init方法"></a>4.4.4 init方法</h4><p>上面的方法调用，之后就会根据实际的数据类型，调用绑定的方法。<br>以<code>boolConfig</code>为例:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Bool Configs */</span><br><span class="hljs-comment">// 给redisServer中成员赋值</span><br><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">boolConfigInit</span><span class="hljs-params">(typeData data)</span> &#123;<br>    *data.yesno.config = data.yesno.default_value;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x0C-initServerConfig函数</div>
+      <div>https://bannirui.github.io/2024/04/15/Redis/Redis-0x0C-initServerConfig函数/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x0D-事件循环器AE</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict">
+                        <span class="hidden-mobile">Redis-0x0B-数据结构dict</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '28b23eda5b6e9d5965b75246f0f26d83'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
