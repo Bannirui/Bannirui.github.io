@@ -131,7 +131,6 @@ services:
 ```
 
 ```Dockerfile
-#FROM arm64v8/openjdk:8-jre
 FROM bitnami/java:1.8
 WORKDIR /var/app
 RUN apt-get update && apt-get install -y git maven 
