@@ -126,3 +126,20 @@ transactionCheckInterval=10
 访问http://127.0.0.1:8083/#/
 
 ![](./部署RocketMQ/1736502608.png)
+
+### 6 本地部署
+#### 6.1 rocket mq
+```sh
+wget https://dist.apache.org/repos/dist/release/rocketmq/5.2.0/rocketmq-all-5.2.0-bin-release.zip
+unzip rocketmq-all-5.2.0-bin-release.zip
+cd rocketmq-all-5.2.0-bin-release/bin
+sh mqnamesrv
+sh bin/mqbroker -n localhost:9876
+```
+
+#### 6.2 rocket mq dashboard
+```sh
+git clone git@github.com:apache/rocketmq-dashboard.git
+cd rocketmq-dashboard
+mvn spring-boot:run
+```
