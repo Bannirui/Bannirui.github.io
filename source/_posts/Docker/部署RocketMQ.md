@@ -134,7 +134,7 @@ wget https://dist.apache.org/repos/dist/release/rocketmq/5.2.0/rocketmq-all-5.2.
 unzip rocketmq-all-5.2.0-bin-release.zip
 cd rocketmq-all-5.2.0-bin-release/bin
 sh mqnamesrv
-sh bin/mqbroker -n localhost:9876
+sh mqbroker -n localhost:9876
 ```
 
 #### 6.2 rocket mq dashboard
