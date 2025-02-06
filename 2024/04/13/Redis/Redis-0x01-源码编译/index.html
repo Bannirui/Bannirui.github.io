@@ -19,26 +19,28 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码github源码地址 我的源码笔记地址 将源码for到自己仓库 12345672 git clone git@github.com:Bannirui&#x2F;redis.git3 git remote add upstream git@gi">
+    <meta name="description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码github源码地址 我的源码笔记地址 将源码for到自己仓库 12345678git clone git@github.com:Bannirui&#x2F;redis.gitcd redisgit remote add upstream g">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x01-源码编译">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码github源码地址 我的源码笔记地址 将源码for到自己仓库 12345672 git clone git@github.com:Bannirui&#x2F;redis.git3 git remote add upstream git@gi">
+<meta property="og:description" content="1 环境   Name Ver    MacOS 11.5.2   Clion 2022.3.3   Clang 12.0.5   LLDB 15.0.5   2 源码github源码地址 我的源码笔记地址 将源码for到自己仓库 12345678git clone git@github.com:Bannirui&#x2F;redis.gitcd redisgit remote add upstream g">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/1738835101.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323103838439.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104043451.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104203310.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104341081.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104921216.png">
+<meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/1738834483.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105129795.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105243908.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105431146.png">
 <meta property="article:published_time" content="2024-04-13T07:42:29.000Z">
-<meta property="article:modified_time" content="2025-01-24T15:52:43.469Z">
+<meta property="article:modified_time" content="2025-02-06T09:45:43.096Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323103838439.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/1738835101.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -256,7 +258,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          240 字
+          289 字
         
       </span>
     
@@ -574,21 +576,31 @@
 <h3 id="2-源码"><a href="#2-源码" class="headerlink" title="2 源码"></a>2 源码</h3><p><a target="_blank" rel="noopener" href="https://github.com/redis/redis">github源码地址</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/Bannirui/redis.git">我的源码笔记地址</a></p>
 <p>将源码for到自己仓库</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">2 git clone git@github.com:Bannirui/redis.git<br>3 git remote add upstream git@github.com:redis/redis.git<br>4 git remote set-url --push upstream no_push<br>5 git fetch upstream<br>6 git checkout 6.2<br>7 git checkout -b study-6.2<br>8 git push origin study-6.2<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/redis.git<br>cd redis<br>git remote add upstream git@github.com:redis/redis.git<br>git remote set-url --push upstream no_push<br>git fetch upstream<br>git checkout 6.2<br>git checkout -b study-6.2<br>git push origin study-6.2<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在mac arm平台下直接编译会报错</p>
+</blockquote>
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/1738835101.png" srcset="/img/loading.gif" lazyload class="">
 
 <h3 id="3-导入Clion并编译"><a href="#3-导入Clion并编译" class="headerlink" title="3 导入Clion并编译"></a>3 导入Clion并编译</h3><h4 id="3-1-ToolChain"><a href="#3-1-ToolChain" class="headerlink" title="3.1 ToolChain"></a>3.1 ToolChain</h4><p>将使用Clang作为构建调试工具，调试器不能使用GDB，之前使用GDB有问题，得使用LLDB。</p>
 <img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323103838439.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="3-2-Makefile"><a href="#3-2-Makefile" class="headerlink" title="3.2 Makefile"></a>3.2 Makefile</h4><p>选择Clang作为Makefile项目的构建工具。</p>
+<h4 id="3-2-编译"><a href="#3-2-编译" class="headerlink" title="3.2 编译"></a>3.2 编译</h4><h5 id="3-2-1-直接用make"><a href="#3-2-1-直接用make" class="headerlink" title="3.2.1 直接用make"></a>3.2.1 直接用make</h5><h6 id="3-2-1-1-make配置"><a href="#3-2-1-1-make配置" class="headerlink" title="3.2.1.1 make配置"></a>3.2.1.1 make配置</h6><p>选择Clang作为Makefile项目的构建工具。</p>
 <img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104043451.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="3-3-编译"><a href="#3-3-编译" class="headerlink" title="3.3 编译"></a>3.3 编译</h4><h5 id="3-3-1-运行"><a href="#3-3-1-运行" class="headerlink" title="3.3.1 运行"></a>3.3.1 运行</h5><img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104203310.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104203310.png" srcset="/img/loading.gif" lazyload class="">
 
-<h5 id="3-3-2-make-test"><a href="#3-3-2-make-test" class="headerlink" title="3.3.2 make test"></a>3.3.2 make test</h5><p>根据提示，出现如下提示<code>It&#39;s a good idea to run &#39;make test&#39;</code>，则在终端执行<code>make test</code>。</p>
+<h6 id="3-2-1-2-make-test"><a href="#3-2-1-2-make-test" class="headerlink" title="3.2.1.2 make test"></a>3.2.1.2 make test</h6><p>根据提示，出现如下提示<code>It&#39;s a good idea to run &#39;make test&#39;</code>，则在终端执行<code>make test</code>。</p>
 <img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104341081.png" srcset="/img/loading.gif" lazyload class="">
 
-<h5 id="3-3-3-编译成功"><a href="#3-3-3-编译成功" class="headerlink" title="3.3.3 编译成功"></a>3.3.3 编译成功</h5><p>终端出现如下提示<code>All tests passed without errors</code>，则表示编译成功。</p>
+<h6 id="3-2-1-3-编译成功"><a href="#3-2-1-3-编译成功" class="headerlink" title="3.2.1.3 编译成功"></a>3.2.1.3 编译成功</h6><p>终端出现如下提示<code>All tests passed without errors</code>，则表示编译成功。</p>
 <img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323104921216.png" srcset="/img/loading.gif" lazyload class="">
+
+<h5 id="3-2-2-用cmake生成make脚本"><a href="#3-2-2-用cmake生成make脚本" class="headerlink" title="3.2.2 用cmake生成make脚本"></a>3.2.2 用cmake生成make脚本</h5><h6 id="3-2-2-1-cmake配置"><a href="#3-2-2-1-cmake配置" class="headerlink" title="3.2.2.1 cmake配置"></a>3.2.2.1 cmake配置</h6><img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/1738834483.png" srcset="/img/loading.gif" lazyload class="">
+
+<h6 id="3-2-2-2-sh脚本"><a href="#3-2-2-2-sh脚本" class="headerlink" title="3.2.2.2 sh脚本"></a>3.2.2.2 sh脚本</h6><p>进到项目根目录下执行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">./configure.sh<br>./build.sh<br></code></pre></td></tr></table></figure>
 
 <h3 id="4-调试"><a href="#4-调试" class="headerlink" title="4 调试"></a>4 调试</h3><h4 id="4-1-配置"><a href="#4-1-配置" class="headerlink" title="4.1 配置"></a>4.1 配置</h4><img src="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/image-20230323105129795.png" srcset="/img/loading.gif" lazyload class="">
 
