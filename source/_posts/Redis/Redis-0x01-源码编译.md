@@ -23,14 +23,18 @@ categories: Redis
 将源码for到自己仓库
 
 ```shell
-2 git clone git@github.com:Bannirui/redis.git
-3 git remote add upstream git@github.com:redis/redis.git
-4 git remote set-url --push upstream no_push
-5 git fetch upstream
-6 git checkout 6.2
-7 git checkout -b study-6.2
-8 git push origin study-6.2
+git clone git@github.com:Bannirui/redis.git
+cd redis
+git remote add upstream git@github.com:redis/redis.git
+git remote set-url --push upstream no_push
+git fetch upstream
+git checkout 6.2
+git checkout -b study-6.2
+git push origin study-6.2
 ```
+
+> 在mac arm平台下直接编译会报错
+![](./Redis-0x01-源码编译/1738835101.png)
 
 ### 3 导入Clion并编译
 
@@ -40,29 +44,39 @@ categories: Redis
 
 ![](Redis-0x01-源码编译/image-20230323103838439.png)
 
-#### 3.2 Makefile
+#### 3.2 编译
+##### 3.2.1 直接用make
+###### 3.2.1.1 make配置
 
 选择Clang作为Makefile项目的构建工具。
 
 ![](Redis-0x01-源码编译/image-20230323104043451.png)
 
-#### 3.3 编译
-
-##### 3.3.1 运行
-
 ![](Redis-0x01-源码编译/image-20230323104203310.png)
 
-##### 3.3.2 make test
+###### 3.2.1.2 make test
 
 根据提示，出现如下提示`It's a good idea to run 'make test'`，则在终端执行`make test`。
 
 ![](Redis-0x01-源码编译/image-20230323104341081.png)
 
-##### 3.3.3 编译成功
+###### 3.2.1.3 编译成功
 
 终端出现如下提示`All tests passed without errors`，则表示编译成功。
 
 ![](Redis-0x01-源码编译/image-20230323104921216.png)
+
+##### 3.2.2 用cmake生成make脚本
+###### 3.2.2.1 cmake配置
+![](./Redis-0x01-源码编译/1738834483.png)
+
+###### 3.2.2.2 sh脚本
+
+进到项目根目录下执行
+```sh
+./configure.sh
+./build.sh
+```
 
 ### 4 调试
 
