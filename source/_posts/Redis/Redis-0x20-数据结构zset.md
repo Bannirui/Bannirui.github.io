@@ -1,22 +1,22 @@
 ---
-title: Redis-0x0c-t_zset
-date: 2023-04-03 22:11:12
+title: Redis-0x20-数据结构zset
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 15:12:09
+categories: Redis
 ---
+
 数据类型zset有序集合。
 
-## 1 数据结构关系
+### 1 数据结构关系
 
 | 数据类型     | 实现   | 编码方式                                                   | 数据结构  |
 | ------------ | ------ | ---------------------------------------------------------- | --------- |
-| 列表OBJ_ZSET | t_zset | {% post_link Redis-0x0f-zskiplist OBJ_ENCODING_SKIPLIST %} | zskiplist |
-|              |        | {% post_link Redis-0x05-ziplist OBJ_ENCODING_ZIPLIST %}    | ziplist   |
+| 列表OBJ_ZSET | t_zset | {% post_link Redis/Redis-0x21-数据结构zskiplist %} | zskiplist |
+|              |        | {% post_link Redis/Redis-0x22-数据结构ziplist %}    | ziplist   |
 
 在使用ziplist进行编码时，ziplist中两两挨着的entry用来表达zset中的一个元素，entry1用来存储zset元素的值，entry2用来存储set元素的score排序字段，ziplist中按照升序方式编排节点。
 
-## 2 集合中元素计数
+### 2 集合中元素计数
 
 ```c
 /**
@@ -62,7 +62,7 @@ unsigned int zzlLength(unsigned char *zl) {
 }
 ```
 
-## 3 编码方式转换
+### 3 编码方式转换
 
 ```c
 /**

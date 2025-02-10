@@ -1,23 +1,21 @@
 ---
-title: Redis-0x05-ziplist
-index_img: /img/Reids-0x05-ziplist.png
-date: 2023-03-30 20:50:22
+title: Redis-0x22-数据结构ziplist
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 15:23:44
+categories: Redis
 ---
 
 数据类型的编码方式。
 
-## 1 ziplist是什么
+### 1 ziplist是什么
 
-### 1.1 结构
+#### 1.1 结构
 
 从注释上可以看出ziplist结构如下。
 
-![](Redis-0x05-ziplist/image-20230330223845470.png)
+![](./image-20230330223845470.png)
 
-### 1.2 字段解释
+#### 1.2 字段解释
 
 | 字段    | 长度     | 语义                                                         |
 | ------- | -------- | ------------------------------------------------------------ |
@@ -27,15 +25,15 @@ categories: [ Redis ]
 | entry   | -        | 保存有限长度的字符串或者整数。                               |
 | zlend   | byte     | 0xFF，特殊的节点，ziplist的结束标识。                        |
 
-## 2 entry是什么
+### 2 entry是什么
 
-### 2.1 结构
+#### 2.1 结构
 
 从注释上可以看出entry的结构如下。
 
-![](Redis-0x05-ziplist/image-20230330225305188.png)
+![](./image-20230330225305188.png)
 
-### 2.2 字段解释
+#### 2.2 字段解释
 
 | 字段       | 语义                                                         |
 | ---------- | ------------------------------------------------------------ |
@@ -43,37 +41,37 @@ categories: [ Redis ]
 | encoding   | 主要作用区分存储的内容是整数还是字符串。<br>存储字符串的时候，还承担着表示字符串长度的职责。<br>存储整数的时候，可能还用来直接存储内容。 |
 | entry-data | 节点实际存储的内容。<br>以字符数组形式存储的字符串，不需要\0结束标识符。<br>整数。 |
 
-### 2.3 详解
+#### 2.3 详解
 
-#### 2.3.1 prevlen字段
+##### 2.3.1 prevlen字段
 
 为什么要在entry上冗余着前一个entry的内存大小，其实作用就跟双链表的指针差不多，这儿不用指针关联，只要记录上一个节点多少个字节就可以移动指针，往前寻址了。
 
 前驱entry地址=当前entry地址-前驱entry大小
 
-![](Redis-0x05-ziplist/image-20230330230319123.png)
+![](./image-20230330230319123.png)
 
-#### 2.3.2 encoding字段
+##### 2.3.2 encoding字段
 
 encoding二进制表示形式的高2位作为标识位，决定entry中数据内容是字符数组还是整数。
 
-##### 2.3.2.1 存储字符串
+###### 2.3.2.1 存储字符串
 
-![](Redis-0x05-ziplist/image-20230330231108397.png)
+![](./image-20230330231108397.png)
 
-##### 2.3.2.2 存储整数
+###### 2.3.2.2 存储整数
 
-![](Redis-0x05-ziplist/image-20230330230815003.png)
+![](./image-20230330230815003.png)
 
-## 3 初始化ziplist
+### 3 初始化ziplist
 
-![](Redis-0x05-ziplist/image-20230330232221382.png)
+![](./image-20230330232221382.png)
 
-![](Redis-0x05-ziplist/image-20230330232312936.png)
+![](./image-20230330232312936.png)
 
-## 4 entry字段prevlen
+### 4 entry字段prevlen
 
-### 4.1 prevlen前驱长度编码
+#### 4.1 prevlen前驱长度编码
 
 ```c
 /**
@@ -92,7 +90,7 @@ encoding二进制表示形式的高2位作为标识位，决定entry中数据内
 } while(0)
 ```
 
-### 4.2 prevlen前驱长度
+#### 4.2 prevlen前驱长度
 
 ```c
 /**
@@ -116,12 +114,11 @@ encoding二进制表示形式的高2位作为标识位，决定entry中数据内
                     ((ptr)[1]);                                                \
     }                                                                          \
 } while(0)
-
 ```
 
-![](Redis-0x05-ziplist/image-20230331090437381.png)
+![](./image-20230331090437381.png)
 
-### 4.3 prevlen需要多大内存 && prevlen字段写入
+#### 4.3 prevlen需要多大内存 && prevlen字段写入
 
 ```c
 // 这个函数有两个场景
@@ -142,11 +139,7 @@ unsigned int zipStorePrevEntryLength(unsigned char *p, unsigned int len) {
             return zipStorePrevEntryLengthLarge(p,len);
         }
     }
-
-
 ```
-
-
 
 ```c
 // prevlen需要5个字节时 entry节点写入prevlen字段
@@ -171,11 +164,11 @@ int zipStorePrevEntryLengthLarge(unsigned char *p, unsigned int len) {
 }
 ```
 
-![](Redis-0x05-ziplist/image-20230331105456800.png)
+![](./image-20230331105456800.png)
 
-## 5 entry字段encoding
+### 5 entry字段encoding
 
-### 5.1 编码类型
+#### 5.1 编码类型
 
 ```c
 // 字符串是否压缩成整型
@@ -213,9 +206,9 @@ int zipTryEncoding(unsigned char *entry, unsigned int entrylen, long long *v, un
 }
 ```
 
-![](Redis-0x05-ziplist/image-20230331101514463.png)
+![](./image-20230331101514463.png)
 
-### 5.2 encoding需要多大内存 && encoding字段写入
+#### 5.2 encoding需要多大内存 && encoding字段写入
 
 ```c
 // 该函数2个使用场景
@@ -263,13 +256,13 @@ unsigned int zipStoreEntryEncoding(unsigned char *p, unsigned char encoding, uns
 }
 ```
 
-![](Redis-0x05-ziplist/image-20230331110748619.png)
+![](./image-20230331110748619.png)
 
-## 6 entry字段entry-data
+### 6 entry字段entry-data
 
-### 6.1 entry-data需要大多内存
+#### 6.1 entry-data需要大多内存
 
-#### 6.1.1 字符串
+##### 6.1.1 字符串
 
 entry-data中存储字符串，不需要给字符数组申请结束标识\0。
 
@@ -277,7 +270,7 @@ entry-data中存储字符串，不需要给字符数组申请结束标识\0。
 reqlen = slen; // 字符串编码 有多少个字符就需要申请多少个byte
 ```
 
-#### 6.1.2 整数
+##### 6.1.2 整数
 
 ```c
 // 根据整数编码计算表示内容需要的大小 也就是entry中的entry-data字段
@@ -299,15 +292,15 @@ static inline unsigned int zipIntSize(unsigned char encoding) {
 }
 ```
 
-### 6.2 entry-data字段写入
+#### 6.2 entry-data字段写入
 
-### 6.2.1 字符串
+#### 6.2.1 字符串
 
 ```c
 memcpy(p,s,slen);
 ```
 
-### 6.2.2 整数
+#### 6.2.2 整数
 
 ```c
 // 向entry中写入整数的entry-data
@@ -344,7 +337,7 @@ void zipSaveInteger(unsigned char *p, int64_t value, unsigned char encoding) {
 }
 ```
 
-## 7 ziplist大小重置
+### 7 ziplist大小重置
 
 ```c
 // ziplist重置大小
@@ -362,9 +355,9 @@ unsigned char *ziplistResize(unsigned char *zl, size_t len) {
 }
 ```
 
-## 8 添加节点
+### 8 添加节点
 
-### 8.1 任意位置插入节点
+#### 8.1 任意位置插入节点
 
 ```c
 // 添加内容 以entry节点形式挂到ziplist上
@@ -494,7 +487,7 @@ unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsigned cha
 }
 ```
 
-### 8.2 头插\尾插
+#### 8.2 头插\尾插
 
 ```c
 /**
@@ -513,9 +506,7 @@ unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int sle
 }
 ```
 
-
-
-## 9 按照脚标查找元素
+### 9 按照脚标查找元素
 
 ```c
 // 按照entry的相对脚标查找
@@ -561,7 +552,7 @@ unsigned char *ziplistIndex(unsigned char *zl, int index) {
 }
 ```
 
-## 10 entry节点的后继节点
+### 10 entry节点的后继节点
 
 ```c
 // @param zl ziplist实例
@@ -588,9 +579,9 @@ unsigned char *ziplistNext(unsigned char *zl, unsigned char *p) {
 }
 ```
 
-## 11 zlentry
+### 11 zlentry
 
-### 11.1 数据结构
+#### 11.1 数据结构
 
 ```c
 // 实际存放数据的节点
@@ -622,15 +613,13 @@ typedef struct zlentry {
 } zlentry;
 ```
 
+#### 11.2 示意图
 
+![](./image-20230404175853209.png)
 
-### 11.2 示意图
+#### 11.3 数据结构转换
 
-![](Redis-0x05-ziplist/image-20230404175853209.png)
-
-### 11.3 数据结构转换
-
-#### 11.3.1 entry信息写到zlentry
+##### 11.3.1 entry信息写到zlentry
 
 ```c
 /**
@@ -652,9 +641,7 @@ static inline void zipEntry(unsigned char *p, zlentry *e) {
 }
 ```
 
-
-
-##### 11.3.1.1 entry中prevlen字段解析到zlentry中prevrawlensize和prevrawlen
+###### 11.3.1.1 entry中prevlen字段解析到zlentry中prevrawlensize和prevrawlen
 
 ```c
 /**
@@ -681,8 +668,6 @@ static inline void zipEntry(unsigned char *p, zlentry *e) {
 
 ```
 
-
-
 ```c
 /**
  * @brief ptr指向entry中的prevlen字段 将prevlen的编码长度写到zlentry中的prevrawlensize字段
@@ -700,7 +685,7 @@ static inline void zipEntry(unsigned char *p, zlentry *e) {
 } while(0)
 ```
 
-##### 11.3.1.2 entry中encoding字段解析到zlentry中encoding字段
+###### 11.3.1.2 entry中encoding字段解析到zlentry中encoding字段
 
 ```c
 /**
@@ -715,7 +700,7 @@ static inline void zipEntry(unsigned char *p, zlentry *e) {
 
 ```
 
-##### 11.3.1.3 entry中encoding和data-entry字段解析到zlentry中lensize和len字段
+###### 11.3.1.3 entry中encoding和data-entry字段解析到zlentry中lensize和len字段
 
 ```c
 /**
@@ -759,7 +744,7 @@ static inline void zipEntry(unsigned char *p, zlentry *e) {
 } while(0)
 ```
 
-#### 11.3.2 entry信息写到zlentry并校验
+##### 11.3.2 entry信息写到zlentry并校验
 
 ```c
 /**
@@ -843,7 +828,7 @@ static inline int zipEntrySafe(unsigned char* zl, size_t zlbytes, unsigned char 
 }
 ```
 
-### 11.4 entry所占内存
+#### 11.4 entry所占内存
 
 ```c
 /**
@@ -862,7 +847,7 @@ static inline unsigned int zipRawEntryLengthSafe(unsigned char* zl, size_t zlbyt
 }
 ```
 
-## 12 读取entry节点中的元素
+### 12 读取entry节点中的元素
 
 ```c
 /**
@@ -896,7 +881,7 @@ unsigned int ziplistGet(unsigned char *p, unsigned char **sstr, unsigned int *sl
 }
 ```
 
-## 13 读取entry节点中整数元素
+### 13 读取entry节点中整数元素
 
 ```c
 /**
@@ -936,4 +921,3 @@ int64_t zipLoadInteger(unsigned char *p, unsigned char encoding) {
     return ret;
 }
 ```
-

@@ -1,25 +1,24 @@
 ---
-title: Redis-0x0b-t_set
-date: 2023-04-03 22:11:05
+title: Redis-0x1E-数据结构set
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 14:53:21
+categories: Redis
 ---
 
 数据类型Set集合。
 
-## 1 数据结构关系
+### 1 数据结构关系
 
 | 数据类型    | 实现  | 编码方式                                              | 数据结构 |
 | ----------- | ----- | ----------------------------------------------------- | -------- |
-| 列表OBJ_SET | t_set | {% post_link Redis-0x0e-intset OBJ_ENCODING_INTSET %} | intset   |
+| 列表OBJ_SET | t_set | {% post_link Redis/Redis-0x1F-数据结构intset %} | intset   |
 |             |       |        | dict     |
 
-![](Redis-0x0b-t-set/image-20230406214750995.png)
+![](./image-20230406214750995.png)
 
-## 2 迭代器
+### 2 迭代器
 
-### 2.1 数据结构
+#### 2.1 数据结构
 
 ```c
 // set集合迭代器
@@ -35,9 +34,9 @@ typedef struct {
 } setTypeIterator;
 ```
 
-![](Redis-0x0b-t-set/image-20230406220859246.png)
+![](./image-20230406220859246.png)
 
-### 2.2 初始化迭代器
+#### 2.2 初始化迭代器
 
 ```c
 /**
@@ -62,7 +61,7 @@ setTypeIterator *setTypeInitIterator(robj *subject) {
 }
 ```
 
-### 2.3 释放迭代器
+#### 2.3 释放迭代器
 
 ```c
 /**
@@ -76,7 +75,7 @@ void setTypeReleaseIterator(setTypeIterator *si) {
 }
 ```
 
-### 2.4 迭代器查询
+#### 2.4 迭代器查询
 
 ```c
 /**
@@ -104,9 +103,9 @@ int setTypeNext(setTypeIterator *si, sds *sdsele, int64_t *llele) {
 }
 ```
 
-## 3 增
+### 3 增
 
-### 3.1 向集合中添加元素
+#### 3.1 向集合中添加元素
 
 ```c
 /**
@@ -160,9 +159,9 @@ int setTypeAdd(robj *subject, sds value) {
 }
 ```
 
-## 4 删
+### 4 删
 
-### 4.1 删除指定元素
+#### 4.1 删除指定元素
 
 ```c
 /**
@@ -192,11 +191,11 @@ int setTypeRemove(robj *setobj, sds value) {
 }
 ```
 
-## 5 改
+### 5 改
 
-## 6 查
+### 6 查
 
-## 7 编码方式转换
+### 7 编码方式转换
 
 ```c
 /**
@@ -240,4 +239,3 @@ void setTypeConvert(robj *setobj, int enc) {
     }
 }
 ```
-

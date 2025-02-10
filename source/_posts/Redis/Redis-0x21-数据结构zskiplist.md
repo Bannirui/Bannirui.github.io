@@ -1,17 +1,15 @@
 ---
-title: Redis-0x0f-zskiplist
-index_img: /img/Redis-0x0f-zskiplist.png
-date: 2023-04-06 22:30:41
+title: Redis-0x21-数据结构zskiplist
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 15:22:50
+categories: Redis
 ---
 
 数据类型的编码方式。
 
-## 1 数据结构
+### 1 数据结构
 
-### 1.1 跳表节点
+#### 1.1 跳表节点
 
 ```c
 // 跳表节点
@@ -29,9 +27,9 @@ typedef struct zskiplistNode {
 } zskiplistNode;
 ```
 
-![](Redis-0x0f-zskiplist/image-20230407133004199.png)
+![](./image-20230407133004199.png)
 
-### 1.2 跳表
+#### 1.2 跳表
 
 ```c
 /**
@@ -58,11 +56,9 @@ zskiplist *zslCreate(void) {
 }
 ```
 
+![](./image-20230407132426976.png)
 
-
-![](Redis-0x0f-zskiplist/image-20230407132426976.png)
-
-## 2 创建跳表节点
+### 2 创建跳表节点
 
 ```c
 /**
@@ -83,9 +79,7 @@ zskiplistNode *zslCreateNode(int level, double score, sds ele) {
 }
 ```
 
-
-
-## 3 创建跳表
+### 3 创建跳表
 
 ```c
 /**
@@ -114,13 +108,11 @@ zskiplist *zslCreate(void) {
 
 初始化完成的跳表只有一个header节点。
 
-![](Redis-0x0f-zskiplist/image-20230407152537934.png)
+![](./image-20230407152537934.png)
 
-## 4 增
-
-### 4.1 插入元素
-
-#### 4.1.1 向跳表插入新元素
+### 4 增
+#### 4.1 插入元素
+##### 4.1.1 向跳表插入新元素
 
 ```c
 /**
@@ -254,57 +246,45 @@ zskiplistNode *zslInsert(zskiplist *zsl, double score, sds ele) {
 }
 ```
 
-#### 4.1.2 图解
+##### 4.1.2 图解
+###### 4.1.2.1 空跳表
 
-##### 4.1.2.1 空跳表
+![](./image-20230408152644227.png)
 
-![](Redis-0x0f-zskiplist/image-20230408152644227.png)
+###### 4.1.2.2 插入1 随机层高4
+####### 4.1.2.2.1 update和rank维护检索路径
+![](./image-20230408152748500.png)
 
-##### 4.1.2.2 插入1 随机层高4
+####### 4.1.2.2.2 随机层高为4并补充update和rank
+![](./image-20230408153516440.png)
 
-###### 4.1.2.2.1 update和rank维护检索路径
+####### 4.1.2.2.3 新建节点维护各层连接信息
+![](./image-20230408161546419.png)
 
-![](Redis-0x0f-zskiplist/image-20230408152748500.png)
+####### 4.1.2.2.4 维护后退指针
+![](./image-20230408161721642.png)
 
-###### 4.1.2.2.2 随机层高为4并补充update和rank
+###### 4.1.2.3 插入3 随机层高1
 
-![](Redis-0x0f-zskiplist/image-20230408153516440.png)
+####### 4.1.2.3.1 维护update和rank
+![](./image-20230408162317417.png)
 
-###### 4.1.2.2.3 新建节点维护各层连接信息
+####### 4.1.2.3.2 前进指针和步进值
+![](./image-20230408163055944.png)
 
-![](Redis-0x0f-zskiplist/image-20230408161546419.png)
+####### 4.1.2.3.3 新节点未涉及层高步进值
+![](./image-20230408163230019.png)
 
-###### 4.1.2.2.4 维护后退指针
+####### 4.1.2.3.4 后退指针
+![](./image-20230408163438274.png)
 
-![](Redis-0x0f-zskiplist/image-20230408161721642.png)
+###### 4.1.2.4 插入5 随机层高1
+![](./image-20230408164401836.png)
 
-##### 4.1.2.3 插入3 随机层高1
+###### 4.1.2.5 插入7  随机层高3
+![](./image-20230408165642442.png)
 
-###### 4.1.2.3.1 维护update和rank
-
-![](Redis-0x0f-zskiplist/image-20230408162317417.png)
-
-###### 4.1.2.3.2 前进指针和步进值
-
-![](Redis-0x0f-zskiplist/image-20230408163055944.png)
-
-###### 4.1.2.3.3 新节点未涉及层高步进值
-
-![](Redis-0x0f-zskiplist/image-20230408163230019.png)
-
-###### 4.1.2.3.4 后退指针
-
-![](Redis-0x0f-zskiplist/image-20230408163438274.png)
-
-##### 4.1.2.4 插入5 随机层高1
-
-![](Redis-0x0f-zskiplist/image-20230408164401836.png)
-
-##### 4.1.2.5 插入7  随机层高3
-
-![](Redis-0x0f-zskiplist/image-20230408165642442.png)
-
-#### 4.2 节点随机层高
+##### 4.2 节点随机层高
 
 ```c
 /**
@@ -319,10 +299,8 @@ int zslRandomLevel(void) {
 }
 ```
 
+### 5 删
 
+### 6 改
 
-## 5 删
-
-## 6 改
-
-## 7 查
+### 7 查

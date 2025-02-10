@@ -1,15 +1,13 @@
 ---
-title: Redis-0x0e-intset
-index_img: /img/Redis-0x0e-intset.png
-date: 2023-04-06 13:37:39
+title: Redis-0x1F-数据结构intset
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 15:01:22
+categories: Redis
 ---
 
 数据类型的编码方式。
 
-## 1 数据结构
+### 1 数据结构
 
 ```c
 typedef struct intset {
@@ -22,9 +20,9 @@ typedef struct intset {
 } intset;
 ```
 
-![](Redis-0x0e-intset/image-20230406162105185.png)
+![](./image-20230406162105185.png)
 
-## 2 创建集合
+### 2 创建集合
 
 ```c
 /**
@@ -41,9 +39,9 @@ intset *intsetNew(void) {
 }
 ```
 
-## 3 增
+### 3 增
 
-### 3.1 元素添加到指定脚标位置
+#### 3.1 元素添加到指定脚标位置
 
 ```c
 /**
@@ -69,7 +67,7 @@ static void _intsetSet(intset *is, int pos, int64_t value) {
 }
 ```
 
-### 3.2 添加整数
+#### 3.2 添加整数
 
 ```c
 /**
@@ -124,11 +122,9 @@ intset *intsetAdd(intset *is, int64_t value, uint8_t *success) {
 }
 ```
 
+### 4 删
 
-
-## 4 删
-
-### 4.1 删除整数
+#### 4.1 删除整数
 
 ```c
 /**
@@ -165,11 +161,9 @@ intset *intsetRemove(intset *is, int64_t value, int *success) {
 }
 ```
 
+### 5 改
 
-
-## 5 改
-
-### 5.1 保持相对位置移动元素
+#### 5.1 保持相对位置移动元素
 
 ```c
 /**
@@ -199,7 +193,7 @@ static void intsetMoveTail(intset *is, uint32_t from, uint32_t to) {
 }
 ```
 
-### 5.2 扩容\缩容
+#### 5.2 扩容\缩容
 
 ```c
 /**
@@ -219,7 +213,7 @@ static intset *intsetResize(intset *is, uint32_t len) {
 }
 ```
 
-### 5.3 升级整数编码
+#### 5.3 升级整数编码
 
 ```c
 /**
@@ -277,11 +271,11 @@ static intset *intsetUpgradeAndAdd(intset *is, int64_t value) {
 }
 ```
 
-![](Redis-0x0e-intset/image-20230406205829282.png)
+![](./image-20230406205829282.png)
 
-## 6 查
+### 6 查
 
-### 6.2 查找目标值所在脚标
+#### 6.1 查找目标值所在脚标
 
 ```c
 /**
@@ -339,7 +333,7 @@ static uint8_t intsetSearch(intset *is, int64_t value, uint32_t *pos) {
 }
 ```
 
-### 6.2 查找脚标上元素
+#### 6.2 查找脚标上元素
 
 ```c
 /**
@@ -353,7 +347,7 @@ static int64_t _intsetGet(intset *is, int pos) {
 }
 ```
 
-### 6.3 查找元素是否存在
+#### 6.3 查找元素是否存在
 
 ```c
 /**
@@ -368,4 +362,3 @@ uint8_t intsetFind(intset *is, int64_t value) {
     return valenc <= intrev32ifbe(is->encoding) && intsetSearch(is,value,NULL);
 }
 ```
-
