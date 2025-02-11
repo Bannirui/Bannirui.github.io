@@ -1,9 +1,8 @@
 ---
-title: Redis-0x16-加载配置文件
-date: 2023-04-12 09:45:25
+title: Redis-0x2D-加载配置文件
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 17:53:48
+categories: Redis
 ---
 
 将配置项赋值给redisServer实例的字段，用于后面的服务端启动。配置无非就来自2个地方：
@@ -11,7 +10,7 @@ categories: [ Redis ]
 * 服务启动参数指定的配置文件redis.conf
 * 服务启动参数指定的配置项
 
-## 1 汇总配置内容
+### 1 汇总配置内容
 
 ```c
 /**
@@ -60,7 +59,7 @@ void loadServerConfig(char *filename, char config_from_stdin, char *options) {
 }
 ```
 
-## 2 redisServer赋值
+### 2 redisServer赋值
 
 ```c
 /**
@@ -322,4 +321,3 @@ loaderr:
     exit(1);
 }
 ```
-

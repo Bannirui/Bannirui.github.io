@@ -1,9 +1,8 @@
 ---
-title: Redis-0x14-哨兵模式检查
-date: 2023-04-11 21:59:26
+title: Redis-0x2C-哨兵模式检查
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 17:47:53
+categories: Redis
 ---
 
 检查当前进程，即服务启动是否以哨兵模式进行，在redisServer实例中用`sentinel_mode`字段进行标识。
@@ -27,4 +26,3 @@ int checkForSentinelMode(int argc, char **argv) {
     return 0;
 }
 ```
-

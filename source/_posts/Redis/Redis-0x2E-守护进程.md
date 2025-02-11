@@ -1,12 +1,11 @@
 ---
-title: Redis-0x17-守护进程
-date: 2023-04-12 10:29:40
+title: Redis-0x2E-守护进程
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 18:09:24
+categories: Redis
 ---
 
-## 1 开启后台进程
+### 1 开启后台进程
 
 ```c
 /**
@@ -48,7 +47,7 @@ void daemonize(void) {
 }
 ```
 
-## 2 记录进程号
+### 2 记录进程号
 
 ```c
 /**
@@ -67,4 +66,3 @@ void createPidFile(void) {
     }
 }
 ```
-

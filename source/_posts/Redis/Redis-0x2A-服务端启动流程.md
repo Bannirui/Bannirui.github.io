@@ -1,24 +1,22 @@
 ---
-title: Redis-0x12-服务端启动流程
-index_img: /img/Redis-0x12-服务端启动流程.png
-date: 2023-04-11 12:46:23
+title: Redis-0x2A-服务端启动流程
 category_bar: true
-tags:  [ Redis@6.2 ]
-categories:  [ Redis ]
+date: 2025-02-10 17:41:41
+categories: Redis
 ---
 
 流程图
 
-![](Redis-0x12-服务端启动流程/image-20230414103010186.png)
+![](./image-20230414103010186.png)
 
-## 1 {% post_link Redis-0x13-注册OOM处理器 内存OOM处理器 %}
+## 1 {% post_link Redis/Redis-0x2B-注册OOM处理器 内存OOM处理器 %}
 
 ```c
 // 内存oom的处理器 注册了一个回调函数
 zmalloc_set_oom_handler(redisOutOfMemoryHandler);
 ```
 
-## 2 {% post_link Redis-0x14-哨兵模式检查 哨兵模式检查 %}
+## 2 {% post_link Redis/Redis-0x2C-哨兵模式检查 哨兵模式检查 %}
 
 ```c
 /**
@@ -29,7 +27,7 @@ zmalloc_set_oom_handler(redisOutOfMemoryHandler);
 server.sentinel_mode = checkForSentinelMode(argc,argv);
 ```
 
-## 3 {% post_link Redis-0x15-初始化server服务配置 初始化server配置 %}
+## 3 {% post_link Redis/Redis-0x0C-initServerConfig函数 初始化server配置 %}
 
 ```c
 // 初始化server配置 填充redisServer中的字段
@@ -77,7 +75,7 @@ else if (strstr(argv[0],"redis-check-aof") != NULL) // 运行redis-check-aof可�
     redis_check_aof_main(argc,argv); // 检测AOF文件
 ```
 
-## 9 {% post_link Redis-0x16-加载配置文件 解析配置文件配置项 %}
+## 9 {% post_link Redis/Redis-0x2D-加载配置文件 解析配置文件配置项 %}
 
 ```c
 // 解析配置文件配置项
@@ -91,7 +89,7 @@ loadServerConfig(server.configfile, config_from_stdin, options);
 if (server.sentinel_mode) loadSentinelConfigFromQueue();
 ```
 
-## 11 {% post_link Redis-0x17-守护进程 开启守护进程 %}
+## 11 {% post_link Redis/Redis-0x2E-守护进程 开启守护进程 %}
 
 ```c
 // 根据配置 开启守护进程
@@ -99,14 +97,14 @@ int background = server.daemonize && !server.supervised;
 if (background) daemonize();
 ```
 
-## 12 {% post_link Redis-0x18-初始化服务端 初始化server服务 %}
+## 12 {% post_link Redis/Redis-0x0A-redisServer的初始化 初始化server服务 %}
 
 ```c
 // 初始化server服务
 initServer();
 ```
 
-## 13 {% post_link Redis-0x19-持久化文件加载内存数据库 加载数据 %}
+## 13 {% post_link Redis/Redis-0x2F-持久化文件加载到内存 加载数据 %}
 
 ```c
 // 恢复持久化的数据到内存数据库
@@ -125,4 +123,3 @@ aeMain(server.el);
 // 删除监听
 aeDeleteEventLoop(server.el);
 ```
-

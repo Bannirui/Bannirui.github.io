@@ -1,12 +1,11 @@
 ---
-title: Redis-0x1c-serverCron任务
-date: 2023-04-14 09:36:57
+title: Redis-0x29-d定时任务
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 17:39:04
+categories: Redis
 ---
 
-## 1 serverCron大任务
+### 1 serverCron大任务
 
 ```c
 /**
@@ -291,7 +290,7 @@ int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData) {
 }
 ```
 
-## 2 定制化运行间隔时长
+### 2 定制化运行间隔时长
 
 ```c
 /**

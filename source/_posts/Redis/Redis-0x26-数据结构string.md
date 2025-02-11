@@ -1,13 +1,13 @@
 ---
-title: Redis-0x09-t_string
-date: 2023-04-03 22:10:44
+title: Redis-0x26-数据结构string
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 17:05:20
+categories: Redis
 ---
+
 数据类型String字符串。
 
-## 1 string字符串 数据结构关系
+### 1 string字符串 数据结构关系
 
 | 数据类型         | 实现     | 编码方式                                           | 数据结构 |
 | ---------------- | -------- | -------------------------------------------------- | -------- |
@@ -15,9 +15,9 @@ categories: [ Redis ]
 |                  |          |  | sds      |
 |                  |          |     | sds      |
 
-## 2 增
+### 2 增
 
-### 2.1 set
+#### 2.1 set
 
 ```c
 /**
@@ -51,7 +51,7 @@ void setCommand(client *c) {
 }
 ```
 
-### 2.2 解析set命令的可选项
+#### 2.2 解析set命令的可选项
 
 ```c
 /**
@@ -162,7 +162,7 @@ int parseExtendedStringArgumentsOrReply(client *c, int *flags, int *unit, robj *
 }
 ```
 
-### 2.3 set全参
+#### 2.3 set全参
 
 ```c
 /**
@@ -267,7 +267,7 @@ void setGenericCommand(client *c, int flags, robj *key, robj *val, robj *expire,
 }
 ```
 
-### 2.4 setrange
+#### 2.4 setrange
 
 ```c
 /**
@@ -353,7 +353,7 @@ void setrangeCommand(client *c) {
 }
 ```
 
-### 2.5 mset
+#### 2.5 mset
 
 ```c
 /**
@@ -393,11 +393,10 @@ void msetGenericCommand(client *c, int nx) {
 }
 ```
 
-## 3 删
+### 3 删
 
-## 4 改
-
-### 4.1 递增递减
+### 4 改
+#### 4.1 递增递减
 
 ```c
 /**
@@ -444,9 +443,8 @@ void incrDecrCommand(client *c, long long incr) {
 }
 ```
 
-## 5 查
-
-### 5.1 get
+### 5 查
+#### 5.1 get
 
 ```c
 /**
@@ -458,7 +456,7 @@ void getCommand(client *c) {
 }
 ```
 
-### 5.2 get全参
+#### 5.2 get全参
 
 ```c
 /**
@@ -484,7 +482,7 @@ int getGenericCommand(client *c) {
 }
 ```
 
-### 5.3 getex
+#### 5.3 getex
 
 ```c
 /**
@@ -577,7 +575,7 @@ void getexCommand(client *c) {
 }
 ```
 
-### 5.4 getdel
+#### 5.4 getdel
 
 ```c
 /**
@@ -599,7 +597,7 @@ void getdelCommand(client *c) {
 }
 ```
 
-### 5.5 getset
+#### 5.5 getset
 
 ```c
 /**
@@ -622,7 +620,7 @@ void getsetCommand(client *c) {
 }
 ```
 
-### 5.6 getrange
+#### 5.6 getrange
 
 ```c
 /**
@@ -675,7 +673,7 @@ void getrangeCommand(client *c) {
 }
 ```
 
-### 5.7 mget
+#### 5.7 mget
 
 ```c
 /**
@@ -702,4 +700,3 @@ void mgetCommand(client *c) {
     }
 }
 ```
-

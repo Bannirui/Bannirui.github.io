@@ -1,23 +1,21 @@
 ---
-title: Redis-0x06-zipmap
-index_img: /img/Redis-0x06-zipmap.png
-date: 2023-04-01 12:10:13
+title: Redis-0x24-数据结构zipmap
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 16:13:11
+categories: Redis
 ---
 
 数据类型的编码方式。
 
-## 1 zipmap数据结构
+### 1 zipmap数据结构
 
-### 1.1 结构图
+#### 1.1 结构图
 
-![](Redis-0x06-zipmap/image-20230401214523205.png)
+![](./image-20230401214523205.png)
 
-### 1.2 字段解释
+#### 1.2 字段解释
 
-#### 1.2.1 zipmap
+##### 1.2.1 zipmap
 
 | 字段  | 长度   | 语义                                                |
 | ----- | ------ | --------------------------------------------------- |
@@ -25,7 +23,7 @@ categories: [ Redis ]
 | entry | ?      | zipmap中存储的每个键值对。                          |
 | end   | 1 byte | zipmap的结束标识符。                                |
 
-#### 1.2.2 entry
+##### 1.2.2 entry
 
 | 字段  | 长度            | 语义                                                         |
 | ----- | --------------- | ------------------------------------------------------------ |
@@ -35,7 +33,7 @@ categories: [ Redis ]
 | free  | 1 byte          | 空闲空间，分配给value的内容，后来value更新了，可能字符串长度变小了，就空闲出来了一部分空间。 |
 | value | ?               | 键值对value的内容。                                          |
 
-## 2 zipmap实例化
+### 2 zipmap实例化
 
 ```c
 // @return zm实例的地址
@@ -52,9 +50,9 @@ unsigned char *zipmapNew(void) {
 }
 ```
 
-![](Redis-0x06-zipmap/image-20230401215341175.png)
+![](./image-20230401215341175.png)
 
-## 3 编码entry需要多大内存
+### 3 编码entry需要多大内存
 
 ```c
 // 一个entry节点内存布局
@@ -75,9 +73,9 @@ static unsigned long zipmapRequiredLength(unsigned int klen, unsigned int vlen) 
 }
 ```
 
-## 4 entry中len字段
+### 4 entry中len字段
 
-### 4.1 len字段读取
+#### 4.1 len字段读取
 
 ```c
 // 读取zipmap中entry节点的的len字段值
@@ -95,7 +93,7 @@ static unsigned int zipmapDecodeLength(unsigned char *p) {
 }
 ```
 
-### 4.2 len字段编码需要多大内存 && len字段写入
+#### 4.2 len字段编码需要多大内存 && len字段写入
 
 ```c
 // 函数有2个功能
@@ -121,7 +119,7 @@ static unsigned int zipmapEncodeLength(unsigned char *p, unsigned int len) {
 }
 ```
 
-## 5 检索key
+### 5 检索key
 
 ```c
 // 遍历zipmap
@@ -173,7 +171,7 @@ static unsigned char *zipmapLookupRaw(unsigned char *zm, unsigned char *key, uns
 }
 ```
 
-## 6 新增\更新节点
+### 6 新增\更新节点
 
 ```c
 // [key, value]键值对的设置 可能是新增 可能是更新
@@ -272,4 +270,3 @@ unsigned char *zipmapSet(unsigned char *zm, unsigned char *key, unsigned int kle
     return zm;
 }
 ```
-

@@ -1,23 +1,21 @@
 ---
-title: Redis-0x08-redisObject
-index_img: /img/Redis-0x08-redisObject.png
-date: 2023-04-03 13:16:28
+title: Redis-0x27-数据结构redisObject
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 17:13:53
+categories: Redis
 ---
 
 数据类型和编码
 
-![](Redis-0x08-redisObject/image-20230412203454429.png)
+![](./image-20230412203454429.png)
 
-## 1 数据结构
+### 1 数据结构
 
-### 1.1 数据结构图
+#### 1.1 数据结构图
 
-![](Redis-0x08-redisObject/image-20230403131757153.png)
+![](./image-20230403131757153.png)
 
-### 1.2 type字段
+#### 1.2 type字段
 
 | 数据类型 | 宏定义     | 值   |
 | -------- | ---------- | ---- |
@@ -27,7 +25,7 @@ categories: [ Redis ]
 | 有序集合 | OBJ_ZSET   | 3    |
 | 哈希表   | OBJ_HASH   | 4    |
 
-### 1.3 encoding字段
+#### 1.3 encoding字段
 
 | 编码方式 | 宏定义                  | 值   |
 | -------- | ----------------------- | ---- |
@@ -43,7 +41,7 @@ categories: [ Redis ]
 |          | OBJ_ENCODING_QUICKLIST  | 9    |
 |          | OBJ_ENCODING_STREAM     | 10   |
 
-### 1.4 lru字段
+#### 1.4 lru字段
 
 配合内存淘汰策略使用的
 
@@ -53,15 +51,15 @@ categories: [ Redis ]
   * 高16位 记录访问数据的时间戳 单位分钟
   * 低8位 记录访问数据频率
 
-### 1.5 refcount字段
+#### 1.5 refcount字段
 
 数据的引用计数
 
-### 1.6 ptr字段
+#### 1.6 ptr字段
 
 数据
 
-## 2 String字符串对象
+### 2 String字符串对象
 
 ```c
 /**
@@ -83,7 +81,7 @@ robj *createStringObject(const char *ptr, size_t len) {
 }
 ```
 
-### 2.1 INT编码
+#### 2.1 INT编码
 
 ```c
 /**
@@ -122,7 +120,7 @@ robj *createStringObjectFromLongLongWithOptions(long long value, int valueobj) {
 }
 ```
 
-### 2.2 EMBSTR编码
+#### 2.2 EMBSTR编码
 
 ```c
 /**
@@ -172,9 +170,9 @@ robj *createEmbeddedStringObject(const char *ptr, size_t len) {
 }
 ```
 
-![](Redis-0x08-redisObject/image-20230412232945476.png)
+![](./image-20230412232945476.png)
 
-### 2.3 RAW编码
+#### 2.3 RAW编码
 
 ```c
 /**
@@ -190,8 +188,6 @@ robj *createRawStringObject(const char *ptr, size_t len) {
     return createObject(OBJ_STRING, sdsnewlen(ptr,len));
 }
 ```
-
-
 
 ```c
 /**
@@ -227,11 +223,11 @@ robj *createObject(int type, void *ptr) {
 }
 ```
 
-![](Redis-0x08-redisObject/image-20230412234114968.png)
+![](./image-20230412234114968.png)
 
-## 3 List列表对象
+### 3 List列表对象
 
-### 3.1 quicklist编码
+#### 3.1 quicklist编码
 
 ```c
 /**
@@ -247,7 +243,7 @@ robj *createQuicklistObject(void) {
 }
 ```
 
-### 3.2 ziplist编码
+#### 3.2 ziplist编码
 
 ```c
 /**
@@ -263,9 +259,9 @@ robj *createZiplistObject(void) {
 }
 ```
 
-##  4 Set集合对象
+###  4 Set集合对象
 
-### 4.1 dict编码
+#### 4.1 dict编码
 
 ```c
 /**
@@ -282,7 +278,7 @@ robj *createSetObject(void) {
 }
 ```
 
-### 4.2 intset编码
+#### 4.2 intset编码
 
 ```c
 /**
@@ -299,9 +295,9 @@ robj *createIntsetObject(void) {
 }
 ```
 
-## 5 ZSet有序集合对象
+### 5 ZSet有序集合对象
 
-### 5.1 zskiplist编码
+#### 5.1 zskiplist编码
 
 ```c
 /**
@@ -322,7 +318,7 @@ robj *createZsetObject(void) {
 }
 ```
 
-### 5.2 ziplist编码
+#### 5.2 ziplist编码
 
 ```c
 /**
@@ -339,9 +335,9 @@ robj *createZsetZiplistObject(void) {
 }
 ```
 
-## 6 Hash哈希对象
+### 6 Hash哈希对象
 
-### 6.1 ziplist编码
+#### 6.1 ziplist编码
 
 ```c
 /**
@@ -358,4 +354,3 @@ robj *createHashObject(void) {
     return o;
 }
 ```
-

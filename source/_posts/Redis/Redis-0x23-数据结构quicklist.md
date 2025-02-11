@@ -1,17 +1,14 @@
 ---
-title: Redis-0x0d-quicklist
-index_img: /img/Redis-0x0d-quicklist.png
-date: 2023-04-03 22:23:06
+title: Redis-0x23-数据结构quicklist
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 16:04:33
+categories: Redis
 ---
 
 数据类型的编码方式。
 
-## 1 数据结构
-
-### 1.1 链表节点quicklistNode
+### 1 数据结构
+#### 1.1 链表节点quicklistNode
 
 ```c
 // 32 byte
@@ -41,9 +38,9 @@ typedef struct quicklistNode {
 } quicklistNode;
 ```
 
-![](Redis-0x0d-quicklist/image-20230403233641483.png)
+![](./image-20230403233641483.png)
 
-### 1.2 链表quicklist
+#### 1.2 链表quicklist
 
 ```c
 // 40 byte
@@ -67,11 +64,9 @@ typedef struct quicklist {
 } quicklist;
 ```
 
+![](./image-20230403233727449.png)
 
-
-![](Redis-0x0d-quicklist/image-20230403233727449.png)
-
-### 1.3 链表数据节点quicklistEntry
+#### 1.3 链表数据节点quicklistEntry
 
 ```c
 // quicklist给元素抽象的节点
@@ -96,15 +91,13 @@ typedef struct quicklistEntry {
 } quicklistEntry;
 ```
 
+![](./image-20230406095903000.png)
 
+#### 1.4 示意图
 
-![](Redis-0x0d-quicklist/image-20230406095903000.png)
+![](./image-20230403234900055.png)
 
-### 1.4 示意图
-
-![](Redis-0x0d-quicklist/image-20230403234900055.png)
-
-## 2 创建链表节点
+### 2 创建链表节点
 
 ```c
 /**
@@ -127,9 +120,9 @@ REDIS_STATIC quicklistNode *quicklistCreateNode(void) {
 }
 ```
 
-## 3 创建链表
+### 3 创建链表
 
-### 3.1 默认参数
+#### 3.1 默认参数
 
 ```c
 // 创建quicklist实例
@@ -150,7 +143,7 @@ quicklist *quicklistCreate(void) {
 }
 ```
 
-### 3.2 指定参数
+#### 3.2 指定参数
 
 ```c
 /**
@@ -168,7 +161,7 @@ quicklist *quicklistNew(int fill, int compress) {
 }
 ```
 
-## 4 quicklist字段赋值
+### 4 quicklist字段赋值
 
 ```c
 /**
@@ -185,17 +178,14 @@ void quicklistSetOptions(quicklist *quicklist, int fill, int depth) {
 }
 ```
 
-### 4.1 fill字段
-
-#### 4.1.1 字段赋值
+#### 4.1 fill字段
+##### 4.1.1 字段赋值
 
 ```c
 // quicklist中字段fill位域长度16bit
 // 能够表示的最大值为2^16-1
 #define FILL_MAX ((1 << (QL_FILL_BITS-1))-1)
 ```
-
-
 
 ```c
 // 对quicklist中fill字段赋值
@@ -214,7 +204,7 @@ void quicklistSetFill(quicklist *quicklist, int fill) {
 }
 ```
 
-#### 4.1.2 配置详情
+##### 4.1.2 配置详情
 
 摘自`redis.conf`配置文件。
 
@@ -235,16 +225,13 @@ void quicklistSetFill(quicklist *quicklist, int fill) {
 list-max-ziplist-size -2
 ```
 
-### 4.2 depth字段
-
-#### 4.2.1 字段赋值
+#### 4.2 depth字段
+##### 4.2.1 字段赋值
 
 ```c
 // compress字段占位域16bit 能够表示的整数上限
 #define COMPRESS_MAX ((1 << QL_COMP_BITS)-1)
 ```
-
-
 
 ```c
 /**
@@ -264,7 +251,7 @@ void quicklistSetCompressDepth(quicklist *quicklist, int compress) {
 }
 ```
 
-#### 4.2.2 配置详情
+##### 4.2.2 配置详情
 
 ```conf
 # Lists may also be compressed.
@@ -284,16 +271,14 @@ void quicklistSetCompressDepth(quicklist *quicklist, int compress) {
 list-compress-depth 0
 ```
 
-## 5 quicklist节点上ziplist容量检查
+### 5 quicklist节点上ziplist容量检查
 
-### 5.1 字节大小校验
+#### 5.1 字节大小校验
 
 ```c
 // fill值[-1,-2,-3,-4,-5]对应的byte大小
 static const size_t optimization_level[] = {4096, 8192, 16384, 32768, 65536};
 ```
-
-
 
 ```c
 /**
@@ -331,7 +316,7 @@ _quicklistNodeSizeMeetsOptimizationRequirement(const size_t sz,
 }
 ```
 
-### 5.2 校验fill字段阈值
+#### 5.2 校验fill字段阈值
 
 ```c
 /**
@@ -412,9 +397,8 @@ REDIS_STATIC int _quicklistNodeAllowInsert(const quicklistNode *node,
 }
 ```
 
-## 6 迭代器
-
-### 6.1 数据结构
+### 6 迭代器
+#### 6.1 数据结构
 
 ```c
 typedef struct quicklistIter {
@@ -430,11 +414,9 @@ typedef struct quicklistIter {
 } quicklistIter;
 ```
 
+![](./image-20230406101901555.png)
 
-
-![](Redis-0x0d-quicklist/image-20230406101901555.png)
-
-### 6.2 创建迭代器
+#### 6.2 创建迭代器
 
 ```c
 /**
@@ -467,7 +449,7 @@ quicklistIter *quicklistGetIterator(const quicklist *quicklist, int direction) {
 }
 ```
 
-### 6.3 指定开始位置的迭代器
+#### 6.3 指定开始位置的迭代器
 
 ```c
 /**
@@ -496,10 +478,8 @@ quicklistIter *quicklistGetIteratorAtIdx(const quicklist *quicklist,
 }
 ```
 
-## 7 增
-
-### 7.1 quicklist插入quicklistNode节点
-
+### 7 增
+#### 7.1 quicklist插入quicklistNode节点
 #### 7.1.1 任意位置
 
 ```c
@@ -547,7 +527,7 @@ REDIS_STATIC void __quicklistInsertNode(quicklist *quicklist,
 }
 ```
 
-#### 7.2 头插
+##### 7.2 头插
 
 ```c
 /**
@@ -563,7 +543,7 @@ REDIS_STATIC void _quicklistInsertNodeBefore(quicklist *quicklist,
 }
 ```
 
-#### 7.3 尾插
+##### 7.3 尾插
 
 ```c
 /**
@@ -579,9 +559,9 @@ REDIS_STATIC void _quicklistInsertNodeAfter(quicklist *quicklist,
 }
 ```
 
-### 7.2 quicklist插入元素
+#### 7.2 quicklist插入元素
 
-#### 7.2.1 头插
+##### 7.2.1 头插
 
 ```c
 /**
@@ -622,7 +602,7 @@ int quicklistPushHead(quicklist *quicklist, void *value, size_t sz) {
 }
 ```
 
-#### 7.2.2 尾插
+##### 7.2.2 尾插
 
 ```c
 /**
@@ -656,13 +636,10 @@ int quicklistPushTail(quicklist *quicklist, void *value, size_t sz) {
 }
 ```
 
-## 8 删
-
-## 9 改
-
-## 10 查
-
-### 10.1 pop列表头或者列表尾
+### 8 删
+### 9 改
+### 10 查
+#### 10.1 pop列表头或者列表尾
 
 ```c
 /**
@@ -701,8 +678,6 @@ int quicklistPop(quicklist *quicklist, int where, unsigned char **data,
     return ret;
 }
 ```
-
-
 
 ```c
 /**
@@ -776,7 +751,7 @@ int quicklistPopCustom(quicklist *quicklist, int where, unsigned char **data,
 }
 ```
 
-### 10.2 查找指定位置
+#### 10.2 查找指定位置
 
 ```c
 /**
@@ -849,7 +824,7 @@ int quicklistIndex(const quicklist *quicklist, const long long idx,
 }
 ```
 
-### 10.3 quicklist迭代器遍历
+#### 10.3 quicklist迭代器遍历
 
 ```c
 /**
@@ -921,4 +896,3 @@ int quicklistNext(quicklistIter *iter, quicklistEntry *entry) {
     }
 }
 ```
-

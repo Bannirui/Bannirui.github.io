@@ -1,25 +1,24 @@
 ---
-title: Redis-0x07-t_hash
-date: 2023-04-02 13:45:17
+title: Redis-0x25-数据结构hash
 category_bar: true
-tags: [ Redis@6.2 ]
-categories: [ Redis ]
+date: 2025-02-10 16:20:20
+categories: Redis
 ---
 
 数据类型Hash哈希表。
 
-## 1 数据结构关系
+### 1 数据结构关系
 
 | 数据类型       | 实现   | 编码方式                                                | 数据结构 |
 | -------------- | ------ | ------------------------------------------------------- | -------- |
-| 哈希表OBJ_HASH | t_hash | {% post_link Redis-0x05-ziplist OBJ_ENCODING_ZIPLIST %} | ziplist  |
+| 哈希表OBJ_HASH | t_hash | {% post_link Redis/Redis-0x22-数据结构ziplist %} | ziplist  |
 |                |        |          | dict     |
 
-![](Redis-0x07-t-hash/image-20230406113414943.png)
+![](./image-20230406113414943.png)
 
-## 2 迭代器
+### 2 迭代器
 
-### 2.1 数据结构
+#### 2.1 数据结构
 
 ```c
 // redisObject数据类型是OBJ_HASH 迭代器
@@ -34,11 +33,9 @@ typedef struct {
 } hashTypeIterator;
 ```
 
+![](./image-20230403145253833.png)
 
-
-![](Redis-0x07-t-hash/image-20230403145253833.png)
-
-### 2.2 初始化
+#### 2.2 初始化
 
 ```c
 // redisObject的hash表类型数据的迭代器
@@ -66,7 +63,7 @@ hashTypeIterator *hashTypeInitIterator(robj *subject) {
 }
 ```
 
-### 2.3 迭代
+#### 2.3 迭代
 
 ```c
 // 迭代器的迭代操作
@@ -115,7 +112,7 @@ int hashTypeNext(hashTypeIterator *hi) {
 }
 ```
 
-## 3 编码转换
+### 3 编码转换
 
 ziplist转换dict。
 
@@ -133,8 +130,6 @@ void hashTypeConvert(robj *o, int enc) {
     }
 }
 ```
-
-
 
 ```c
 // 编码类型转换 ziplist->dict
@@ -178,8 +173,6 @@ void hashTypeConvertZiplist(robj *o, int enc) {
 }
 ```
 
-
-
 举个例子，假设键值对为：
 
 ```json
@@ -189,10 +182,10 @@ void hashTypeConvertZiplist(robj *o, int enc) {
 }
 ```
 
-### 3.1 ziplist编码
+#### 3.1 ziplist编码
 
-![](Redis-0x07-t-hash/image-20230403214457298.png)
+![](./image-20230403214457298.png)
 
-### 3.2 dict编码
+#### 3.2 dict编码
 
-![](Redis-0x07-t-hash/image-20230403214631317.png)
+![](./image-20230403214631317.png)
