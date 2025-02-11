@@ -1,0 +1,1019 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="数据类型String字符串。 1 string字符串 数据结构关系   数据类型 实现 编码方式 数据结构    字符串OBJ_STRING t_string  sds      sds      sds   2 增2.1 set1234567891011121314151617181920212223242526272829&#x2F;** * @brief set命令入口 比如&lt;t&gt;set">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x26-数据结构string">
+<meta property="og:url" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x26-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84string/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="数据类型String字符串。 1 string字符串 数据结构关系   数据类型 实现 编码方式 数据结构    字符串OBJ_STRING t_string  sds      sds      sds   2 增2.1 set1234567891011121314151617181920212223242526272829&#x2F;** * @brief set命令入口 比如&lt;t&gt;set">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-10T09:05:20.000Z">
+<meta property="article:modified_time" content="2025-02-10T09:12:21.348Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x26-数据结构string - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x26-数据结构string"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-10 17:05" pubdate>
+          2025年2月10日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(48)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0F-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8epoll/" title="Redis-0x0F-多路复用器epoll"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0F-多路复用器epoll</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x10-socket%E7%BC%96%E7%A8%8B/" title="Redis-0x10-socket编程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x10-socket编程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x11-%E5%BA%93%E5%87%BD%E6%95%B0fcntl/" title="Redis-0x11-库函数fcntl"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x11-库函数fcntl</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/16/Redis/Redis-0x12-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/" title="Redis-0x12-数据结构sds"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x12-数据结构sds</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/16/Redis/Redis-0x13-%E5%BA%93%E5%87%BD%E6%95%B0fopen/" title="Redis-0x13-库函数fopen"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x13-库函数fopen</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x26-数据结构string</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>数据类型String字符串。</p>
+<h3 id="1-string字符串-数据结构关系"><a href="#1-string字符串-数据结构关系" class="headerlink" title="1 string字符串 数据结构关系"></a>1 string字符串 数据结构关系</h3><table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>实现</th>
+<th>编码方式</th>
+<th>数据结构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符串OBJ_STRING</td>
+<td>t_string</td>
+<td></td>
+<td>sds</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>sds</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>sds</td>
+</tr>
+</tbody></table>
+<h3 id="2-增"><a href="#2-增" class="headerlink" title="2 增"></a>2 增</h3><h4 id="2-1-set"><a href="#2-1-set" class="headerlink" title="2.1 set"></a>2.1 set</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief set命令入口 比如&lt;t&gt;set name dingrui&lt;/t&gt;</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">setCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    robj *expire = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-type">int</span> unit = UNIT_SECONDS;<br>    <span class="hljs-type">int</span> flags = OBJ_NO_FLAGS;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 把set命令的可选项解析出来</span><br><span class="hljs-comment">     *   - 可选项命令掩码求和体现在flags上</span><br><span class="hljs-comment">     *   - 设置的过期时间值设置在expire上</span><br><span class="hljs-comment">     *   - 设置的过期时间单位设置在unit上</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">if</span> (parseExtendedStringArgumentsOrReply(c,&amp;flags,&amp;unit,&amp;expire,COMMAND_SET) != C_OK) &#123;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 尝试对字符串进行编码转换 目的是为了压缩内存</span><br><span class="hljs-comment">     *   - 字符串长度[1...20] 尝试用int编码</span><br><span class="hljs-comment">     *   - 字符串长度[1...4] 用EMBSTR编码</span><br><span class="hljs-comment">     *   - 字符串过长 用RAW编码</span><br><span class="hljs-comment">     */</span><br>    c-&gt;argv[<span class="hljs-number">2</span>] = tryObjectEncoding(c-&gt;argv[<span class="hljs-number">2</span>]);<br>    <span class="hljs-comment">// 调用set命令</span><br>    setGenericCommand(c,flags,c-&gt;argv[<span class="hljs-number">1</span>],c-&gt;argv[<span class="hljs-number">2</span>],expire,unit,<span class="hljs-literal">NULL</span>,<span class="hljs-literal">NULL</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-2-解析set命令的可选项"><a href="#2-2-解析set命令的可选项" class="headerlink" title="2.2 解析set命令的可选项"></a>2.2 解析set命令的可选项</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief 解析命令的可选项内容</span><br><span class="hljs-comment"> *        get命令</span><br><span class="hljs-comment"> *          - GET key</span><br><span class="hljs-comment"> *          - get命令不存在可选参数</span><br><span class="hljs-comment"> *        set命令</span><br><span class="hljs-comment"> *          - SET key value [EX seconds] [PX milliseconds] [NX|XX]</span><br><span class="hljs-comment"> *          - set命令的可选参数设置是从脚标2开始</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> * @param flags 命令可选项的掩码通过或计算体现在flags上</span><br><span class="hljs-comment"> * @param unit 命令设置了过期时间的时候时间单位 秒或者毫秒</span><br><span class="hljs-comment"> * @param expire 命令设置了过期时间的时候时间值</span><br><span class="hljs-comment"> * @param command_type 标识要解析的命令是get还是set</span><br><span class="hljs-comment"> * @return 操作状态码</span><br><span class="hljs-comment"> *         0标识成功</span><br><span class="hljs-comment"> *         -1标识失败</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">parseExtendedStringArgumentsOrReply</span><span class="hljs-params">(client *c, <span class="hljs-type">int</span> *flags, <span class="hljs-type">int</span> *unit, robj **expire, <span class="hljs-type">int</span> command_type)</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 可选参数解析的脚标</span><br><span class="hljs-comment">     *   - get命令没有可选参数 不会进for循环</span><br><span class="hljs-comment">     *   - set命令从脚标2开始解析</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">int</span> j = command_type == COMMAND_GET ? <span class="hljs-number">2</span> : <span class="hljs-number">3</span>;<br>    <span class="hljs-keyword">for</span> (; j &lt; c-&gt;argc; j++) &#123;<br>        <span class="hljs-comment">//  可选参数的配置项</span><br>        <span class="hljs-type">char</span> *opt = c-&gt;argv[j]-&gt;ptr;<br>        <span class="hljs-comment">// 可选参数的配置值</span><br>        robj *next = (j == c-&gt;argc<span class="hljs-number">-1</span>) ? <span class="hljs-literal">NULL</span> : c-&gt;argv[j+<span class="hljs-number">1</span>];<br><br>        <span class="hljs-keyword">if</span> ((opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;n&#x27;</span> || opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;N&#x27;</span>) &amp;&amp;<br>            (opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;x&#x27;</span> || opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;X&#x27;</span>) &amp;&amp; opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp;<br>            !(*flags &amp; OBJ_SET_XX) &amp;&amp; !(*flags &amp; OBJ_SET_GET) &amp;&amp; (command_type == COMMAND_SET))<br>        &#123; <span class="hljs-comment">// NX</span><br>            *flags |= OBJ_SET_NX;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;x&#x27;</span> || opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;X&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;x&#x27;</span> || opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;X&#x27;</span>) &amp;&amp; opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp;<br>                   !(*flags &amp; OBJ_SET_NX) &amp;&amp; (command_type == COMMAND_SET))<br>        &#123; <span class="hljs-comment">// XX命令</span><br>            *flags |= OBJ_SET_XX;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;g&#x27;</span> || opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;G&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;e&#x27;</span> || opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;E&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;t&#x27;</span> || opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;T&#x27;</span>) &amp;&amp; opt[<span class="hljs-number">3</span>] == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp;<br>                   !(*flags &amp; OBJ_SET_NX) &amp;&amp; (command_type == COMMAND_SET))<br>        &#123;<br>            *flags |= OBJ_SET_GET;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(opt, <span class="hljs-string">&quot;KEEPTTL&quot;</span>) &amp;&amp; !(*flags &amp; OBJ_PERSIST) &amp;&amp;<br>            !(*flags &amp; OBJ_EX) &amp;&amp; !(*flags &amp; OBJ_EXAT) &amp;&amp;<br>            !(*flags &amp; OBJ_PX) &amp;&amp; !(*flags &amp; OBJ_PXAT) &amp;&amp; (command_type == COMMAND_SET))<br>        &#123;<br>            *flags |= OBJ_KEEPTTL;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!strcasecmp(opt,<span class="hljs-string">&quot;PERSIST&quot;</span>) &amp;&amp; (command_type == COMMAND_GET) &amp;&amp;<br>               !(*flags &amp; OBJ_EX) &amp;&amp; !(*flags &amp; OBJ_EXAT) &amp;&amp;<br>               !(*flags &amp; OBJ_PX) &amp;&amp; !(*flags &amp; OBJ_PXAT) &amp;&amp;<br>               !(*flags &amp; OBJ_KEEPTTL))<br>        &#123;<br>            *flags |= OBJ_PERSIST;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;e&#x27;</span> || opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;E&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;x&#x27;</span> || opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;X&#x27;</span>) &amp;&amp; opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp;<br>                   !(*flags &amp; OBJ_KEEPTTL) &amp;&amp; !(*flags &amp; OBJ_PERSIST) &amp;&amp;<br>                   !(*flags &amp; OBJ_EXAT) &amp;&amp; !(*flags &amp; OBJ_PX) &amp;&amp;<br>                   !(*flags &amp; OBJ_PXAT) &amp;&amp; next)<br>        &#123; <span class="hljs-comment">// EX命令</span><br>            *flags |= OBJ_EX;<br>            *expire = next;<br>            j++;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;p&#x27;</span> || opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;P&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;x&#x27;</span> || opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;X&#x27;</span>) &amp;&amp; opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp;<br>                   !(*flags &amp; OBJ_KEEPTTL) &amp;&amp; !(*flags &amp; OBJ_PERSIST) &amp;&amp;<br>                   !(*flags &amp; OBJ_EX) &amp;&amp; !(*flags &amp; OBJ_EXAT) &amp;&amp;<br>                   !(*flags &amp; OBJ_PXAT) &amp;&amp; next)<br>        &#123; <span class="hljs-comment">// PX命令</span><br>            *flags |= OBJ_PX;<br>            *unit = UNIT_MILLISECONDS;<br>            *expire = next;<br>            j++;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;e&#x27;</span> || opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;E&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;x&#x27;</span> || opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;X&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;a&#x27;</span> || opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;A&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">3</span>] == <span class="hljs-string">&#x27;t&#x27;</span> || opt[<span class="hljs-number">3</span>] == <span class="hljs-string">&#x27;T&#x27;</span>) &amp;&amp; opt[<span class="hljs-number">4</span>] == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp;<br>                   !(*flags &amp; OBJ_KEEPTTL) &amp;&amp; !(*flags &amp; OBJ_PERSIST) &amp;&amp;<br>                   !(*flags &amp; OBJ_EX) &amp;&amp; !(*flags &amp; OBJ_PX) &amp;&amp;<br>                   !(*flags &amp; OBJ_PXAT) &amp;&amp; next)<br>        &#123;<br>            *flags |= OBJ_EXAT;<br>            *expire = next;<br>            j++;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;p&#x27;</span> || opt[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;P&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;x&#x27;</span> || opt[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;X&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;a&#x27;</span> || opt[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;A&#x27;</span>) &amp;&amp;<br>                   (opt[<span class="hljs-number">3</span>] == <span class="hljs-string">&#x27;t&#x27;</span> || opt[<span class="hljs-number">3</span>] == <span class="hljs-string">&#x27;T&#x27;</span>) &amp;&amp; opt[<span class="hljs-number">4</span>] == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp;<br>                   !(*flags &amp; OBJ_KEEPTTL) &amp;&amp; !(*flags &amp; OBJ_PERSIST) &amp;&amp;<br>                   !(*flags &amp; OBJ_EX) &amp;&amp; !(*flags &amp; OBJ_EXAT) &amp;&amp;<br>                   !(*flags &amp; OBJ_PX) &amp;&amp; next)<br>        &#123;<br>            *flags |= OBJ_PXAT;<br>            *unit = UNIT_MILLISECONDS;<br>            *expire = next;<br>            j++;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            addReplyErrorObject(c,shared.syntaxerr);<br>            <span class="hljs-keyword">return</span> C_ERR;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> C_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-3-set全参"><a href="#2-3-set全参" class="headerlink" title="2.3 set全参"></a>2.3 set全参</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief set命令的全参调用</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> * @param flags 体现了set命令的可选项命令 NX XX EX PX等可选项的或运算</span><br><span class="hljs-comment"> * @param key 键</span><br><span class="hljs-comment"> * @param val 值</span><br><span class="hljs-comment"> * @param expire 设置了过期 过期的值</span><br><span class="hljs-comment"> * @param unit 设置了过期 过期的时间单位</span><br><span class="hljs-comment"> * @param ok_reply</span><br><span class="hljs-comment"> * @param abort_reply</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">setGenericCommand</span><span class="hljs-params">(client *c, <span class="hljs-type">int</span> flags, robj *key, robj *val, robj *expire, <span class="hljs-type">int</span> unit, robj *ok_reply, robj *abort_reply)</span> &#123;<br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> milliseconds = <span class="hljs-number">0</span>, when = <span class="hljs-number">0</span>; <span class="hljs-comment">/* initialized to avoid any harmness warning */</span><br><br>    <span class="hljs-keyword">if</span> (expire) &#123; <span class="hljs-comment">// 设置了过期</span><br>        <span class="hljs-keyword">if</span> (getLongLongFromObjectOrReply(c, expire, &amp;milliseconds, <span class="hljs-literal">NULL</span>) != C_OK)<br>            <span class="hljs-keyword">return</span>;<br>        <span class="hljs-keyword">if</span> (milliseconds &lt;= <span class="hljs-number">0</span> || (unit == UNIT_SECONDS &amp;&amp; milliseconds &gt; LLONG_MAX / <span class="hljs-number">1000</span>)) &#123;<br>            <span class="hljs-comment">/* Negative value provided or multiplication is gonna overflow. */</span><br>            addReplyErrorFormat(c, <span class="hljs-string">&quot;invalid expire time in %s&quot;</span>, c-&gt;cmd-&gt;name);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (unit == UNIT_SECONDS) milliseconds *= <span class="hljs-number">1000</span>;<br>        when = milliseconds;<br>        <span class="hljs-keyword">if</span> ((flags &amp; OBJ_PX) || (flags &amp; OBJ_EX))<br>            when += mstime();<br>        <span class="hljs-keyword">if</span> (when &lt;= <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-comment">/* Overflow detected. */</span><br>            addReplyErrorFormat(c, <span class="hljs-string">&quot;invalid expire time in %s&quot;</span>, c-&gt;cmd-&gt;name);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> ((flags &amp; OBJ_SET_NX &amp;&amp; lookupKeyWrite(c-&gt;db,key) != <span class="hljs-literal">NULL</span>) ||<br>        (flags &amp; OBJ_SET_XX &amp;&amp; lookupKeyWrite(c-&gt;db,key) == <span class="hljs-literal">NULL</span>))<br>    &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * NX语义是键不存在时才执行set命令</span><br><span class="hljs-comment">         *   - 已经存在了键 那就不执行set命令</span><br><span class="hljs-comment">         * XX语义是键存在时才执行set命令</span><br><span class="hljs-comment">         *   - 不存在键 那就不执行set命令</span><br><span class="hljs-comment">         */</span><br>        addReply(c, abort_reply ? abort_reply : shared.null[c-&gt;resp]);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (flags &amp; OBJ_SET_GET) &#123; <span class="hljs-comment">// set之前先执行GET命令</span><br>        <span class="hljs-keyword">if</span> (getGenericCommand(c) == C_ERR) <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// 存到内存数据库中</span><br>    genericSetKey(c,c-&gt;db,key, val,flags &amp; OBJ_KEEPTTL,<span class="hljs-number">1</span>);<br>    server.dirty++;<br>    notifyKeyspaceEvent(NOTIFY_STRING,<span class="hljs-string">&quot;set&quot;</span>,key,c-&gt;db-&gt;id);<br>    <span class="hljs-keyword">if</span> (expire) &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 对key设置了过期时间</span><br><span class="hljs-comment">         *   - 要么在过期时间dict中新增key的过期时间</span><br><span class="hljs-comment">         *   - 要么在过期时间dict中覆盖key的过期时间</span><br><span class="hljs-comment">         */</span><br>        setExpire(c,c-&gt;db,key,when);<br>        notifyKeyspaceEvent(NOTIFY_GENERIC,<span class="hljs-string">&quot;expire&quot;</span>,key,c-&gt;db-&gt;id);<br><br>        <span class="hljs-comment">/* Propagate as SET Key Value PXAT millisecond-timestamp if there is EXAT/PXAT or</span><br><span class="hljs-comment">         * propagate as SET Key Value PX millisecond if there is EX/PX flag.</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * Additionally when we propagate the SET with PX (relative millisecond) we translate</span><br><span class="hljs-comment">         * it again to SET with PXAT for the AOF.</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * Additional care is required while modifying the argument order. AOF relies on the</span><br><span class="hljs-comment">         * exp argument being at index 3. (see feedAppendOnlyFile)</span><br><span class="hljs-comment">         * */</span><br>        robj *<span class="hljs-built_in">exp</span> = (flags &amp; OBJ_PXAT) || (flags &amp; OBJ_EXAT) ? shared.pxat : shared.px;<br>        robj *millisecondObj = createStringObjectFromLongLong(milliseconds);<br>        rewriteClientCommandVector(c,<span class="hljs-number">5</span>,shared.<span class="hljs-built_in">set</span>,key,val,<span class="hljs-built_in">exp</span>,millisecondObj);<br>        decrRefCount(millisecondObj);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (!(flags &amp; OBJ_SET_GET)) &#123;<br>        addReply(c, ok_reply ? ok_reply : shared.ok);<br>    &#125;<br><br>    <span class="hljs-comment">/* Propagate without the GET argument (Isn&#x27;t needed if we had expire since in that case we completely re-written the command argv) */</span><br>    <span class="hljs-keyword">if</span> ((flags &amp; OBJ_SET_GET) &amp;&amp; !expire) &#123;<br>        <span class="hljs-type">int</span> argc = <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> j;<br>        robj **argv = zmalloc((c-&gt;argc<span class="hljs-number">-1</span>)*<span class="hljs-keyword">sizeof</span>(robj*));<br>        <span class="hljs-keyword">for</span> (j=<span class="hljs-number">0</span>; j &lt; c-&gt;argc; j++) &#123;<br>            <span class="hljs-type">char</span> *a = c-&gt;argv[j]-&gt;ptr;<br>            <span class="hljs-comment">/* Skip GET which may be repeated multiple times. */</span><br>            <span class="hljs-keyword">if</span> (j &gt;= <span class="hljs-number">3</span> &amp;&amp;<br>                (a[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;g&#x27;</span> || a[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;G&#x27;</span>) &amp;&amp;<br>                (a[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;e&#x27;</span> || a[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;E&#x27;</span>) &amp;&amp;<br>                (a[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;t&#x27;</span> || a[<span class="hljs-number">2</span>] == <span class="hljs-string">&#x27;T&#x27;</span>) &amp;&amp; a[<span class="hljs-number">3</span>] == <span class="hljs-string">&#x27;\0&#x27;</span>)<br>                <span class="hljs-keyword">continue</span>;<br>            argv[argc++] = c-&gt;argv[j];<br>            incrRefCount(c-&gt;argv[j]);<br>        &#125;<br>        replaceClientCommandVector(c, argc, argv);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-4-setrange"><a href="#2-4-setrange" class="headerlink" title="2.4 setrange"></a>2.4 setrange</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief setrange key offset value</span><br><span class="hljs-comment"> *        比如setrange name 3 zz</span><br><span class="hljs-comment"> *        键name的value是dingrui</span><br><span class="hljs-comment"> *        setrange name 3 zz的语义是dingrui字符串从脚标3(从0开始)开始，用zz这个新字符串替换掉gr这两个字符</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">setrangeCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    robj *o;<br>    <span class="hljs-type">long</span> offset;<br>    sds value = c-&gt;argv[<span class="hljs-number">3</span>]-&gt;ptr; <span class="hljs-comment">// setrange命令的参数value</span><br>    <span class="hljs-comment">// setrange命令中的offset参数</span><br>    <span class="hljs-keyword">if</span> (getLongFromObjectOrReply(c,c-&gt;argv[<span class="hljs-number">2</span>],&amp;offset,<span class="hljs-literal">NULL</span>) != C_OK)<br>        <span class="hljs-keyword">return</span>;<br><br>    <span class="hljs-keyword">if</span> (offset &lt; <span class="hljs-number">0</span>) &#123;<br>        addReplyError(c,<span class="hljs-string">&quot;offset is out of range&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// 旧值</span><br>    o = lookupKeyWrite(c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>]);<br>    <span class="hljs-keyword">if</span> (o == <span class="hljs-literal">NULL</span>) &#123; <span class="hljs-comment">// 不存在键</span><br>        <span class="hljs-comment">/* Return 0 when setting nothing on a non-existing string */</span><br>        <span class="hljs-keyword">if</span> (sdslen(value) == <span class="hljs-number">0</span>) &#123;<br>            addReply(c,shared.czero);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br><br>        <span class="hljs-comment">/* Return when the resulting string exceeds allowed size */</span><br>        <span class="hljs-keyword">if</span> (checkStringLength(c,offset+sdslen(value)) != C_OK)<br>            <span class="hljs-keyword">return</span>;<br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 创建一个redisObject实例放到全局hash表中</span><br><span class="hljs-comment">         * 给sds开辟的内存大小=setrange命令的offset值+setrange命令的value长度</span><br><span class="hljs-comment">         * sds的buf数组里面现在还是空的</span><br><span class="hljs-comment">         */</span><br>        o = createObject(OBJ_STRING,sdsnewlen(<span class="hljs-literal">NULL</span>, offset+sdslen(value)));<br>        dbAdd(c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>],o);<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// key已经存在</span><br>        <span class="hljs-type">size_t</span> olen;<br><br>        <span class="hljs-comment">/* Key exists, check type */</span><br>        <span class="hljs-comment">// 字符串类型</span><br>        <span class="hljs-keyword">if</span> (checkType(c,o,OBJ_STRING))<br>            <span class="hljs-keyword">return</span>;<br><br>        <span class="hljs-comment">/* Return existing string length when setting nothing */</span><br>        <span class="hljs-comment">// 字符串长度</span><br>        olen = stringObjectLen(o);<br>        <span class="hljs-keyword">if</span> (sdslen(value) == <span class="hljs-number">0</span>) &#123;<br>            addReplyLongLong(c,olen);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br><br>        <span class="hljs-comment">/* Return when the resulting string exceeds allowed size */</span><br>        <span class="hljs-keyword">if</span> (checkStringLength(c,offset+sdslen(value)) != C_OK)<br>            <span class="hljs-keyword">return</span>;<br><br>        <span class="hljs-comment">/* Create a copy when the object is shared or encoded. */</span><br>        o = dbUnshareStringValue(c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>],o); <span class="hljs-comment">// 全局hash表查询key的值</span><br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (sdslen(value) &gt; <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// setrange命令里面的value</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 此时的o是redisObject实例 其内容以及长度就两种情况</span><br><span class="hljs-comment">         *   - 长度为offset+len(value) 内容为null</span><br><span class="hljs-comment">         *   - 长度为len(oldVal) 内容为oldVal</span><br><span class="hljs-comment">         * 第一种情况是不用对sds扩容的</span><br><span class="hljs-comment">         */</span><br>        o-&gt;ptr = sdsgrowzero(o-&gt;ptr,offset+sdslen(value));<br>        <span class="hljs-comment">// 将setrange命令的value拷贝到指定位置</span><br>        <span class="hljs-built_in">memcpy</span>((<span class="hljs-type">char</span>*)o-&gt;ptr+offset,value,sdslen(value));<br>        signalModifiedKey(c,c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>]);<br>        notifyKeyspaceEvent(NOTIFY_STRING,<br>            <span class="hljs-string">&quot;setrange&quot;</span>,c-&gt;argv[<span class="hljs-number">1</span>],c-&gt;db-&gt;id);<br>        server.dirty++;<br>    &#125;<br>    addReplyLongLong(c,sdslen(o-&gt;ptr));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-5-mset"><a href="#2-5-mset" class="headerlink" title="2.5 mset"></a>2.5 mset</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief mset命令</span><br><span class="hljs-comment"> * @param c </span><br><span class="hljs-comment"> * @param nx 标识</span><br><span class="hljs-comment"> *           1标识要求批量set的key都不存在 但凡有key已经存在就不生效</span><br><span class="hljs-comment"> *           0标识不要求批量set的key都不存在 即可以覆盖更新键值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">msetGenericCommand</span><span class="hljs-params">(client *c, <span class="hljs-type">int</span> nx)</span> &#123;<br>    <span class="hljs-type">int</span> j;<br><br>    <span class="hljs-keyword">if</span> ((c-&gt;argc % <span class="hljs-number">2</span>) == <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// 基本的参数个数校验</span><br>        addReplyError(c,<span class="hljs-string">&quot;wrong number of arguments for MSET&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-comment">/* Handle the NX flag. The MSETNX semantic is to return zero and don&#x27;t</span><br><span class="hljs-comment">     * set anything if at least one key already exists. */</span><br>    <span class="hljs-keyword">if</span> (nx) &#123; <span class="hljs-comment">// 必须所有key都不存在</span><br>        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">1</span>; j &lt; c-&gt;argc; j += <span class="hljs-number">2</span>) &#123;<br>            <span class="hljs-keyword">if</span> (lookupKeyWrite(c-&gt;db,c-&gt;argv[j]) != <span class="hljs-literal">NULL</span>) &#123;<br>                addReply(c, shared.czero);<br>                <span class="hljs-keyword">return</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">// 成对的key-value</span><br>    <span class="hljs-keyword">for</span> (j = <span class="hljs-number">1</span>; j &lt; c-&gt;argc; j += <span class="hljs-number">2</span>) &#123;<br>        c-&gt;argv[j+<span class="hljs-number">1</span>] = tryObjectEncoding(c-&gt;argv[j+<span class="hljs-number">1</span>]);<br>        setKey(c,c-&gt;db,c-&gt;argv[j],c-&gt;argv[j+<span class="hljs-number">1</span>]);<br>        notifyKeyspaceEvent(NOTIFY_STRING,<span class="hljs-string">&quot;set&quot;</span>,c-&gt;argv[j],c-&gt;db-&gt;id);<br>    &#125;<br>    server.dirty += (c-&gt;argc<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>;<br>    addReply(c, nx ? shared.cone : shared.ok);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-删"><a href="#3-删" class="headerlink" title="3 删"></a>3 删</h3><h3 id="4-改"><a href="#4-改" class="headerlink" title="4 改"></a>4 改</h3><h4 id="4-1-递增递减"><a href="#4-1-递增递减" class="headerlink" title="4.1 递增递减"></a>4.1 递增递减</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief 递增\递减incr</span><br><span class="hljs-comment"> * @param c </span><br><span class="hljs-comment"> * @param incr 要递增\递减的值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">incrDecrCommand</span><span class="hljs-params">(client *c, <span class="hljs-type">long</span> <span class="hljs-type">long</span> incr)</span> &#123;<br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> value, oldvalue;<br>    robj *o, *new;<br><br>    o = lookupKeyWrite(c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>]);<br>    <span class="hljs-keyword">if</span> (checkType(c,o,OBJ_STRING)) <span class="hljs-keyword">return</span>; <span class="hljs-comment">// 数据类型校验</span><br>    <span class="hljs-keyword">if</span> (getLongLongFromObjectOrReply(c,o,&amp;value,<span class="hljs-literal">NULL</span>) != C_OK) <span class="hljs-keyword">return</span>;<br>    <span class="hljs-comment">// 递增\递减前的值</span><br>    oldvalue = value;<br>    <span class="hljs-keyword">if</span> ((incr &lt; <span class="hljs-number">0</span> &amp;&amp; oldvalue &lt; <span class="hljs-number">0</span> &amp;&amp; incr &lt; (LLONG_MIN-oldvalue)) ||<br>        (incr &gt; <span class="hljs-number">0</span> &amp;&amp; oldvalue &gt; <span class="hljs-number">0</span> &amp;&amp; incr &gt; (LLONG_MAX-oldvalue))) &#123;<br>        addReplyError(c,<span class="hljs-string">&quot;increment or decrement would overflow&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    value += incr;<br><br>    <span class="hljs-keyword">if</span> (o &amp;&amp; o-&gt;refcount == <span class="hljs-number">1</span> &amp;&amp; o-&gt;encoding == OBJ_ENCODING_INT &amp;&amp;<br>        (value &lt; <span class="hljs-number">0</span> || value &gt;= OBJ_SHARED_INTEGERS) &amp;&amp;<br>        value &gt;= LONG_MIN &amp;&amp; value &lt;= LONG_MAX)<br>    &#123;<br>        new = o;<br>        o-&gt;ptr = (<span class="hljs-type">void</span>*)((<span class="hljs-type">long</span>)value);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        new = createStringObjectFromLongLongForValue(value);<br>        <span class="hljs-keyword">if</span> (o) &#123;<br>            dbOverwrite(c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>],new);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            dbAdd(c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>],new);<br>        &#125;<br>    &#125;<br>    signalModifiedKey(c,c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>]);<br>    notifyKeyspaceEvent(NOTIFY_STRING,<span class="hljs-string">&quot;incrby&quot;</span>,c-&gt;argv[<span class="hljs-number">1</span>],c-&gt;db-&gt;id);<br>    server.dirty++;<br>    addReply(c,shared.colon);<br>    addReply(c,new);<br>    addReply(c,shared.crlf);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="5-查"><a href="#5-查" class="headerlink" title="5 查"></a>5 查</h3><h4 id="5-1-get"><a href="#5-1-get" class="headerlink" title="5.1 get"></a>5.1 get</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief get命令入口</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">getCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    getGenericCommand(c);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="5-2-get全参"><a href="#5-2-get全参" class="headerlink" title="5.2 get全参"></a>5.2 get全参</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief get命令的全参调用 因为get命令没有可选参数 所以全参的get调用和get的入口调用是一样的</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> * @return 操作状态吗</span><br><span class="hljs-comment"> *         0标识成功</span><br><span class="hljs-comment"> *         -1标识失败</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">getGenericCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    robj *o;<br><br>    <span class="hljs-comment">// 全局字典查找键</span><br>    <span class="hljs-keyword">if</span> ((o = lookupKeyReadOrReply(c,c-&gt;argv[<span class="hljs-number">1</span>],shared.null[c-&gt;resp])) == <span class="hljs-literal">NULL</span>)<br>        <span class="hljs-keyword">return</span> C_OK;<br><br>    <span class="hljs-keyword">if</span> (checkType(c,o,OBJ_STRING)) &#123; <span class="hljs-comment">// 校验数据类型得是string字符串</span><br>        <span class="hljs-keyword">return</span> C_ERR;<br>    &#125;<br>    <span class="hljs-comment">// 网络模块负责响应客户端</span><br>    addReplyBulk(c,o);<br>    <span class="hljs-keyword">return</span> C_OK;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="5-3-getex"><a href="#5-3-getex" class="headerlink" title="5.3 getex"></a>5.3 getex</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief getex命令 可选项</span><br><span class="hljs-comment"> *          - persist 如果键此前设置过过期时间 将过期时间从过期dict中移除</span><br><span class="hljs-comment"> *          - 为键key设置过期时间</span><br><span class="hljs-comment"> *            - ex 为key设置秒为单位的过期时间</span><br><span class="hljs-comment"> *            - px 为key设置以毫秒为单位的过期时间</span><br><span class="hljs-comment"> *            - exat 为key设置秒为单位的过期时间戳</span><br><span class="hljs-comment"> *            - pxat 为key设置毫秒为单位的过期时间戳</span><br><span class="hljs-comment"> *         getex不设置可选项 就相当于get命令</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">getexCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    robj *expire = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-type">int</span> unit = UNIT_SECONDS;<br>    <span class="hljs-type">int</span> flags = OBJ_NO_FLAGS;<br><br>    <span class="hljs-keyword">if</span> (parseExtendedStringArgumentsOrReply(c,&amp;flags,&amp;unit,&amp;expire,COMMAND_GET) != C_OK) &#123;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    robj *o;<br>    <span class="hljs-comment">// 全局哈希表中不存在key</span><br>    <span class="hljs-keyword">if</span> ((o = lookupKeyReadOrReply(c,c-&gt;argv[<span class="hljs-number">1</span>],shared.null[c-&gt;resp])) == <span class="hljs-literal">NULL</span>)<br>        <span class="hljs-keyword">return</span>;<br><br>    <span class="hljs-comment">// 确保数据类型是string字符串</span><br>    <span class="hljs-keyword">if</span> (checkType(c,o,OBJ_STRING)) &#123;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> milliseconds = <span class="hljs-number">0</span>, when = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">/* Validate the expiration time value first */</span><br>    <span class="hljs-keyword">if</span> (expire) &#123; <span class="hljs-comment">// 设置了过期时间</span><br>        <span class="hljs-keyword">if</span> (getLongLongFromObjectOrReply(c, expire, &amp;milliseconds, <span class="hljs-literal">NULL</span>) != C_OK)<br>            <span class="hljs-keyword">return</span>;<br>        <span class="hljs-keyword">if</span> (milliseconds &lt;= <span class="hljs-number">0</span> || (unit == UNIT_SECONDS &amp;&amp; milliseconds &gt; LLONG_MAX / <span class="hljs-number">1000</span>)) &#123;<br>            <span class="hljs-comment">/* Negative value provided or multiplication is gonna overflow. */</span><br>            addReplyErrorFormat(c, <span class="hljs-string">&quot;invalid expire time in %s&quot;</span>, c-&gt;cmd-&gt;name);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (unit == UNIT_SECONDS) milliseconds *= <span class="hljs-number">1000</span>;<br>        when = milliseconds;<br>        <span class="hljs-keyword">if</span> ((flags &amp; OBJ_PX) || (flags &amp; OBJ_EX))<br>            when += mstime();<br>        <span class="hljs-keyword">if</span> (when &lt;= <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-comment">/* Overflow detected. */</span><br>            addReplyErrorFormat(c, <span class="hljs-string">&quot;invalid expire time in %s&quot;</span>, c-&gt;cmd-&gt;name);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">/* We need to do this before we expire the key or delete it */</span><br>    <span class="hljs-comment">// 将get出来的值返回给客户端</span><br>    addReplyBulk(c,o);<br><br>    <span class="hljs-comment">/* This command is never propagated as is. It is either propagated as PEXPIRE[AT],DEL,UNLINK or PERSIST.</span><br><span class="hljs-comment">     * This why it doesn&#x27;t need special handling in feedAppendOnlyFile to convert relative expire time to absolute one. */</span><br>    <span class="hljs-keyword">if</span> (((flags &amp; OBJ_PXAT) || (flags &amp; OBJ_EXAT)) &amp;&amp; checkAlreadyExpired(milliseconds)) &#123; <span class="hljs-comment">// 设置了过期时间戳</span><br>        <span class="hljs-comment">/* When PXAT/EXAT absolute timestamp is specified, there can be a chance that timestamp</span><br><span class="hljs-comment">         * has already elapsed so delete the key in that case. */</span><br>        <span class="hljs-type">int</span> deleted = server.lazyfree_lazy_expire ? dbAsyncDelete(c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]) :<br>                      dbSyncDelete(c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]);<br>        serverAssert(deleted);<br>        robj *aux = server.lazyfree_lazy_expire ? shared.unlink : shared.del;<br>        rewriteClientCommandVector(c,<span class="hljs-number">2</span>,aux,c-&gt;argv[<span class="hljs-number">1</span>]);<br>        signalModifiedKey(c, c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]);<br>        notifyKeyspaceEvent(NOTIFY_GENERIC, <span class="hljs-string">&quot;del&quot;</span>, c-&gt;argv[<span class="hljs-number">1</span>], c-&gt;db-&gt;id);<br>        server.dirty++;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (expire) &#123;<br>        setExpire(c,c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>],when);<br>        <span class="hljs-comment">/* Propagate */</span><br>        robj *<span class="hljs-built_in">exp</span> = (flags &amp; OBJ_PXAT) || (flags &amp; OBJ_EXAT) ? shared.pexpireat : shared.pexpire;<br>        robj* millisecondObj = createStringObjectFromLongLong(milliseconds);<br>        rewriteClientCommandVector(c,<span class="hljs-number">3</span>,<span class="hljs-built_in">exp</span>,c-&gt;argv[<span class="hljs-number">1</span>],millisecondObj);<br>        decrRefCount(millisecondObj);<br>        signalModifiedKey(c, c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]);<br>        notifyKeyspaceEvent(NOTIFY_GENERIC,<span class="hljs-string">&quot;expire&quot;</span>,c-&gt;argv[<span class="hljs-number">1</span>],c-&gt;db-&gt;id);<br>        server.dirty++;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (flags &amp; OBJ_PERSIST) &#123; <span class="hljs-comment">// 移除key的过期时间</span><br>        <span class="hljs-keyword">if</span> (removeExpire(c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>])) &#123;<br>            signalModifiedKey(c, c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]);<br>            rewriteClientCommandVector(c, <span class="hljs-number">2</span>, shared.persist, c-&gt;argv[<span class="hljs-number">1</span>]);<br>            notifyKeyspaceEvent(NOTIFY_GENERIC,<span class="hljs-string">&quot;persist&quot;</span>,c-&gt;argv[<span class="hljs-number">1</span>],c-&gt;db-&gt;id);<br>            server.dirty++;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="5-4-getdel"><a href="#5-4-getdel" class="headerlink" title="5.4 getdel"></a>5.4 getdel</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief 获取键的值 获取后将键删除</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">getdelCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    <span class="hljs-keyword">if</span> (getGenericCommand(c) == C_ERR) <span class="hljs-keyword">return</span>;<br>    <span class="hljs-type">int</span> deleted = server.lazyfree_lazy_user_del ? dbAsyncDelete(c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]) :<br>                  dbSyncDelete(c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]);<br>    <span class="hljs-keyword">if</span> (deleted) &#123;<br>        <span class="hljs-comment">/* Propagate as DEL/UNLINK command */</span><br>        robj *aux = server.lazyfree_lazy_user_del ? shared.unlink : shared.del;<br>        rewriteClientCommandVector(c,<span class="hljs-number">2</span>,aux,c-&gt;argv[<span class="hljs-number">1</span>]);<br>        signalModifiedKey(c, c-&gt;db, c-&gt;argv[<span class="hljs-number">1</span>]);<br>        notifyKeyspaceEvent(NOTIFY_GENERIC, <span class="hljs-string">&quot;del&quot;</span>, c-&gt;argv[<span class="hljs-number">1</span>], c-&gt;db-&gt;id);<br>        server.dirty++;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="5-5-getset"><a href="#5-5-getset" class="headerlink" title="5.5 getset"></a>5.5 getset</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief getset获取key的值 获取完后为key设置新值</span><br><span class="hljs-comment"> *        比如: getset name dingrui</span><br><span class="hljs-comment"> * @param c </span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">getsetCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    <span class="hljs-comment">// 获取key的值</span><br>    <span class="hljs-keyword">if</span> (getGenericCommand(c) == C_ERR) <span class="hljs-keyword">return</span>;<br>    <span class="hljs-comment">// 要设置的新值 压缩字符串内存</span><br>    c-&gt;argv[<span class="hljs-number">2</span>] = tryObjectEncoding(c-&gt;argv[<span class="hljs-number">2</span>]);<br>    <span class="hljs-comment">// set命令</span><br>    setKey(c,c-&gt;db,c-&gt;argv[<span class="hljs-number">1</span>],c-&gt;argv[<span class="hljs-number">2</span>]);<br>    notifyKeyspaceEvent(NOTIFY_STRING,<span class="hljs-string">&quot;set&quot;</span>,c-&gt;argv[<span class="hljs-number">1</span>],c-&gt;db-&gt;id);<br>    server.dirty++;<br><br>    <span class="hljs-comment">/* Propagate as SET command */</span><br>    rewriteClientCommandArgument(c,<span class="hljs-number">0</span>,shared.<span class="hljs-built_in">set</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="5-6-getrange"><a href="#5-6-getrange" class="headerlink" title="5.6 getrange"></a>5.6 getrange</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief getrange key start end</span><br><span class="hljs-comment"> *        获取key的[start...end]位置的子串</span><br><span class="hljs-comment"> *          - 如果没有这个key 不管start和end参数如何 就返回&quot;&quot;空字符串</span><br><span class="hljs-comment"> *          - 数据库存在key 将key对应的value[start...end]子串返回给客户端</span><br><span class="hljs-comment"> * @param c</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">getrangeCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    robj *o;<br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> start, end;<br>    <span class="hljs-type">char</span> *str, llbuf[<span class="hljs-number">32</span>];<br>    <span class="hljs-type">size_t</span> <span class="hljs-built_in">strlen</span>;<br><br>    <span class="hljs-keyword">if</span> (getLongLongFromObjectOrReply(c,c-&gt;argv[<span class="hljs-number">2</span>],&amp;start,<span class="hljs-literal">NULL</span>) != C_OK)<br>        <span class="hljs-keyword">return</span>;<br>    <span class="hljs-keyword">if</span> (getLongLongFromObjectOrReply(c,c-&gt;argv[<span class="hljs-number">3</span>],&amp;end,<span class="hljs-literal">NULL</span>) != C_OK)<br>        <span class="hljs-keyword">return</span>;<br>    <span class="hljs-comment">// 从数据库查询键</span><br>    <span class="hljs-keyword">if</span> ((o = lookupKeyReadOrReply(c,c-&gt;argv[<span class="hljs-number">1</span>],shared.emptybulk)) == <span class="hljs-literal">NULL</span> ||<br>        checkType(c,o,OBJ_STRING)) <span class="hljs-keyword">return</span>;<br><br>    <span class="hljs-keyword">if</span> (o-&gt;encoding == OBJ_ENCODING_INT) &#123; <span class="hljs-comment">// 字符串的编码是int</span><br>        str = llbuf;<br>        <span class="hljs-built_in">strlen</span> = ll2string(llbuf,<span class="hljs-keyword">sizeof</span>(llbuf),(<span class="hljs-type">long</span>)o-&gt;ptr);<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 字符串编码是EMBSTR或RAW</span><br>        str = o-&gt;ptr;<br>        <span class="hljs-built_in">strlen</span> = sdslen(str);<br>    &#125;<br><br>    <span class="hljs-comment">/* Convert negative indexes */</span><br>    <span class="hljs-keyword">if</span> (start &lt; <span class="hljs-number">0</span> &amp;&amp; end &lt; <span class="hljs-number">0</span> &amp;&amp; start &gt; end) &#123;<br>        addReply(c,shared.emptybulk);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (start &lt; <span class="hljs-number">0</span>) start = <span class="hljs-built_in">strlen</span>+start;<br>    <span class="hljs-keyword">if</span> (end &lt; <span class="hljs-number">0</span>) end = <span class="hljs-built_in">strlen</span>+end;<br>    <span class="hljs-keyword">if</span> (start &lt; <span class="hljs-number">0</span>) start = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (end &lt; <span class="hljs-number">0</span>) end = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> ((<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span>)end &gt;= <span class="hljs-built_in">strlen</span>) end = <span class="hljs-built_in">strlen</span><span class="hljs-number">-1</span>;<br><br>    <span class="hljs-comment">/* Precondition: end &gt;= 0 &amp;&amp; end &lt; strlen, so the only condition where</span><br><span class="hljs-comment">     * nothing can be returned is: start &gt; end. */</span><br>    <span class="hljs-keyword">if</span> (start &gt; end || <span class="hljs-built_in">strlen</span> == <span class="hljs-number">0</span>) &#123;<br>        addReply(c,shared.emptybulk);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        addReplyBulkCBuffer(c,(<span class="hljs-type">char</span>*)str+start,end-start+<span class="hljs-number">1</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="5-7-mget"><a href="#5-7-mget" class="headerlink" title="5.7 mget"></a>5.7 mget</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief mget k1 k2 k3</span><br><span class="hljs-comment"> *        获取多个key</span><br><span class="hljs-comment"> * @param c </span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">mgetCommand</span><span class="hljs-params">(client *c)</span> &#123;<br>    <span class="hljs-type">int</span> j;<br><br>    addReplyArrayLen(c,c-&gt;argc<span class="hljs-number">-1</span>);<br>    <span class="hljs-keyword">for</span> (j = <span class="hljs-number">1</span>; j &lt; c-&gt;argc; j++) &#123;<br>        <span class="hljs-comment">// 轮询要要查找的所有key</span><br>        robj *o = lookupKeyRead(c-&gt;db,c-&gt;argv[j]);<br>        <span class="hljs-keyword">if</span> (o == <span class="hljs-literal">NULL</span>) &#123;<br>            addReplyNull(c);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (o-&gt;type != OBJ_STRING) &#123;<br>                addReplyNull(c);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                addReplyBulk(c,o);<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x26-数据结构string</div>
+      <div>https://bannirui.github.io/2025/02/10/Redis/Redis-0x26-数据结构string/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/10/Redis/Redis-0x27-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84redisObject/" title="Redis-0x27-数据结构redisObject">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x27-数据结构redisObject</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/10/Redis/Redis-0x25-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84hash/" title="Redis-0x25-数据结构hash">
+                        <span class="hidden-mobile">Redis-0x25-数据结构hash</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '560d92952452ab43e430931089a35543'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1112 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="数据类型的编码方式。 1 ziplist是什么1.1 结构从注释上可以看出ziplist结构如下。   1.2 字段解释   字段 长度 语义    zlbytes uint32_t 表示ziplist占用内存大小。   zltail uint32_t 表示最后一个entry相对ziplist的地址偏移量。   zllen uint16_t entry节点数量，16bit上限是2^16-1。数量&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-0x22-数据结构ziplist">
+<meta property="og:url" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="数据类型的编码方式。 1 ziplist是什么1.1 结构从注释上可以看出ziplist结构如下。   1.2 字段解释   字段 长度 语义    zlbytes uint32_t 表示ziplist占用内存大小。   zltail uint32_t 表示最后一个entry相对ziplist的地址偏移量。   zllen uint16_t entry节点数量，16bit上限是2^16-1。数量&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330223845470.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330225305188.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330230319123.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330231108397.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330230815003.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330232221382.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330232312936.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331090437381.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331105456800.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331101514463.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331110748619.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230404175853209.png">
+<meta property="article:published_time" content="2025-02-10T07:23:44.000Z">
+<meta property="article:modified_time" content="2025-02-10T07:42:37.978Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330223845470.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Redis-0x22-数据结构ziplist - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis-0x22-数据结构ziplist"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-10 15:23" pubdate>
+          2025年2月10日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Redis"
+        id="heading-e111446745a1825b862f8727ae63bce4" role="tab" data-toggle="collapse" href="#collapse-e111446745a1825b862f8727ae63bce4"
+        aria-expanded="true"
+      >
+        Redis
+        <span class="list-group-count">(48)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e111446745a1825b862f8727ae63bce4"
+           role="tabpanel" aria-labelledby="heading-e111446745a1825b862f8727ae63bce4">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x00-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87/" title="Redis-0x00-学习目标"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x00-学习目标</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x01-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="Redis-0x01-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x01-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x02-%E4%BB%8EReadme%E5%BC%80%E5%A7%8B/" title="Redis-0x02-从Readme开始"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x02-从Readme开始</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x03-Makefile%E8%84%9A%E6%9C%AC/" title="Redis-0x03-Makefile脚本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x03-Makefile脚本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x04-%E7%94%A8cmake%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="Redis-0x04-用cmake构建项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x04-用cmake构建项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x05-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0/" title="Redis-0x05-内存管理的跨平台"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x05-内存管理的跨平台</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="Redis-0x06-zmalloc的实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x06-zmalloc的实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x07-linux%E7%B3%BB%E7%BB%9Fproc%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" title="Redis-0x07-linux系统proc虚拟文件系统"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x07-linux系统proc虚拟文件系统</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x08-%E5%A6%82%E4%BD%95%E5%B0%86jemalloc%E7%BC%96%E8%AF%91%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD/" title="Redis-0x08-如何将jemalloc编译到项目中"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x08-如何将jemalloc编译到项目中</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/13/Redis/Redis-0x09-%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%9D%83%E9%99%90%E4%B8%8Eunmask%E5%80%BC/" title="Redis-0x09-新建文件目录与权限与unmask值"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x09-新建文件目录与权限与unmask值</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0A-redisServer%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="Redis-0x0A-redisServer的初始化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0A-redisServer的初始化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0B-数据结构dict</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0C-initServerConfig%E5%87%BD%E6%95%B0/" title="Redis-0x0C-initServerConfig函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0C-initServerConfig函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0D-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%99%A8AE/" title="Redis-0x0D-事件循环器AE"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0D-事件循环器AE</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0E-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8Kqueue/" title="Redis-0x0E-多路复用器Kqueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0E-多路复用器Kqueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x0F-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8epoll/" title="Redis-0x0F-多路复用器epoll"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x0F-多路复用器epoll</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x10-socket%E7%BC%96%E7%A8%8B/" title="Redis-0x10-socket编程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x10-socket编程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/15/Redis/Redis-0x11-%E5%BA%93%E5%87%BD%E6%95%B0fcntl/" title="Redis-0x11-库函数fcntl"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x11-库函数fcntl</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/16/Redis/Redis-0x12-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/" title="Redis-0x12-数据结构sds"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x12-数据结构sds</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/04/16/Redis/Redis-0x13-%E5%BA%93%E5%87%BD%E6%95%B0fopen/" title="Redis-0x13-库函数fopen"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Redis-0x13-库函数fopen</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Redis/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis-0x22-数据结构ziplist</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>数据类型的编码方式。</p>
+<h3 id="1-ziplist是什么"><a href="#1-ziplist是什么" class="headerlink" title="1 ziplist是什么"></a>1 ziplist是什么</h3><h4 id="1-1-结构"><a href="#1-1-结构" class="headerlink" title="1.1 结构"></a>1.1 结构</h4><p>从注释上可以看出ziplist结构如下。</p>
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330223845470.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="1-2-字段解释"><a href="#1-2-字段解释" class="headerlink" title="1.2 字段解释"></a>1.2 字段解释</h4><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>长度</th>
+<th>语义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zlbytes</td>
+<td>uint32_t</td>
+<td>表示ziplist占用内存大小。</td>
+</tr>
+<tr>
+<td>zltail</td>
+<td>uint32_t</td>
+<td>表示最后一个entry相对ziplist的地址偏移量。</td>
+</tr>
+<tr>
+<td>zllen</td>
+<td>uint16_t</td>
+<td>entry节点数量，16bit上限是2^16-1。<br>数量&lt;上限，代表的就是实际节点数量。<br>数量&gt;&#x3D;上限，节点的实际数量需要遍历计数。</td>
+</tr>
+<tr>
+<td>entry</td>
+<td>-</td>
+<td>保存有限长度的字符串或者整数。</td>
+</tr>
+<tr>
+<td>zlend</td>
+<td>byte</td>
+<td>0xFF，特殊的节点，ziplist的结束标识。</td>
+</tr>
+</tbody></table>
+<h3 id="2-entry是什么"><a href="#2-entry是什么" class="headerlink" title="2 entry是什么"></a>2 entry是什么</h3><h4 id="2-1-结构"><a href="#2-1-结构" class="headerlink" title="2.1 结构"></a>2.1 结构</h4><p>从注释上可以看出entry的结构如下。</p>
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330225305188.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="2-2-字段解释"><a href="#2-2-字段解释" class="headerlink" title="2.2 字段解释"></a>2.2 字段解释</h4><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>语义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>prevlen</td>
+<td>前驱节点entry占用多少bytes。</td>
+</tr>
+<tr>
+<td>encoding</td>
+<td>主要作用区分存储的内容是整数还是字符串。<br>存储字符串的时候，还承担着表示字符串长度的职责。<br>存储整数的时候，可能还用来直接存储内容。</td>
+</tr>
+<tr>
+<td>entry-data</td>
+<td>节点实际存储的内容。<br>以字符数组形式存储的字符串，不需要\0结束标识符。<br>整数。</td>
+</tr>
+</tbody></table>
+<h4 id="2-3-详解"><a href="#2-3-详解" class="headerlink" title="2.3 详解"></a>2.3 详解</h4><h5 id="2-3-1-prevlen字段"><a href="#2-3-1-prevlen字段" class="headerlink" title="2.3.1 prevlen字段"></a>2.3.1 prevlen字段</h5><p>为什么要在entry上冗余着前一个entry的内存大小，其实作用就跟双链表的指针差不多，这儿不用指针关联，只要记录上一个节点多少个字节就可以移动指针，往前寻址了。</p>
+<p>前驱entry地址&#x3D;当前entry地址-前驱entry大小</p>
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330230319123.png" srcset="/img/loading.gif" lazyload class="">
+
+<h5 id="2-3-2-encoding字段"><a href="#2-3-2-encoding字段" class="headerlink" title="2.3.2 encoding字段"></a>2.3.2 encoding字段</h5><p>encoding二进制表示形式的高2位作为标识位，决定entry中数据内容是字符数组还是整数。</p>
+<h6 id="2-3-2-1-存储字符串"><a href="#2-3-2-1-存储字符串" class="headerlink" title="2.3.2.1 存储字符串"></a>2.3.2.1 存储字符串</h6><img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330231108397.png" srcset="/img/loading.gif" lazyload class="">
+
+<h6 id="2-3-2-2-存储整数"><a href="#2-3-2-2-存储整数" class="headerlink" title="2.3.2.2 存储整数"></a>2.3.2.2 存储整数</h6><img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330230815003.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="3-初始化ziplist"><a href="#3-初始化ziplist" class="headerlink" title="3 初始化ziplist"></a>3 初始化ziplist</h3><img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330232221382.png" srcset="/img/loading.gif" lazyload class="">
+
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230330232312936.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="4-entry字段prevlen"><a href="#4-entry字段prevlen" class="headerlink" title="4 entry字段prevlen"></a>4 entry字段prevlen</h3><h4 id="4-1-prevlen前驱长度编码"><a href="#4-1-prevlen前驱长度编码" class="headerlink" title="4.1 prevlen前驱长度编码"></a>4.1 prevlen前驱长度编码</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief ptr指向entry中的prevlen字段 将prevlen的编码长度写到prevlensize中</span><br><span class="hljs-comment"> *                                  prevlen的值&lt;0xfe 说明prevlen就1个字节 存储的就是前驱点占用多少bytes</span><br><span class="hljs-comment"> *                                  prevlen的值&gt;=0xfe 说明prevlen共5个字节 第1个字节是0xfe标识 后4个字节存储前驱节点占用多少bytes</span><br><span class="hljs-comment"> * @param ptr 指向entry</span><br><span class="hljs-comment"> * @param prevlensize entry中prevlen字段的编码长度</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZIP_DECODE_PREVLENSIZE(ptr, prevlensize) do &#123;                          \</span><br><span class="hljs-meta">    <span class="hljs-keyword">if</span> ((ptr)[0] &lt; ZIP_BIG_PREVLEN) &#123;                                          \</span><br><span class="hljs-meta">        (prevlensize) = 1;                                                     \</span><br><span class="hljs-meta">    &#125; <span class="hljs-keyword">else</span> &#123;                                                                   \</span><br><span class="hljs-meta">        (prevlensize) = 5;                                                     \</span><br><span class="hljs-meta">    &#125;                                                                          \</span><br><span class="hljs-meta">&#125; while(0)</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="4-2-prevlen前驱长度"><a href="#4-2-prevlen前驱长度" class="headerlink" title="4.2 prevlen前驱长度"></a>4.2 prevlen前驱长度</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief ptr指向entry节点 将entrty中的prevlen字段向zlentry中的prevlensize和prevlen字段写入</span><br><span class="hljs-comment"> * @param ptr 指向entry节点</span><br><span class="hljs-comment"> * @param prevlensize 用来接收entry中prevlen字段的编码</span><br><span class="hljs-comment"> *                                    prevlen&lt;255 1个字节表示长度 即prevlensize=1</span><br><span class="hljs-comment"> *                                    prevlen&gt;=255 5个字节表示长度 即prevlensize=5</span><br><span class="hljs-comment"> * @param prevlen 用来接收entry中prevlen字段的值</span><br><span class="hljs-comment"> *                                    prevlen&lt;255 zlentry中prevlen字段值=entry中prevlen字段值</span><br><span class="hljs-comment"> *                                    prevlen&gt;=255 zlentry中prevlen字段值=entry中prevlen字段的后4个字节值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZIP_DECODE_PREVLEN(ptr, prevlensize, prevlen) do &#123; \</span><br><span class="hljs-meta">    ZIP_DECODE_PREVLENSIZE(ptr, prevlensize);                                  \</span><br><span class="hljs-meta">    <span class="hljs-keyword">if</span> ((prevlensize) == 1) &#123;                                                  \</span><br><span class="hljs-meta">        (prevlen) = (ptr)[0];                                                  \</span><br><span class="hljs-meta">    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">/* prevlensize == 5 */</span>                                            \</span><br><span class="hljs-meta">        (prevlen) = ((ptr)[4] &lt;&lt; 24) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[3] &lt;&lt; 16) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[2] &lt;&lt;  8) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[1]);                                                \</span><br><span class="hljs-meta">    &#125;                                                                          \</span><br><span class="hljs-meta">&#125; while(0)</span><br></code></pre></td></tr></table></figure>
+
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331090437381.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="4-3-prevlen需要多大内存-amp-amp-prevlen字段写入"><a href="#4-3-prevlen需要多大内存-amp-amp-prevlen字段写入" class="headerlink" title="4.3 prevlen需要多大内存 &amp;&amp; prevlen字段写入"></a>4.3 prevlen需要多大内存 &amp;&amp; prevlen字段写入</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 这个函数有两个场景</span><br><span class="hljs-comment">//                1 不传entry时 不需要对entry中prevlen字段写入</span><br><span class="hljs-comment">//                2 传entry时 对entry中prevlen字段写入</span><br><span class="hljs-comment">// @param p 指向entry节点</span><br><span class="hljs-comment">// @pram len 前驱entry的长度大小</span><br><span class="hljs-comment">// @return p是null的时候 entry中需要给prevlen这个字段开辟多大内存(多少个byte)</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">zipStorePrevEntryLength</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> len)</span> &#123;<br>    <span class="hljs-keyword">if</span> (p == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-comment">// 前驱节点大小的表示 要么用1个字节 要么用5个字节</span><br>        <span class="hljs-keyword">return</span> (len &lt; ZIP_BIG_PREVLEN) ? <span class="hljs-number">1</span> : <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">uint32_t</span>) + <span class="hljs-number">1</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span> (len &lt; ZIP_BIG_PREVLEN) &#123; <span class="hljs-comment">// prevlen用1个字节表示 填充len的实际大小</span><br>            p[<span class="hljs-number">0</span>] = len;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// prevlen用5个字节表示 第1个字节填充0xfe 后4个字节使用len的实际值</span><br>            <span class="hljs-keyword">return</span> zipStorePrevEntryLengthLarge(p,len);<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// prevlen需要5个字节时 entry节点写入prevlen字段</span><br><span class="hljs-comment">// 这个函数有两个场景</span><br><span class="hljs-comment">//                1 不传entry时 不需要对entry中prevlen字段写入</span><br><span class="hljs-comment">//                2 传entry时 对entry中prevlen字段写入</span><br><span class="hljs-comment">// @param p entry节点</span><br><span class="hljs-comment">// @param len 写给prevlen字段表示的长度</span><br><span class="hljs-comment">// @return prevlen的大小 5个字节</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">zipStorePrevEntryLengthLarge</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> len)</span> &#123;<br>    <span class="hljs-type">uint32_t</span> u32;<br>    <span class="hljs-keyword">if</span> (p != <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-comment">// prevlen共5bytes</span><br>        <span class="hljs-comment">// 第1个byte填充标识位0xfe</span><br>        <span class="hljs-comment">// 后4个byte写入len</span><br>        p[<span class="hljs-number">0</span>] = ZIP_BIG_PREVLEN;<br>        u32 = len;<br>        <span class="hljs-built_in">memcpy</span>(p+<span class="hljs-number">1</span>,&amp;u32,<span class="hljs-keyword">sizeof</span>(u32));<br>        memrev32ifbe(p+<span class="hljs-number">1</span>);<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">uint32_t</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331105456800.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="5-entry字段encoding"><a href="#5-entry字段encoding" class="headerlink" title="5 entry字段encoding"></a>5 entry字段encoding</h3><h4 id="5-1-编码类型"><a href="#5-1-编码类型" class="headerlink" title="5.1 编码类型"></a>5.1 编码类型</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 字符串是否压缩成整型</span><br><span class="hljs-comment">// @param entry 内容</span><br><span class="hljs-comment">// @param entrylen 内容长度</span><br><span class="hljs-comment">// @param v 字符串转成的整数</span><br><span class="hljs-comment">// @param encoding entry种encoding字段</span><br><span class="hljs-comment">// @return 0-标识可以将字符串压缩成整型 1-标识可以将字符串压缩成整型</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">zipTryEncoding</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *entry, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> entrylen, <span class="hljs-type">long</span> <span class="hljs-type">long</span> *v, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *encoding)</span> &#123;<br>    <span class="hljs-comment">// 字符串转换成的整数(long long)</span><br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> value;<br><br>    <span class="hljs-keyword">if</span> (entrylen &gt;= <span class="hljs-number">32</span> || entrylen == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 整型32bit边界</span><br>    <span class="hljs-keyword">if</span> (string2ll((<span class="hljs-type">char</span>*)entry,entrylen,&amp;value)) &#123; <span class="hljs-comment">// 将entry字符串转换成整数value</span><br>        <span class="hljs-comment">/* Great, the string can be encoded. Check what&#x27;s the smallest</span><br><span class="hljs-comment">         * of our encoding types that can hold this value. */</span><br>        <span class="hljs-comment">// entry的整数编码提供了6种 根据具体的数字大小选择合适的编码方式</span><br>        <span class="hljs-keyword">if</span> (value &gt;= <span class="hljs-number">0</span> &amp;&amp; value &lt;= <span class="hljs-number">12</span>) &#123; <span class="hljs-comment">// 4bit无符号整数[0...12]</span><br>            *encoding = ZIP_INT_IMM_MIN+value; <span class="hljs-comment">// 这种编码方式直接把内容也压缩到了encoding中了 1个字节搞定</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value &gt;= INT8_MIN &amp;&amp; value &lt;= INT8_MAX) &#123; <span class="hljs-comment">// 8bit有符号</span><br>            *encoding = ZIP_INT_8B;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value &gt;= INT16_MIN &amp;&amp; value &lt;= INT16_MAX) &#123; <span class="hljs-comment">// 16bit有符号</span><br>            *encoding = ZIP_INT_16B;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value &gt;= INT24_MIN &amp;&amp; value &lt;= INT24_MAX) &#123; <span class="hljs-comment">// 24bit有符号</span><br>            *encoding = ZIP_INT_24B;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value &gt;= INT32_MIN &amp;&amp; value &lt;= INT32_MAX) &#123; <span class="hljs-comment">// 32bit有符号</span><br>            *encoding = ZIP_INT_32B;<br>        &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 64bit有符号</span><br>            *encoding = ZIP_INT_64B;<br>        &#125;<br>        *v = value;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331101514463.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="5-2-encoding需要多大内存-amp-amp-encoding字段写入"><a href="#5-2-encoding需要多大内存-amp-amp-encoding字段写入" class="headerlink" title="5.2 encoding需要多大内存 &amp;&amp; encoding字段写入"></a>5.2 encoding需要多大内存 &amp;&amp; encoding字段写入</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 该函数2个使用场景</span><br><span class="hljs-comment">//                p为null 只返回encoding需要几个字节即可</span><br><span class="hljs-comment">//                p不为null 不仅需要返回encoding需要几个字节 还需要为entry写入encoding这字段内容</span><br><span class="hljs-comment">// @param p 指向entry节点</span><br><span class="hljs-comment">// @param encoding entry中encoding字段</span><br><span class="hljs-comment">// @param rawlen entry中entry-data实际内容的长度</span><br><span class="hljs-comment">// @return entry需要为encoding这个字段开辟多大内存</span><br><span class="hljs-comment">//         不同的编码类型开辟的字节数不同</span><br><span class="hljs-comment">//         字符串 可能需要1byte或者2bytes或者5bytes</span><br><span class="hljs-comment">//         整数 需要1byte</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">zipStoreEntryEncoding</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> encoding, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> rawlen)</span> &#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> len = <span class="hljs-number">1</span>, buf[<span class="hljs-number">5</span>];<br><br>    <span class="hljs-keyword">if</span> (ZIP_IS_STR(encoding)) &#123; <span class="hljs-comment">// 字符串编码方式需要给encoding分配大小可能是1byte\2bytes\5bytes 根据字符串长度决定</span><br>        <span class="hljs-comment">/* Although encoding is given it may not be set for strings,</span><br><span class="hljs-comment">         * so we determine it here using the raw length. */</span><br>        <span class="hljs-keyword">if</span> (rawlen &lt;= <span class="hljs-number">0x3f</span>) &#123; <span class="hljs-comment">// encoding需要1byte 高2位放1 后6位表示字符串长度 长度上限就是0x3f</span><br>            <span class="hljs-keyword">if</span> (!p) <span class="hljs-keyword">return</span> len;<br>            buf[<span class="hljs-number">0</span>] = ZIP_STR_06B | rawlen;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (rawlen &lt;= <span class="hljs-number">0x3fff</span>) &#123; <span class="hljs-comment">// encoding需要2bytes 高2位放1 后14位表示字符串长度 长度上限就是0x3fff</span><br>            len += <span class="hljs-number">1</span>;<br>            <span class="hljs-keyword">if</span> (!p) <span class="hljs-keyword">return</span> len;<br>            buf[<span class="hljs-number">0</span>] = ZIP_STR_14B | ((rawlen &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0x3f</span>);<br>            buf[<span class="hljs-number">1</span>] = rawlen &amp; <span class="hljs-number">0xff</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// encoding需要5bytes 高2位放1 后40位表示字符串长度 长度上限就是0x3fffffffff</span><br>            len += <span class="hljs-number">4</span>;<br>            <span class="hljs-keyword">if</span> (!p) <span class="hljs-keyword">return</span> len;<br>            buf[<span class="hljs-number">0</span>] = ZIP_STR_32B;<br>            buf[<span class="hljs-number">1</span>] = (rawlen &gt;&gt; <span class="hljs-number">24</span>) &amp; <span class="hljs-number">0xff</span>;<br>            buf[<span class="hljs-number">2</span>] = (rawlen &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xff</span>;<br>            buf[<span class="hljs-number">3</span>] = (rawlen &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xff</span>;<br>            buf[<span class="hljs-number">4</span>] = rawlen &amp; <span class="hljs-number">0xff</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 整数编码需要给encoding这个字段分配1byte</span><br>        <span class="hljs-comment">/* Implies integer encoding, so length is always 1. */</span><br>        <span class="hljs-keyword">if</span> (!p) <span class="hljs-keyword">return</span> len;<br>        buf[<span class="hljs-number">0</span>] = encoding;<br>    &#125;<br><br>    <span class="hljs-comment">/* Store this length at p. */</span><br>    <span class="hljs-built_in">memcpy</span>(p,buf,len);<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230331110748619.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="6-entry字段entry-data"><a href="#6-entry字段entry-data" class="headerlink" title="6 entry字段entry-data"></a>6 entry字段entry-data</h3><h4 id="6-1-entry-data需要大多内存"><a href="#6-1-entry-data需要大多内存" class="headerlink" title="6.1 entry-data需要大多内存"></a>6.1 entry-data需要大多内存</h4><h5 id="6-1-1-字符串"><a href="#6-1-1-字符串" class="headerlink" title="6.1.1 字符串"></a>6.1.1 字符串</h5><p>entry-data中存储字符串，不需要给字符数组申请结束标识\0。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">reqlen = slen; <span class="hljs-comment">// 字符串编码 有多少个字符就需要申请多少个byte</span><br></code></pre></td></tr></table></figure>
+
+<h5 id="6-1-2-整数"><a href="#6-1-2-整数" class="headerlink" title="6.1.2 整数"></a>6.1.2 整数</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 根据整数编码计算表示内容需要的大小 也就是entry中的entry-data字段</span><br><span class="hljs-comment">// @param encoding 整数编码方式</span><br><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">zipIntSize</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> encoding)</span> &#123;<br>    <span class="hljs-keyword">switch</span>(encoding) &#123;<br>    <span class="hljs-keyword">case</span> ZIP_INT_8B:  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <span class="hljs-comment">// 1字节</span><br>    <span class="hljs-keyword">case</span> ZIP_INT_16B: <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>; <span class="hljs-comment">// 2字节</span><br>    <span class="hljs-keyword">case</span> ZIP_INT_24B: <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>; <span class="hljs-comment">// 3字节</span><br>    <span class="hljs-keyword">case</span> ZIP_INT_32B: <span class="hljs-keyword">return</span> <span class="hljs-number">4</span>; <span class="hljs-comment">// 4字节</span><br>    <span class="hljs-keyword">case</span> ZIP_INT_64B: <span class="hljs-keyword">return</span> <span class="hljs-number">8</span>; <span class="hljs-comment">// 5字节</span><br>    &#125;<br>    <span class="hljs-comment">// [0...12]的数字会编码到encoding中 不需要额外的内存</span><br>    <span class="hljs-keyword">if</span> (encoding &gt;= ZIP_INT_IMM_MIN &amp;&amp; encoding &lt;= ZIP_INT_IMM_MAX)<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; <span class="hljs-comment">/* 4 bit immediate */</span><br>    <span class="hljs-comment">/* bad encoding, covered by a previous call to ZIP_ASSERT_ENCODING */</span><br>    redis_unreachable();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="6-2-entry-data字段写入"><a href="#6-2-entry-data字段写入" class="headerlink" title="6.2 entry-data字段写入"></a>6.2 entry-data字段写入</h4><h4 id="6-2-1-字符串"><a href="#6-2-1-字符串" class="headerlink" title="6.2.1 字符串"></a>6.2.1 字符串</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">memcpy</span>(p,s,slen);<br></code></pre></td></tr></table></figure>
+
+<h4 id="6-2-2-整数"><a href="#6-2-2-整数" class="headerlink" title="6.2.2 整数"></a>6.2.2 整数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 向entry中写入整数的entry-data</span><br><span class="hljs-comment">// @param p entry节点</span><br><span class="hljs-comment">// @param value 整数的值</span><br><span class="hljs-comment">// @param encoding 编码</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">zipSaveInteger</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">int64_t</span> value, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> encoding)</span> &#123;<br>    <span class="hljs-type">int16_t</span> i16;<br>    <span class="hljs-type">int32_t</span> i32;<br>    <span class="hljs-type">int64_t</span> i64;<br>    <span class="hljs-keyword">if</span> (encoding == ZIP_INT_8B) &#123; <span class="hljs-comment">// 1字节</span><br>        ((<span class="hljs-type">int8_t</span>*)p)[<span class="hljs-number">0</span>] = (<span class="hljs-type">int8_t</span>)value;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_16B) &#123; <span class="hljs-comment">// 2字节</span><br>        i16 = value;<br>        <span class="hljs-built_in">memcpy</span>(p,&amp;i16,<span class="hljs-keyword">sizeof</span>(i16));<br>        memrev16ifbe(p);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_24B) &#123; <span class="hljs-comment">// 3字节</span><br>        i32 = value&lt;&lt;<span class="hljs-number">8</span>;<br>        memrev32ifbe(&amp;i32);<br>        <span class="hljs-built_in">memcpy</span>(p,((<span class="hljs-type">uint8_t</span>*)&amp;i32)+<span class="hljs-number">1</span>,<span class="hljs-keyword">sizeof</span>(i32)-<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">uint8_t</span>));<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_32B) &#123; <span class="hljs-comment">// 4字节</span><br>        i32 = value;<br>        <span class="hljs-built_in">memcpy</span>(p,&amp;i32,<span class="hljs-keyword">sizeof</span>(i32));<br>        memrev32ifbe(p);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_64B) &#123; <span class="hljs-comment">// 8字节</span><br>        i64 = value;<br>        <span class="hljs-built_in">memcpy</span>(p,&amp;i64,<span class="hljs-keyword">sizeof</span>(i64));<br>        memrev64ifbe(p);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding &gt;= ZIP_INT_IMM_MIN &amp;&amp; encoding &lt;= ZIP_INT_IMM_MAX) &#123; <span class="hljs-comment">// 直接写在encoding的后6bit上了</span><br>        <span class="hljs-comment">/* Nothing to do, the value is stored in the encoding itself. */</span><br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        assert(<span class="hljs-literal">NULL</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="7-ziplist大小重置"><a href="#7-ziplist大小重置" class="headerlink" title="7 ziplist大小重置"></a>7 ziplist大小重置</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// ziplist重置大小</span><br><span class="hljs-comment">// @param zl ziplist实例</span><br><span class="hljs-comment">// @param len 新ziplist的大小</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *<span class="hljs-title function_">ziplistResize</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zl, <span class="hljs-type">size_t</span> len)</span> &#123;<br>    assert(len &lt; UINT32_MAX);<br>    <span class="hljs-comment">// 内存分批</span><br>    zl = zrealloc(zl,len);<br>    <span class="hljs-comment">// ziplist中zlbytes字段记录新的大小</span><br>    ZIPLIST_BYTES(zl) = intrev32ifbe(len);<br>    <span class="hljs-comment">// ziplist结束标识</span><br>    zl[len<span class="hljs-number">-1</span>] = ZIP_END;<br>    <span class="hljs-keyword">return</span> zl;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="8-添加节点"><a href="#8-添加节点" class="headerlink" title="8 添加节点"></a>8 添加节点</h3><h4 id="8-1-任意位置插入节点"><a href="#8-1-任意位置插入节点" class="headerlink" title="8.1 任意位置插入节点"></a>8.1 任意位置插入节点</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 添加内容 以entry节点形式挂到ziplist上</span><br><span class="hljs-comment">// @param zl ziplist</span><br><span class="hljs-comment">// @param p entry节点 挂到哪个节点之后</span><br><span class="hljs-comment">// @param s 内容</span><br><span class="hljs-comment">// @param slen 内容长度</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *__ziplistInsert(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zl, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *s, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> slen) &#123;<br>    <span class="hljs-comment">// 取出ziplist的zlbytes值</span><br>    <span class="hljs-comment">// curlen ziplist的大小</span><br>    <span class="hljs-comment">// reqlen 需要向系统申请多大内容给当前entry节点 reqlen=prevlen需要的内存+encoding需要的内存+entry-data需要的内存</span><br>    <span class="hljs-type">size_t</span> curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen, newlen;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> prevlensize, prevlen = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">size_t</span> offset;<br>    <span class="hljs-type">int</span> nextdiff = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">// encoding 0000 0000</span><br>    <span class="hljs-comment">// 字符串编码下高2位0 剩下6位表示字符串长度</span><br>    <span class="hljs-comment">// 也就是说如果是字符串编码方式 那么默认支持的字符串长度是2^6-1</span><br>    <span class="hljs-comment">// 如果实际字符串长度比2^6-1要长 那么就要更新encoding编码方式</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> encoding = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> value = <span class="hljs-number">123456789</span>; <span class="hljs-comment">/* initialized to avoid warning. Using a value</span><br><span class="hljs-comment">                                    that is easy to see if for some reason</span><br><span class="hljs-comment">                                    we use it uninitialized. */</span><br>    zlentry tail;<br><br>    <span class="hljs-comment">/* Find out prevlen for the entry that is inserted. */</span><br>    <span class="hljs-keyword">if</span> (p[<span class="hljs-number">0</span>] != ZIP_END) &#123; <span class="hljs-comment">// p指向的是end</span><br>        ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *ptail = ZIPLIST_ENTRY_TAIL(zl); <span class="hljs-comment">// tail节点</span><br>        <span class="hljs-keyword">if</span> (ptail[<span class="hljs-number">0</span>] != ZIP_END) &#123; <span class="hljs-comment">// 往中间某个节点后挂载</span><br>            prevlen = zipRawEntryLengthSafe(zl, curlen, ptail);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">/* See if the entry can be encoded */</span><br>    <span class="hljs-comment">// s 字符串</span><br>    <span class="hljs-comment">// slen 字符串长度</span><br>    <span class="hljs-comment">// value 字符串转换成的整数</span><br>    <span class="hljs-comment">// encoding 整数的编码 也就是entry中的encoding字段</span><br>    <span class="hljs-keyword">if</span> (zipTryEncoding(s,slen,&amp;value,&amp;encoding)) &#123; <span class="hljs-comment">// 字符串是否可以压缩成整型</span><br>        <span class="hljs-comment">/* &#x27;encoding&#x27; is set to the appropriate integer encoding */</span><br>        reqlen = zipIntSize(encoding); <span class="hljs-comment">// 整数内容还需要多大内存 也就是entry节点中的entry-data需要多少字节</span><br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">/* &#x27;encoding&#x27; is untouched, however zipStoreEntryEncoding will use the</span><br><span class="hljs-comment">         * string length to figure out how to encode it. */</span><br>        reqlen = slen; <span class="hljs-comment">// 字符串编码 有多少个字符就需要申请多少个byte</span><br>    &#125;<br>    <span class="hljs-comment">// 此时reqlen只记录了entry中需要开辟多大内存给entry-data这个字段</span><br>    <span class="hljs-comment">/* We need space for both the length of the previous entry and</span><br><span class="hljs-comment">     * the length of the payload. */</span><br>    <span class="hljs-comment">// entry中需要开辟多大内存给prevlen这个字段</span><br>    reqlen += zipStorePrevEntryLength(<span class="hljs-literal">NULL</span>,prevlen);<br>    <span class="hljs-comment">// entry中需要开辟多大内存给encoding这个字段</span><br>    reqlen += zipStoreEntryEncoding(<span class="hljs-literal">NULL</span>,encoding,slen);<br><br>    <span class="hljs-comment">/* When the insert position is not equal to the tail, we need to</span><br><span class="hljs-comment">     * make sure that the next entry can hold this entry&#x27;s length in</span><br><span class="hljs-comment">     * its prevlen field. */</span><br>    <span class="hljs-type">int</span> forcelarge = <span class="hljs-number">0</span>;<br>    nextdiff = (p[<span class="hljs-number">0</span>] != ZIP_END) ? zipPrevLenByteDiff(p,reqlen) : <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (nextdiff == <span class="hljs-number">-4</span> &amp;&amp; reqlen &lt; <span class="hljs-number">4</span>) &#123;<br>        nextdiff = <span class="hljs-number">0</span>;<br>        forcelarge = <span class="hljs-number">1</span>;<br>    &#125;<br><br>    <span class="hljs-comment">/* Store offset because a realloc may change the address of zl. */</span><br>    offset = p-zl;<br>    <span class="hljs-comment">// 新添加entry节点了 ziplist要扩容 ziplist要扩到多大=老ziplist大小+新entry节点大小+节点不是挂在末节点可能导致的额外内存</span><br>    newlen = curlen+reqlen+nextdiff;<br>    <span class="hljs-comment">// ziplist重置大小</span><br>    zl = ziplistResize(zl,newlen);<br>    p = zl+offset; <span class="hljs-comment">// 保证p在ziplist中的相对位置</span><br><br>    <span class="hljs-comment">/* Apply memory move when necessary and update tail offset. */</span><br>    <span class="hljs-keyword">if</span> (p[<span class="hljs-number">0</span>] != ZIP_END) &#123;<br>        <span class="hljs-comment">/* Subtract one because of the ZIP_END bytes */</span><br>        memmove(p+reqlen,p-nextdiff,curlen-offset<span class="hljs-number">-1</span>+nextdiff);<br><br>        <span class="hljs-comment">/* Encode this entry&#x27;s raw length in the next entry. */</span><br>        <span class="hljs-keyword">if</span> (forcelarge)<br>            zipStorePrevEntryLengthLarge(p+reqlen,reqlen);<br>        <span class="hljs-keyword">else</span><br>            zipStorePrevEntryLength(p+reqlen,reqlen);<br><br>        <span class="hljs-comment">/* Update offset for tail */</span><br>        ZIPLIST_TAIL_OFFSET(zl) =<br>            intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+reqlen);<br><br>        <span class="hljs-comment">/* When the tail contains more than one entry, we need to take</span><br><span class="hljs-comment">         * &quot;nextdiff&quot; in account as well. Otherwise, a change in the</span><br><span class="hljs-comment">         * size of prevlen doesn&#x27;t have an effect on the *tail* offset. */</span><br>        assert(zipEntrySafe(zl, newlen, p+reqlen, &amp;tail, <span class="hljs-number">1</span>));<br>        <span class="hljs-keyword">if</span> (p[reqlen+tail.headersize+tail.len] != ZIP_END) &#123;<br>            ZIPLIST_TAIL_OFFSET(zl) =<br>                intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+nextdiff);<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">/* This element will be the new tail. */</span><br>        ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(p-zl);<br>    &#125;<br><br>    <span class="hljs-comment">/* When nextdiff != 0, the raw length of the next entry has changed, so</span><br><span class="hljs-comment">     * we need to cascade the update throughout the ziplist */</span><br>    <span class="hljs-keyword">if</span> (nextdiff != <span class="hljs-number">0</span>) &#123;<br>        offset = p-zl;<br>        zl = __ziplistCascadeUpdate(zl,p+reqlen);<br>        p = zl+offset;<br>    &#125;<br><br>    <span class="hljs-comment">/* Write the entry */</span><br>    <span class="hljs-comment">// entry写入prevlen字段</span><br>    p += zipStorePrevEntryLength(p,prevlen);<br>    <span class="hljs-comment">// entry写入encoding字段</span><br>    <span class="hljs-comment">// 此时的encoding状态</span><br>    <span class="hljs-comment">//                  如果是字符串编码  encoding默认赋值为了1个byte(0000 0000) 现在还要根据字符串的实际长度再次确认encoding是1 byte\2 bytes\5 bytes</span><br>    <span class="hljs-comment">//                  如果是整数编码   encoding就1个byte 前面已经根据整数大小填充好了encoding的各个bit</span><br>    p += zipStoreEntryEncoding(p,encoding,slen);<br>    <span class="hljs-comment">// entry写入entry-data</span><br>    <span class="hljs-keyword">if</span> (ZIP_IS_STR(encoding)) &#123; <span class="hljs-comment">// 写入字符串</span><br>        <span class="hljs-built_in">memcpy</span>(p,s,slen);<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 写入整数 [0...12]的内容直接写在encoding空置的后6bit上</span><br>        zipSaveInteger(p,value,encoding);<br>    &#125;<br>    ZIPLIST_INCR_LENGTH(zl,<span class="hljs-number">1</span>);<br>    <span class="hljs-keyword">return</span> zl;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="8-2-头插-尾插"><a href="#8-2-头插-尾插" class="headerlink" title="8.2 头插\尾插"></a>8.2 头插\尾插</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief push的语义是头插还是尾插</span><br><span class="hljs-comment"> * @param zl ziplist实例</span><br><span class="hljs-comment"> * @param s 元素</span><br><span class="hljs-comment"> * @param slen 元素大小 几个字节</span><br><span class="hljs-comment"> * @param where 新增元素插入到哪个entry节点之后</span><br><span class="hljs-comment"> * @return ziplist实例</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *<span class="hljs-title function_">ziplistPush</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zl, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *s, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> slen, <span class="hljs-type">int</span> where)</span> &#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p;<br>    <span class="hljs-comment">// 头插还是尾插</span><br>    p = (where == ZIPLIST_HEAD) ? ZIPLIST_ENTRY_HEAD(zl) : ZIPLIST_ENTRY_END(zl);<br>    <span class="hljs-keyword">return</span> __ziplistInsert(zl,p,s,slen);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="9-按照脚标查找元素"><a href="#9-按照脚标查找元素" class="headerlink" title="9 按照脚标查找元素"></a>9 按照脚标查找元素</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 按照entry的相对脚标查找</span><br><span class="hljs-comment">// @param zl ziplist实例</span><br><span class="hljs-comment">// @param index 给定的脚标位置</span><br><span class="hljs-comment">//                           负数 从后往前找</span><br><span class="hljs-comment">//                           非负数 从前往后找脚标位置</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *<span class="hljs-title function_">ziplistIndex</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zl, <span class="hljs-type">int</span> index)</span> &#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> prevlensize, prevlen = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">// 取出ziplist中zlbytes字段的值</span><br>    <span class="hljs-type">size_t</span> zlbytes = intrev32ifbe(ZIPLIST_BYTES(zl));<br>    <span class="hljs-keyword">if</span> (index &lt; <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// 从后往前找</span><br>        index = (-index)<span class="hljs-number">-1</span>;<br>        p = ZIPLIST_ENTRY_TAIL(zl); <span class="hljs-comment">// 最后一个entry地址</span><br>        <span class="hljs-keyword">if</span> (p[<span class="hljs-number">0</span>] != ZIP_END) &#123;<br>            <span class="hljs-comment">/* No need for &quot;safe&quot; check: when going backwards, we know the header</span><br><span class="hljs-comment">             * we&#x27;re parsing is in the range, we just need to assert (below) that</span><br><span class="hljs-comment">             * the size we take doesn&#x27;t cause p to go outside the allocation. */</span><br>            ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);<br>            <span class="hljs-keyword">while</span> (prevlen &gt; <span class="hljs-number">0</span> &amp;&amp; index--) &#123;<br>                p -= prevlen;<br>                assert(p &gt;= zl + ZIPLIST_HEADER_SIZE &amp;&amp; p &lt; zl + zlbytes - ZIPLIST_END_SIZE);<br>                ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);<br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 从前往后找</span><br>        p = ZIPLIST_ENTRY_HEAD(zl); <span class="hljs-comment">// 首个entry地址</span><br>        <span class="hljs-keyword">while</span> (index--) &#123;<br>            <span class="hljs-comment">/* Use the &quot;safe&quot; length: When we go forward, we need to be careful</span><br><span class="hljs-comment">             * not to decode an entry header if it&#x27;s past the ziplist allocation. */</span><br>            <span class="hljs-comment">// p指向的entry节点的大小 指针后移到下一个entry节点</span><br>            p += zipRawEntryLengthSafe(zl, zlbytes, p);<br>            <span class="hljs-keyword">if</span> (p[<span class="hljs-number">0</span>] == ZIP_END)<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">// ziplist是空的 没有entry节点</span><br>    <span class="hljs-keyword">if</span> (p[<span class="hljs-number">0</span>] == ZIP_END || index &gt; <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    zipAssertValidEntry(zl, zlbytes, p);<br>    <span class="hljs-keyword">return</span> p;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="10-entry节点的后继节点"><a href="#10-entry节点的后继节点" class="headerlink" title="10 entry节点的后继节点"></a>10 entry节点的后继节点</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// @param zl ziplist实例</span><br><span class="hljs-comment">// @param p entry节点</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *<span class="hljs-title function_">ziplistNext</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zl, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p)</span> &#123;<br>    ((<span class="hljs-type">void</span>) zl);<br>    <span class="hljs-comment">// ziplist的blbytes字段值</span><br>    <span class="hljs-type">size_t</span> zlbytes = intrev32ifbe(ZIPLIST_BYTES(zl));<br><br>    <span class="hljs-comment">/* &quot;p&quot; could be equal to ZIP_END, caused by ziplistDelete,</span><br><span class="hljs-comment">     * and we should return NULL. Otherwise, we should return NULL</span><br><span class="hljs-comment">     * when the *next* element is ZIP_END (there is no next entry). */</span><br>    <span class="hljs-keyword">if</span> (p[<span class="hljs-number">0</span>] == ZIP_END) &#123; <span class="hljs-comment">// p已经指向了end 之后没有entry节点了</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    &#125;<br><br>    p += zipRawEntryLength(p); <span class="hljs-comment">// 指针后移到下一个entry节点</span><br>    <span class="hljs-keyword">if</span> (p[<span class="hljs-number">0</span>] == ZIP_END) &#123; <span class="hljs-comment">// 刚才的p已经是ziplist中的最后一个entry了 现在指向了end节点</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    &#125;<br><br>    zipAssertValidEntry(zl, zlbytes, p);<br>    <span class="hljs-keyword">return</span> p;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="11-zlentry"><a href="#11-zlentry" class="headerlink" title="11 zlentry"></a>11 zlentry</h3><h4 id="11-1-数据结构"><a href="#11-1-数据结构" class="headerlink" title="11.1 数据结构"></a>11.1 数据结构</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 实际存放数据的节点</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">zlentry</span> &#123;</span><br>    <span class="hljs-comment">// 前驱节点entry的长度为prevrawlen 编码prevrawlen需要几个字节</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> prevrawlensize; <span class="hljs-comment">/* Bytes used to encode the previous entry len*/</span><br>    <span class="hljs-comment">// 前驱节点entry的长度为prevrawlen</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> prevrawlen;     <span class="hljs-comment">/* Previous entry len. */</span><br>    <span class="hljs-comment">// 当前节点entry的长度为len 编码len需要几个字节</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> lensize;        <span class="hljs-comment">/* Bytes used to encode this entry type/len.</span><br><span class="hljs-comment">                                    For example strings have a 1, 2 or 5 bytes</span><br><span class="hljs-comment">                                    header. Integers always use a single byte.*/</span><br>    <span class="hljs-comment">// 当前节点entry的长度为len</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> len;            <span class="hljs-comment">/* Bytes used to represent the actual entry.</span><br><span class="hljs-comment">                                    For strings this is just the string length</span><br><span class="hljs-comment">                                    while for integers it is 1, 2, 3, 4, 8 or</span><br><span class="hljs-comment">                                    0 (for 4 bit immediate) depending on the</span><br><span class="hljs-comment">                                    number range. */</span><br>    <span class="hljs-comment">// 节点头部所需要的字节数=prevrawlensize+lensize</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> headersize;     <span class="hljs-comment">/* prevrawlensize + lensize. */</span><br>    <span class="hljs-comment">// 编码方式 整数\字符数组</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> encoding;      <span class="hljs-comment">/* Set to ZIP_STR_* or ZIP_INT_* depending on</span><br><span class="hljs-comment">                                    the entry encoding. However for 4 bits</span><br><span class="hljs-comment">                                    immediate integers this can assume a range</span><br><span class="hljs-comment">                                    of values and must be range-checked. */</span><br>    <span class="hljs-comment">// 数据节点的数据(包含头部信息)以字符串形式保存</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p;            <span class="hljs-comment">/* Pointer to the very start of the entry, that</span><br><span class="hljs-comment">                                    is, this points to prev-entry-len field. */</span><br>&#125; zlentry;<br></code></pre></td></tr></table></figure>
+
+<h4 id="11-2-示意图"><a href="#11-2-示意图" class="headerlink" title="11.2 示意图"></a>11.2 示意图</h4><img src="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/image-20230404175853209.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="11-3-数据结构转换"><a href="#11-3-数据结构转换" class="headerlink" title="11.3 数据结构转换"></a>11.3 数据结构转换</h4><h5 id="11-3-1-entry信息写到zlentry"><a href="#11-3-1-entry信息写到zlentry" class="headerlink" title="11.3.1 entry信息写到zlentry"></a>11.3.1 entry信息写到zlentry</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief 将p指向的entry信息写到zlentry中</span><br><span class="hljs-comment"> * @param p ziplist中entry节点</span><br><span class="hljs-comment"> * @param e zlentry</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title function_">zipEntry</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, zlentry *e)</span> &#123;<br>    <span class="hljs-comment">// entry的prevlen字段写到zlentry的prevrawlensize和prevrawlen字段</span><br>    ZIP_DECODE_PREVLEN(p, e-&gt;prevrawlensize, e-&gt;prevrawlen);<br>    <span class="hljs-comment">// entry的encoding写到zlentry的encoding字段</span><br>    ZIP_ENTRY_ENCODING(p + e-&gt;prevrawlensize, e-&gt;encoding);<br>    <span class="hljs-comment">// entry的encoding以及data-entry写到zlentry的lensize和len字段</span><br>    ZIP_DECODE_LENGTH(p + e-&gt;prevrawlensize, e-&gt;encoding, e-&gt;lensize, e-&gt;len);<br>    assert(e-&gt;lensize != <span class="hljs-number">0</span>); <span class="hljs-comment">/* check that encoding was valid. */</span><br>    <span class="hljs-comment">// 写zlentry的headersize字段</span><br>    e-&gt;headersize = e-&gt;prevrawlensize + e-&gt;lensize;<br>    e-&gt;p = p;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h6 id="11-3-1-1-entry中prevlen字段解析到zlentry中prevrawlensize和prevrawlen"><a href="#11-3-1-1-entry中prevlen字段解析到zlentry中prevrawlensize和prevrawlen" class="headerlink" title="11.3.1.1 entry中prevlen字段解析到zlentry中prevrawlensize和prevrawlen"></a>11.3.1.1 entry中prevlen字段解析到zlentry中prevrawlensize和prevrawlen</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief ptr指向entry节点 将entrty中的prevlen字段向zlentry中的prevrawlensize和prevrawlen字段写入</span><br><span class="hljs-comment"> * @param ptr 指向entry节点</span><br><span class="hljs-comment"> * @param prevlensize zlentry中的prevrawlensize字段 用来接收entry中prevlen字段的编码</span><br><span class="hljs-comment"> *                                    prevlen&lt;255 1个字节表示长度 即prevlensize=1</span><br><span class="hljs-comment"> *                                    prevlen&gt;=255 5个字节表示长度 即prevlensize=5</span><br><span class="hljs-comment"> * @param prevlen zlentry中prevrawlen字段 用来接收entry中prevlen字段的值</span><br><span class="hljs-comment"> *                                    prevlen&lt;255 zlentry中prevlen字段值=entry中prevlen字段值</span><br><span class="hljs-comment"> *                                    prevlen&gt;=255 zlentry中prevlen字段值=entry中prevlen字段的后4个字节值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZIP_DECODE_PREVLEN(ptr, prevlensize, prevlen) do &#123; \</span><br><span class="hljs-meta">    ZIP_DECODE_PREVLENSIZE(ptr, prevlensize);                                  \</span><br><span class="hljs-meta">    <span class="hljs-keyword">if</span> ((prevlensize) == 1) &#123;                                                  \</span><br><span class="hljs-meta">        (prevlen) = (ptr)[0];                                                  \</span><br><span class="hljs-meta">    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">/* prevlensize == 5 */</span>                                            \</span><br><span class="hljs-meta">        (prevlen) = ((ptr)[4] &lt;&lt; 24) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[3] &lt;&lt; 16) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[2] &lt;&lt;  8) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[1]);                                                \</span><br><span class="hljs-meta">    &#125;                                                                          \</span><br><span class="hljs-meta">&#125; while(0)</span><br><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief ptr指向entry中的prevlen字段 将prevlen的编码长度写到zlentry中的prevrawlensize字段</span><br><span class="hljs-comment"> *                                  prevlen的值&lt;0xfe 说明prevlen就1个字节 存储的就是前驱点占用多少bytes</span><br><span class="hljs-comment"> *                                  prevlen的值&gt;=0xfe 说明prevlen共5个字节 第1个字节是0xfe标识 后4个字节存储前驱节点占用多少bytes</span><br><span class="hljs-comment"> * @param ptr 指向entry</span><br><span class="hljs-comment"> * @param prevlensize zlentry中的prevrawlensize字段 用来接收entry中prevlen字段的编码长度</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZIP_DECODE_PREVLENSIZE(ptr, prevlensize) do &#123;                          \</span><br><span class="hljs-meta">    <span class="hljs-keyword">if</span> ((ptr)[0] &lt; ZIP_BIG_PREVLEN) &#123;                                          \</span><br><span class="hljs-meta">        (prevlensize) = 1;                                                     \</span><br><span class="hljs-meta">    &#125; <span class="hljs-keyword">else</span> &#123;                                                                   \</span><br><span class="hljs-meta">        (prevlensize) = 5;                                                     \</span><br><span class="hljs-meta">    &#125;                                                                          \</span><br><span class="hljs-meta">&#125; while(0)</span><br></code></pre></td></tr></table></figure>
+
+<h6 id="11-3-1-2-entry中encoding字段解析到zlentry中encoding字段"><a href="#11-3-1-2-entry中encoding字段解析到zlentry中encoding字段" class="headerlink" title="11.3.1.2 entry中encoding字段解析到zlentry中encoding字段"></a>11.3.1.2 entry中encoding字段解析到zlentry中encoding字段</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief ptr指向entry的encoding字段 把entry的encoding的高2位编码信息写到zlentry的encoding字段中</span><br><span class="hljs-comment"> * @param ptr 指向了entry的encoding字段</span><br><span class="hljs-comment"> * @param encoding 代指zlentry的encoding字段</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZIP_ENTRY_ENCODING(ptr, encoding) do &#123;  \</span><br><span class="hljs-meta">    (encoding) = ((ptr)[0]); \</span><br><span class="hljs-meta">    <span class="hljs-keyword">if</span> ((encoding) &lt; ZIP_STR_MASK) (encoding) &amp;= ZIP_STR_MASK; \</span><br><span class="hljs-meta">&#125; while(0)</span><br><br></code></pre></td></tr></table></figure>
+
+<h6 id="11-3-1-3-entry中encoding和data-entry字段解析到zlentry中lensize和len字段"><a href="#11-3-1-3-entry中encoding和data-entry字段解析到zlentry中lensize和len字段" class="headerlink" title="11.3.1.3 entry中encoding和data-entry字段解析到zlentry中lensize和len字段"></a>11.3.1.3 entry中encoding和data-entry字段解析到zlentry中lensize和len字段</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief entry的encoding以及data-entry写到zlentry的lensize和len字段</span><br><span class="hljs-comment"> * @param ptr指向entry的encoding字段地址</span><br><span class="hljs-comment"> * @param encoding 代指zlentry的encoding字段</span><br><span class="hljs-comment"> * @param lensize 代指zlentry的lensize字段</span><br><span class="hljs-comment"> * @param len 代指zlentry的len字段</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZIP_DECODE_LENGTH(ptr, encoding, lensize, len) do &#123;                    \</span><br><span class="hljs-meta">    <span class="hljs-keyword">if</span> ((encoding) &lt; ZIP_STR_MASK) &#123;                                           \</span><br><span class="hljs-meta">        <span class="hljs-keyword">if</span> ((encoding) == ZIP_STR_06B) &#123;                                       \</span><br><span class="hljs-meta">            (lensize) = 1;                                                     \</span><br><span class="hljs-meta">            (len) = (ptr)[0] &amp; 0x3f;                                           \</span><br><span class="hljs-meta">        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((encoding) == ZIP_STR_14B) &#123;                                \</span><br><span class="hljs-meta">            (lensize) = 2;                                                     \</span><br><span class="hljs-meta">            (len) = (((ptr)[0] &amp; 0x3f) &lt;&lt; 8) | (ptr)[1];                       \</span><br><span class="hljs-meta">        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((encoding) == ZIP_STR_32B) &#123;                                \</span><br><span class="hljs-meta">            (lensize) = 5;                                                     \</span><br><span class="hljs-meta">            (len) = ((ptr)[1] &lt;&lt; 24) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[2] &lt;&lt; 16) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[3] &lt;&lt;  8) |                                         \</span><br><span class="hljs-meta">                    ((ptr)[4]);                                                \</span><br><span class="hljs-meta">        &#125; <span class="hljs-keyword">else</span> &#123;                                                               \</span><br><span class="hljs-meta">            (lensize) = 0; <span class="hljs-comment">/* bad encoding, should be covered by a previous */</span> \</span><br><span class="hljs-meta">            (len) = 0;     <span class="hljs-comment">/* ZIP_ASSERT_ENCODING / zipEncodingLenSize, or  */</span> \</span><br><span class="hljs-meta">                           <span class="hljs-comment">/* match the lensize after this macro with 0.    */</span> \</span><br><span class="hljs-meta">        &#125;                                                                      \</span><br><span class="hljs-meta">    &#125; <span class="hljs-keyword">else</span> &#123;                                                                   \</span><br><span class="hljs-meta">        (lensize) = 1;                                                         \</span><br><span class="hljs-meta">        <span class="hljs-keyword">if</span> ((encoding) == ZIP_INT_8B)  (len) = 1;                              \</span><br><span class="hljs-meta">        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((encoding) == ZIP_INT_16B) (len) = 2;                         \</span><br><span class="hljs-meta">        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((encoding) == ZIP_INT_24B) (len) = 3;                         \</span><br><span class="hljs-meta">        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((encoding) == ZIP_INT_32B) (len) = 4;                         \</span><br><span class="hljs-meta">        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((encoding) == ZIP_INT_64B) (len) = 8;                         \</span><br><span class="hljs-meta">        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding &gt;= ZIP_INT_IMM_MIN &amp;&amp; encoding &lt;= ZIP_INT_IMM_MAX)   \</span><br><span class="hljs-meta">            (len) = 0; <span class="hljs-comment">/* 4 bit immediate */</span>                                   \</span><br><span class="hljs-meta">        <span class="hljs-keyword">else</span>                                                                   \</span><br><span class="hljs-meta">            (lensize) = (len) = 0; <span class="hljs-comment">/* bad encoding */</span>                          \</span><br><span class="hljs-meta">    &#125;                                                                          \</span><br><span class="hljs-meta">&#125; while(0)</span><br></code></pre></td></tr></table></figure>
+
+<h5 id="11-3-2-entry信息写到zlentry并校验"><a href="#11-3-2-entry信息写到zlentry并校验" class="headerlink" title="11.3.2 entry信息写到zlentry并校验"></a>11.3.2 entry信息写到zlentry并校验</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief 将p指向的entry节点信息封装到zlentry中</span><br><span class="hljs-comment"> * @param zl ziplist实例</span><br><span class="hljs-comment"> * @param zlbytes ziplist的zlbytes字段 ziplist所占内存大小</span><br><span class="hljs-comment"> * @param p 当前指向的entry节点地址</span><br><span class="hljs-comment"> * @param e 将entry节点信息填充到zlentry中 e指向的就是该zlentry</span><br><span class="hljs-comment"> * @param validate_prevlen 是否要校验前驱节点有没有越界 合法entry节点内存地址区间为[HEAD...END]</span><br><span class="hljs-comment"> * @return 1标识p指向的entry节点合法 0标识不合法</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">int</span> <span class="hljs-title function_">zipEntrySafe</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>* zl, <span class="hljs-type">size_t</span> zlbytes, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, zlentry *e, <span class="hljs-type">int</span> validate_prevlen)</span> &#123;<br>    <span class="hljs-comment">// HEAD节点</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zlfirst = zl + ZIPLIST_HEADER_SIZE;<br>    <span class="hljs-comment">// END节点</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *zllast = zl + zlbytes - ZIPLIST_END_SIZE;<br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OUT_OF_RANGE(p) (unlikely((p) <span class="hljs-string">&lt; zlfirst || (p) &gt;</span> zllast))</span><br><br>    <span class="hljs-comment">/* If threre&#x27;s no possibility for the header to reach outside the ziplist,</span><br><span class="hljs-comment">     * take the fast path. (max lensize and prevrawlensize are both 5 bytes) */</span><br>    <span class="hljs-keyword">if</span> (p &gt;= zlfirst &amp;&amp; p + <span class="hljs-number">10</span> &lt; zllast) &#123; <span class="hljs-comment">// 1个entry=prevlen+encoding+entry-data prevlen最大值为5byte encoding最大值为5byte 该if分支确保了在[p...END]这一片内存上是有entry节点的</span><br>        <span class="hljs-comment">// 从p地址开始 将整个entry信息写到zlentry实例中</span><br>        ZIP_DECODE_PREVLEN(p, e-&gt;prevrawlensize, e-&gt;prevrawlen);<br>        ZIP_ENTRY_ENCODING(p + e-&gt;prevrawlensize, e-&gt;encoding);<br>        ZIP_DECODE_LENGTH(p + e-&gt;prevrawlensize, e-&gt;encoding, e-&gt;lensize, e-&gt;len);<br>        e-&gt;headersize = e-&gt;prevrawlensize + e-&gt;lensize;<br>        e-&gt;p = p;<br>        <span class="hljs-comment">/* We didn&#x27;t call ZIP_ASSERT_ENCODING, so we check lensize was set to 0. */</span><br>        <span class="hljs-keyword">if</span> (unlikely(e-&gt;lensize == <span class="hljs-number">0</span>))<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 合法性校验 entry内容长度为0</span><br>        <span class="hljs-comment">/* Make sure the entry doesn&#x27;t rech outside the edge of the ziplist */</span><br>        <span class="hljs-keyword">if</span> (OUT_OF_RANGE(p + e-&gt;headersize + e-&gt;len))<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 合法性校验 越界 p指向的节点超出了ziplist上entry界限</span><br>        <span class="hljs-comment">/* Make sure prevlen doesn&#x27;t rech outside the edge of the ziplist */</span><br>        <span class="hljs-keyword">if</span> (validate_prevlen &amp;&amp; OUT_OF_RANGE(p - e-&gt;prevrawlen)) <span class="hljs-comment">// 是否需要对前驱节点进行校验</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 合法性校验 越界 前驱节点超出了ziplist上entry界限</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    &#125;<br><br>    <span class="hljs-comment">/* Make sure the pointer doesn&#x27;t rech outside the edge of the ziplist */</span><br>    <span class="hljs-keyword">if</span> (OUT_OF_RANGE(p))<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">/* Make sure the encoded prevlen header doesn&#x27;t reach outside the allocation */</span><br>    <span class="hljs-comment">// entry的prevlen编码写到zlentry的prevrawlensize字段</span><br>    ZIP_DECODE_PREVLENSIZE(p, e-&gt;prevrawlensize);<br>    <span class="hljs-keyword">if</span> (OUT_OF_RANGE(p + e-&gt;prevrawlensize))<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">/* Make sure encoded entry header is valid. */</span><br>    <span class="hljs-comment">// entry的encoding字段的高2位编码标识写到zlentry的encoding字段</span><br>    ZIP_ENTRY_ENCODING(p + e-&gt;prevrawlensize, e-&gt;encoding);<br>    <span class="hljs-comment">// 根据zlentry的encoding字段解析出lensize字段</span><br>    e-&gt;lensize = zipEncodingLenSize(e-&gt;encoding);<br>    <span class="hljs-keyword">if</span> (unlikely(e-&gt;lensize == ZIP_ENCODING_SIZE_INVALID))<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">/* Make sure the encoded entry header doesn&#x27;t reach outside the allocation */</span><br>    <span class="hljs-keyword">if</span> (OUT_OF_RANGE(p + e-&gt;prevrawlensize + e-&gt;lensize))<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">/* Decode the prevlen and entry len headers. */</span><br>    <span class="hljs-comment">// 填充zlentry的prevrawlensize和prevrawlen字段</span><br>    ZIP_DECODE_PREVLEN(p, e-&gt;prevrawlensize, e-&gt;prevrawlen);<br>    <span class="hljs-comment">// 填充zlentry的len字段</span><br>    ZIP_DECODE_LENGTH(p + e-&gt;prevrawlensize, e-&gt;encoding, e-&gt;lensize, e-&gt;len);<br>    <span class="hljs-comment">// zlentry的headersize字段</span><br>    e-&gt;headersize = e-&gt;prevrawlensize + e-&gt;lensize;<br><br>    <span class="hljs-comment">/* Make sure the entry doesn&#x27;t rech outside the edge of the ziplist */</span><br>    <span class="hljs-keyword">if</span> (OUT_OF_RANGE(p + e-&gt;headersize + e-&gt;len))<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">/* Make sure prevlen doesn&#x27;t rech outside the edge of the ziplist */</span><br>    <span class="hljs-keyword">if</span> (validate_prevlen &amp;&amp; OUT_OF_RANGE(p - e-&gt;prevrawlen))<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>    e-&gt;p = p;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br><span class="hljs-meta">#<span class="hljs-keyword">undef</span> OUT_OF_RANGE</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="11-4-entry所占内存"><a href="#11-4-entry所占内存" class="headerlink" title="11.4 entry所占内存"></a>11.4 entry所占内存</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief p指向的entry所占内存 现将p指向的entry封装成zlentry 然后通过hadersize+len直接计算出entry节点的内存大小</span><br><span class="hljs-comment"> * @param zl ziplist实例</span><br><span class="hljs-comment"> * @param zlbytes ziplist所占内存大小</span><br><span class="hljs-comment"> * @param p 指向的entry地址</span><br><span class="hljs-comment"> * @return p指向的entry所占内存</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">zipRawEntryLengthSafe</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>* zl, <span class="hljs-type">size_t</span> zlbytes, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p)</span> &#123;<br>    zlentry e;<br>    <span class="hljs-comment">// 将p指向的entry封装成zlentry</span><br>    assert(zipEntrySafe(zl, zlbytes, p, &amp;e, <span class="hljs-number">0</span>));<br>    <span class="hljs-comment">// entry节点所占内存</span><br>    <span class="hljs-keyword">return</span> e.headersize + e.len;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="12-读取entry节点中的元素"><a href="#12-读取entry节点中的元素" class="headerlink" title="12 读取entry节点中的元素"></a>12 读取entry节点中的元素</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief p指向的entry中的entry-data读取出来</span><br><span class="hljs-comment"> * @param p entry地址</span><br><span class="hljs-comment"> * @param sstr entry中存储的元素是字符串 该字符串的字符数组地址</span><br><span class="hljs-comment"> * @param slen entry中存储的元素是字符串 该字符串的长度</span><br><span class="hljs-comment"> * @param sval entry中存储的元素是整数 该整数的值</span><br><span class="hljs-comment"> * @return 1标识p指向的是ziplist中合法的entry节点 并将entry中的元素读取了出来</span><br><span class="hljs-comment"> *         0标识p指向的不是合法entry节点地址 没有正确的元素被读取出来</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title function_">ziplistGet</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> **sstr, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *slen, <span class="hljs-type">long</span> <span class="hljs-type">long</span> *sval)</span> &#123;<br>    zlentry entry;<br>    <span class="hljs-keyword">if</span> (p == <span class="hljs-literal">NULL</span> || p[<span class="hljs-number">0</span>] == ZIP_END) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (sstr) *sstr = <span class="hljs-literal">NULL</span>;<br><br>    <span class="hljs-comment">// 将p指向的entry信息封装到zlentry数据结构中 方便计算</span><br>    zipEntry(p, &amp;entry); <span class="hljs-comment">/* no need for &quot;safe&quot; variant since the input pointer was validated by the function that returned it. */</span><br>    <span class="hljs-keyword">if</span> (ZIP_IS_STR(entry.encoding)) &#123; <span class="hljs-comment">// entry中存储的元素编码方式是字符数组</span><br>        <span class="hljs-keyword">if</span> (sstr) &#123;<br>            *slen = entry.len; <span class="hljs-comment">// 字符串的长度</span><br>            *sstr = p+entry.headersize; <span class="hljs-comment">// 字符数组地址</span><br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// entry中存储的元素编码方式是整数</span><br>        <span class="hljs-keyword">if</span> (sval) &#123;<br>            <span class="hljs-comment">// p+entry.headersize指向的是entry中的entry-data字段</span><br>            *sval = zipLoadInteger(p+entry.headersize,entry.encoding); <span class="hljs-comment">// 整数</span><br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="13-读取entry节点中整数元素"><a href="#13-读取entry节点中整数元素" class="headerlink" title="13 读取entry节点中整数元素"></a>13 读取entry节点中整数元素</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @brief entry的整数编码中 将整数数值读取出来</span><br><span class="hljs-comment"> * @param p 指向的是entry中的entry-data字段</span><br><span class="hljs-comment"> * @param encoding entry中的encoding字段值</span><br><span class="hljs-comment"> * @return entry中存储的整数元素的值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">int64_t</span> <span class="hljs-title function_">zipLoadInteger</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *p, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> encoding)</span> &#123;<br>    <span class="hljs-type">int16_t</span> i16;<br>    <span class="hljs-type">int32_t</span> i32;<br>    <span class="hljs-type">int64_t</span> i64, ret = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (encoding == ZIP_INT_8B) &#123; <span class="hljs-comment">// 11 111111 + 8bit有符号整数</span><br>        ret = ((<span class="hljs-type">int8_t</span>*)p)[<span class="hljs-number">0</span>];<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_16B) &#123; <span class="hljs-comment">// 11 000000 + 16bit有符号整数</span><br>        <span class="hljs-built_in">memcpy</span>(&amp;i16,p,<span class="hljs-keyword">sizeof</span>(i16));<br>        memrev16ifbe(&amp;i16);<br>        ret = i16;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_32B) &#123; <span class="hljs-comment">// 11 010000 + 32bit有符号整数</span><br>        <span class="hljs-built_in">memcpy</span>(&amp;i32,p,<span class="hljs-keyword">sizeof</span>(i32));<br>        memrev32ifbe(&amp;i32);<br>        ret = i32;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_24B) &#123; <span class="hljs-comment">// 11 110000 + 24bit有符号整数</span><br>        i32 = <span class="hljs-number">0</span>;<br>        <span class="hljs-built_in">memcpy</span>(((<span class="hljs-type">uint8_t</span>*)&amp;i32)+<span class="hljs-number">1</span>,p,<span class="hljs-keyword">sizeof</span>(i32)-<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">uint8_t</span>));<br>        memrev32ifbe(&amp;i32);<br>        ret = i32&gt;&gt;<span class="hljs-number">8</span>;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding == ZIP_INT_64B) &#123; <span class="hljs-comment">// 11 100000 + 64bit有符号整数</span><br>        <span class="hljs-built_in">memcpy</span>(&amp;i64,p,<span class="hljs-keyword">sizeof</span>(i64));<br>        memrev64ifbe(&amp;i64);<br>        ret = i64;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (encoding &gt;= ZIP_INT_IMM_MIN &amp;&amp; encoding &lt;= ZIP_INT_IMM_MAX) &#123; <span class="hljs-comment">// 11 11???? 4bit无符号整数</span><br>        ret = (encoding &amp; ZIP_INT_IMM_MASK)<span class="hljs-number">-1</span>; <span class="hljs-comment">// encoding这1byte上的后4bit就是存储的整数</span><br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        assert(<span class="hljs-literal">NULL</span>);<br>    &#125;<br>    <span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis-0x22-数据结构ziplist</div>
+      <div>https://bannirui.github.io/2025/02/10/Redis/Redis-0x22-数据结构ziplist/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/02/10/Redis/Redis-0x23-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84quicklist/" title="Redis-0x23-数据结构quicklist">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis-0x23-数据结构quicklist</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/10/Redis/Redis-0x21-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84zskiplist/" title="Redis-0x21-数据结构zskiplist">
+                        <span class="hidden-mobile">Redis-0x21-数据结构zskiplist</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '140fc08fabae7921b02d2e9af9f9916f'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
