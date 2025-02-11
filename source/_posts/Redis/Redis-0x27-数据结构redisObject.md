@@ -11,6 +11,106 @@ categories: Redis
 
 ### 1 数据结构
 
+```c
+// 16byte
+typedef struct redisObject {
+
+	/**
+	 * unsigned int一共32bit
+	 * <ul>
+	 *   <li>数据结构类型 4bit 最多15种枚举</li>
+	 *   <li>编码方式 4bit 最多15种枚举</li>
+	 *   <li>lru时间戳 24bit</li>
+	 * </ul>
+	 */
+	/**
+	 * 数据结构类型
+	 * <ul>
+	 *   <li>0 字符串</li>
+	 *   <li>1 链表</li>
+	 *   <li>2 set</li>
+	 *   <li>3 zset</li>
+	 *   <li>4 hash</li>
+	 *   <li>5 module</li>
+	 *   <li>6 stream</li>
+	 * </ul>
+	 */
+    unsigned type:4;
+
+	/**
+	 * 编码方式
+	 * <ul>
+	 *   <li>0 raw</li>
+	 *   <li>1 int</li>
+	 *   <li>2 ht</li>
+	 *   <li>3 zipmap</li>
+	 *   <li>4 linkedlist</li>
+	 *   <li>5 ziplist</li>
+	 *   <li>6 intset</li>
+	 *   <li>7 skiplist</li>
+	 *   <li>8 embstr</li>
+	 *   <li>9 quicklist</li>
+	 *   <li>10 stream</li>
+	 * </ul>
+	 */
+    unsigned encoding:4;
+
+    /**
+     * <p>配合内存淘汰策略使用的</p>
+     * <ul>
+     *   <li>LFU
+     *     <ul>
+     *       <li>高16位 记录访问数据的时间戳 单位分钟</li>
+     *       <li>低8位 记录访问数据频率</li>
+     *     </ul>
+     *   </li>
+     *   <li>LRU
+     *     <ul>
+     *       <li>记录访问数据的时间戳 单位秒 24位</li>
+     *     </ul>
+     *   </li>
+     * </ul>
+     */
+    unsigned lru:LRU_BITS; /* LRU time (relative to global lru_clock) or
+                            * LFU data (least significant 8 bits frequency
+                            * and most significant 16 bits access time). */
+	/**
+	 * 数据的引用计数 这个对象被引用的次数 用于对象的生命周期管理
+	 * <ul>
+	 *  <li>引用时增加计数</li>
+	 *  <li>解绑时减少计数</li>
+	 * </ul>
+	 * 通过计数管理对象的生命周期 但是约定了常量对象 也就是不会回收内存 一般用于小整数缓存
+	 * 因此约定了将INT_MAX作为特殊标识
+	 * <ul>
+	 *  <li>一旦某个对象的引用计数是INT_MAX 那么这个对象就是作为常量对象来使用的</li>
+	 *  <li>引用这个对象时不会再增加这个计数</li>
+	 *  <li>释放对为个对象的引用时也不会减少这个计数</li>
+	 * </ul>
+	 * 那么正常情况下这个值的区间就是是[1...INT_MAX-1]
+	 * <ul>
+	 *  <li>引用对象时就增加引用计数 增加到INT_MAX时就是抛异常</li>
+	 *  <li>解绑对象时就减少引用计数 减少到0时就是销毁对象进行内存回收</li>
+	 * </ul>
+	 */
+	int refcount;
+    /**
+     * <p>指向数据类型的编码方式的实现上<p>
+     * <ul>
+     *   <li>sds字符串而言 指向的是sds 而sds指针指向的又是sds的buf数组</li>
+     *   <li>其他编码方式 指向的就是数据结构实例 比如
+     *     <ul>
+     *       <li>quicklist</li>
+     *       <li>dict</li>
+     *       <li>ziplist</li>
+     *     </ul>
+     *   </li>
+     * </ul>
+     */
+    void *ptr;
+} robj;
+```
+
 #### 1.1 数据结构图
 
 ![](./image-20230403131757153.png)
@@ -52,8 +152,77 @@ categories: Redis
   * 低8位 记录访问数据频率
 
 #### 1.5 refcount字段
+数据的引用计数，用途主要有2个
+- INT_MAX作为特殊标识常量
+- 用于对象生命周期管理和内存回收
+##### 1.5.1 常量标识
+```c
+/**
+ * 把对象标识为常量 引用计数置为INT_MAX这个特殊标识
+ */
+robj *makeObjectShared(robj *o) {
+    serverAssert(o->refcount == 1);
+    // 引用计数INT_MAX特殊标识 标识对象是全局常量
+    o->refcount = OBJ_SHARED_REFCOUNT;
+    return o;
+}
+```
 
-数据的引用计数
+##### 1.5.2 对象生命周期异常
+```c
+/**
+ * 有其他对象引用当前对象 增加当前对象的引用计数
+ * INT_MAX边界需要处理
+ * @param o 被引用的对象
+ */
+void incrRefCount(robj *o) {
+    // 引用计数在[1...INT_MAX)区间内的都是普通对象 增加计数
+    if (o->refcount < OBJ_FIRST_SPECIAL_REFCOUNT) {
+        o->refcount++;
+    } else {
+        if (o->refcount == OBJ_SHARED_REFCOUNT) {
+            // 常量对象的引用计数用INT_MAX特殊标识 这个标识不能动
+            /* Nothing to do: this refcount is immutable. */
+        } else if (o->refcount == OBJ_STATIC_REFCOUNT) {
+            // 普通对象能被引用INT_MAX次作为异常上抛
+            serverPanic("You tried to retain an object allocated in the stack");
+        }
+    }
+}
+```
+
+##### 1.5.3 垃圾回收
+```c
+/**
+ * 其他对象解绑当前对象时 把当前对象的引用计数减少
+ * <ul>需要处理的边界有2个
+ *   <li>0 当某个对象不再被引用时就说明对象内存需要释放</li>
+ *   <li>INT_MAX 常量不用回收 不要改变这个特殊引用计数</li>
+ * </ul>
+ * @param o 当前对象
+ */
+void decrRefCount(robj *o) {
+    if (o->refcount == 1) {
+        // 进行垃圾回收
+        switch(o->type) {
+        case OBJ_STRING: freeStringObject(o); break;
+        case OBJ_LIST: freeListObject(o); break;
+        case OBJ_SET: freeSetObject(o); break;
+        case OBJ_ZSET: freeZsetObject(o); break;
+        case OBJ_HASH: freeHashObject(o); break;
+        case OBJ_MODULE: freeModuleObject(o); break;
+        case OBJ_STREAM: freeStreamObject(o); break;
+        default: serverPanic("Unknown object type"); break;
+        }
+        zfree(o);
+    } else {
+        // 理论上不存在的边界 上抛异常
+        if (o->refcount <= 0) serverPanic("decrRefCount against refcount <= 0");
+        // 正常对象被解绑减少引用计数
+        if (o->refcount != OBJ_SHARED_REFCOUNT) o->refcount--;
+    }
+}
+```
 
 #### 1.6 ptr字段
 
