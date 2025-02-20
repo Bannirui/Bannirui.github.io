@@ -7,17 +7,9 @@ categories: Redis
 
 数据类型String字符串。
 
-### 1 string字符串 数据结构关系
+### 1 增
 
-| 数据类型         | 实现     | 编码方式                                           | 数据结构 |
-| ---------------- | -------- | -------------------------------------------------- | -------- |
-| 字符串OBJ_STRING | t_string |     | sds      |
-|                  |          |  | sds      |
-|                  |          |     | sds      |
-
-### 2 增
-
-#### 2.1 set
+#### 1.1 set
 
 ```c
 /**
@@ -51,7 +43,7 @@ void setCommand(client *c) {
 }
 ```
 
-#### 2.2 解析set命令的可选项
+#### 1.2 解析set命令的可选项
 
 ```c
 /**
@@ -162,7 +154,7 @@ int parseExtendedStringArgumentsOrReply(client *c, int *flags, int *unit, robj *
 }
 ```
 
-#### 2.3 set全参
+#### 1.3 set全参
 
 ```c
 /**
@@ -267,7 +259,7 @@ void setGenericCommand(client *c, int flags, robj *key, robj *val, robj *expire,
 }
 ```
 
-#### 2.4 setrange
+#### 1.4 setrange
 
 ```c
 /**
@@ -353,7 +345,7 @@ void setrangeCommand(client *c) {
 }
 ```
 
-#### 2.5 mset
+#### 1.5 mset
 
 ```c
 /**
@@ -393,10 +385,10 @@ void msetGenericCommand(client *c, int nx) {
 }
 ```
 
-### 3 删
+### 2 删
 
-### 4 改
-#### 4.1 递增递减
+### 3 改
+#### 3.1 递增递减
 
 ```c
 /**
@@ -443,8 +435,8 @@ void incrDecrCommand(client *c, long long incr) {
 }
 ```
 
-### 5 查
-#### 5.1 get
+### 4 查
+#### 4.1 get
 
 ```c
 /**
@@ -456,7 +448,7 @@ void getCommand(client *c) {
 }
 ```
 
-#### 5.2 get全参
+#### 4.2 get全参
 
 ```c
 /**
@@ -482,7 +474,7 @@ int getGenericCommand(client *c) {
 }
 ```
 
-#### 5.3 getex
+#### 4.3 getex
 
 ```c
 /**
@@ -575,7 +567,7 @@ void getexCommand(client *c) {
 }
 ```
 
-#### 5.4 getdel
+#### 4.4 getdel
 
 ```c
 /**
@@ -597,7 +589,7 @@ void getdelCommand(client *c) {
 }
 ```
 
-#### 5.5 getset
+#### 4.5 getset
 
 ```c
 /**
@@ -620,7 +612,7 @@ void getsetCommand(client *c) {
 }
 ```
 
-#### 5.6 getrange
+#### 4.6 getrange
 
 ```c
 /**
@@ -673,7 +665,7 @@ void getrangeCommand(client *c) {
 }
 ```
 
-#### 5.7 mget
+#### 4.7 mget
 
 ```c
 /**
