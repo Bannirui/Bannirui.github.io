@@ -31,7 +31,7 @@ git checkout -b jdk_22_study
 ```
 
 #### 1.2 系统工具准备
-- xcode 16.2
+- AppStore安装xcode
 - brew install autoconf
 - brew install make
 - brew install libtool
@@ -85,7 +85,7 @@ git checkout -b jdk_22_study
 
 ![](./jvm-0x00-编译openjdk/1739895872.png)
 因为jdk15我在现在的电脑环境上已经编译不成功了，因为macos sdk新版本已经不维护某个工具了，因此先到homebrew上看看x86支持的最新的jdk是openjdk21
-加些以jdk21为BootJDK来编译jdk22
+因此以jdk21为BootJDK来编译jdk22
 
 #### 1.5 字符集修改
 ![](./jvm-0x00-编译openjdk/1739896129.png)
