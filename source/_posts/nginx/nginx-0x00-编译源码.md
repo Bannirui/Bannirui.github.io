@@ -62,3 +62,15 @@ sudo make install
 ```
 
 然后在上面`prefix`指定的路径下可以看到可执行文件`/usr/local/nginx/nginx`
+
+### 6 启动
+
+配置文件在`/usr/local/nginx/conf`下，就用默认的配置就行
+
+```sh
+sudo /usr/local/nginx/sbin/nginx
+```
+
+服务默认监听在80端口
+
+![](./nginx-0x00-编译源码/1740104411.png)
