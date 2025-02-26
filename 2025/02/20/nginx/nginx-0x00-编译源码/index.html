@@ -21,14 +21,14 @@
   
     <meta name="description" content="1 下载源码123456789git clone git@github.com:Bannirui&#x2F;nginx.gitcd ngixgit remote add upstream git@github.com:nginx&#x2F;nginx.gitgit remote set-url --push upstream no_pushgit remote -vgit fetch upstreamgit chec">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ngix-0x00-编译源码">
+<meta property="og:title" content="nginx-0x00-编译源码">
 <meta property="og:url" content="https://bannirui.github.io/2025/02/20/nginx/nginx-0x00-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/index.html">
 <meta property="og:site_name" content="hex Blog">
 <meta property="og:description" content="1 下载源码123456789git clone git@github.com:Bannirui&#x2F;nginx.gitcd ngixgit remote add upstream git@github.com:nginx&#x2F;nginx.gitgit remote set-url --push upstream no_pushgit remote -vgit fetch upstreamgit chec">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2025/02/20/nginx/nginx-0x00-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/1740104411.png">
 <meta property="article:published_time" content="2025-02-20T09:24:31.000Z">
-<meta property="article:modified_time" content="2025-02-21T02:20:47.554Z">
+<meta property="article:modified_time" content="2025-02-26T06:30:09.762Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2025/02/20/nginx/nginx-0x00-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/1740104411.png">
@@ -37,7 +37,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>ngix-0x00-编译源码 - hex Blog</title>
+  <title>nginx-0x00-编译源码 - hex Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -226,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="ngix-0x00-编译源码"></span>
+            <span id="subtitle" data-typed-text="nginx-0x00-编译源码"></span>
           
         </div>
 
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          195 字
+          224 字
         
       </span>
     
@@ -314,17 +314,17 @@
     
     <div class="category row nomargin-x">
       <a class="category-item 
-          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="ngix"
-        id="heading-335af481fbaf93780b4e2edaaa37a06b" role="tab" data-toggle="collapse" href="#collapse-335af481fbaf93780b4e2edaaa37a06b"
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="nginx"
+        id="heading-ee434023cf89d7dfb21f63d64f0f9d74" role="tab" data-toggle="collapse" href="#collapse-ee434023cf89d7dfb21f63d64f0f9d74"
         aria-expanded="true"
       >
-        ngix
-        <span class="list-group-count">(1)</span>
+        nginx
+        <span class="list-group-count">(2)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
-      <div class="category-collapse collapse show" id="collapse-335af481fbaf93780b4e2edaaa37a06b"
-           role="tabpanel" aria-labelledby="heading-335af481fbaf93780b4e2edaaa37a06b">
+      <div class="category-collapse collapse show" id="collapse-ee434023cf89d7dfb21f63d64f0f9d74"
+           role="tabpanel" aria-labelledby="heading-ee434023cf89d7dfb21f63d64f0f9d74">
         
         
           
@@ -333,10 +333,19 @@
     
       
       
-        <a href="/2025/02/20/nginx/nginx-0x00-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/" title="ngix-0x00-编译源码"
+        <a href="/2025/02/20/nginx/nginx-0x00-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/" title="nginx-0x00-编译源码"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">ngix-0x00-编译源码</span>
+          <span class="category-post">nginx-0x00-编译源码</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/02/26/nginx/nginx-0x01-cmake%E7%BC%96%E8%AF%91/" title="nginx-0x01-cmake编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x01-cmake编译</span>
         </a>
       
     
@@ -358,14 +367,14 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">ngix-0x00-编译源码</h1>
+            <h1 id="seo-header">nginx-0x00-编译源码</h1>
             
             
               <div class="markdown-body">
                 
                 <h3 id="1-下载源码"><a href="#1-下载源码" class="headerlink" title="1 下载源码"></a>1 下载源码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/nginx.git<br><span class="hljs-built_in">cd</span> ngix<br>git remote add upstream git@github.com:nginx/nginx.git<br>git remote set-url --push upstream no_push<br>git remote -v<br>git fetch upstream<br>git checkout master<br>git rebase upstream/master<br>git checkout -b my_study<br></code></pre></td></tr></table></figure>
 
-<h3 id="2-前置依赖"><a href="#2-前置依赖" class="headerlink" title="2 前置依赖"></a>2 前置依赖</h3><h4 id="2-1-brew安装"><a href="#2-1-brew安装" class="headerlink" title="2.1 brew安装"></a>2.1 brew安装</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">brew install pcre openssl<br></code></pre></td></tr></table></figure>
+<h3 id="2-前置依赖"><a href="#2-前置依赖" class="headerlink" title="2 前置依赖"></a>2 前置依赖</h3><h4 id="2-1-brew安装"><a href="#2-1-brew安装" class="headerlink" title="2.1 brew安装"></a>2.1 brew安装</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">brew install pcre openssl<br>brew install pkg-config<br></code></pre></td></tr></table></figure>
 
 <h4 id="2-2-源码安装zlib"><a href="#2-2-源码安装zlib" class="headerlink" title="2.2 源码安装zlib"></a>2.2 源码安装zlib</h4><p><a target="_blank" rel="noopener" href="https://zlib.net/">从官网下载源码</a></p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">mkdir</span> -p ~/MyApp/zlib<br><span class="hljs-built_in">cp</span> ~/Downloads/zlib-1.3.1.tar.gz ./<br>tar -zxvf ./zlib-1.3.1.tar.gz<br></code></pre></td></tr></table></figure>
@@ -383,6 +392,9 @@
 
 <p>服务默认监听在80端口</p>
 <img src="/2025/02/20/nginx/nginx-0x00-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/1740104411.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>为了在IDea中阅读代码，要简单配置一下开发环境<a href="/2023/11/02/Clion%E9%85%8D%E7%BD%AEMakefile%E9%A1%B9%E7%9B%AE%E8%B7%B3%E8%BD%AC%E5%8A%9F%E8%83%BD/" title="Clion配置Makefile项目跳转功能">Clion配置Makefile项目跳转功能</a></p>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -409,7 +421,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/ngix/" class="category-chain-item">ngix</a>
+  <a href="/categories/nginx/" class="category-chain-item">nginx</a>
   
   
 
@@ -429,7 +441,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>ngix-0x00-编译源码</div>
+      <div>nginx-0x00-编译源码</div>
       <div>https://bannirui.github.io/2025/02/20/nginx/nginx-0x00-编译源码/</div>
     </div>
     <div class="license-meta">
@@ -473,6 +485,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2025/02/26/nginx/nginx-0x01-cmake%E7%BC%96%E8%AF%91/" title="nginx-0x01-cmake编译">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">nginx-0x01-cmake编译</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
