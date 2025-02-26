@@ -1,8 +1,8 @@
 ---
-title: ngix-0x00-编译源码
+title: nginx-0x00-编译源码
 category_bar: true
 date: 2025-02-20 17:24:31
-categories: ngix
+categories: nginx
 ---
 
 ### 1 下载源码
@@ -25,6 +25,7 @@ git checkout -b my_study
 
 ```sh
 brew install pcre openssl
+brew install pkg-config
 ```
 
 #### 2.2 源码安装zlib
