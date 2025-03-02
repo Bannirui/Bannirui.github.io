@@ -143,3 +143,5 @@ git clone git@github.com:apache/rocketmq-dashboard.git
 cd rocketmq-dashboard
 mvn spring-boot:run
 ```
+
+访问后台链接 http://localhost:8080
