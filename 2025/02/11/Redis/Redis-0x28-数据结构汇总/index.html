@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="redis中提供了丰富的数据类型，为了高效使用内存又对每种数据类型提供了不同的编码方式    数据类型 编码方式       string raw      list int      set ht      zset zipmap      hash ziplist      module intset      stream skiplist       embstr       quicke">
+    <meta name="description" content="redis中提供了丰富的数据类型，为了高效使用内存又对每种数据类型提供了不同的编码方式，数据类型和编码的枚举在server.h中 123456789101112131415161718192021222324252627&#x2F;&#x2F; 字符串#define OBJ_STRING 0    &#x2F;* String object. *&#x2F;&#x2F;&#x2F; 列表#define OBJ_LIST 1      &#x2F;* List obj">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x28-数据结构汇总">
 <meta property="og:url" content="https://bannirui.github.io/2025/02/11/Redis/Redis-0x28-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%B1%87%E6%80%BB/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="redis中提供了丰富的数据类型，为了高效使用内存又对每种数据类型提供了不同的编码方式    数据类型 编码方式       string raw      list int      set ht      zset zipmap      hash ziplist      module intset      stream skiplist       embstr       quicke">
+<meta property="og:description" content="redis中提供了丰富的数据类型，为了高效使用内存又对每种数据类型提供了不同的编码方式，数据类型和编码的枚举在server.h中 123456789101112131415161718192021222324252627&#x2F;&#x2F; 字符串#define OBJ_STRING 0    &#x2F;* String object. *&#x2F;&#x2F;&#x2F; 列表#define OBJ_LIST 1      &#x2F;* List obj">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-02-11T08:03:29.000Z">
-<meta property="article:modified_time" content="2025-02-17T12:45:54.451Z">
+<meta property="article:modified_time" content="2025-02-28T16:17:30.914Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          73 字
+          256 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          1 分钟
+          3 分钟
         
       </span>
     
@@ -538,84 +538,64 @@
             
               <div class="markdown-body">
                 
-                <p>redis中提供了丰富的数据类型，为了高效使用内存又对每种数据类型提供了不同的编码方式</p>
+                <p>redis中提供了丰富的数据类型，为了高效使用内存又对每种数据类型提供了不同的编码方式，数据类型和编码的枚举在<code>server.h</code>中</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 字符串</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_STRING 0    <span class="hljs-comment">/* String object. */</span></span><br><span class="hljs-comment">// 列表</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_LIST 1      <span class="hljs-comment">/* List object. */</span></span><br><span class="hljs-comment">// 集合</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_SET 2       <span class="hljs-comment">/* Set object. */</span></span><br><span class="hljs-comment">// 有序集合</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ZSET 3      <span class="hljs-comment">/* Sorted set object. */</span></span><br><span class="hljs-comment">// 哈希表</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_HASH 4      <span class="hljs-comment">/* Hash object. */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_MODULE 5    <span class="hljs-comment">/* Module object. */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_STREAM 6    <span class="hljs-comment">/* Stream object. */</span></span><br><span class="hljs-comment">// raw编码字符串 只有字符串才会用到的编码方式</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_RAW 0     <span class="hljs-comment">/* Raw representation */</span></span><br><br><span class="hljs-comment">// int编码字符串</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_INT 1     <span class="hljs-comment">/* Encoded as integer */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_HT 2      <span class="hljs-comment">/* Encoded as hash table */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_ZIPMAP 3  <span class="hljs-comment">/* Encoded as zipmap */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_LINKEDLIST 4 <span class="hljs-comment">/* No longer used: old list encoding. */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_ZIPLIST 5 <span class="hljs-comment">/* Encoded as ziplist */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_INTSET 6  <span class="hljs-comment">/* Encoded as intset */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_SKIPLIST 7  <span class="hljs-comment">/* Encoded as skiplist */</span></span><br><span class="hljs-comment">// embed编码字符串</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_EMBSTR 8  <span class="hljs-comment">/* Embedded sds string encoding */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_QUICKLIST 9 <span class="hljs-comment">/* Encoded as linked list of ziplists */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> OBJ_ENCODING_STREAM 10 <span class="hljs-comment">/* Encoded as a radix tree of listpacks */</span></span><br></code></pre></td></tr></table></figure>
+
 <table>
 <thead>
 <tr>
 <th>数据类型</th>
 <th>编码方式</th>
-<th></th>
-<th></th>
-<th></th>
+<th>链接</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>string</td>
-<td>raw</td>
-<td></td>
-<td></td>
-<td></td>
+<td>int embed raw</td>
+<td><a href="/2024/04/16/Redis/Redis-0x12-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/" title="Redis-0x12-数据结构sds">Redis-0x12-数据结构sds</a> <a href="/2025/02/10/Redis/Redis-0x26-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84string/" title="Redis-0x26-数据结构string">Redis-0x26-数据结构string</a></td>
 </tr>
 <tr>
 <td>list</td>
-<td>int</td>
-<td></td>
-<td></td>
-<td></td>
+<td>quicklist</td>
+<td><a href="/2025/02/10/Redis/Redis-0x23-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84quicklist/" title="Redis-0x23-数据结构quicklist">Redis-0x23-数据结构quicklist</a></td>
+</tr>
+<tr>
+<td>list</td>
+<td>ziplist</td>
+<td><a href="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/" title="Redis-0x22-数据结构ziplist">Redis-0x22-数据结构ziplist</a></td>
 </tr>
 <tr>
 <td>set</td>
 <td>ht</td>
-<td></td>
-<td></td>
-<td></td>
+<td><a href="/2025/02/10/Redis/Redis-0x1E-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84set/" title="Redis-0x1E-数据结构set">Redis-0x1E-数据结构set</a> <a href="/2025/02/10/Redis/Redis-0x25-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84hash/" title="Redis-0x25-数据结构hash">Redis-0x25-数据结构hash</a></td>
+</tr>
+<tr>
+<td>set</td>
+<td>intset</td>
+<td><a href="/2025/02/10/Redis/Redis-0x1E-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84set/" title="Redis-0x1E-数据结构set">Redis-0x1E-数据结构set</a> <a href="/2025/02/10/Redis/Redis-0x1F-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84intset/" title="Redis-0x1F-数据结构intset">Redis-0x1F-数据结构intset</a></td>
 </tr>
 <tr>
 <td>zset</td>
-<td>zipmap</td>
-<td></td>
-<td></td>
-<td></td>
+<td>ziplist</td>
+<td><a href="/2025/02/10/Redis/Redis-0x20-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84zset/" title="Redis-0x20-数据结构zset">Redis-0x20-数据结构zset</a> <a href="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/" title="Redis-0x22-数据结构ziplist">Redis-0x22-数据结构ziplist</a></td>
 </tr>
 <tr>
 <td>hash</td>
 <td>ziplist</td>
-<td></td>
+<td><a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict">Redis-0x0B-数据结构dict</a> <a href="/2025/02/10/Redis/Redis-0x22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84ziplist/" title="Redis-0x22-数据结构ziplist">Redis-0x22-数据结构ziplist</a></td>
+</tr>
+<tr>
+<td>hash</td>
+<td>ht</td>
+<td><a href="/2024/04/15/Redis/Redis-0x0B-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84dict/" title="Redis-0x0B-数据结构dict">Redis-0x0B-数据结构dict</a> <a href="/2025/02/10/Redis/Redis-0x25-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84hash/" title="Redis-0x25-数据结构hash">Redis-0x25-数据结构hash</a></td>
+</tr>
+<tr>
+<td>stream</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>module</td>
-<td>intset</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>stream</td>
-<td>skiplist</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>embstr</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>quickest</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>stream</td>
-<td></td>
 <td></td>
 <td></td>
 </tr>
