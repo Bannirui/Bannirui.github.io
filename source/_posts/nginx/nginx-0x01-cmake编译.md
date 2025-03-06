@@ -18,18 +18,7 @@ project(nginx LANGUAGES C CXX)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
-# 架构ARM
-set(CMAKE_OSX_ARCHITECTURES "arm64")
 
-# 安装路径 /usr/local
-set(NGX_PREFIX "${CMAKE_INSTALL_PREFIX}" CACHE STRING "nginx install prefix")
-set(NGX_SBIN_PATH "${NGX_PREFIX}/bin/nginx" CACHE STRING "")
-set(NGX_MODULES_PATH "${NGX_PREFIX}/modules" CACHE STRING "")
-# nginx的配置文件
-set(NGX_CONF_PATH "${NGX_PREFIX}/conf/nginx.conf" CACHE STRING "")
-set(NGX_ERROR_LOG_PATH "${NGX_PREFIX}/logs/error.log" CACHE STRING "")
-set(NGX_PID_PATH "${NGX_PREFIX}/logs/nginx.pid" CACHE STRING "")
-set(NGX_LOCK_PATH "${NGX_PREFIX}/logs/nginx.lock" CACHE STRING "")
 set(NGX_PLATFORM "" CACHE STRING "NGX platform to build for")
 
 include(CheckCSourceCompiles)
@@ -263,17 +252,22 @@ target_link_libraries(${PROJECT_NAME}
         ${REQ_LIBRARIES}
 )
 
-# 安装 /usr/local/bin
-install(TARGETS nginx DESTINATION "${NGX_PREFIX}/bin")
-
-get_filename_component(NGX_HTTP_LOG_DIR "${NGX_HTTP_LOG_PATH}" DIRECTORY)
-install(DIRECTORY DESTINATION "${NGX_HTTP_LOG_DIR}")
-
-install(DIRECTORY DESTINATION "${NGX_HTTP_CLIENT_TEMP_PATH}")
-install(DIRECTORY DESTINATION "${NGX_HTTP_PROXY_TEMP_PATH}")
-install(DIRECTORY DESTINATION "${NGX_HTTP_FASTCGI_TEMP_PATH}")
-install(DIRECTORY DESTINATION "${NGX_HTTP_UWSGI_TEMP_PATH}")
-install(DIRECTORY DESTINATION "${NGX_HTTP_SCGI_TEMP_PATH}")
+# 安装路径 /usr/local
+# 安装可执行文件
+set(NGX_DIR "${CMAKE_INSTALL_PREFIX}/nginx" CACHE STRING "")
+set(NGX_BIN_DIR "${CMAKE_INSTALL_PREFIX}/nginx/sbin" CACHE STRING "")
+# nginx的配置文件
+set(NGX_CONF_DIR "${CMAKE_INSTALL_PREFIX}/nginx/conf" CACHE STRING "")
+# 日志目录
+set(NGX_LOG_DIR "${CMAKE_INSTALL_PREFIX}/nginx/logs" CACHE STRING "")
+# 可执行程序
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${NGX_BIN_DIR})
+# 默认服务
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docs/html" DESTINATION ${NGX_BIN_DIR})
+# 配置文件
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/conf" DESTINATION ${NGX_DIR})
+# 日志目录
+install(DIRECTORY DESTINATION ${NGX_LOG_DIR})
 ```
 
 ### 2 运行
