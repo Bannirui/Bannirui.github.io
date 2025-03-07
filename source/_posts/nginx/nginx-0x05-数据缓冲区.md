@@ -1,7 +1,7 @@
 ---
-title: nginx-0x04-缓冲区
+title: nginx-0x05-数据缓冲区
 category_bar: true
-date: 2025-03-06 13:15:28
+date: 2025-03-07 10:15:28
 categories: nginx
 ---
 
