@@ -1,0 +1,109 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.16 Chrome/132.0.6834.196 Electron/34.2.0 Safari/537.36" version="26.0.16">
+  <diagram name="第 1 页" id="fe3fQuEECL4YLPYI8b1z">
+    <mxGraphModel dx="1114" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="1c3zmRk5OtosDnNeGVRL-1" target="1c3zmRk5OtosDnNeGVRL-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="295" />
+              <mxPoint x="220" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-1" value="elts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="280" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-2" value="nelts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="310" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="1c3zmRk5OtosDnNeGVRL-3" target="1c3zmRk5OtosDnNeGVRL-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-3" value="next" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="340" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-5" value="已分配" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="240" y="460" width="90" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="1c3zmRk5OtosDnNeGVRL-29" target="1c3zmRk5OtosDnNeGVRL-32">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="295" />
+              <mxPoint x="370" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-29" value="elts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="280" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-30" value="nelts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="310" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="1c3zmRk5OtosDnNeGVRL-31" target="1c3zmRk5OtosDnNeGVRL-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-31" value="next" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="340" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-32" value="已分配" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="390" y="370" width="90" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="1c3zmRk5OtosDnNeGVRL-35" target="1c3zmRk5OtosDnNeGVRL-38">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="295" />
+              <mxPoint x="520" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-35" value="elts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="280" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-36" value="nelts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="310" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-37" value="next" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="340" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-38" value="已分配" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="540" y="370" width="90" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-39" value="未分配" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="480" width="90" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="1c3zmRk5OtosDnNeGVRL-42" target="1c3zmRk5OtosDnNeGVRL-35">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="265" />
+              <mxPoint x="340" y="200" />
+              <mxPoint x="585" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-42" value="last" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240" y="250" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-43" value="size" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240" y="370" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-44" value="nalloc" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240" y="400" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-45" value="pool" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240" y="430" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-47" value="最后一个节点" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="170" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-48" value="第一个节点" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="270" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1c3zmRk5OtosDnNeGVRL-49" value="链表" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="255" y="210" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
