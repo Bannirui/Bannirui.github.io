@@ -1,0 +1,935 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="nginx-0x0B-事件模型中定时任务的触发时机就需要定时器，换言之定时器的作用就触发定时任务的执行。  1 事件循环广义上区分系统的事件类型  网络事件 普通任务  事件循环器的作用就是高效处理网络事件和普通任务  如果阻塞式调用复用器，虽然可以及时感知到网络事件就绪，但是可能会错过大量定时任务的期待的执时机 因此为了兼顾二者，就要非阻塞式调用系统调用，并且设置超时时间就是最近的一次定时任务执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx-0x0A-定时器">
+<meta property="og:url" content="https://bannirui.github.io/2025/04/09/nginx/nginx-0x0A-%E5%AE%9A%E6%97%B6%E5%99%A8/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="nginx-0x0B-事件模型中定时任务的触发时机就需要定时器，换言之定时器的作用就触发定时任务的执行。  1 事件循环广义上区分系统的事件类型  网络事件 普通任务  事件循环器的作用就是高效处理网络事件和普通任务  如果阻塞式调用复用器，虽然可以及时感知到网络事件就绪，但是可能会错过大量定时任务的期待的执时机 因此为了兼顾二者，就要非阻塞式调用系统调用，并且设置超时时间就是最近的一次定时任务执">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-09T07:50:10.000Z">
+<meta property="article:modified_time" content="2025-04-09T09:29:17.199Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>nginx-0x0A-定时器 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="nginx-0x0A-定时器"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-04-09 15:50" pubdate>
+          2025年4月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="nginx"
+        id="heading-ee434023cf89d7dfb21f63d64f0f9d74" role="tab" data-toggle="collapse" href="#collapse-ee434023cf89d7dfb21f63d64f0f9d74"
+        aria-expanded="true"
+      >
+        nginx
+        <span class="list-group-count">(14)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-ee434023cf89d7dfb21f63d64f0f9d74"
+           role="tabpanel" aria-labelledby="heading-ee434023cf89d7dfb21f63d64f0f9d74">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2025/02/20/nginx/nginx-0x00-%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81/" title="nginx-0x00-编译源码"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x00-编译源码</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/02/26/nginx/nginx-0x01-cmake%E7%BC%96%E8%AF%91/" title="nginx-0x01-cmake编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x01-cmake编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/03/nginx/nginx-0x02-%E5%86%85%E5%AD%98%E6%B1%A0/" title="nginx-0x02-内存池"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x02-内存池</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/04/nginx/nginx-0x03-%E6%95%B0%E7%BB%84/" title="nginx-0x03-数组"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x03-数组</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/07/nginx/nginx-0x04-%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/" title="nginx-0x04-部署vue项目"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x04-部署vue项目</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/07/nginx/nginx-0x05-%E6%95%B0%E6%8D%AE%E7%BC%93%E5%86%B2%E5%8C%BA/" title="nginx-0x05-数据缓冲区"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x05-数据缓冲区</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/07/nginx/nginx-0x06-%E5%8F%8C%E9%93%BE%E8%A1%A8/" title="nginx-0x06-双链表"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x06-双链表</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/07/nginx/nginx-0x07-%E5%8D%95%E9%93%BE%E8%A1%A8/" title="nginx-0x07-单链表"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x07-单链表</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/13/nginx/nginx-0x08-hash%E8%A1%A8/" title="nginx-0x08-hash表"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x08-hash表</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/03/14/nginx/nginx-0x09-%E5%AD%97%E7%AC%A6%E4%B8%B2/" title="nginx-0x09-字符串"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x09-字符串</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/09/nginx/nginx-0x0A-%E5%AE%9A%E6%97%B6%E5%99%A8/" title="nginx-0x0A-定时器"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">nginx-0x0A-定时器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/09/nginx/nginx-0x0B-%E4%BA%8B%E4%BB%B6%E6%A8%A1%E5%9E%8B/" title="nginx-0x0B-事件模型"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x0B-事件模型</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/09/nginx/nginx-0x0C-%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4/" title="nginx-0x0C-系统时间"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x0C-系统时间</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/09/nginx/nginx-0x0D-%E5%85%B3%E4%BA%8E%E4%BC%AA%E4%BA%8B%E4%BB%B6%E7%9A%84%E9%98%B2%E5%BE%A1/" title="nginx-0x0D-关于伪事件的防御"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x0D-关于伪事件的防御</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">nginx-0x0A-定时器</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <a href="/2025/04/09/nginx/nginx-0x0B-%E4%BA%8B%E4%BB%B6%E6%A8%A1%E5%9E%8B/" title="nginx-0x0B-事件模型">nginx-0x0B-事件模型</a>中定时任务的触发时机就需要定时器，换言之定时器的作用就触发定时任务的执行。
+
+<h3 id="1-事件循环"><a href="#1-事件循环" class="headerlink" title="1 事件循环"></a>1 事件循环</h3><p>广义上区分系统的事件类型</p>
+<ul>
+<li>网络事件</li>
+<li>普通任务</li>
+</ul>
+<p>事件循环器的作用就是高效处理网络事件和普通任务</p>
+<ul>
+<li>如果阻塞式调用复用器，虽然可以及时感知到网络事件就绪，但是可能会错过大量定时任务的期待的执时机</li>
+<li>因此为了兼顾二者，就要非阻塞式调用系统调用，并且设置超时时间就是最近的一次定时任务执行时间，确保定时任务也可以被及时处理</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * @param ngx_kqueue kq实例</span><br><span class="hljs-comment"> * @param tp 系统调用的超时设置 没有事件到达唤醒线程 就阻塞到这个时间后唤醒线程不要一直阻塞</span><br><span class="hljs-comment"> *           &lt;ul&gt;</span><br><span class="hljs-comment"> *             &lt;li&gt;有值 超时唤醒&lt;/li&gt;</span><br><span class="hljs-comment"> *             &lt;li&gt;没值 用kq定时器事件 配置kq实例化时注册定时器事件&lt;/li&gt;</span><br><span class="hljs-comment"> *           &lt;/ul&gt;</span><br><span class="hljs-comment"> * @return events 就绪事件数量</span><br><span class="hljs-comment"> */</span><br>events = kevent(ngx_kqueue, change_list, n, event_list, (<span class="hljs-type">int</span>) nevents, tp);<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-关于定时任务的执行时机"><a href="#2-关于定时任务的执行时机" class="headerlink" title="2 关于定时任务的执行时机"></a>2 关于定时任务的执行时机</h3><p>事件循环的主线程</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 启动事件循环</span><br><span class="hljs-keyword">for</span> ( ;; ) &#123;<br>    ngx_log_debug0(NGX_LOG_DEBUG_EVENT, cycle-&gt;<span class="hljs-built_in">log</span>, <span class="hljs-number">0</span>, <span class="hljs-string">&quot;worker cycle&quot;</span>);<br>    <span class="hljs-comment">// 每一次事件循环的处理</span><br>    ngx_process_events_and_timers(cycle);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 事件循环的处理</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span><br><span class="hljs-title function_">ngx_process_events_and_timers</span><span class="hljs-params">(<span class="hljs-type">ngx_cycle_t</span> *cycle)</span><br>&#123;<br>       <span class="hljs-comment">/*</span><br><span class="hljs-comment">     * &lt;ul&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;ngx_process_events是个宏定义&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;这个宏是接口ngx_event_actions中的方法process_events&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;至于接口对应的实现是在编译时根据启用的模块进行赋值 kequeue的是ngx_kqueue_module_ctx中的actions&lt;/li&gt;</span><br><span class="hljs-comment">     * &lt;/ul&gt;</span><br><span class="hljs-comment">     * 最终调用到系统的kq 拿到就绪的网络IO事件</span><br><span class="hljs-comment">     * 能继续执行下去的场景一定是</span><br><span class="hljs-comment">     * &lt;ul&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;虽然没有设置系统调用超时 但是有网络事件就绪&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;设置了系统调用超时 在超时到期之前就有网络事件就绪&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;设置了系统调用超时 一直没有网络事件就绪 直到超时到期&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;在复用器上注册了定时器事件 虽然没有网络事件 但是定时器事件触发了&lt;/li&gt;</span><br><span class="hljs-comment">     * &lt;/ul&gt;</span><br><span class="hljs-comment">     */</span><br>    (<span class="hljs-type">void</span>) ngx_process_events(cycle, timer, flags);<br>        <span class="hljs-comment">// 先处理网络accept连接事件</span><br>    ngx_event_process_posted(cycle, &amp;ngx_posted_accept_events);<br><br>    <span class="hljs-keyword">if</span> (ngx_accept_mutex_held) &#123;<br>        ngx_shmtx_unlock(&amp;ngx_accept_mutex);<br>    &#125;<br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">     * 处理普通任务 定时任务</span><br><span class="hljs-comment">     * 执行到这的情况有两种</span><br><span class="hljs-comment">     * &lt;ul&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;系统调用kq指定的超时时间 超时到期了 而这个超时时间就是在系统调用前根据任务队列的到期时间算出来的&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;系统调用kq没有指定超时时间 让系统调用阻塞执行 但是这种情况会搭配往复用器注册定时器事件来唤醒阻塞线程&lt;/li&gt;</span><br><span class="hljs-comment">     * &lt;/ul&gt;</span><br><span class="hljs-comment">     * 其实不管哪种方式执行到这 都是为了配合系统时间才起作用</span><br><span class="hljs-comment">     * 执行定时任务的时候的逻辑是拿着任务的过期时间跟当前系统时间比较 到期了就执行</span><br><span class="hljs-comment">     * 想要获得系统时间就要调用gettimeofday 对于高性能服务器而言 频繁的系统调用是笔很大的开销</span><br><span class="hljs-comment">     * nginx在性能和定时任务的执行精度做了权衡</span><br><span class="hljs-comment">     * &lt;ul&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;每次都系统调用获取系统时间开销大 时间精确&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;缓存一个系统时间 每次从内存拿开销小 时间一定会不精准 有滞后&lt;/li&gt;</span><br><span class="hljs-comment">     * &lt;/ul&gt;</span><br><span class="hljs-comment">     * 所以现在的矛盾变成了怎么解决内存上缓存着的时间精度 换言之就是怎么更新缓存的系统时间 所以引申出来的机制就是更新缓存的系统时间的频率就是系统时间的精度</span><br><span class="hljs-comment">     * 怎么更新系统时间 对应的方式是向复用器注册定时器事件 定时器事件就绪就去更新系统时间</span><br><span class="hljs-comment">     * 更新系统时间的精度 对应的就是定时器事件的执行间隔 比如设置定时器间隔是100ms 那么每隔100s就会去更新一次缓存的系统时间 也就意味着缓存的系统时间比实时的系统时间滞后最多100ms</span><br><span class="hljs-comment">     * 意味着当执行定时任务的时候参考的系统时间存在的精度误差导致定时任务的执行精度问题</span><br><span class="hljs-comment">     * 所以</span><br><span class="hljs-comment">     * &lt;ul&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;如果不在乎定时任务的管理精度 就没必要启用高精度定时器机制&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;如果需要精细管理定时任务 就可以依赖高精度定时器机制&lt;/li&gt;</span><br><span class="hljs-comment">     * &lt;/ul&gt;</span><br><span class="hljs-comment">     */</span><br>    ngx_event_expire_timers();<br>    <span class="hljs-comment">// 再处理网络IO的读写事件</span><br>    ngx_event_process_posted(cycle, &amp;ngx_posted_events);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-定时任务要不要执行的判断标准"><a href="#3-定时任务要不要执行的判断标准" class="headerlink" title="3 定时任务要不要执行的判断标准"></a>3 定时任务要不要执行的判断标准</h3><p>每个定时任务都维护上超时时间，每触发定时任务的执行时机就扫描一遍定时任务找到超时时间已经过期的，这些任务就是要执行的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 处理超时事件</span><br><span class="hljs-comment"> * 事件循环线程每个处理周期都会在恰当时机被唤醒</span><br><span class="hljs-comment"> * 在这个唤醒时机 定时任务就获得到一次被执行的机会</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;找到过期的定时器从红黑树中移除&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;根据定时器找到对应的事件 回调事件&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">void</span><br><span class="hljs-title function_">ngx_event_expire_timers</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-comment">// 事件 根据timer定时器的地址倒推出来事件的地址</span><br>    <span class="hljs-type">ngx_event_t</span>        *ev;<br>    <span class="hljs-type">ngx_rbtree_node_t</span>  *node, *root, *sentinel;<br><br>    sentinel = ngx_event_timer_rbtree.sentinel;<br>    <span class="hljs-comment">// 轮询检索红黑树把过期的定时器删除</span><br>    <span class="hljs-keyword">for</span> ( ;; ) &#123;<br>        <span class="hljs-comment">// 红黑树的根</span><br>        root = ngx_event_timer_rbtree.root;<br>        <span class="hljs-comment">// 到了树的边界 说明找遍了整棵树</span><br>        <span class="hljs-keyword">if</span> (root == sentinel) &#123;<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-comment">// 事件队列中最早超时到期的事件</span><br>        node = ngx_rbtree_min(root, sentinel);<br><br>        <span class="hljs-comment">/* node-&gt;key &gt; ngx_current_msec */</span><br>        <span class="hljs-comment">// 任务定时器队列中最早到期的都还没超时 说明所有的任务都还没超时</span><br>        <span class="hljs-keyword">if</span> ((<span class="hljs-type">ngx_msec_int_t</span>) (node-&gt;key - ngx_current_msec) &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-comment">// 已经找到有任务超时过期了 根据事件的定时器找到事件本身</span><br>        ev = ngx_rbtree_data(node, <span class="hljs-type">ngx_event_t</span>, timer);<br><br>        ngx_log_debug2(NGX_LOG_DEBUG_EVENT, ev-&gt;<span class="hljs-built_in">log</span>, <span class="hljs-number">0</span>,<br>                       <span class="hljs-string">&quot;event timer del: %d: %M&quot;</span>,<br>                       ngx_event_ident(ev-&gt;data), ev-&gt;timer.key);<br>        <span class="hljs-comment">// 从红黑树中删除过期的定时器</span><br>        ngx_rbtree_delete(&amp;ngx_event_timer_rbtree, &amp;ev-&gt;timer);<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> (NGX_DEBUG)</span><br>        ev-&gt;timer.left = <span class="hljs-literal">NULL</span>;<br>        ev-&gt;timer.right = <span class="hljs-literal">NULL</span>;<br>        ev-&gt;timer.parent = <span class="hljs-literal">NULL</span>;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>        ev-&gt;timer_set = <span class="hljs-number">0</span>;<br><br>        ev-&gt;timedout = <span class="hljs-number">1</span>;<br>        <span class="hljs-comment">// 回调事件</span><br>        ev-&gt;handler(ev);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-关于高精度定时器"><a href="#4-关于高精度定时器" class="headerlink" title="4 关于高精度定时器"></a>4 关于高精度定时器</h3><p>可以看到在定时任务的处理中需要依赖系统当前时间来判断定时任务有没有到期，而且系统上还会有很多其他需要使用系统当前时间的地方。可想而知，对于高性能的服务端而言，如果每次需要使用系统当前时间就执行一次系统调用<code>gettimeofday</code>，这是一笔不小的开销。自然而然就想到要缓存系统时间，定时去更新就行，可以大大减少系统调用次数。</p>
+<p>既然用到缓存就一定存在缓存不一致，谁跟谁不一致呢，当需要使用系统时间的时候，从缓存上拿到的系统时间可能跟彼时真正的系统时间存在误差，误差是多大，误差范围就是[0…缓存更新间隔]，比如，每隔t更新一次缓存系统时间，那么使用的时候拿到的值可能跟系统时间一样，也可能滞后实际时间t。</p>
+<p>所以这个时候要解决的矛盾是: 为了系统系能和时间精度，需要设计一种机制能够支持高精度地更新缓存的系统时间—定时器事件登场。</p>
+<h4 id="4-1-注册定时器事件"><a href="#4-1-注册定时器事件" class="headerlink" title="4.1 注册定时器事件"></a>4.1 注册定时器事件</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 通过向kq注册定时器事件方式实现高精度定时器</span><br><span class="hljs-keyword">if</span> (timer) &#123;<br>    kev.ident = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">// 表明注册的事件类型是定时器事件 不是读写事件 kq会在设定的时间间隔触发这个事件</span><br>    kev.filter = EVFILT_TIMER;<br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">     * 两个作用</span><br><span class="hljs-comment">     * &lt;ul&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;ADD表明向kq注册新事件 如果kq中已经存在这个事件就更新&lt;/li&gt;</span><br><span class="hljs-comment">     *   &lt;li&gt;ENABLE表明启用这个事件 让它开始工作&lt;/li&gt;</span><br><span class="hljs-comment">     * &lt;/ul&gt;</span><br><span class="hljs-comment">     */</span><br>    kev.flags = EV_ADD|EV_ENABLE;<br>    <span class="hljs-comment">// 定时器不需要子标志</span><br>    kev.fflags = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">// 间隔时间 ms</span><br>    kev.data = timer;<br>    kev.udata = <span class="hljs-number">0</span>;<br><br>    ts.tv_sec = <span class="hljs-number">0</span>;<br>    ts.tv_nsec = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">// 向kq注册定时器</span><br>    <span class="hljs-keyword">if</span> (kevent(ngx_kqueue, &amp;kev, <span class="hljs-number">1</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, &amp;ts) == <span class="hljs-number">-1</span>) &#123;<br>        ngx_log_error(NGX_LOG_ALERT, cycle-&gt;<span class="hljs-built_in">log</span>, ngx_errno,<br>                      <span class="hljs-string">&quot;kevent(EVFILT_TIMER) failed&quot;</span>);<br>        <span class="hljs-keyword">return</span> NGX_ERROR;<br>    &#125;<br><br>    ngx_event_flags |= NGX_USE_TIMER_EVENT;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-2-定时器事件就绪"><a href="#4-2-定时器事件就绪" class="headerlink" title="4.2 定时器事件就绪"></a>4.2 定时器事件就绪</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 就绪的事件是个定时器事件 借助这个事件更新系统时间 等会函数调用方的主线程要触发定时任务执行 依赖更新过后的系统时间来判断任务是否到期</span><br><span class="hljs-keyword">if</span> (event_list[i].filter == EVFILT_TIMER) &#123;<br>    <span class="hljs-comment">// 更新系统时间</span><br>    ngx_time_update();<br>    <span class="hljs-keyword">continue</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-3-更新缓存时间"><a href="#4-3-更新缓存时间" class="headerlink" title="4.3 更新缓存时间"></a>4.3 更新缓存时间</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 更新缓存的系统时间 时间戳格式</span><br>ngx_current_msec = ngx_monotonic_time(sec, msec);<br><span class="hljs-comment">// 更新缓存的系统时间 结构化格式</span><br>tp = &amp;cached_time[slot];<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/nginx/" class="category-chain-item">nginx</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>nginx-0x0A-定时器</div>
+      <div>https://bannirui.github.io/2025/04/09/nginx/nginx-0x0A-定时器/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年4月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/04/09/nginx/nginx-0x0B-%E4%BA%8B%E4%BB%B6%E6%A8%A1%E5%9E%8B/" title="nginx-0x0B-事件模型">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">nginx-0x0B-事件模型</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/17/electron/electron-0x00-%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE/" title="electron-0x00-新建项目">
+                        <span class="hidden-mobile">electron-0x00-新建项目</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '7638cfe746d2dfeb000fe3f9a03b23e6'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
