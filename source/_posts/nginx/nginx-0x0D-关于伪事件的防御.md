@@ -88,6 +88,25 @@ epoll红黑树中有对fd对应的file对象引用，计数是1
 - epoll\kequeue边缘式触发
 - instance防伪码
 
+#### 3.1 多路复用器触发方式
+
+```c
+// 多路复用器触发模式 边缘式 搭配instance机制防御僵尸事件和伪事件
+#define NGX_CLEAR_EVENT    EV_CLEAR
+```
+
+```c
+        if (!rev->active && !rev->ready) {
+            // 向多路复用器注册事件 监听读 设置为边缘式触发方式 将来配合instance机制防御僵尸事件和伪事件
+            if (ngx_add_event(rev, NGX_READ_EVENT, NGX_CLEAR_EVENT)
+                == NGX_ERROR)
+            {
+                return NGX_ERROR;
+            }
+        }
+```
+
+#### 3.2 instance机制
 ```c
             /*
              * 读写事件的处理
