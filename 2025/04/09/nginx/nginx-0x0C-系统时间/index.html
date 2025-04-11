@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+    <meta name="description" content="系统时间缓存的必要性以及整套配合机制在nginx-0x0A-定时器已经提过。这篇介绍的是系统时间到底是咋缓存的。 首先年月日时分秒结构化的时间肯定是通用的，但是有些场景对时间单调性有严格要求。 1 获取时间的系统调用   系统调用\比较 gettiemofday clock_gettime    格式 结构化绝对时间，系统时间，墙上时间 相对时间，相对系统开机时长   精度 微秒 纳秒   2 关">
 <meta property="og:type" content="article">
 <meta property="og:title" content="nginx-0x0C-系统时间">
 <meta property="og:url" content="https://bannirui.github.io/2025/04/09/nginx/nginx-0x0C-%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+<meta property="og:description" content="系统时间缓存的必要性以及整套配合机制在nginx-0x0A-定时器已经提过。这篇介绍的是系统时间到底是咋缓存的。 首先年月日时分秒结构化的时间肯定是通用的，但是有些场景对时间单调性有严格要求。 1 获取时间的系统调用   系统调用\比较 gettiemofday clock_gettime    格式 结构化绝对时间，系统时间，墙上时间 相对时间，相对系统开机时长   精度 微秒 纳秒   2 关">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-04-09T08:36:09.000Z">
-<meta property="article:modified_time" content="2025-04-09T09:44:28.012Z">
+<meta property="article:modified_time" content="2025-04-11T02:09:46.155Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          27 字
+          1.8k 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          1 分钟
+          15 分钟
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         nginx
-        <span class="list-group-count">(14)</span>
+        <span class="list-group-count">(16)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -455,6 +455,24 @@
         </a>
       
     
+      
+      
+        <a href="/2025/04/10/nginx/nginx-0x0E-%E9%94%81/" title="nginx-0x0E-锁"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x0E-锁</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/11/nginx/nginx-0x0F-nginx%E4%B8%AD%E6%80%8E%E4%B9%88%E4%BD%BF%E7%94%A8kequeue%E7%9A%84/" title="nginx-0x0F-nginx中怎么使用kequeue的"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">nginx-0x0F-nginx中怎么使用kequeue的</span>
+        </a>
+      
+    
   </div>
 
         
@@ -478,7 +496,59 @@
             
               <div class="markdown-body">
                 
-                
+                <p>系统时间缓存的必要性以及整套配合机制在<a href="/2025/04/09/nginx/nginx-0x0A-%E5%AE%9A%E6%97%B6%E5%99%A8/" title="nginx-0x0A-定时器">nginx-0x0A-定时器</a>已经提过。这篇介绍的是系统时间到底是咋缓存的。</p>
+<p>首先年月日时分秒结构化的时间肯定是通用的，但是有些场景对时间单调性有严格要求。</p>
+<h3 id="1-获取时间的系统调用"><a href="#1-获取时间的系统调用" class="headerlink" title="1 获取时间的系统调用"></a>1 获取时间的系统调用</h3><table>
+<thead>
+<tr>
+<th>系统调用\比较</th>
+<th>gettiemofday</th>
+<th>clock_gettime</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>格式</td>
+<td>结构化绝对时间，系统时间，墙上时间</td>
+<td>相对时间，相对系统开机时长</td>
+</tr>
+<tr>
+<td>精度</td>
+<td>微秒</td>
+<td>纳秒</td>
+</tr>
+</tbody></table>
+<h3 id="2-关于时间格式"><a href="#2-关于时间格式" class="headerlink" title="2 关于时间格式"></a>2 关于时间格式</h3><p>上面已经介绍了两种时间格式</p>
+<ul>
+<li>结构化时间</li>
+<li>单调相对时间</li>
+</ul>
+<p>因此在nginx中就维护了这两种格式的全局变量</p>
+<ul>
+<li>static ngx_time_t        cached_time[NGX_TIME_SLOTS];</li>
+<li>volatile ngx_msec_t      ngx_current_msec;</li>
+</ul>
+<h3 id="3-关于性能的考量"><a href="#3-关于性能的考量" class="headerlink" title="3 关于性能的考量"></a>3 关于性能的考量</h3><p>对于缓存，有更新的地方，有读取使用的地方。为了保障公共资源的安全性，采用锁保护是最简单的方式，关于怎么加锁</p>
+<ul>
+<li>读写都要加锁，共用一把锁，这种方式实现最简单，性能最差</li>
+<li>读写都要加锁，读写锁分离，这种方式稍微复杂，但是对于高性能服务器上高吞吐的读是接受不了的</li>
+<li>只要求写加锁，读无锁化，这种方式实现起来最难，性能最高</li>
+</ul>
+<h3 id="4-为什么同样是缓存一个是单值变量一个是数组"><a href="#4-为什么同样是缓存一个是单值变量一个是数组" class="headerlink" title="4 为什么同样是缓存一个是单值变量一个是数组"></a>4 为什么同样是缓存一个是单值变量一个是数组</h3><p>读写解耦的情况下，想象有个无限长度的数组，写有写指针，读有读指针，写就永远不用担心读的数据被污染和安全问题。<br>但是不可能有无限空间这一说，环形数组就是有有限空间模拟无限存储的过程，既然是数组就要考虑数组长度，过短和过长都不行，nginx默认用长度64的数组来缓存时间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * 系统时间缓冲区</span><br><span class="hljs-comment"> * 缓存时间 减少系统调用 数组长度通过宏NGX_TIME_SLOTS控制 长度64</span><br><span class="hljs-comment"> * 首先为什么把缓冲区设计成环形 这样设计的目的是为了保证有锁单线程写 无锁多进程读</span><br><span class="hljs-comment"> * 既然环形的设计目的是为了解耦读写操作 那么是不是只要保证缓冲区大小是2就行 写操作一直在两个位置轮流交替</span><br><span class="hljs-comment"> * 长度2不是不可以但是存在的隐患是读时被写覆盖</span><br><span class="hljs-comment"> * 假设A在读系统时间 拿到的指针是1</span><br><span class="hljs-comment"> * 在A读期间B发生了多次对系统时间的更新</span><br><span class="hljs-comment"> *   - B更新系统时间 指针1</span><br><span class="hljs-comment"> *   - B更新系统时间 指针2</span><br><span class="hljs-comment"> *   - B更新系统时间 指针1</span><br><span class="hljs-comment"> *   - ...</span><br><span class="hljs-comment"> * 也就是意味着A使用的系统时间已经发生了更新 原来的值被覆盖了 这种场景可能导致误判</span><br><span class="hljs-comment"> * 所以本质问题就是最好留给更新操作多点时间缓冲 用空间来换 只要环形缓冲区大一点 就足够避免上面的事情发生</span><br><span class="hljs-comment"> * 可能这就是作者设计缓冲区默认长度64的原因</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-type">ngx_time_t</span>        cached_time[NGX_TIME_SLOTS];<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-1-结构化时间格式"><a href="#4-1-结构化时间格式" class="headerlink" title="4.1 结构化时间格式"></a>4.1 结构化时间格式</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 结构化时间格式</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>    <span class="hljs-comment">// 秒</span><br>    <span class="hljs-type">time_t</span>      sec;<br>    <span class="hljs-comment">// 毫秒</span><br>    <span class="hljs-type">ngx_uint_t</span>  msec;<br>    <span class="hljs-type">ngx_int_t</span>   gmtoff;<br>&#125; <span class="hljs-type">ngx_time_t</span>;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-2-单调时间"><a href="#4-2-单调时间" class="headerlink" title="4.2 单调时间"></a>4.2 单调时间</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * 缓存的系统时间 格式是毫秒 语义是这个时间表达的是系统启动后x毫秒 是个相对系统启动的相对时间</span><br><span class="hljs-comment"> * 是通过clock_gettime得到的单调时间</span><br><span class="hljs-comment"> * 为什么下面的ngx_cached_time要用环形设计 而这个系统时间不需要环形设计而只要一个变量</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;首先ngx_current_msec就是个整数 而ngx_cached_time是结构化的时间 有多个结构体成员&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;其次系统对于long读写是原子的 不存在并发不安全问题&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * 这个时间的唯一作用就是判断定时任务是不是到期该执行了 这个使用场景决定了</span><br><span class="hljs-comment"> * 必须单调 不能出现时间倒退导致对定时任务的误判</span><br><span class="hljs-comment"> * 为什么结构化时间缓存用的是环形数组形式 而单调时间用的就是一个变量</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;首先 语义是就不同 单调时间就是一个很明确的数字&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;第二 类型 它就是一个整型 不存在更新期间读到一半新数据 一半老数据&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">volatile</span> <span class="hljs-type">ngx_msec_t</span>      ngx_current_msec;<br></code></pre></td></tr></table></figure>
+
+<p>这就是结构化时间用环形数组缓存，而单调时间用整数缓存的原因。</p>
+<h3 id="5-关于读写解耦"><a href="#5-关于读写解耦" class="headerlink" title="5 关于读写解耦"></a>5 关于读写解耦</h3><p>在环形数组上用读写指针方式保证读写操作分离，写用锁保证资源互斥，读用无锁保证性能。</p>
+<h4 id="5-1-读"><a href="#5-1-读" class="headerlink" title="5.1 读"></a>5.1 读</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * 下面这几个都是给读线程直接用的 目的就直接读到缓存的最新的系统时间</span><br><span class="hljs-comment"> * ngx_cached_time比较特殊 它是一个指针 本质就是cached_time环形数组的读指针</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;读操作的是ngx_cached_time 无锁&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;写操作的是slot 需要竞争锁 互斥操作 写完移动读指针到最新位置&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">volatile</span> <span class="hljs-type">ngx_time_t</span>     *ngx_cached_time;<br></code></pre></td></tr></table></figure>
+
+<h4 id="5-2-写"><a href="#5-2-写" class="headerlink" title="5.2 写"></a>5.2 写</h4><p>写指针，这个数组指针只留给写操作使用的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * cached_time数组 指向的是当前缓存的最新的系统时间 数组脚标移动实现环形数组</span><br><span class="hljs-comment"> * 这个slot可以理解成只给写线程用的写指针</span><br><span class="hljs-comment"> * 读线程不会直接用这个指针 读线程用的是ngx_cached_time</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> <span class="hljs-type">ngx_uint_t</span>        slot;<br></code></pre></td></tr></table></figure>
+
+<p>在更新时间内部有个小细节，我觉得值得学习，高性能软件开发中总能看到很多小技巧小细节</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * 正常情况下更新时间的步骤是</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;数组维护的最新的时间在slot上 slot是直接给写线程使用的 对应这个slot位置的是ngx_cached_time给读线程使用的&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;拿到逻辑上的下一个位置 slot等于0或slot+1&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;将新时间写到缓存上&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;写完后更新读指针ngx_cached_time&lt;/li&gt;</span><br><span class="hljs-comment"> *   &lt;li&gt;释放写锁&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> * 为什么要上写锁 为了保护写这个资源的原子性 为什么呢 因为要这是个结构体要写秒和毫秒两个成员</span><br><span class="hljs-comment"> * 那是不是如果只写一个long型数字就可以不用锁 天然原子性</span><br><span class="hljs-comment"> * 所以并没有直接去更新到下一个位置上 而是看下秒级没变 那就只用更新毫秒 只更新毫秒就是只更新一个long字段 不怕无锁读的地方读到更新一半这种情况</span><br><span class="hljs-comment"> */</span><br>tp = &amp;cached_time[slot];<br><br><span class="hljs-keyword">if</span> (tp-&gt;sec == sec) &#123;<br>    <span class="hljs-comment">// 只更新毫秒这个字段 这样做的的目的是为了快速返回 减少持锁时长 减少写并发的锁竞争</span><br>    tp-&gt;msec = msec;<br>    ngx_unlock(&amp;ngx_time_lock);<br>    <span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
