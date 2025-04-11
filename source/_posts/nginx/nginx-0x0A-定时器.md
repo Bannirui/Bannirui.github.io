@@ -223,3 +223,5 @@ ngx_event_expire_timers(void)
     // 更新缓存的系统时间 结构化格式
     tp = &cached_time[slot];
 ```
+
+关于nginx缓存系统时间可见{% post_link nginx/nginx-0x0C-系统时间 %}
