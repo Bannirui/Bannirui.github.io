@@ -225,7 +225,7 @@ ngx_kqueue_add_event(ngx_event_t *ev, ngx_int_t event, ngx_uint_t flags)
 
 #### 2.3 删除事件
 
-删除事件看到了数组原地删除的方法，这个在以前删除leetcode好像遇到过。
+删除事件看到了数组原地删除的方法，这个在以前刷leetcode好像遇到过。
 
 ```c
 	/*
