@@ -1,5 +1,5 @@
 ---
-title: nginx-0x10-ngin怎么防止惊群现象的
+title: nginx-0x10-nginx怎么防止惊群现象的
 category_bar: true
 date: 2025-04-12 21:20:36
 categories: nginx
