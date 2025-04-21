@@ -13,6 +13,8 @@ categories: linux
 - epoll_ctl
 - epoll_wait
 
+![](./linux-0x01-epoll/1744696841.png)
+
 ### 1 epoll_create
 
 ```c
@@ -27,8 +29,6 @@ SYSCALL_DEFINE1(epoll_create1, int, flags)
 
 - ctl
 - wait
-
-![](./linux-0x01-epoll/1744696841.png)
 
 ### 2 epoll_ctl
 
