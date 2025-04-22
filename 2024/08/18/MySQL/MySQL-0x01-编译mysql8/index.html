@@ -19,19 +19,19 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 环境   Name Version    macOS 11.5.2   clion 2023.1.1   git 2.40.0   2 源码1234567891011121314151617fork&gt; git clone git@github.com:Bannirui&#x2F;mysql-server.git&gt; git remote add upstream git@github.com:">
+    <meta name="description" content="1 环境   Name Version    macOS 11.5.2   clion 2023.1.1   git 2.40.0   2 源码12345678910111213forkgit clone git@github.com:Bannirui&#x2F;mysql-server.gitgit remote add upstream git@github.com:mysql&#x2F;mysql-server">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL源码-0x01-编译mysql8">
 <meta property="og:url" content="https://bannirui.github.io/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="1 环境   Name Version    macOS 11.5.2   clion 2023.1.1   git 2.40.0   2 源码1234567891011121314151617fork&gt; git clone git@github.com:Bannirui&#x2F;mysql-server.git&gt; git remote add upstream git@github.com:">
+<meta property="og:description" content="1 环境   Name Version    macOS 11.5.2   clion 2023.1.1   git 2.40.0   2 源码12345678910111213forkgit clone git@github.com:Bannirui&#x2F;mysql-server.gitgit remote add upstream git@github.com:mysql&#x2F;mysql-server">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426185421743.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426172509886.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426190400219.png">
 <meta property="og:image" content="https://bannirui.github.io/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426190013421.png">
 <meta property="article:published_time" content="2024-08-17T16:27:51.000Z">
-<meta property="article:modified_time" content="2025-01-24T15:52:43.420Z">
+<meta property="article:modified_time" content="2025-04-21T05:23:30.421Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426185421743.png">
@@ -252,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          227 字
+          245 字
         
       </span>
     
@@ -263,7 +263,7 @@
         
         
         
-          2 分钟
+          3 分钟
         
       </span>
     
@@ -395,25 +395,28 @@
 <td>2.40.0</td>
 </tr>
 </tbody></table>
-<h3 id="2-源码"><a href="#2-源码" class="headerlink" title="2 源码"></a>2 源码</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell">fork<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/mysql-server.git</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git remote add upstream git@github.com:mysql/mysql-server.git</span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git remote set-url --push upstream no_push</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git remote -v</span><br>origin  git@github.com:Bannirui/mysql-server.git (fetch)<br>origin  git@github.com:Bannirui/mysql-server.git (push)<br>upstream        git@github.com:mysql/mysql-server.git (fetch)<br>upstream        no_push (push)<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git checkout -b study-8.0 origin/8.0</span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git add .</span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git commit -m <span class="hljs-string">&#x27;buid on clion&#x27;</span></span><br><span class="hljs-meta prompt_">&gt; </span><span class="language-bash">git push origin study-8.0</span><br></code></pre></td></tr></table></figure>
+<h3 id="2-源码"><a href="#2-源码" class="headerlink" title="2 源码"></a>2 源码</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell">fork<br><br>git clone git@github.com:Bannirui/mysql-server.git<br><br>git remote add upstream git@github.com:mysql/mysql-server.git<br>git remote set-url --push upstream no_push<br><br>git remote -v<br><br>git checkout -b study-8.0 origin/8.0<br>git add .<br>git commit -m &#x27;buid on clion&#x27;<br>git push origin study-8.0<br></code></pre></td></tr></table></figure>
 
-<h3 id="3-Clion设置"><a href="#3-Clion设置" class="headerlink" title="3 Clion设置"></a>3 Clion设置</h3><h4 id="3-1-新建日志目录"><a href="#3-1-新建日志目录" class="headerlink" title="3.1 新建日志目录"></a>3.1 新建日志目录</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p build/data<br></code></pre></td></tr></table></figure>
+<h3 id="3-Clion设置"><a href="#3-Clion设置" class="headerlink" title="3 Clion设置"></a>3 Clion设置</h3><p><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/source-installation-prerequisites.html">祭上源码编译的官方文档</a></p>
+<h4 id="3-1-新建日志目录"><a href="#3-1-新建日志目录" class="headerlink" title="3.1 新建日志目录"></a>3.1 新建日志目录</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p build/data<br></code></pre></td></tr></table></figure>
 
-<h4 id="3-2-cmake设置"><a href="#3-2-cmake设置" class="headerlink" title="3.2 cmake设置"></a>3.2 cmake设置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">-DWITH_DEBUG:BOOL=ON<br>-DDOWNLOAD_BOOST:BOOL=ON<br>-DWITH_BOOST:PATH=/Users/dingrui/Dev/ENV/BOOST<br>-DCMAKE_INSTALL_PREFIX:PATH=/build<br>-DMYSQL_DATADIR:PATH=/build/data<br></code></pre></td></tr></table></figure>
+<h4 id="3-2-Boost源码"><a href="#3-2-Boost源码" class="headerlink" title="3.2 Boost源码"></a>3.2 Boost源码</h4><p>最好不要用cmake自动下载Boost源码，失败率太高，比较好的方式是手动下载到本地。</p>
+<p><a target="_blank" rel="noopener" href="https://www.boost.org/users/history/">先到官网下载Boost源码到本地</a></p>
+<h4 id="3-3-cmake设置"><a href="#3-3-cmake设置" class="headerlink" title="3.3 cmake设置"></a>3.3 cmake设置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">-DWITH_DEBUG:BOOL=ON<br>-DDOWNLOAD_BOOST:BOOL=OFF<br>-DWITH_BOOST:PATH=/Users/dingrui/MyDev/env/boost/boost_1_77_0<br>-DCMAKE_INSTALL_PREFIX:PATH=/build<br>-DMYSQL_DATADIR:PATH=/build/data<br></code></pre></td></tr></table></figure>
 
 <img src="/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426185421743.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="3-3-编译"><a href="#3-3-编译" class="headerlink" title="3.3 编译"></a>3.3 编译</h4><img src="/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426172509886.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="3-4-编译"><a href="#3-4-编译" class="headerlink" title="3.4 编译"></a>3.4 编译</h4><img src="/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426172509886.png" srcset="/img/loading.gif" lazyload class="">
 
-<h4 id="3-4-运行msqld"><a href="#3-4-运行msqld" class="headerlink" title="3.4 运行msqld"></a>3.4 运行msqld</h4><h5 id="3-4-1-新建data目录"><a href="#3-4-1-新建data目录" class="headerlink" title="3.4.1 新建data目录"></a>3.4.1 新建data目录</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p build-out/data<br></code></pre></td></tr></table></figure>
+<h4 id="3-5-运行msqld"><a href="#3-5-运行msqld" class="headerlink" title="3.5 运行msqld"></a>3.5 运行msqld</h4><h5 id="3-5-1-新建data目录"><a href="#3-5-1-新建data目录" class="headerlink" title="3.5.1 新建data目录"></a>3.5.1 新建data目录</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir -p build-out/data<br></code></pre></td></tr></table></figure>
 
-<h5 id="3-4-1-gitignore"><a href="#3-4-1-gitignore" class="headerlink" title="3.4.1 gitignore"></a>3.4.1 gitignore</h5><img src="/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426190400219.png" srcset="/img/loading.gif" lazyload class="">
+<h5 id="3-5-2-gitignore"><a href="#3-5-2-gitignore" class="headerlink" title="3.5.2 gitignore"></a>3.5.2 gitignore</h5><img src="/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426190400219.png" srcset="/img/loading.gif" lazyload class="">
 
-<h5 id="3-4-2-初始化"><a href="#3-4-2-初始化" class="headerlink" title="3.4.2 初始化"></a>3.4.2 初始化</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">--basedir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out<br>--datadir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out/data<br>--initialize-insecure<br></code></pre></td></tr></table></figure>
+<h5 id="3-4-3-初始化"><a href="#3-4-3-初始化" class="headerlink" title="3.4.3 初始化"></a>3.4.3 初始化</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">--basedir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out<br>--datadir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out/data<br>--initialize-insecure<br></code></pre></td></tr></table></figure>
 
 <img src="/2024/08/18/MySQL/MySQL-0x01-%E7%BC%96%E8%AF%91mysql8/image-20230426190013421.png" srcset="/img/loading.gif" lazyload class="">
 
-<h5 id="3-4-3-启动服务"><a href="#3-4-3-启动服务" class="headerlink" title="3.4.3 启动服务"></a>3.4.3 启动服务</h5><p>修改启动参数再次运行即可。</p>
+<h5 id="3-5-4-启动服务"><a href="#3-5-4-启动服务" class="headerlink" title="3.5.4 启动服务"></a>3.5.4 启动服务</h5><p>修改启动参数再次运行即可。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">--basedir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out<br>--datadir=/Users/dingrui/Dev/code/git/cpp/mysql-server/build-out/data<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
