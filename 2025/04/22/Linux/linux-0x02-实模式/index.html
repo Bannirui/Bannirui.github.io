@@ -19,16 +19,16 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="CPU处理器上电后，默认会给两个寄存器赋值，让CPU寻址执行  CS寄存器赋值0xF000 IP寄存器赋值0xFFF0  此时CPU要执行的指令在0xFFFF0处 在实模式下，内存布局     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af9">
+    <meta name="description" content="CPU处理器上电后，默认会给两个寄存器赋值，让CPU寻址执行  CS寄存器赋值0xF000 IP寄存器赋值0xFFF0  此时CPU要执行的指令在0xFFFF0处，这个地方是BIOS的代码，最终BIOS的代码会将启动盘第一扇区的内容加载到0x07C00，并让CPU跳过去。 此时的内存布局     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux-0x02-实模式">
 <meta property="og:url" content="https://bannirui.github.io/2025/04/22/Linux/linux-0x02-%E5%AE%9E%E6%A8%A1%E5%BC%8F/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="CPU处理器上电后，默认会给两个寄存器赋值，让CPU寻址执行  CS寄存器赋值0xF000 IP寄存器赋值0xFFF0  此时CPU要执行的指令在0xFFFF0处 在实模式下，内存布局     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af9">
+<meta property="og:description" content="CPU处理器上电后，默认会给两个寄存器赋值，让CPU寻址执行  CS寄存器赋值0xF000 IP寄存器赋值0xFFF0  此时CPU要执行的指令在0xFFFF0处，这个地方是BIOS的代码，最终BIOS的代码会将启动盘第一扇区的内容加载到0x07C00，并让CPU跳过去。 此时的内存布局     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2025/04/22/Linux/linux-0x02-%E5%AE%9E%E6%A8%A1%E5%BC%8F/1745307351.png">
 <meta property="article:published_time" content="2025-04-22T07:34:07.000Z">
-<meta property="article:modified_time" content="2025-04-22T07:39:47.217Z">
+<meta property="article:modified_time" content="2025-04-27T08:14:19.426Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2025/04/22/Linux/linux-0x02-%E5%AE%9E%E6%A8%A1%E5%BC%8F/1745307351.png">
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          80 字
+          114 字
         
       </span>
     
@@ -319,7 +319,7 @@
         aria-expanded="true"
       >
         linux
-        <span class="list-group-count">(3)</span>
+        <span class="list-group-count">(5)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -358,6 +358,24 @@
         </a>
       
     
+      
+      
+        <a href="/2025/04/26/Linux/linux-0x03-%E5%85%B3%E4%BA%8E%E6%BA%90%E7%A0%81%E7%89%88%E6%9C%AC/" title="linux-0x03-关于源码版本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x03-关于源码版本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/27/Linux/linux-0x04-%E5%90%AF%E5%8A%A8%E6%AE%B5/" title="linux-0x04-启动段"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x04-启动段</span>
+        </a>
+      
+    
   </div>
 
         
@@ -386,8 +404,8 @@
 <li>CS寄存器赋值0xF000</li>
 <li>IP寄存器赋值0xFFF0</li>
 </ul>
-<p>此时CPU要执行的指令在0xFFFF0处</p>
-<p>在实模式下，内存布局</p>
+<p>此时CPU要执行的指令在0xFFFF0处，这个地方是BIOS的代码，最终BIOS的代码会将启动盘第一扇区的内容加载到0x07C00，并让CPU跳过去。</p>
+<p>此时的内存布局</p>
 <img src="/2025/04/22/Linux/linux-0x02-%E5%AE%9E%E6%A8%A1%E5%BC%8F/1745307351.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
@@ -479,6 +497,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2025/04/26/Linux/linux-0x03-%E5%85%B3%E4%BA%8E%E6%BA%90%E7%A0%81%E7%89%88%E6%9C%AC/" title="linux-0x03-关于源码版本">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">linux-0x03-关于源码版本</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
