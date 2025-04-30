@@ -81,3 +81,17 @@ go:	mov	ax,cs
 ```
 
 ##### 2.2.2 打印字符串
+
+```asm
+	| 要显示的字符串长度24
+	mov	cx,#24
+	| BH页码
+	| BL属性
+	mov	bx,#0x0007	| page 0, attribute 7 (normal)
+	| 要显示的字符串地址 ES:BP 现在es已经是0x9000了 只要指定段内偏移量就行了
+	mov	bp,#msg1
+	| AH功能号0x13
+	| AL显示方式0x01
+	mov	ax,#0x1301	| write string, move cursor
+	int	0x10
+```
