@@ -95,3 +95,44 @@ go:	mov	ax,cs
 	mov	ax,#0x1301	| write string, move cursor
 	int	0x10
 ```
+
+#### 2.3 磁盘加载代码到临时位置
+
+继续利用BIOS的中断服务加载磁盘的内容，将内核代码加载到内存，临时先存放在0x10000上。
+
+```asm
+| 定义一个函数 发起真正的读盘行为
+| 入参 AX=要从磁盘读多少个扇区read_track
+|     BX=ES:BX=缓冲区地址
+|     CX=要从磁盘读多少Byte内容
+read_track:
+	push ax
+	push bx
+	push cx
+	push dx
+	| ch=track的低8位=柱面号
+	mov dx,track
+	mov cx,sread
+	| CL=要读的扇区号
+	inc cx
+	mov ch,dl
+	| dh=head的低8位=磁头号
+	mov dx,head
+	mov dh,dl
+	| dl=驱动器号=0表示软盘
+	mov dl,#0
+	and dx,#0x0100
+	mov ah,#2
+	| 13号中断调用功能号AH=0x02
+	int 0x13
+	| 出参 CF=0表示成功 CF不等于0说明异常
+	jc bad_rt
+	pop dx
+	pop cx
+	pop bx
+	pop ax
+	ret
+```
+
+![](./linux-0x04-引导代码/1746515045.png)
+
