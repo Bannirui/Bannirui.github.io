@@ -28,8 +28,10 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/1745742536.png">
 <meta property="og:image" content="https://bannirui.github.io/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/1745980488.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/1746515045.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/1746521473.png">
 <meta property="article:published_time" content="2025-04-27T08:09:56.000Z">
-<meta property="article:modified_time" content="2025-04-30T09:10:55.779Z">
+<meta property="article:modified_time" content="2025-05-06T08:59:17.966Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/1745742536.png">
@@ -250,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          602 字
+          1.2k 字
         
       </span>
     
@@ -261,7 +263,7 @@
         
         
         
-          6 分钟
+          11 分钟
         
       </span>
     
@@ -320,7 +322,7 @@
         aria-expanded="true"
       >
         linux
-        <span class="list-group-count">(6)</span>
+        <span class="list-group-count">(7)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -386,6 +388,15 @@
         </a>
       
     
+      
+      
+        <a href="/2025/05/06/Linux/linux-0x06-13%E5%8F%B7BIOS%E4%B8%AD%E6%96%AD/" title="linux-0x06-13号BIOS中断"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x06-13号BIOS中断</span>
+        </a>
+      
+    
   </div>
 
         
@@ -429,6 +440,20 @@
 <h5 id="2-2-1-拿到光标位置"><a href="#2-2-1-拿到光标位置" class="headerlink" title="2.2.1 拿到光标位置"></a>2.2.1 拿到光标位置</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs asm">   | AH设置int 0x10功能号 读取光标位置 位置行列都是0-based 行号返回到DH 列号返回到DL<br>   | 这个地方读取光标坐标的用途是下面要输出字符串 输出字符串的光标就是现在获取到的<br>mov	ah,#0x03	| read cursor pos<br>| BH是int 0x10的参数 指定显示页 0表示使用默认的显示页<br>xor	bh,bh<br>int	0x10<br></code></pre></td></tr></table></figure>
 
 <h5 id="2-2-2-打印字符串"><a href="#2-2-2-打印字符串" class="headerlink" title="2.2.2 打印字符串"></a>2.2.2 打印字符串</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs asm">| 要显示的字符串长度24<br>mov	cx,#24<br>| BH页码<br>| BL属性<br>mov	bx,#0x0007	| page 0, attribute 7 (normal)<br>| 要显示的字符串地址 ES:BP 现在es已经是0x9000了 只要指定段内偏移量就行了<br>mov	bp,#msg1<br>| AH功能号0x13<br>| AL显示方式0x01<br>mov	ax,#0x1301	| write string, move cursor<br>int	0x10<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-3-磁盘加载代码到临时位置"><a href="#2-3-磁盘加载代码到临时位置" class="headerlink" title="2.3 磁盘加载代码到临时位置"></a>2.3 磁盘加载代码到临时位置</h4><p>继续利用BIOS的中断服务加载磁盘的内容，将内核代码加载到内存，临时先存放在0x10000上。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs asm">| 定义一个函数 发起真正的读盘行为<br>| 入参 AX=要从磁盘读多少个扇区read_track<br>|     BX=ES:BX=缓冲区地址<br>|     CX=要从磁盘读多少Byte内容<br>read_track:<br>	push ax<br>	push bx<br>	push cx<br>	push dx<br>	| ch=track的低8位=柱面号<br>	mov dx,track<br>	mov cx,sread<br>	| CL=要读的扇区号<br>	inc cx<br>	mov ch,dl<br>	| dh=head的低8位=磁头号<br>	mov dx,head<br>	mov dh,dl<br>	| dl=驱动器号=0表示软盘<br>	mov dl,#0<br>	and dx,#0x0100<br>	mov ah,#2<br>	| 13号中断调用功能号AH=0x02<br>	int 0x13<br>	| 出参 CF=0表示成功 CF不等于0说明异常<br>	jc bad_rt<br>	pop dx<br>	pop cx<br>	pop bx<br>	pop ax<br>	ret<br></code></pre></td></tr></table></figure>
+
+<img src="/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/1746515045.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>现在的状态是CPU执行的初始化代码在0x900000高地址空间，现在已经把磁盘的内核代码加载到了0x10000低地址空间。也就说预留了(0x90000-0x10000+1)Byte&#x3D;512KB空间给内核代码暂存，这个空间是足够了。</p>
+<p>下面就要把这些代码搬到低地址空间去，为什么要多此一举，不直接给一步到位在加载的时候就直接放到低地址空间去。本质原因就是在加载磁盘的期间我们还需要依赖内存上的BIOS代码，BIOS中断向量表和中断程序。因此如果直接把磁盘的代码放到低地址空间，会覆盖掉BIOS程序，导致程序崩溃。</p>
+<h4 id="2-4-内核代码搬运到低地址空间"><a href="#2-4-内核代码搬运到低地址空间" class="headerlink" title="2.4 内核代码搬运到低地址空间"></a>2.4 内核代码搬运到低地址空间</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs asm">| 代码已经暂存在DS:BX=0x10000上<br>| 现在开始把这片内核代码搬到0x00上 为构建内核空间做准备<br>| 但是现在不清楚内核代码到底有多大 预留给内核代码的暂存空间是[0x10000...0x8FFFF] 所以不用管到底有多少代码 直接把整片空间都搬一次就行<br>| 从0x10000到0x90000总共有8个段 每个段空间=0xFFFF=64KB<br>| 所以下面这段代码搬代码的时候分8次 每次搬1个段 每个段64KB<br>do_move:<br>    | ES=AX=这次1段搬到哪儿<br>	mov	es,ax		| destination segment<br>	| 搬完1段之后更新 下一次就知道搬到新的地址是哪儿<br>	add	ax,#0x1000<br>	| 目标段增加到0x9000时说明[0x10000...0x8FFFF]都已经搬完了 结束搬运代码的流程<br>	cmp	ax,#0x9000<br>	jz	end_move<br>	| DS:SI-&gt;ES:DI 复制 每次复制2个字节<br>	| CX=要复制多少次=0x8000个word=0x8000*2个Byte=64KB<br>	| 每复制完一次SI跟DI会自动自增2=2个Byte<br>	mov	ds,ax		| source segment<br>	sub	di,di<br>	sub	si,si<br>	mov 	cx,#0x8000<br>	rep<br>	movsw<br>	j	do_move<br></code></pre></td></tr></table></figure>
+
+<img src="/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/1746521473.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>至此，原来的BIOS构建的空间已经被摧毁，准备开始构建属于内核的空间。</p>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
