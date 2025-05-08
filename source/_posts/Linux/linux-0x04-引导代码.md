@@ -175,3 +175,21 @@ do_move:
 #### 2.5 切换保护模式的前置准备
 
 在将CPU从实模式切换到保护模式之前，需要做准备工作，主要是构建好
+
+```asm
+end_move:
+    | DS=CS=0x9000
+    | 内核代码已经全部搬到0x0的低地址空间上了 下面准备切换CPU从实模式到保护模式 在切到保护模式之前先做准备工作 构建中断描述符表和全局描述符表
+	mov	ax,cs		| right, forgot this at first. didn't work :-)
+	mov	ds,ax
+	| 把idt_48处的6字节内容加载到IDTR中断描述符表寄存器 之后CPU就知道中断向量表存在哪儿 有多大了
+	| 此刻的idt中断描述符表是空的 也就是变相的临时禁用了中断服务
+	lidt	idt_48		| load idt with 0,0
+	| 进入保护模式的前提 lgdt指令把gdt_48处的6Byte内容加载到GDTR寄存器 之后CPU就知道全局描述符表在哪儿 有多大
+	| 用于进入x86保护模式的关键汇编指令
+	lgdt	gdt_48		| load gdt with whatever appropriate
+```
+
+- {% post_link Linux/linux-0x07-中断描述符表 %}
+
+- {% post_link Linux/linux-0x08-全局描述符表 %}
