@@ -1,0 +1,1038 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 GDTR告诉GDTR寄存器的信息是啥，将来CPU根据GDTR中的数据就可以找到全局描述符表在哪儿，有多大。 123456| GDT表 全局描述符表gdt_48:    | 2Byte GDT表的大小 也就是说GDT的大小&#x3D;0x800Byte&#x3D;2048Byte GDT表每个表项是8Byte 那么GDT表最多只有(2048&#x2F;8)&#x3D;256个段	.word	0x800		| gdt limit&#x3D;204">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux-0x08-全局描述符表">
+<meta property="og:url" content="https://bannirui.github.io/2025/05/07/Linux/linux-0x08-%E5%85%A8%E5%B1%80%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8/index.html">
+<meta property="og:site_name" content="hex Blog">
+<meta property="og:description" content="1 GDTR告诉GDTR寄存器的信息是啥，将来CPU根据GDTR中的数据就可以找到全局描述符表在哪儿，有多大。 123456| GDT表 全局描述符表gdt_48:    | 2Byte GDT表的大小 也就是说GDT的大小&#x3D;0x800Byte&#x3D;2048Byte GDT表每个表项是8Byte 那么GDT表最多只有(2048&#x2F;8)&#x3D;256个段	.word	0x800		| gdt limit&#x3D;204">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-07T07:51:20.000Z">
+<meta property="article:modified_time" content="2025-05-08T13:21:53.066Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>linux-0x08-全局描述符表 - hex Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>hex Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="linux-0x08-全局描述符表"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-05-07 15:51" pubdate>
+          2025年5月7日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="linux"
+        id="heading-e206a54e97690cce50cc872dd70ee896" role="tab" data-toggle="collapse" href="#collapse-e206a54e97690cce50cc872dd70ee896"
+        aria-expanded="true"
+      >
+        linux
+        <span class="list-group-count">(9)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-e206a54e97690cce50cc872dd70ee896"
+           role="tabpanel" aria-labelledby="heading-e206a54e97690cce50cc872dd70ee896">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2025/04/14/Linux/linux-0x00-%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="linux-0x00-源码编译"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x00-源码编译</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/15/Linux/linux-0x01-epoll/" title="linux-0x01-epoll"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x01-epoll</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/22/Linux/linux-0x02-%E5%AE%9E%E6%A8%A1%E5%BC%8F/" title="linux-0x02-实模式"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x02-实模式</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/26/Linux/linux-0x03-%E5%85%B3%E4%BA%8E%E6%BA%90%E7%A0%81%E7%89%88%E6%9C%AC/" title="linux-0x03-关于源码版本"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x03-关于源码版本</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/27/Linux/linux-0x04-%E5%BC%95%E5%AF%BC%E4%BB%A3%E7%A0%81/" title="linux-0x04-引导代码"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x04-引导代码</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/04/28/Linux/linux-0x05-10%E5%8F%B7BIOS%E4%B8%AD%E6%96%AD/" title="linux-0x05-10号BIOS中断"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x05-10号BIOS中断</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/05/06/Linux/linux-0x06-13%E5%8F%B7BIOS%E4%B8%AD%E6%96%AD/" title="linux-0x06-13号BIOS中断"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x06-13号BIOS中断</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/05/07/Linux/linux-0x07-%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8/" title="linux-0x07-中断描述符表"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">linux-0x07-中断描述符表</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/05/07/Linux/linux-0x08-%E5%85%A8%E5%B1%80%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8/" title="linux-0x08-全局描述符表"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">linux-0x08-全局描述符表</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">linux-0x08-全局描述符表</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="1-GDTR"><a href="#1-GDTR" class="headerlink" title="1 GDTR"></a>1 GDTR</h3><p>告诉GDTR寄存器的信息是啥，将来CPU根据GDTR中的数据就可以找到全局描述符表在哪儿，有多大。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs asm">| GDT表 全局描述符表<br>gdt_48:<br>    | 2Byte GDT表的大小 也就是说GDT的大小=0x800Byte=2048Byte GDT表每个表项是8Byte 那么GDT表最多只有(2048/8)=256个段<br>	.word	0x800		| gdt limit=2048, 256 GDT entries<br>	| 4Byte GDT的线性地址 小端顺 4字节的DGT表地址是0x0009????<br>	.word	gdt,0x9		| gdt base = 0X9xxxx<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-GDT在哪儿"><a href="#2-GDT在哪儿" class="headerlink" title="2 GDT在哪儿"></a>2 GDT在哪儿</h3><p>规划在高地址空间0x90000上</p>
+<h3 id="3-段信息"><a href="#3-段信息" class="headerlink" title="3 段信息"></a>3 段信息</h3><p>GDT表放了3项，也就是3个段</p>
+<ul>
+<li>空段</li>
+<li>代码段</li>
+<li>数据段</li>
+</ul>
+<p>GDT表中的3个项如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs asm">| GDT表 里面每个表项是8Byte 每个表项是个段信息<br>gdt:<br>    | 段1 是空段<br>	.word	0,0,0,0		| dummy<br><br>    | 段2 代码段<br>	.word	0x07FF		| 8Mb - limit=2047 (2048*4096=8Mb)<br>	.word	0x0000		| base address=0<br>	.word	0x9A00		| code read/exec<br>	.word	0x00C0		| granularity=4096, 386<br><br>    | 段3 数据段<br>	.word	0x07FF		| 8Mb - limit=2047 (2048*4096=8Mb)<br>	.word	0x0000		| base address=0<br>	.word	0x9200		| data read/write<br>	.word	0x00C0		| granularity=4096, 386<br></code></pre></td></tr></table></figure>
+
+<p>关于段信息中，每个位上的含义，示意图中已经比较详细，需要特别说明是的段属性位</p>
+<h4 id="3-1-段属性"><a href="#3-1-段属性" class="headerlink" title="3.1 段属性"></a>3.1 段属性</h4><h5 id="3-1-1-Type"><a href="#3-1-1-Type" class="headerlink" title="3.1.1 Type"></a>3.1.1 Type</h5><p>第40到43位，Type属性存储了段的类型信息，该属性的含义随着S属性的不同而不同</p>
+<h6 id="S-x3D-0该段是系统段"><a href="#S-x3D-0该段是系统段" class="headerlink" title="S&#x3D;0该段是系统段"></a>S&#x3D;0该段是系统段</h6><table>
+<thead>
+<tr>
+<th>TYPE的4bit值16进制</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x1</td>
+<td>可用286TSS</td>
+</tr>
+<tr>
+<td>0x2</td>
+<td>该段存储了局部描述符表LDT</td>
+</tr>
+<tr>
+<td>0x3</td>
+<td>忙的286TSS</td>
+</tr>
+<tr>
+<td>0x4</td>
+<td>286调用门</td>
+</tr>
+<tr>
+<td>0x5</td>
+<td>任务门</td>
+</tr>
+<tr>
+<td>0x6</td>
+<td>286中断门</td>
+</tr>
+<tr>
+<td>0x7</td>
+<td>286陷阱门</td>
+</tr>
+<tr>
+<td>0x9</td>
+<td>可用386TSS</td>
+</tr>
+<tr>
+<td>0xB</td>
+<td>忙的386TSS</td>
+</tr>
+<tr>
+<td>0xC</td>
+<td>386调用门</td>
+</tr>
+<tr>
+<td>0xE</td>
+<td>386中断门</td>
+</tr>
+<tr>
+<td>0xF</td>
+<td>386陷阱门</td>
+</tr>
+</tbody></table>
+<h6 id="S-x3D-1数据段或代码段"><a href="#S-x3D-1数据段或代码段" class="headerlink" title="S&#x3D;1数据段或代码段"></a>S&#x3D;1数据段或代码段</h6><p>第40位&#x3D;0代表数据段</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>作用</th>
+<th>值&#x3D;0</th>
+<th>值&#x3D;1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>41</td>
+<td>段的增长方向</td>
+<td>向上增长</td>
+<td>向下增长</td>
+</tr>
+<tr>
+<td>42</td>
+<td>段的写权限</td>
+<td>只读</td>
+<td>可读可写</td>
+</tr>
+<tr>
+<td>43</td>
+<td>段的访问标记</td>
+<td>该段没有被访问过</td>
+<td>该段已经被访问过</td>
+</tr>
+</tbody></table>
+<p>第40位&#x3D;1代表代码段</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>作用</th>
+<th>值&#x3D;0</th>
+<th>值&#x3D;1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>41</td>
+<td>一致代码段标记</td>
+<td>不是一致代码段</td>
+<td>是一致代码段</td>
+</tr>
+<tr>
+<td>42</td>
+<td>段的读权限</td>
+<td>只能执行</td>
+<td>可读\可执行</td>
+</tr>
+<tr>
+<td>43</td>
+<td>段的访问标记</td>
+<td>该段没有被访问过</td>
+<td>该段已经被访问过</td>
+</tr>
+</tbody></table>
+<h5 id="3-1-2-S"><a href="#3-1-2-S" class="headerlink" title="3.1.2 S"></a>3.1.2 S</h5><p>第44位，S属性存储了描述符的类型</p>
+<ul>
+<li>0 该描述符对应的段是系统段</li>
+<li>1 该描述符对应的段是数据段或者代码段</li>
+</ul>
+<h5 id="3-1-3-DPL"><a href="#3-1-3-DPL" class="headerlink" title="3.1.3 DPL"></a>3.1.3 DPL</h5><p>第45到46位， DPL属性占2bit，记录了访问段所需要的特权级，特权级范围从0到3，值越小特权级越高。</p>
+<h5 id="3-1-4-P"><a href="#3-1-4-P" class="headerlink" title="3.1.4 P"></a>3.1.4 P</h5><p>第47位，P属性标记了该段是否存在</p>
+<ul>
+<li>P&#x3D;0，该段在内存中不存在</li>
+<li>P&#x3D;1，该段在内存中存在</li>
+</ul>
+<p>尝试访问在内存中不存在的段时会触发段不存在错误</p>
+<h5 id="3-1-5-AVL"><a href="#3-1-5-AVL" class="headerlink" title="3.1.5 AVL"></a>3.1.5 AVL</h5><p>第52位，AVL属性占1bit，该属性的意义可由操作系统、应用程序自己定义</p>
+<h5 id="3-1-6-L"><a href="#3-1-6-L" class="headerlink" title="3.1.6 L"></a>3.1.6 L</h5><p>第53位，该属性仅在IA-32e模式下有意义，它标记了该段是否为64位代码段</p>
+<ul>
+<li>L&#x3D;1，表示该段是64位代码段</li>
+</ul>
+<p>如果L属性为1，则必须保证D属性为0</p>
+<h5 id="3-1-7-D-x2F-B"><a href="#3-1-7-D-x2F-B" class="headerlink" title="3.1.7 D&#x2F;B"></a>3.1.7 D&#x2F;B</h5><p>第54位，这个属性随着段描述符是代码段、向下扩展数据段还是栈段有所不同</p>
+<ul>
+<li>代码段(S属性第44位&#x3D;1 TYPE属性第40位&#x3D;1)，当段描述符是代码段的时候，此时第54位属性是D属性<ul>
+<li>0 被视为16位代码段执行</li>
+<li>1 被视为32位代码段执行</li>
+</ul>
+</li>
+<li>栈段，被SS寄存器指向的数据段，这种情况下称之为B属性<ul>
+<li>0 没有设置B属性，在采用堆栈访问如PUSH、POP指令时使用的是16位堆栈指针寄存器SP</li>
+<li>1 设置了B属性，在采用堆栈访问如PUSH、POP指令时使用的是32位堆栈指针寄存器ESP</li>
+</ul>
+</li>
+<li>向下扩展的数据段，这种情况是B属性<ul>
+<li>0 没有设置B属性，段的上界是64KB</li>
+<li>1 设置了B属性，段的上界是4GB</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-1-8-G"><a href="#3-1-8-G" class="headerlink" title="3.1.8 G"></a>3.1.8 G</h5><p>第55位，记录了段界限的粒度</p>
+<ul>
+<li>0 段界限的粒度Byte</li>
+<li>1 段界限的粒度是4KB</li>
+</ul>
+<p>在一个段描述符中，Limit占用20bit</p>
+<ul>
+<li>如果G&#x3D;0，段的最大界限值&#x3D;(1&lt;&lt;20)Byte&#x3D;1MB</li>
+<li>如果G&#x3D;1，段的最大界限值&#x3D;(1&lt;&lt;20)*4KB&#x3D;4GB</li>
+</ul>
+<h4 id="3-2-代码段"><a href="#3-2-代码段" class="headerlink" title="3.2 代码段"></a>3.2 代码段</h4><p>代码段的8字节的16进制从高位到低位是00C0 9A00 0000 07FF</p>
+<ul>
+<li>Limit&#x3D;007FF&#x3D;2047 得到段限长&#x3D;(2047+1)*4KB&#x3D;8MB</li>
+<li>Base&#x3D;00000000&#x3D;0x0</li>
+<li>S&#x3D;1 是代码段或数据段</li>
+<li></li>
+</ul>
+<h4 id="3-3-数据段"><a href="#3-3-数据段" class="headerlink" title="3.3 数据段"></a>3.3 数据段</h4><p>数据段的8字节的16进制从高位到低位是00C0 9200 0000 07FF</p>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>linux-0x08-全局描述符表</div>
+      <div>https://bannirui.github.io/2025/05/07/Linux/linux-0x08-全局描述符表/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年5月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/05/07/Linux/linux-0x07-%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8/" title="linux-0x07-中断描述符表">
+                        <span class="hidden-mobile">linux-0x07-中断描述符表</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '2ec636e7f1be8aad05d0be333099e718'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
