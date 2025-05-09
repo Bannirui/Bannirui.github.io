@@ -26,10 +26,12 @@
 <meta property="og:site_name" content="hex Blog">
 <meta property="og:description" content="1 GDTR告诉GDTR寄存器的信息是啥，将来CPU根据GDTR中的数据就可以找到全局描述符表在哪儿，有多大。 123456| GDT表 全局描述符表gdt_48:    | 2Byte GDT表的大小 也就是说GDT的大小&#x3D;0x800Byte&#x3D;2048Byte GDT表每个表项是8Byte 那么GDT表最多只有(2048&#x2F;8)&#x3D;256个段	.word	0x800		| gdt limit&#x3D;204">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2025/05/07/Linux/linux-0x08-%E5%85%A8%E5%B1%80%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8/1746776300.png">
 <meta property="article:published_time" content="2025-05-07T07:51:20.000Z">
-<meta property="article:modified_time" content="2025-05-08T13:21:53.066Z">
+<meta property="article:modified_time" content="2025-05-09T07:43:51.386Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2025/05/07/Linux/linux-0x08-%E5%85%A8%E5%B1%80%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8/1746776300.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -247,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          1.3k 字
         
       </span>
     
@@ -258,7 +260,7 @@
         
         
         
-          10 分钟
+          12 分钟
         
       </span>
     
@@ -504,59 +506,67 @@
 <td>386陷阱门</td>
 </tr>
 </tbody></table>
-<h6 id="S-x3D-1数据段或代码段"><a href="#S-x3D-1数据段或代码段" class="headerlink" title="S&#x3D;1数据段或代码段"></a>S&#x3D;1数据段或代码段</h6><p>第40位&#x3D;0代表数据段</p>
+<h6 id="S-x3D-1数据段或代码段"><a href="#S-x3D-1数据段或代码段" class="headerlink" title="S&#x3D;1数据段或代码段"></a>S&#x3D;1数据段或代码段</h6><p>第43位&#x3D;0代表数据段</p>
 <table>
 <thead>
 <tr>
 <th>位</th>
+<th>属性</th>
 <th>作用</th>
 <th>值&#x3D;0</th>
 <th>值&#x3D;1</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>41</td>
+<td>42</td>
+<td>E</td>
 <td>段的增长方向</td>
 <td>向上增长</td>
 <td>向下增长</td>
 </tr>
 <tr>
-<td>42</td>
+<td>41</td>
+<td>W</td>
 <td>段的写权限</td>
 <td>只读</td>
 <td>可读可写</td>
 </tr>
 <tr>
-<td>43</td>
+<td>40</td>
+<td>A</td>
 <td>段的访问标记</td>
 <td>该段没有被访问过</td>
 <td>该段已经被访问过</td>
 </tr>
 </tbody></table>
-<p>第40位&#x3D;1代表代码段</p>
+<p>第43位&#x3D;1代表代码段</p>
 <table>
 <thead>
 <tr>
 <th>位</th>
+<th>属性</th>
 <th>作用</th>
 <th>值&#x3D;0</th>
 <th>值&#x3D;1</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>41</td>
+<td>42</td>
+<td>C</td>
 <td>一致代码段标记</td>
 <td>不是一致代码段</td>
 <td>是一致代码段</td>
 </tr>
 <tr>
-<td>42</td>
+<td>41</td>
+<td>R</td>
 <td>段的读权限</td>
 <td>只能执行</td>
 <td>可读\可执行</td>
 </tr>
 <tr>
-<td>43</td>
+<td>40</td>
+<td>A</td>
 <td>段的访问标记</td>
 <td>该段没有被访问过</td>
 <td>该段已经被访问过</td>
@@ -608,14 +618,67 @@
 <li>如果G&#x3D;0，段的最大界限值&#x3D;(1&lt;&lt;20)Byte&#x3D;1MB</li>
 <li>如果G&#x3D;1，段的最大界限值&#x3D;(1&lt;&lt;20)*4KB&#x3D;4GB</li>
 </ul>
+<p>GDT表中的3个段示意图</p>
+<img src="/2025/05/07/Linux/linux-0x08-%E5%85%A8%E5%B1%80%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8/1746776300.png" srcset="/img/loading.gif" lazyload class="">
+
 <h4 id="3-2-代码段"><a href="#3-2-代码段" class="headerlink" title="3.2 代码段"></a>3.2 代码段</h4><p>代码段的8字节的16进制从高位到低位是00C0 9A00 0000 07FF</p>
 <ul>
-<li>Limit&#x3D;007FF&#x3D;2047 得到段限长&#x3D;(2047+1)*4KB&#x3D;8MB</li>
-<li>Base&#x3D;00000000&#x3D;0x0</li>
-<li>S&#x3D;1 是代码段或数据段</li>
-<li></li>
+<li><p>[55]G&#x3D;1 段界限的粒度4KB</p>
+</li>
+<li><p>Limit&#x3D;0x007FF&#x3D;2047 得到段限长&#x3D;(2047+1)*4KB&#x3D;8MB</p>
+</li>
+<li><p>Base&#x3D;00000000&#x3D;0x0</p>
+</li>
+<li><p>[44]S&#x3D;1 是代码段或数据段</p>
+</li>
+<li><p>TYPE[43]&#x3D;1 表示代码段</p>
+</li>
+<li><p>TYPE[42]&#x3D;0 不是一致性代码段</p>
+</li>
+<li><p>TYPE[41]&#x3D;1 可读</p>
+</li>
+<li><p>TYPE[40]&#x3D;0 没有被访问过</p>
+</li>
+<li><p>DPL&#x3D;0x00 特权级0</p>
+</li>
+<li><p>P&#x3D;1 该段在内存中存在</p>
+</li>
+<li><p>[52]AVL&#x3D;0 没有自定义含义</p>
+</li>
+<li><p>[53]L&#x3D;0 不是IA-32e 没有含义</p>
+</li>
+<li><p>[54]是D属性&#x3D;1 32位代码段</p>
+</li>
 </ul>
 <h4 id="3-3-数据段"><a href="#3-3-数据段" class="headerlink" title="3.3 数据段"></a>3.3 数据段</h4><p>数据段的8字节的16进制从高位到低位是00C0 9200 0000 07FF</p>
+<ul>
+<li><p>[55]G&#x3D;1 段界限的粒度4KB</p>
+</li>
+<li><p>Limit&#x3D;0x007FF&#x3D;2047 得到段限长&#x3D;(2047+1)*4KB&#x3D;8MB</p>
+</li>
+<li><p>Base&#x3D;00000000&#x3D;0x0</p>
+</li>
+<li><p>[44]S&#x3D;1 是代码段或数据段</p>
+</li>
+<li><p>TYPE[43]&#x3D;0 表示数据段</p>
+</li>
+<li><p>TYPE[42]&#x3D;0 表示不是向下扩展</p>
+</li>
+<li><p>TYPE[41]&#x3D;1 可读可写</p>
+</li>
+<li><p>TYPE[40]&#x3D;0 没有被访问过</p>
+</li>
+<li><p>DPL&#x3D;0x00 特权级0</p>
+</li>
+<li><p>P&#x3D;1 该段在内存中存在</p>
+</li>
+<li><p>[52]AVL&#x3D;0 没有自定义含义</p>
+</li>
+<li><p>[53]L&#x3D;0 不是IA-32e 没有含义</p>
+</li>
+<li><p>[54]是D属性&#x3D;1 32位代码段</p>
+</li>
+</ul>
 
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
