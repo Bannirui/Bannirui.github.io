@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.16 Chrome/132.0.6834.196 Electron/34.2.0 Safari/537.36" version="26.0.16">
   <diagram name="第 1 页" id="WGkBW5IIXQicfwlrZCdL">
-    <mxGraphModel dx="2093" dy="2130" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1594" dy="1901" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1311,10 +1311,10 @@
           <mxGeometry x="3110" y="130" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="QBygn94gDZrxnFcKJMGF-444" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;direction=south;" vertex="1" parent="1">
-          <mxGeometry x="3240" y="141" width="160" height="20" as="geometry" />
+          <mxGeometry x="3240" y="93.5" width="160" height="20" as="geometry" />
         </mxCell>
         <mxCell id="QBygn94gDZrxnFcKJMGF-445" value="Type&lt;br&gt;&lt;div&gt;4bit&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="3288" y="109" width="80" height="30" as="geometry" />
+          <mxGeometry x="3280" y="63.5" width="80" height="30" as="geometry" />
         </mxCell>
         <mxCell id="QBygn94gDZrxnFcKJMGF-446" value="S&lt;br&gt;&lt;div&gt;1bit&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="3180" y="105" width="80" height="30" as="geometry" />
@@ -1732,6 +1732,18 @@
         </mxCell>
         <mxCell id="QBygn94gDZrxnFcKJMGF-584" value="0" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="2490" y="539" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="QBygn94gDZrxnFcKJMGF-585" value="&lt;div&gt;E/C&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="3275" y="116" width="50" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="QBygn94gDZrxnFcKJMGF-586" value="&lt;div&gt;W/R&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="3313" y="116" width="50" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="QBygn94gDZrxnFcKJMGF-587" value="&lt;div&gt;A/A&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="3350" y="116" width="50" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="QBygn94gDZrxnFcKJMGF-588" value="&lt;div&gt;数据/代码段&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="3240" y="107.5" width="50" height="25" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
