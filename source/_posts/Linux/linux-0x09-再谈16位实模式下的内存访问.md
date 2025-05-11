@@ -1,5 +1,5 @@
 ---
-title: linux-0x09-再谈16位实模式下的内在访问
+title: linux-0x09-再谈16位实模式下的内存访问
 category_bar: true
 date: 2025-05-11 09:34:21
 categories: linux
