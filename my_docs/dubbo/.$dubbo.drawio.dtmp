@@ -90,7 +90,7 @@
           <mxGeometry x="1190" y="170" width="110" height="30" as="geometry" />
         </mxCell>
         <mxCell id="sy4J3GjQt16E9kHFUE2P-31" value="Registry" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="1211" y="120" width="60" height="30" as="geometry" />
+          <mxGeometry x="1215" y="120" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="sy4J3GjQt16E9kHFUE2P-32" value="unRegister" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1190" y="200" width="110" height="30" as="geometry" />
