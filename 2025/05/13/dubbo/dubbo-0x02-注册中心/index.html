@@ -19,16 +19,19 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="为什么要先看注册中心，因为dubbo-0x01-源码阅读规划从可以看到Provider和Consumer都要跟注册中心交互，换言之先研究注册中心可以弄清楚交互枢纽以及弄明白到底注册了服务的什么维度信息。   从类图很清晰看出来这是模板方法，对于使用了模板方法的设计模式的就是在基类中看共性特征，在子类中看个性化实现。 1 注册中心定义    		 		var gitalkConfig &#x3D; {&quot;cli">
+    <meta name="description" content="为什么要先看注册中心，因为dubbo-0x01-源码阅读规划从可以看到Provider和Consumer都要跟注册中心交互，换言之先研究注册中心可以弄清楚交互枢纽以及弄明白到底注册了服务的什么维度信息。   从类图很清晰看出来这是模板方法，对于使用了模板方法的设计模式的就是在基类中看共性特征，在子类中看个性化实现。 1 注册中心定义  注册中心的抽象很简单，因为它的使用方有两类，Provider和">
 <meta property="og:type" content="article">
 <meta property="og:title" content="dubbo-0x02-注册中心">
 <meta property="og:url" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="为什么要先看注册中心，因为dubbo-0x01-源码阅读规划从可以看到Provider和Consumer都要跟注册中心交互，换言之先研究注册中心可以弄清楚交互枢纽以及弄明白到底注册了服务的什么维度信息。   从类图很清晰看出来这是模板方法，对于使用了模板方法的设计模式的就是在基类中看共性特征，在子类中看个性化实现。 1 注册中心定义    		 		var gitalkConfig &#x3D; {&quot;cli">
+<meta property="og:description" content="为什么要先看注册中心，因为dubbo-0x01-源码阅读规划从可以看到Provider和Consumer都要跟注册中心交互，换言之先研究注册中心可以弄清楚交互枢纽以及弄明白到底注册了服务的什么维度信息。   从类图很清晰看出来这是模板方法，对于使用了模板方法的设计模式的就是在基类中看共性特征，在子类中看个性化实现。 1 注册中心定义  注册中心的抽象很简单，因为它的使用方有两类，Provider和">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747125960.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747189544.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747192662.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747204959.png">
 <meta property="article:published_time" content="2025-05-13T08:45:22.000Z">
-<meta property="article:modified_time" content="2025-05-13T09:24:10.817Z">
+<meta property="article:modified_time" content="2025-05-14T06:42:54.098Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747125960.png">
@@ -249,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          158 字
+          663 字
         
       </span>
     
@@ -260,7 +263,7 @@
         
         
         
-          2 分钟
+          6 分钟
         
       </span>
     
@@ -385,7 +388,37 @@
 <img src="/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747125960.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>从类图很清晰看出来这是模板方法，对于使用了模板方法的设计模式的就是在基类中看共性特征，在子类中看个性化实现。</p>
-<h3 id="1-注册中心定义"><a href="#1-注册中心定义" class="headerlink" title="1 注册中心定义"></a>1 注册中心定义</h3>
+<h3 id="1-注册中心定义"><a href="#1-注册中心定义" class="headerlink" title="1 注册中心定义"></a>1 注册中心定义</h3><img src="/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747189544.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>注册中心的抽象很简单，因为它的使用方有两类，Provider和Consumer，所以API声明了两类。</p>
+<ul>
+<li>注册</li>
+<li>注销</li>
+<li>订阅</li>
+<li>取消订阅</li>
+</ul>
+<h3 id="2-服务的本地缓存"><a href="#2-服务的本地缓存" class="headerlink" title="2 服务的本地缓存"></a>2 服务的本地缓存</h3><img src="/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747192662.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="2-1-registered缓存"><a href="#2-1-registered缓存" class="headerlink" title="2.1 registered缓存"></a>2.1 registered缓存</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 写到缓存&#123;<span class="hljs-doctag">@link</span> AbstractRegistry#registered&#125;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">register</span><span class="hljs-params">(URL url)</span> &#123;<br>    <span class="hljs-keyword">if</span> (url == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;register url == null&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (logger.isInfoEnabled()) &#123;<br>        logger.info(<span class="hljs-string">&quot;Register: &quot;</span> + url);<br>    &#125;<br>    <span class="hljs-comment">// 入缓存</span><br>    registered.add(url);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 从缓存&#123;<span class="hljs-doctag">@link</span> AbstractRegistry#registered&#125;中移除</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">unregister</span><span class="hljs-params">(URL url)</span> &#123;<br>    <span class="hljs-keyword">if</span> (url == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;unregister url == null&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (logger.isInfoEnabled()) &#123;<br>        logger.info(<span class="hljs-string">&quot;Unregister: &quot;</span> + url);<br>    &#125;<br>    <span class="hljs-comment">// 移除缓存</span><br>    registered.remove(url);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-2-subscribed缓存"><a href="#2-2-subscribed缓存" class="headerlink" title="2.2 subscribed缓存"></a>2.2 subscribed缓存</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 写到缓存&#123;<span class="hljs-doctag">@link</span> AbstractRegistry#subscribed&#125;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">subscribe</span><span class="hljs-params">(URL url, NotifyListener listener)</span> &#123;<br>    <span class="hljs-keyword">if</span> (url == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;subscribe url == null&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (listener == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;subscribe listener == null&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (logger.isInfoEnabled()) &#123;<br>        logger.info(<span class="hljs-string">&quot;Subscribe: &quot;</span> + url);<br>    &#125;<br>    Set&lt;NotifyListener&gt; listeners = subscribed.get(url);<br>    <span class="hljs-keyword">if</span> (listeners == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-comment">// 入缓存</span><br>        subscribed.putIfAbsent(url, <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrentHashSet</span>&lt;NotifyListener&gt;());<br>        listeners = subscribed.get(url);<br>    &#125;<br>    listeners.add(listener);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 从缓存&#123;<span class="hljs-doctag">@link</span> AbstractRegistry#subscribed&#125;中移除</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">unsubscribe</span><span class="hljs-params">(URL url, NotifyListener listener)</span> &#123;<br>    <span class="hljs-keyword">if</span> (url == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;unsubscribe url == null&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (listener == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;unsubscribe listener == null&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (logger.isInfoEnabled()) &#123;<br>        logger.info(<span class="hljs-string">&quot;Unsubscribe: &quot;</span> + url);<br>    &#125;<br>    Set&lt;NotifyListener&gt; listeners = subscribed.get(url);<br>    <span class="hljs-keyword">if</span> (listeners != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-comment">// 删除缓存</span><br>        listeners.remove(listener);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-容错机制"><a href="#3-容错机制" class="headerlink" title="3 容错机制"></a>3 容错机制</h3><p>注册中心可能面临的问题</p>
+<ul>
+<li>网络不可用</li>
+<li>注册中心重启</li>
+<li>注册中心读写请求过大</li>
+</ul>
+<p>面对这种情况，一般都会设计一些失败补偿机制，FailbackRegistry在AbstractRegistry的基础上扩展了失败后的安全重试。</p>
+<p>实现方式就是定时任务扫描，将处理失败的请求缓存下来，定时任务周期性扫描缓存，将请求拿出来重新处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">FailbackRegistry</span><span class="hljs-params">(URL url)</span> &#123;<br>    <span class="hljs-built_in">super</span>(url);<br>    <span class="hljs-built_in">this</span>.retryPeriod = url.getParameter(Constants.REGISTRY_RETRY_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RETRY_PERIOD);<br>    <span class="hljs-comment">// 构造方法启动线程池启动定时任务去对失败的请求进行安全地补偿</span><br>    <span class="hljs-built_in">this</span>.retryFuture = retryExecutor.scheduleWithFixedDelay(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-comment">// Check and connect to the registry</span><br>            <span class="hljs-keyword">try</span> &#123;<br>                retry();<br>            &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123; <span class="hljs-comment">// Defensive fault tolerance</span><br>                logger.error(<span class="hljs-string">&quot;Unexpected error occur at failed retry, cause: &quot;</span> + t.getMessage(), t);<br>            &#125;<br>        &#125;<br>    &#125;, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>目前为止，注册中心如图，具体的实现只要看一种就行，下面我就会看借助zk的实现</p>
+<img src="/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747204959.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
