@@ -143,6 +143,40 @@ categories: dubbo
     }
 ```
 
+模板方法留给子类去关注实现的就是下面这几个方法
+
+```java
+    protected abstract void doRegister(URL url);
+
+    protected abstract void doUnregister(URL url);
+
+    protected abstract void doSubscribe(URL url, NotifyListener listener);
+
+    protected abstract void doUnsubscribe(URL url, NotifyListener listener);
+```
+
 目前为止，注册中心如图，具体的实现只要看一种就行，下面我就会看借助zk的实现
 
 ![](./dubbo-0x02-注册中心/1747204959.png)
+
+### 4 zk的实现
+
+以注册为例，就是借助zk的临时节点和watch机制，所有这个时候比较有意义的是研究一下zk中node节点路径，也就是dubbo封装了URL{% post_link dubbo/dubbo-0x03-URL %}，看看这个结构。
+
+```java
+    protected void doRegister(URL url) {
+        try {
+            /**
+             * zk读写操作
+             *     - 创建节点
+             *         - path
+             *             - /dubbo/com.alibaba.dubbo.demo.DemoService/providers/dubbo%3A%2F%2F192.168.0.11%3A20880%2Fcom.alibaba.dubbo.demo.DemoService%3Fanyhost%3Dtrue%26application%3Dnative-provider%26dubbo%3D2.0.2%26generic%3Dfalse%26interface%3Dcom.alibaba.dubbo.demo.DemoService%26methods%3DsayHello%26pid%3D41099%26side%3Dprovider%26timestamp%3D1669562090672
+             *         - 永久/临时
+             *             - 默认临时节点
+             */
+            this.zkClient.create(toUrlPath(url), url.getParameter(Constants.DYNAMIC_KEY, true));
+        } catch (Throwable e) {
+            throw new RpcException("Failed to register " + url + " to zookeeper " + getUrl() + ", cause: " + e.getMessage(), e);
+        }
+    }
+```
