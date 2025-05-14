@@ -111,3 +111,38 @@ categories: dubbo
         }
     }
 ```
+
+### 3 容错机制
+
+注册中心可能面临的问题
+
+- 网络不可用
+- 注册中心重启
+- 注册中心读写请求过大
+
+面对这种情况，一般都会设计一些失败补偿机制，FailbackRegistry在AbstractRegistry的基础上扩展了失败后的安全重试。
+
+实现方式就是定时任务扫描，将处理失败的请求缓存下来，定时任务周期性扫描缓存，将请求拿出来重新处理。
+
+```java
+    public FailbackRegistry(URL url) {
+        super(url);
+        this.retryPeriod = url.getParameter(Constants.REGISTRY_RETRY_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RETRY_PERIOD);
+        // 构造方法启动线程池启动定时任务去对失败的请求进行安全地补偿
+        this.retryFuture = retryExecutor.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                // Check and connect to the registry
+                try {
+                    retry();
+                } catch (Throwable t) { // Defensive fault tolerance
+                    logger.error("Unexpected error occur at failed retry, cause: " + t.getMessage(), t);
+                }
+            }
+        }, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);
+    }
+```
+
+目前为止，注册中心如图，具体的实现只要看一种就行，下面我就会看借助zk的实现
+
+![](./dubbo-0x02-注册中心/1747204959.png)
