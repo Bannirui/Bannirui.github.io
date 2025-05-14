@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747192662.png">
 <meta property="og:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747204959.png">
 <meta property="article:published_time" content="2025-05-13T08:45:22.000Z">
-<meta property="article:modified_time" content="2025-05-14T06:42:54.098Z">
+<meta property="article:modified_time" content="2025-05-14T08:54:45.785Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747125960.png">
@@ -252,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          663 字
+          857 字
         
       </span>
     
@@ -263,7 +263,7 @@
         
         
         
-          6 分钟
+          8 分钟
         
       </span>
     
@@ -322,7 +322,7 @@
         aria-expanded="true"
       >
         dubbo
-        <span class="list-group-count">(3)</span>
+        <span class="list-group-count">(4)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -358,6 +358,15 @@
            class="list-group-item list-group-item-action
            active">
           <span class="category-post">dubbo-0x02-注册中心</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/05/14/dubbo/dubbo-0x03-URL/" title="dubbo-0x03-URL"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">dubbo-0x03-URL</span>
         </a>
       
     
@@ -417,8 +426,14 @@
 <p>实现方式就是定时任务扫描，将处理失败的请求缓存下来，定时任务周期性扫描缓存，将请求拿出来重新处理。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">FailbackRegistry</span><span class="hljs-params">(URL url)</span> &#123;<br>    <span class="hljs-built_in">super</span>(url);<br>    <span class="hljs-built_in">this</span>.retryPeriod = url.getParameter(Constants.REGISTRY_RETRY_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RETRY_PERIOD);<br>    <span class="hljs-comment">// 构造方法启动线程池启动定时任务去对失败的请求进行安全地补偿</span><br>    <span class="hljs-built_in">this</span>.retryFuture = retryExecutor.scheduleWithFixedDelay(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-comment">// Check and connect to the registry</span><br>            <span class="hljs-keyword">try</span> &#123;<br>                retry();<br>            &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123; <span class="hljs-comment">// Defensive fault tolerance</span><br>                logger.error(<span class="hljs-string">&quot;Unexpected error occur at failed retry, cause: &quot;</span> + t.getMessage(), t);<br>            &#125;<br>        &#125;<br>    &#125;, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);<br>&#125;<br></code></pre></td></tr></table></figure>
 
+<p>模板方法留给子类去关注实现的就是下面这几个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doRegister</span><span class="hljs-params">(URL url)</span>;<br><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doUnregister</span><span class="hljs-params">(URL url)</span>;<br><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doSubscribe</span><span class="hljs-params">(URL url, NotifyListener listener)</span>;<br><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doUnsubscribe</span><span class="hljs-params">(URL url, NotifyListener listener)</span>;<br></code></pre></td></tr></table></figure>
+
 <p>目前为止，注册中心如图，具体的实现只要看一种就行，下面我就会看借助zk的实现</p>
 <img src="/2025/05/13/dubbo/dubbo-0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/1747204959.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="4-zk的实现"><a href="#4-zk的实现" class="headerlink" title="4 zk的实现"></a>4 zk的实现</h3><p>以注册为例，就是借助zk的临时节点和watch机制，所有这个时候比较有意义的是研究一下zk中node节点路径，也就是dubbo封装了URL<a href="/2025/05/14/dubbo/dubbo-0x03-URL/" title="dubbo-0x03-URL">dubbo-0x03-URL</a>，看看这个结构。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doRegister</span><span class="hljs-params">(URL url)</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * zk读写操作</span><br><span class="hljs-comment">         *     - 创建节点</span><br><span class="hljs-comment">         *         - path</span><br><span class="hljs-comment">         *             - /dubbo/com.alibaba.dubbo.demo.DemoService/providers/dubbo%3A%2F%2F192.168.0.11%3A20880%2Fcom.alibaba.dubbo.demo.DemoService%3Fanyhost%3Dtrue%26application%3Dnative-provider%26dubbo%3D2.0.2%26generic%3Dfalse%26interface%3Dcom.alibaba.dubbo.demo.DemoService%26methods%3DsayHello%26pid%3D41099%26side%3Dprovider%26timestamp%3D1669562090672</span><br><span class="hljs-comment">         *         - 永久/临时</span><br><span class="hljs-comment">         *             - 默认临时节点</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-built_in">this</span>.zkClient.create(toUrlPath(url), url.getParameter(Constants.DYNAMIC_KEY, <span class="hljs-literal">true</span>));<br>    &#125; <span class="hljs-keyword">catch</span> (Throwable e) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RpcException</span>(<span class="hljs-string">&quot;Failed to register &quot;</span> + url + <span class="hljs-string">&quot; to zookeeper &quot;</span> + getUrl() + <span class="hljs-string">&quot;, cause: &quot;</span> + e.getMessage(), e);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -509,6 +524,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2025/05/14/dubbo/dubbo-0x03-URL/" title="dubbo-0x03-URL">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">dubbo-0x03-URL</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
