@@ -13,3 +13,101 @@ categories: dubbo
 
 ### 1 注册中心定义
 
+![](./dubbo-0x02-注册中心/1747189544.png)
+
+注册中心的抽象很简单，因为它的使用方有两类，Provider和Consumer，所以API声明了两类。
+
+- 注册
+- 注销
+- 订阅
+- 取消订阅
+
+### 2 服务的本地缓存
+
+![](./dubbo-0x02-注册中心/1747192662.png)
+
+#### 2.1 registered缓存
+
+```java
+    /**
+     * 写到缓存{@link AbstractRegistry#registered}
+     */
+    @Override
+    public void register(URL url) {
+        if (url == null) {
+            throw new IllegalArgumentException("register url == null");
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Register: " + url);
+        }
+        // 入缓存
+        registered.add(url);
+    }
+```
+
+```java
+    /**
+     * 从缓存{@link AbstractRegistry#registered}中移除
+     */
+    @Override
+    public void unregister(URL url) {
+        if (url == null) {
+            throw new IllegalArgumentException("unregister url == null");
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Unregister: " + url);
+        }
+        // 移除缓存
+        registered.remove(url);
+    }
+```
+
+#### 2.2 subscribed缓存
+
+```java
+    /**
+     * 写到缓存{@link AbstractRegistry#subscribed}
+     */
+    @Override
+    public void subscribe(URL url, NotifyListener listener) {
+        if (url == null) {
+            throw new IllegalArgumentException("subscribe url == null");
+        }
+        if (listener == null) {
+            throw new IllegalArgumentException("subscribe listener == null");
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Subscribe: " + url);
+        }
+        Set<NotifyListener> listeners = subscribed.get(url);
+        if (listeners == null) {
+            // 入缓存
+            subscribed.putIfAbsent(url, new ConcurrentHashSet<NotifyListener>());
+            listeners = subscribed.get(url);
+        }
+        listeners.add(listener);
+    }
+```
+
+```java
+    /**
+     * 从缓存{@link AbstractRegistry#subscribed}中移除
+     */
+    @Override
+    public void unsubscribe(URL url, NotifyListener listener) {
+        if (url == null) {
+            throw new IllegalArgumentException("unsubscribe url == null");
+        }
+        if (listener == null) {
+            throw new IllegalArgumentException("unsubscribe listener == null");
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Unsubscribe: " + url);
+        }
+        Set<NotifyListener> listeners = subscribed.get(url);
+        if (listeners != null) {
+            // 删除缓存
+            listeners.remove(listener);
+        }
+    }
+```
