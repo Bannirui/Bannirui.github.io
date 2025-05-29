@@ -160,3 +160,12 @@ public interface RegistryFactory {
                 EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
 ```
+
+### 3 总结服务发现的策略
+
+- 自己写个实现类打上`@Adaptive`注解，SPI退化
+- 接口上打`@SPI`注解指定默认别名，方法打上`@Adaptive`注解
+  - 没指定别名 -> 解析接口名，比如MyInterfaceName就被解析成my.interface.name
+    - protocol特殊处理，直接url.getProtocol()拿到别名，再拿着别名去找实现
+    - 其他的用url.getParameter(xxx)拿到别名，再拿着别名去找实现
+  - 指定了key -> 用这个key去`url.getParamter(key)`作别名去找实现，没找到再用`@SPI`注解指定的别名去找
