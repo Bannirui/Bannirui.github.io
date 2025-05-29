@@ -19,16 +19,16 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="换言之dubbo在反射上用了两个机制  一个是jdk的反射 一个是字节码技术的反射  单从这个点而言，又可以看出来dubbo的偏好真的是为了动态而动态，正常人在二者之间肯定选字节码方式，所以为什么要提供选择而不是直接提供好最优方案呢。     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1">
+    <meta name="description" content="换言之dubbo在反射上用了两个机制  一个是jdk的反射 一个是字节码技术的反射  单从这个点而言，又可以看出来dubbo的偏好真的是为了动态而动态，正常人在二者之间肯定选字节码方式，所以为什么要提供选择而不是直接提供好最优方案呢。 1 jdk的反射12Method method &#x3D; proxy.getClass().getMethod(methodName, parameterTypes)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="dubbo-0x07-反射">
 <meta property="og:url" content="https://bannirui.github.io/2025/05/22/dubbo/dubbo-0x07-%E5%8F%8D%E5%B0%84/index.html">
 <meta property="og:site_name" content="hex Blog">
-<meta property="og:description" content="换言之dubbo在反射上用了两个机制  一个是jdk的反射 一个是字节码技术的反射  单从这个点而言，又可以看出来dubbo的偏好真的是为了动态而动态，正常人在二者之间肯定选字节码方式，所以为什么要提供选择而不是直接提供好最优方案呢。     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1">
+<meta property="og:description" content="换言之dubbo在反射上用了两个机制  一个是jdk的反射 一个是字节码技术的反射  单从这个点而言，又可以看出来dubbo的偏好真的是为了动态而动态，正常人在二者之间肯定选字节码方式，所以为什么要提供选择而不是直接提供好最优方案呢。 1 jdk的反射12Method method &#x3D; proxy.getClass().getMethod(methodName, parameterTypes)">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2025/05/22/dubbo/dubbo-0x07-%E5%8F%8D%E5%B0%84/1747899473.png">
 <meta property="article:published_time" content="2025-05-22T07:26:28.000Z">
-<meta property="article:modified_time" content="2025-05-22T08:35:07.712Z">
+<meta property="article:modified_time" content="2025-05-26T05:35:24.950Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2025/05/22/dubbo/dubbo-0x07-%E5%8F%8D%E5%B0%84/1747899473.png">
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          124 字
+          311 字
         
       </span>
     
@@ -260,7 +260,7 @@
         
         
         
-          2 分钟
+          3 分钟
         
       </span>
     
@@ -319,7 +319,7 @@
         aria-expanded="true"
       >
         dubbo
-        <span class="list-group-count">(9)</span>
+        <span class="list-group-count">(10)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -412,6 +412,15 @@
         </a>
       
     
+      
+      
+        <a href="/2025/05/29/dubbo/dubbo-0x09-%E5%85%B3%E4%BA%8E%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" title="dubbo-0x09-关于进程间通信协议"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">dubbo-0x09-关于进程间通信协议</span>
+        </a>
+      
+    
   </div>
 
         
@@ -443,7 +452,13 @@
 <li>一个是字节码技术的反射</li>
 </ul>
 <p>单从这个点而言，又可以看出来dubbo的偏好真的是为了动态而动态，正常人在二者之间肯定选字节码方式，所以为什么要提供选择而不是直接提供好最优方案呢。</p>
+<h3 id="1-jdk的反射"><a href="#1-jdk的反射" class="headerlink" title="1 jdk的反射"></a>1 jdk的反射</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> proxy.getClass().getMethod(methodName, parameterTypes); <span class="hljs-comment">// Java反射调用目标对象的方法</span><br><span class="hljs-keyword">return</span> method.invoke(proxy, arguments);<br></code></pre></td></tr></table></figure>
 
+<h3 id="2-编码技术"><a href="#2-编码技术" class="headerlink" title="2 编码技术"></a>2 编码技术</h3><p>先创建个代理类，提供<code>invokeMethod</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 核心方法 构造代理方法</span><br><span class="hljs-comment"> * &lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;o 要代理的对象&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;n 要代理的方法&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;p 要代理的方法n的形参类型&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;v 要代理的方法n的实参&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">StringBuilder</span> <span class="hljs-variable">c3</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuilder</span>(<span class="hljs-string">&quot;public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws &quot;</span> + InvocationTargetException.class.getName() + <span class="hljs-string">&quot;&#123; &quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<p>当调用方调用代对象的<code>invokeMethod</code>方法后，代理类会将请求转发给真正的目标对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">return</span> wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments); <span class="hljs-comment">// 通过代理对象执行目标对象的方法</span><br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
