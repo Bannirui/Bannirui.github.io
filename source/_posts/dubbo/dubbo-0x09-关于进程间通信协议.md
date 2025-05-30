@@ -87,7 +87,7 @@ Protocol接口类
 
 这个就是配置给SPI去发现加载的，那么怎么加载到，前面{% post_link dubbo/dubbo-0x05-SPI机制 %}讲过，SPI发现全靠URL的配置，所以可以看到dubbo在遍地复制URL，目的就是为了做动态发现
 
-#### 3.1 改URL的协议为dubbo为了加载出DubboProtocol
+#### 3.1 改URL的协议为dubbo加载出DubboProtocol
 
 ```java
                     // 复制url协议从registry换成dubbo 放到invoker里面
@@ -146,4 +146,48 @@ Protocol接口类
 
 具体用哪个注册中心看{% post_link dubbo/dubbo-0x02-注册中心 %}
 
-### 5 
+### 5 消费端的网络通信
+
+在{% post_link dubbo/dubbo-0x01-源码阅读规划 %}就已经设想过肯定要在服务端对提供方的服务做代理实现的
+
+但是服务端比较复杂，复杂在哪儿，网络通信不是单点对单点的，要考虑负载和重试，所以这整个网络通信的周边就不看了，也没必要。
+
+核心就是把整个网络通信这一层封装起来创建个代理invoker，它从注册中心去拿到服务提供方的连接信息，用netty连接。
+
+```java
+                /**
+                 * 此时的url是
+                 * registry://localhost:2181/com.alibaba.dubbo.registry.RegistryService?application=native-consumer&dubbo=2.0.2&pid=82516&qos.port=33333&refer=application%3Dnative-consumer%26dubbo%3D2.0.2%26interface%3Dcom.alibaba.dubbo.demo.DemoService%26methods%3DsayHello%26pid%3D82516%26qos.port%3D33333%26register.ip%3D198.18.0.1%26side%3Dconsumer%26timestamp%3D1669709307576&registry=zookeeper&timestamp=1669709314764
+                 * {@link Protocol}
+                 * <ul>
+                 *     <li>refer方法用了{@link com.alibaba.dubbo.common.extension.Adaptive}注解没指定key</li>
+                 *     <li>类上打了{@link SPI#value("dubbo")}指定了默认实现{@link DubboProtocol}</li>
+                 * </ul>
+                 * 所以SPI会解析{@link Protocol}的类名为protocol 因为protocol特殊
+                 * refprotocol.refer()方法的第2个参数类型是{@link URL}
+                 * 因此会执行{@link URL#getProtocol()}得到registry作为别名让SPI去找registry的实现{@link com.alibaba.dubbo.registry.integration.RegistryProtocol}
+                 */
+                this.invoker = refprotocol.refer(interfaceClass, this.urls.get(0));
+```
+
+有了这个代理就已经解决了进程间通信的问题，现在要解决是怎么让消费方无调用，让它像自己在调用本地方法一样
+
+### 6 本地方法代理
+
+答案依然是代理，把上面的代理对象修饰一下，再套一层代理就行
+
+```java
+        /**
+         * 上面已经生成了代理对象{@link ReferenceConfig#invoker} 这个代理要解决的是进程单网络通信
+         * 现在准备再套个代理 要解决的是消费方无感调用问题
+         * invoker中的URL是zookeeper://localhost:2181/com.alibaba.dubbo.registry.RegistryService?anyhost=true&application=native-consumer&check=false&dubbo=2.0.2&generic=false&interface=com.alibaba.dubbo.demo.DemoService&methods=sayHello&pid=82897&qos.port=33333&register.ip=198.18.0.1&remote.timestamp=1669707577585&side=consumer&timestamp=1669709866593
+         * {@link ProxyFactory}接口打了{@link SPI("javassist")}
+         * {@link ProxyFactory#getProxy(Invoker)}方法打了{@link com.alibaba.dubbo.common.extension.Adaptive("proxy")}
+         * 所以调用{@link Invoker#getUrl()}拿到url再调用{@link URL#getParameter("proxy")}拿到空
+         * 就用{@link SPI}的javassist作为别名让SPI去找实现
+         * 最终找到{@link com.alibaba.dubbo.rpc.proxy.javassist.JavassistProxyFactory#getProxy(Invoker)}
+         */
+        return (T) proxyFactory.getProxy(this.invoker);
+```
+
+至此，dubbo的骨干脉络就结束了
