@@ -13,8 +13,9 @@ categories: dubbo
 
 大胆的想象，如果自己来做这个产品会怎样下手，即使想错了，在后面实际阅读中会纠正观点；如果恰好跟作者想的一样，观点也会得到印证。上面的图是我认为实现一RPC需要关注的功能点，下面我也就差不多按照这个顺序去探寻源码，过程中有展开的再细化添加
 
-- [ ] 远程注册中心用来保存服务的主机信息和服务本身信息
-- [ ] Provider注册服务信息
-- [ ] Consumer拉取服务信息
-- [ ] Consumer创建服务的代理对象
-- [ ] Consumer跟Provider两个进程通信
+- [X] 想看注册中心的话{% post_link dubbo/dubbo-0x02-注册中心 %}
+- [X] Provider怎么向注册中心登记自身信息{% post_link dubbo/dubbo-0x09-关于进程间通信协议 %}
+- [X] Consumer怎么从注册中心订阅{% post_link dubbo/dubbo-0x09-关于进程间通信协议 %}
+- [X] Consumer创建网络层代理跟Provider通信{% post_link dubbo/dubbo-0x09-关于进程间通信协议 %}
+- [X] Consumer怎么解决无感调用{% post_link dubbo/dubbo-0x09-关于进程间通信协议 %}
+- [X] dubbo中核心 也是被滥用的SPI{% post_link dubbo/dubbo-0x05-SPI机制 %}
