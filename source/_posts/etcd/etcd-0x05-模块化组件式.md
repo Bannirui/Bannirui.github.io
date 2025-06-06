@@ -26,3 +26,11 @@ categories: etcd
 	// the key-value http handler will propose updates to raft
 	serveHTTPKVAPI(kvs, *kvport, confChangeC, errorC)
 ```
+
+按照功能划分有3个核心模块
+
+- httpKVAPI 服务端接收客户端请求 {% post_link etcd/etcd-0x06-怎么跟客户端通信 %}
+
+- kvstore 键值对数据库
+
+- raftnode 实现raft协议共识算法
