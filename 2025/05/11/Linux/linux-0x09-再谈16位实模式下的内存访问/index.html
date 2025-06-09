@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux-0x09-再谈16位实模式下的内存访问">
 <meta property="og:url" content="https://bannirui.github.io/2025/05/11/Linux/linux-0x09-%E5%86%8D%E8%B0%8816%E4%BD%8D%E5%AE%9E%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="所谓cpu实模式就是cpu real-mode，cpu要寻的地址就是实际的物理地址。在16位模式下，寄存器用的是16bit，但是地址总线是20根，也就是地址空间是1&lt;&lt;20(Byte)&#x3D;1Mb。 现在CPU要用16位寄存器读到20位地址，显然是不行的。怎么办呢？那就用两个寄存器进行组合，因此就出现了基址和偏移进行组合。 16bit能定位的地址上限是1&lt;&lt;16(By">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-05-11T01:34:21.000Z">
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>linux-0x09-再谈16位实模式下的内存访问 - hex Blog</title>
+  <title>linux-0x09-再谈16位实模式下的内存访问 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -128,7 +128,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"

@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty源码-03-NioEventLoop">
 <meta property="og:url" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="Netty没有简单地使用线程池复用线程的方式，而是自己实现了一套EventLoopGroup管理器，管理着EventLoop。  一个Group多个线程方式保证服务器的吞吐率。每个线程负责一个Channel的整个生命周期事件，虽然单个事件效率可能下降，但是利用异步方式增加了吞吐率。 每个NioEventLoop维护一个Selector多路复用器，保证IO读写事件始终在一个线程内处理。 在多线程下不">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/202211112145377.png">
@@ -38,7 +38,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Netty源码-03-NioEventLoop - hex Blog</title>
+  <title>Netty源码-03-NioEventLoop - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -131,7 +131,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"

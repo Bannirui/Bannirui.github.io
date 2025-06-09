@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty-0x02-NioEventLoopGroup之任务管理">
 <meta property="og:url" content="https://bannirui.github.io/2023/05/10/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="1 不同任务类型的提交方式首先体现了Executor这个抽象接口的功能，实现解耦  提交任务的线程只关注于提交这个动作，任务提交完，使命就结束了 NioEventLoopGroup负责关注任务的管理和调度 所谓的管理就是如何在内存中组织编排任务实例 调度就是负责实现任务如何执行    名词(术语)约定，在Netty世界中，任务有2种  IO任务(特指的是Socket编程涉及的网络IO) 其他都叫做">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/05/10/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/image-20230510212923723.png">
@@ -38,7 +38,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Netty-0x02-NioEventLoopGroup之任务管理 - hex Blog</title>
+  <title>Netty-0x02-NioEventLoopGroup之任务管理 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -131,7 +131,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"

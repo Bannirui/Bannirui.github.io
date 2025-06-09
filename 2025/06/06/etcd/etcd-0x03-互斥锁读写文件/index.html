@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="etcd-0x03-互斥锁读写文件">
 <meta property="og:url" content="https://bannirui.github.io/2025/06/06/etcd/etcd-0x03-%E4%BA%92%E6%96%A5%E9%94%81%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="1234567func (s *kvstore) getSnapshot() ([]byte, error) &amp;#123;	&#x2F;&#x2F; 我在raft-py中时考虑过共享文件安全性 etcd用的就是读写锁 保证 读写互斥 读时不写 我以为是COW的方案保证性能呢	s.mu.RLock()	defer s.mu.RUnlock()	&#x2F;&#x2F; map序列化json	return json.Marshal(s.kv">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-06T06:08:20.000Z">
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>etcd-0x03-互斥锁读写文件 - hex Blog</title>
+  <title>etcd-0x03-互斥锁读写文件 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -128,7 +128,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
