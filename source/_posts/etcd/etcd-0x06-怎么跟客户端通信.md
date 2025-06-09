@@ -5,9 +5,11 @@ date: 2025-06-06 16:34:45
 categories: etcd
 ---
 
-etcd用了严格的REST API风格，GET对应查，PUT对应写，所以只看这两个就行
+etcd用了严格的REST API风格，GET对应查，PUT对应写，所以只看这两个就行。从两个方面入手，先看raftexample再看etcd。
 
-### 1 HTTP服务器
+### 1 raftexample
+
+#### 1.1 HTTP服务器
 
 ```go
 // serveHTTPKVAPI starts a key-value server with a GET/PUT API and listens.
@@ -61,7 +63,7 @@ type httpKVAPI struct {
 }
 ```
 
-### 2 客户端读
+#### 1.2 客户端读
 
 ```go
 	case http.MethodGet:
@@ -73,7 +75,7 @@ type httpKVAPI struct {
 		}
 ```
 
-### 3 客户端写
+#### 1.3 客户端写
 
 ```go
 	case http.MethodPut:
@@ -90,4 +92,28 @@ type httpKVAPI struct {
 		// Optimistic-- no waiting for ack from raft. Value is not yet
 		// committed so a subsequent GET on the key may return old value
 		w.WriteHeader(http.StatusNoContent)
+```
+
+### 2 etcd
+
+在etcd集群中每个节点承担两个功能
+- 既是raft的一个节点，需要进行raft协议的通信
+- 又是数据库的服务端，需要接收客户端的读写请求
+
+#### 2.1 raft通信
+
+```go
+	// 初始化集群间通信TCP连接
+	if e.Peers, err = configurePeerListeners(cfg); err != nil {
+		return e, err
+	}
+```
+
+#### 2.2 数据库服务端
+
+```go
+	// 初始化集群节点开放给客户端的TCP连接
+	if e.sctxs, err = configureClientListeners(cfg); err != nil {
+		return e, err
+	}
 ```
