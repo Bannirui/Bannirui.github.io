@@ -1,5 +1,5 @@
 ---
-title: etcd-0x13-消息类型
+title: etcd-0x0D-消息类型
 category_bar: true
 date: 2025-06-12 15:08:52
 categories: etcd

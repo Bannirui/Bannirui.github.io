@@ -1,5 +1,5 @@
 ---
-title: etcd-0x10-数据流转状态
+title: etcd-0x0A-数据流转状态
 category_bar: true
 date: 2025-06-11 15:36:01
 categories: etcd
@@ -63,4 +63,4 @@ type raftLog struct {
 }
 ```
 
-![](./etcd-0x10-数据流转状态/1749627931.png)
+![](./etcd-0x0A-数据流转状态/1749627931.png)

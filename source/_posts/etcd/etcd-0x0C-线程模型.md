@@ -1,5 +1,5 @@
 ---
-title: etcd-0x12-线程模型
+title: etcd-0x0C-线程模型
 category_bar: true
 date: 2025-06-12 14:22:09
 categories: etcd

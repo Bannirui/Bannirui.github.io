@@ -1,5 +1,5 @@
 ---
-title: etcd-0x11-Storage组件
+title: etcd-0x0B-Storage组件
 category_bar: true
 date: 2025-06-11 16:17:21
 categories: etcd
@@ -29,7 +29,7 @@ type MemoryStorage struct {
 }
 ```
 
-![](./etcd-0x11-Storage组件/1749629934.png)
+![](./etcd-0x0B-Storage组件/1749629934.png)
 
 ### 2 用wal恢复完后哨兵是谁
 
