@@ -19,25 +19,25 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 组件布局12345678910111213141516171819type MemoryStorage struct &amp;#123;	&#x2F;&#x2F; Protects access to all fields. Most methods of MemoryStorage are	&#x2F;&#x2F; run on the raft goroutine, but Append() is run on an applicat">
+    <meta name="description" content="12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455&#x2F;&#x2F; 比如 当前快照是Index&#x3D;10 当前ents&#x3D;[entry11, entry12, ..., entry20] committed&#x3D;18 applied&#x3D;16&#x2F;&#x2F; 那么 entry11~en">
 <meta property="og:type" content="article">
-<meta property="og:title" content="etcd-0x11-Storage组件">
-<meta property="og:url" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x11-Storage%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:title" content="etcd-0x0A-数据流转状态">
+<meta property="og:url" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="1 组件布局12345678910111213141516171819type MemoryStorage struct &amp;#123;	&#x2F;&#x2F; Protects access to all fields. Most methods of MemoryStorage are	&#x2F;&#x2F; run on the raft goroutine, but Append() is run on an applicat">
+<meta property="og:description" content="12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455&#x2F;&#x2F; 比如 当前快照是Index&#x3D;10 当前ents&#x3D;[entry11, entry12, ..., entry20] committed&#x3D;18 applied&#x3D;16&#x2F;&#x2F; 那么 entry11~en">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x11-Storage%E7%BB%84%E4%BB%B6/1749629934.png">
-<meta property="article:published_time" content="2025-06-11T08:17:21.000Z">
-<meta property="article:modified_time" content="2025-06-13T14:39:11.371Z">
+<meta property="og:image" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/1749627931.png">
+<meta property="article:published_time" content="2025-06-11T07:36:01.000Z">
+<meta property="article:modified_time" content="2025-06-13T23:15:07.136Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x11-Storage%E7%BB%84%E4%BB%B6/1749629934.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/1749627931.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>etcd-0x11-Storage组件 - HEX BLOG</title>
+  <title>etcd-0x0A-数据流转状态 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -226,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="etcd-0x11-Storage组件"></span>
+            <span id="subtitle" data-typed-text="etcd-0x0A-数据流转状态"></span>
           
         </div>
 
@@ -237,7 +237,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-06-11 16:17" pubdate>
+        <time datetime="2025-06-11 15:36" pubdate>
           2025年6月11日 下午
         </time>
       </span>
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          842 字
+          316 字
         
       </span>
     
@@ -260,7 +260,7 @@
         
         
         
-          8 分钟
+          3 分钟
         
       </span>
     
@@ -423,37 +423,37 @@
     
       
       
-        <a href="/2025/06/11/etcd/etcd-0x10-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x10-数据流转状态"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">etcd-0x10-数据流转状态</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2025/06/11/etcd/etcd-0x11-Storage%E7%BB%84%E4%BB%B6/" title="etcd-0x11-Storage组件"
+        <a href="/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x0A-数据流转状态"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">etcd-0x11-Storage组件</span>
+          <span class="category-post">etcd-0x0A-数据流转状态</span>
         </a>
       
     
       
       
-        <a href="/2025/06/12/etcd/etcd-0x12-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/" title="etcd-0x12-线程模型"
+        <a href="/2025/06/11/etcd/etcd-0x0B-Storage%E7%BB%84%E4%BB%B6/" title="etcd-0x0B-Storage组件"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">etcd-0x12-线程模型</span>
+          <span class="category-post">etcd-0x0B-Storage组件</span>
         </a>
       
     
       
       
-        <a href="/2025/06/12/etcd/etcd-0x13-%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B/" title="etcd-0x13-消息类型"
+        <a href="/2025/06/12/etcd/etcd-0x0C-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/" title="etcd-0x0C-线程模型"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">etcd-0x13-消息类型</span>
+          <span class="category-post">etcd-0x0C-线程模型</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/06/12/etcd/etcd-0x0D-%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B/" title="etcd-0x0D-消息类型"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">etcd-0x0D-消息类型</span>
         </a>
       
     
@@ -475,20 +475,14 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">etcd-0x11-Storage组件</h1>
+            <h1 id="seo-header">etcd-0x0A-数据流转状态</h1>
             
             
               <div class="markdown-body">
                 
-                <h3 id="1-组件布局"><a href="#1-组件布局" class="headerlink" title="1 组件布局"></a>1 组件布局</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MemoryStorage <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// Protects access to all fields. Most methods of MemoryStorage are</span><br>	<span class="hljs-comment">// run on the raft goroutine, but Append() is run on an application</span><br>	<span class="hljs-comment">// goroutine.</span><br>	sync.Mutex<br><br>	hardState pb.HardState<br>	<span class="hljs-comment">// 记录是最新的snap 如果是启动恢复就记录用来恢复的那个snap</span><br>	snapshot  pb.Snapshot<br>	<span class="hljs-comment">// ents[i] has raft log position i+snapshot.Metadata.Index</span><br>	<span class="hljs-comment">// 这个里面放在就是所有没有被snap删除的日志 一定为有个哨兵</span><br>	<span class="hljs-comment">// 启动时没有snap 也没有wal 那么哨兵就是(term=0 index=0)</span><br>	<span class="hljs-comment">// 启动时有snap snap的term和index会被封装成哨兵放在首位(term=snap的term index=snap的index)</span><br>	<span class="hljs-comment">// 启动时没有wal 此时里面还是就躺着哨兵</span><br>	<span class="hljs-comment">// 启动时有wal 里面除了哨兵 如实放着wal里面的日志</span><br>	ents []pb.Entry<br><br>	callStats inMemStorageCallStats<br>&#125;<br></code></pre></td></tr></table></figure>
+                <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 比如 当前快照是Index=10 当前ents=[entry11, entry12, ..., entry20] committed=18 applied=16</span><br><span class="hljs-comment">// 那么 entry11~entry20都保存在MemoryStorage.ents中</span><br><span class="hljs-comment">//     entry11~entry18被认为是committed可以下发到状态机</span><br><span class="hljs-comment">//     entry11~entry16被认为是applied已在状态机执行</span><br><span class="hljs-comment">//     entry19~entry20虽然在ents中 也许已经复制到其他节点但尚未被集群确认提交</span><br><span class="hljs-keyword">type</span> raftLog <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// storage contains all stable entries since the last snapshot.</span><br>	<span class="hljs-comment">// storage中数据在启动的时候会从snap和wal中恢复 包含两部分数据</span><br>	<span class="hljs-comment">// 已持久化/已提交 被quorum确认</span><br>	<span class="hljs-comment">// 已持久化/未提交 已写入wal但是还没同步给多数节点</span><br>	<span class="hljs-comment">// 也就是说Storage#ents中存放是的所有还未被快照删除的日志条目</span><br>	storage Storage<br><br>	<span class="hljs-comment">// unstable contains all unstable entries and snapshot.</span><br>	<span class="hljs-comment">// they will be saved into storage.</span><br>	<span class="hljs-comment">// 未持久化/未提交 刚生成</span><br>	<span class="hljs-comment">// 在raftLog中还没持久化到Storage的日志条目</span><br>	unstable unstable<br><br>	<span class="hljs-comment">// committed is the highest log position that is known to be in</span><br>	<span class="hljs-comment">// stable storage on a quorum of nodes.</span><br>	<span class="hljs-comment">// 已在多数派节点同步成功的index 已提交 wal中也有</span><br>	<span class="hljs-comment">// 也就是最大已被大多数节点确认复制的index</span><br>	committed <span class="hljs-type">uint64</span><br>	<span class="hljs-comment">// applying is the highest log position that the application has</span><br>	<span class="hljs-comment">// been instructed to apply to its state machine. Some of these</span><br>	<span class="hljs-comment">// entries may be in the process of applying and have not yet</span><br>	<span class="hljs-comment">// reached applied.</span><br>	<span class="hljs-comment">// Use: The field is incremented when accepting a Ready struct.</span><br>	<span class="hljs-comment">// Invariant: applied &lt;= applying &amp;&amp; applying &lt;= committed</span><br>	applying <span class="hljs-type">uint64</span><br>	<span class="hljs-comment">// applied is the highest log position that the application has</span><br>	<span class="hljs-comment">// successfully applied to its state machine.</span><br>	<span class="hljs-comment">// Use: The field is incremented when advancing after the committed</span><br>	<span class="hljs-comment">// entries in a Ready struct have been applied (either synchronously</span><br>	<span class="hljs-comment">// or asynchronously).</span><br>	<span class="hljs-comment">// Invariant: applied &lt;= committed</span><br>	<span class="hljs-comment">// 已提交/已应用</span><br>	<span class="hljs-comment">// 也就是已被状态机应用的最大index</span><br>	applied <span class="hljs-type">uint64</span><br><br>	logger Logger<br><br>	<span class="hljs-comment">// maxApplyingEntsSize limits the outstanding byte size of the messages</span><br>	<span class="hljs-comment">// returned from calls to nextCommittedEnts that have not been acknowledged</span><br>	<span class="hljs-comment">// by a call to appliedTo.</span><br>	maxApplyingEntsSize entryEncodingSize<br>	<span class="hljs-comment">// applyingEntsSize is the current outstanding byte size of the messages</span><br>	<span class="hljs-comment">// returned from calls to nextCommittedEnts that have not been acknowledged</span><br>	<span class="hljs-comment">// by a call to appliedTo.</span><br>	applyingEntsSize entryEncodingSize<br>	<span class="hljs-comment">// applyingEntsPaused is true when entry application has been paused until</span><br>	<span class="hljs-comment">// enough progress is acknowledged.</span><br>	applyingEntsPaused <span class="hljs-type">bool</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
-<img src="/2025/06/11/etcd/etcd-0x11-Storage%E7%BB%84%E4%BB%B6/1749629934.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="2-用wal恢复完后哨兵是谁"><a href="#2-用wal恢复完后哨兵是谁" class="headerlink" title="2 用wal恢复完后哨兵是谁"></a>2 用wal恢复完后哨兵是谁</h3><a href="/2025/06/06/etcd/etcd-0x04-WAL%E6%8A%80%E6%9C%AF/" title="etcd-0x04-WAL技术">etcd-0x04-WAL技术</a>提过数据恢复的流程，raft会给数据都安一个哨兵，杜绝了数据脚标越界的判断，那么恢复完这个哨兵是怎么处理的呢
-
-<h4 id="2-1-用snap恢复完"><a href="#2-1-用snap恢复完" class="headerlink" title="2.1 用snap恢复完"></a>2.1 用snap恢复完</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 用snap恢复数据</span><br><span class="hljs-comment">// 在raft中几乎只要有数据的地方 为了避免对边界的考虑 都会放置一个哨兵 snap也不例外 即使没有snap文件 也会创建个内存上的概念snap 它的term是0 index是0</span><br><span class="hljs-comment">// snap有效的话 恢复完后storage#ents的哨兵就是(term=snap的term index=snap的index)</span><br><span class="hljs-comment">// snap无效的话 恢复完后storage#ents的哨兵依然是之前storage初始化的(term=0 index=0)</span><br><span class="hljs-comment">// @Param snap 准备用来恢复数据的snap</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(ms *MemoryStorage)</span></span> ApplySnapshot(snap pb.Snapshot) <span class="hljs-type">error</span> &#123;<br>	ms.Lock()<br>	<span class="hljs-keyword">defer</span> ms.Unlock()<br><br>	<span class="hljs-comment">// handle check for old snapshot being applied</span><br>	<span class="hljs-comment">// storage初始化的时候只会在ents中放一个(term=0 index=0)的哨兵 其他的都是默认初始化值 那么这个ms.snapshot.Metadata.Index就是0</span><br>	<span class="hljs-comment">// 它的语义是storage的最新的一个snap</span><br>	msIndex := ms.snapshot.Metadata.Index<br>	<span class="hljs-comment">// 用来恢复数据的snap文件可能存在 可能不存在 如果不存在 此时的snap就是哨兵 它的index就是默认值0</span><br>	snapIndex := snap.Metadata.Index<br>	<span class="hljs-keyword">if</span> msIndex &gt;= snapIndex &#123;<br>		<span class="hljs-comment">// 为什么做这个 上一个snap的index肯定是&lt;准备用的snap的index 为什么有=呢 如果上一个snap和这一个相等就没必要用来作恢复 效果不变</span><br>		<span class="hljs-comment">// 所以在初始启动时候 没有snap文件场景下 会走到这</span><br>		<span class="hljs-comment">// 那么此时storage#ents中还是只有一个哨兵(term=0 index=0)</span><br>		<span class="hljs-keyword">return</span> ErrSnapOutOfDate<br>	&#125;<br>	<span class="hljs-comment">// snap是有效的 用它来恢复数据</span><br>	ms.snapshot = snap<br>	<span class="hljs-comment">// 此时storage#ents的哨兵就变了(term=0 index=0)-&gt;(term=snap的term index=snap的index)</span><br>	ms.ents = []pb.Entry&#123;&#123;Term: snap.Metadata.Term, Index: snap.Metadata.Index&#125;&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-2-用wal回放完"><a href="#2-2-用wal回放完" class="headerlink" title="2.2 用wal回放完"></a>2.2 用wal回放完</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 在做wal回放的时候会调到这</span><br><span class="hljs-comment">// @Param entries wal中的数据</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(ms *MemoryStorage)</span></span> Append(entries []pb.Entry) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(entries) == <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>	&#125;<br><br>	ms.Lock()<br>	<span class="hljs-keyword">defer</span> ms.Unlock()<br>	<span class="hljs-comment">// storage中第一个index raft已经做了兼容考虑 不管有没有snap文件 这个地方都能取到正确的值</span><br>	<span class="hljs-comment">// 如果空机器启动啥也没的时候 这个地方拿到的first就是1</span><br>	first := ms.firstIndex()<br>	<span class="hljs-comment">// 要回放的最后一个index</span><br>	last := entries[<span class="hljs-number">0</span>].Index + <span class="hljs-type">uint64</span>(<span class="hljs-built_in">len</span>(entries)) - <span class="hljs-number">1</span><br><br>	<span class="hljs-comment">// shortcut if there is no new entry.</span><br>	<span class="hljs-keyword">if</span> last &lt; first &#123;<br>		<span class="hljs-comment">// 要回放的都已经在storage中了</span><br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>	&#125;<br>	<span class="hljs-comment">// truncate compacted entries</span><br>	<span class="hljs-keyword">if</span> first &gt; entries[<span class="hljs-number">0</span>].Index &#123;<br>		<span class="hljs-comment">// 要回放的数据有部分已经存在storage中了 做截断</span><br>		entries = entries[first-entries[<span class="hljs-number">0</span>].Index:]<br>	&#125;<br><br>	offset := entries[<span class="hljs-number">0</span>].Index - ms.ents[<span class="hljs-number">0</span>].Index<br>	<span class="hljs-keyword">switch</span> &#123;<br>	<span class="hljs-keyword">case</span> <span class="hljs-type">uint64</span>(<span class="hljs-built_in">len</span>(ms.ents)) &gt; offset:<br>		<span class="hljs-comment">// NB: full slice expression protects ms.ents at index &gt;= offset from</span><br>		<span class="hljs-comment">// rewrites, as they may still be referenced from outside MemoryStorage.</span><br>		ms.ents = <span class="hljs-built_in">append</span>(ms.ents[:offset:offset], entries...)<br>	<span class="hljs-keyword">case</span> <span class="hljs-type">uint64</span>(<span class="hljs-built_in">len</span>(ms.ents)) == offset:<br>		ms.ents = <span class="hljs-built_in">append</span>(ms.ents, entries...)<br>	<span class="hljs-keyword">default</span>:<br>		getLogger().Panicf(<span class="hljs-string">&quot;missing log entry [last: %d, append at: %d]&quot;</span>,<br>			ms.lastIndex(), entries[<span class="hljs-number">0</span>].Index)<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<img src="/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/1749627931.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -535,8 +529,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>etcd-0x11-Storage组件</div>
-      <div>https://bannirui.github.io/2025/06/11/etcd/etcd-0x11-Storage组件/</div>
+      <div>etcd-0x0A-数据流转状态</div>
+      <div>https://bannirui.github.io/2025/06/11/etcd/etcd-0x0A-数据流转状态/</div>
     </div>
     <div class="license-meta">
       
@@ -580,9 +574,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/06/12/etcd/etcd-0x12-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/" title="etcd-0x12-线程模型">
+                      <a href="/2025/06/11/etcd/etcd-0x0B-Storage%E7%BB%84%E4%BB%B6/" title="etcd-0x0B-Storage组件">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">etcd-0x12-线程模型</span>
+                        <span class="hidden-mobile">etcd-0x0B-Storage组件</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -590,8 +584,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/06/11/etcd/etcd-0x10-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x10-数据流转状态">
-                        <span class="hidden-mobile">etcd-0x10-数据流转状态</span>
+                      <a href="/2025/06/11/etcd/etcd-0x09-%E5%90%AF%E5%8A%A8%E5%89%8D%E7%9A%84%E6%95%B0%E6%8D%AE%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%86%E5%A4%87/" title="etcd-0x09-启动前的数据初始化准备">
+                        <span class="hidden-mobile">etcd-0x09-启动前的数据初始化准备</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -614,7 +608,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '40dedaa9e2a5a36c44952bc9d95f2d61'
+            id: 'ef644c0e3b0d39df1beff50972673645'
           }
         )
         var gitalk = new Gitalk(options);
