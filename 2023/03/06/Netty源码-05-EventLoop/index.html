@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty源码-05-EventLoop">
 <meta property="og:url" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="前文已经了解过了NioEventLoopGroup和NioEventLoop。 在Netty中是用的是Reactor线程模型(IO多路复用器+多个线程)，真正处理业务流程的worker线程都是单个线程，一个线程处理多个Channel，一个Channel始终都是由特定的线程进行处理。 在这样的情况下，如果某个Channel的业务流程耗时较久或者阻塞，那么绑定在当前线程上所有的任务都会受到影响，这样的">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-05-EventLoop/202211112312121.png">
@@ -39,7 +39,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Netty源码-05-EventLoop - hex Blog</title>
+  <title>Netty源码-05-EventLoop - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -132,7 +132,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"

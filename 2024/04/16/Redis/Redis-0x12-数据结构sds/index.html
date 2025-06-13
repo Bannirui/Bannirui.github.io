@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x12-数据结构sds">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/16/Redis/Redis-0x12-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="1 sds字符串是什么12345&#x2F;** * 字符数组 * 为什么这样 我觉得是向下兼容C语言中的字符串类型 *&#x2F;typedef char *sds;  attribute ((packed)) 告诉编译器取消结构体在编译过程中的对齐优化 按照实际字节占用进行对齐 为什么禁止编译器优化呢？因为5种类型的sds的结构是精心设计的  1 首先为了能完全兼容C语言中的字符串 最终暴露给用户的依然是指向实际">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/16/Redis/Redis-0x12-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84sds/image-20230401224400100.png">
@@ -42,7 +42,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-0x12-数据结构sds - hex Blog</title>
+  <title>Redis-0x12-数据结构sds - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -135,7 +135,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"

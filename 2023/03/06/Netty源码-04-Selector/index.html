@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty源码-04-Selector">
 <meta property="og:url" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-04-Selector/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="Netty对Selector的优化体现在两个方面：  数据结构替换，数组替换hash表，轮询时直接寻址，提高查询效率。 基于Linux系统epoll封装的Selector可能存存在空轮询风险，尽量减少空轮询出现带来的负面影响。  一 数据结构每个IO线程都绑定了唯一的复用器，因此Selector的初始化时机是在创建NioEventLoop时。 123456789101112131415161718">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-03-06T13:30:38.000Z">
@@ -36,7 +36,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Netty源码-04-Selector - hex Blog</title>
+  <title>Netty源码-04-Selector - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -129,7 +129,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"

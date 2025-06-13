@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Netty源码-06-MpscQueue">
 <meta property="og:url" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="在IO线程NioEventLoop中维护了一个队列实现，用于存放非IO任务，一个IO线程负责N个Channel，为了保证一个线程贯穿始终负责一个Channel的所有任务(任务执行次序有先后区分需要)，因此可能IO线程自己将待执行的内容封装成异步任务，也有可能其他线程提交任务(立即执行或者定时任务)。 面对这种场景：  多个线程充当生产者 唯一线程充当消费者  Netty选择了JCTools的实现M">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/202211141344171.png">
@@ -38,7 +38,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Netty源码-06-MpscQueue - hex Blog</title>
+  <title>Netty源码-06-MpscQueue - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -131,7 +131,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"

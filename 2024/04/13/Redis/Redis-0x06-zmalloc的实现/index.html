@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis-0x06-zmalloc的实现">
 <meta property="og:url" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
-<meta property="og:site_name" content="hex Blog">
+<meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="前文了解了为何redis需要抽象一层内存管理器，以及redis是怎么做的跨平台兼容。   这个章节尝试跟着zmalloc的代码进行逐行学习，整个zmalloc.c源文件700+行，再除去注释和换行等，实际代码规模不大，因此计划以函数为粒度进行解读和学习。  1 ASSERT_NO_SIZE_OVERFLOW 这是一个断言函数，这个函数存在的目的也是为了跨平台兼容。  12345678910111">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2024/04/13/Redis/Redis-0x06-zmalloc%E7%9A%84%E5%AE%9E%E7%8E%B0/IMG_B9C8F5A5AE81-1.jpeg">
@@ -41,7 +41,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Redis-0x06-zmalloc的实现 - hex Blog</title>
+  <title>Redis-0x06-zmalloc的实现 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -134,7 +134,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>hex Blog</strong>
+      <strong>HEX BLOG</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
