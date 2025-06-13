@@ -2,7 +2,7 @@
 title: jvm-0x00-编译openjdk
 category_bar: true
 date: 2023-03-10 23:18:14
-categories: java
+categories: jvm
 ---
 
 ### 1 jdk编译

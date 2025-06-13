@@ -1,9 +1,8 @@
 ---
-title: JVM-0x05-加载动态链接库
+title: jvm-0x07-加载动态链接库
 date: 2023-05-04 13:37:40
 category_bar: true
-tags:  [ JVM@15 ]
-categories: [ JVM ]
+categories: jvm
 ---
 
 系统调用。
@@ -83,4 +82,3 @@ dlerror(), the error indication is reset.  Thus in the case of two
 calls to dlerror(), where the second call follows the first immedi-
 ately, the second call will always return a null pointer.
 ```
-

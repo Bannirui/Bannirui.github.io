@@ -1,9 +1,8 @@
 ---
-title: Java源码-0x05-宏定义
+title: java源码-0x05-宏定义
 category_bar: true
 date: 2024-03-10 00:37:36
-categories: Java
-tags: Java@15
+categories: java
 ---
 
 ### 1 宏定义
@@ -22,7 +21,7 @@ tags: Java@15
 
 #### <a id="1">1.1 JNIEXPORT</a>
 
-![](./Java源码-0x05-宏定义/1710002661.png)
+![](./java源码-0x05-宏定义/1710002661.png)
 
 #### <a id="2">1.2 JNICALL</a>
 

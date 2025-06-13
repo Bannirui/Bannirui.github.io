@@ -2,7 +2,7 @@
 title: jvm-0x01-在Linux上编译openjdk22
 category_bar: true
 date: 2025-06-13 22:47:26
-categories: java
+categories: jvm
 ---
 
 之前在mac上编译的openjdk源码{% post_link java/jvm-0x00-编译openjdk %}，两个原因促使我要在Linux上操作一下
@@ -12,7 +12,7 @@ categories: java
 
 ### 1 安装jdk21作为boot
 
-![官网下个java21用作openjdk22的boot](https://www.oracle.com/cn/java/technologies/downloads/#java21)
+[官网下个java21用作openjdk22的boot](https://www.oracle.com/cn/java/technologies/downloads/#java21)
 
 ```sh
 mkdir -p MyApp/jdk/21

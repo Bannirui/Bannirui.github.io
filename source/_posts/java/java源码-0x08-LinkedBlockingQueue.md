@@ -1,16 +1,13 @@
 ---
-title: Java源码-LinkedBlockingQueue
+title: java源码-0x08-LinkedBlockingQueue
 date: 2023-03-11 13:48:19
 category_bar: true
-categories:
-- Java
-tags:
-- Java@15
+categories: java
 ---
 
 ## 1 类图
 
-![](Java源码-LinkedBlockingQueue/202211221522904.png)
+![](./java源码-0x08-LinkedBlockingQueue/202211221522904.png)
 
 ## 2 构造方法
 
@@ -116,7 +113,6 @@ private void enqueue(Node<E> node) { // 元素入队 操作单链表
     }
 ```
 
-
 ```java
 private E dequeue() { // 元素出队 操作单链表
         // assert takeLock.isHeldByCurrentThread();
@@ -141,4 +137,3 @@ private E dequeue() { // 元素出队 操作单链表
 | 锁数量           | 2                                                     |
 | 线程阻塞机制     | ReentrantLock条件队列阻塞/通知唤醒                    |
 | 生产者消费者用锁 | 生产者使用put锁操作链表尾，消费者使用take锁操作链表头 |
-

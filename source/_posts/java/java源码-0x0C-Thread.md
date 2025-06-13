@@ -1,11 +1,8 @@
 ---
-title: Java源码-Thread
+title: java源码-0x0C-Thread
 date: 2023-03-10 23:40:12
 category_bar: true
-categories:
-- Java
-tags:
-- Java@15
+categories: java
 ---
 
 ## 1 Demo
@@ -696,4 +693,3 @@ void JavaThread::thread_main_inner() {
   this->smr_delete();
 }
 ```
-

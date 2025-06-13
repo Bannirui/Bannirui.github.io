@@ -1,9 +1,8 @@
 ---
-title: JVM-0x04-加载JVM
+title: jvm-0x06-加载JVM
 date: 2023-05-04 14:17:45
 category_bar: true
-tags:  [ JVM@15 ]
-categories: [ JVM ]
+categories: jvm
 ---
 JVM启动的前置准备，加载JVM动态链接库，JVM启动涉及到的函数。
 
@@ -81,4 +80,3 @@ LoadJavaVM(const char *jvmpath, InvocationFunctions *ifn)
     return JNI_TRUE;
 }
 ```
-

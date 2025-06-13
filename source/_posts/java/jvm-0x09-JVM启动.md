@@ -1,9 +1,8 @@
 ---
-title: JVM-0x07-JVM启动
+title: jvm-0x09-JVM启动
 date: 2023-05-04 15:38:45
 category_bar: true
-tags:  [ JVM@15 ]
-categories: [ JVM ]
+categories: jvm
 ---
 
 通过创建线程的方式，将JVM的创建启动控制权转移到新线程被CPU的调度时机。
@@ -174,4 +173,3 @@ CallJavaMainInNewThread(jlong stack_size, void* args) {
     return rslt;
 }
 ```
-

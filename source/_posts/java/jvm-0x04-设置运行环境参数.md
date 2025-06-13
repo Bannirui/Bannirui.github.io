@@ -1,9 +1,8 @@
 ---
-title: JVM-0x02-设置运行环境参数
+title: jvm-0x04-设置运行环境参数
 date: 2023-04-28 13:31:57
 category_bar: true
-tags:  [ JVM@15 ]
-categories: [ JVM ]
+categories: jvm
 ---
 
 CreateExecutionEnvironment该函数主要负责两件事情：
@@ -108,7 +107,7 @@ static void MacOSXStartup(int argc, char *argv[]) {
      */
     if (pthread_create(&main_thr, NULL, &apple_main, &args) != 0) {
         JLI_ReportErrorMessageSys("Could not create main thread: %s\n", strerror(errno));
-        exit(1);
+        exit(1)
     }
     if (pthread_detach(main_thr)) {
         JLI_ReportErrorMessageSys("pthread_detach() failed: %s\n", strerror(errno));
@@ -119,7 +118,7 @@ static void MacOSXStartup(int argc, char *argv[]) {
 }
 ```
 
-#### 2.1 {% post_link JVM-0x03-pthread系统调用 创建线程系统调用 %}
+#### 2.1 {% post_link java/jvm-0x05-pthread系统调用 %}
 
 创建好线程，线程处于就绪状态，等待被cpu调度，一旦被调度成功，新线程就开始执行。
 
@@ -127,7 +126,7 @@ static void MacOSXStartup(int argc, char *argv[]) {
 
 即线程被cpu调度之后，开始执行的逻辑。
 
-这个里面还涉及到{% post_link JVM-0x05-加载动态链接库 系统调用slsym %}。
+这个里面还涉及到{% post_link java/jvm-0x07-加载动态链接库 %}。
 
 ```c
 /**

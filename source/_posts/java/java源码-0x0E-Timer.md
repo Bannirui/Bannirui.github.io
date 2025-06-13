@@ -1,11 +1,8 @@
 ---
-title: Java源码-Timer
+title: java源码-0x0E-Timer
 date: 2023-03-04 11:15:39
 category_bar: true
-categories:
-- Java
-tags:
-- Java@15
+categories: java
 ---
 
 定时器，调度执行延时任务。
@@ -45,7 +42,7 @@ public class TimerTest {
 
 ## 2 源码分析
 
-![](Java源码-Timer/20230304114344005.png)
+![](./java源码-0x0E-Timer/20230304114344005.png)
 
 涉及到的几个类
 

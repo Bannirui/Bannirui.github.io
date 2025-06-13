@@ -1,9 +1,8 @@
 ---
-title: Java源码-0x02-Object
+title: java源码-0x02-Object
 category_bar: true
 date: 2024-03-07 12:41:30
-categories: Java
-tags: Java@15
+categories: java
 ---
 
 Object是java世界的基类，放在第一个进行分析也是理所当然的。因为是基石
@@ -12,7 +11,7 @@ Object是java世界的基类，放在第一个进行分析也是理所当然的�
 
 - 涉及到的方法一定是底层的，所以类结构虽然简单，但是方法实现可能比较复杂
 
-![](./Java源码-0x02-Object/1709800139.png)
+![](./java源码-0x02-Object/1709800139.png)
 
 native方法
 
@@ -56,7 +55,7 @@ native方法
 
 ### 1 时机
 
-![](./Java源码-0x02-Object/1709910160.png)
+![](./java源码-0x02-Object/1709910160.png)
 
 在jvm启动的过程中，会将Object类需要的几个native方法注册到klass对象中
 
@@ -79,7 +78,7 @@ native方法
 
 java对象的hashcode值是直接或者间接存储在对象头的markword中的，并且还会跟不同锁状态有直接关联，甚至在偏向锁的场景下还会引起锁膨胀升级
 
-关于markword请看{% post_link Java源码-0x03-MarkWord %}
+关于markword请看{% post_link java/java源码-0x03-MarkWord %}
 
 文件`src/hotspot/share/prims/jvm.cpp`
 
@@ -97,7 +96,7 @@ JVM_END
 
 #### 3.2 hashcode存储
 
-![](./Java源码-0x02-Object/1709952617.png)
+![](./java源码-0x02-Object/1709952617.png)
 
 以64位系统为例，hashcode最多31位，上图可以看出
 
@@ -121,17 +120,17 @@ JVM_END
 
 也就是要把markword的第3位置为0，此时低3位就是`001`就是无锁状态
 
-偏向锁的有关方法请看{% post_link Java源码-0x04-biasedLocking %}
+偏向锁的有关方法请看{% post_link java/java源码-0x04-biasedLocking %}
 
 #### 3.4 hashcode算法
 
 hashcode的算法策略可以通过jvm启动参数指定
 
-![](./Java源码-0x02-Object/1709957390.png)
+![](./java源码-0x02-Object/1709957390.png)
 
 比如，指定`-XX:+UnlockExperimentalVMOptions -XX:hashCode=1`
 
-![](./Java源码-0x02-Object/1709957532.png)
+![](./java源码-0x02-Object/1709957532.png)
 
 文件`src/hotspot/share/runtime/synchronizer.cpp`
 

@@ -1,9 +1,8 @@
 ---
-title: JVM-0x03-pthread系统调用
+title: jvm-0x05-pthread系统调用
 date: 2023-04-28 14:01:05
 category_bar: true
-tags:  [ JVM@15 ]
-categories: [ JVM ]
+categories: jvm
 ---
 
 系统调用。

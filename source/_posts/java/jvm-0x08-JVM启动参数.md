@@ -1,9 +1,8 @@
 ---
-title: JVM-0x06-JVM启动参数
+title: jvm-0x08-JVM启动参数
 date: 2023-05-04 15:38:32
 category_bar: true
-tags:  [ JVM@15 ]
-categories: [ JVM ]
+categories: jvm
 ---
 
 JVM启动的前置准备，JVM启动需要的参数。
@@ -256,4 +255,3 @@ ParseArguments(int *pargc, char ***pargv,
     return JNI_TRUE;
 }
 ```
-

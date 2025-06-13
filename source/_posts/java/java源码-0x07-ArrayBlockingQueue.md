@@ -1,11 +1,8 @@
 ---
-title: Java源码-ArrayBlockingQueue
+title: java源码-0x07-ArrayBlockingQueue
 date: 2023-03-11 13:47:49
 category_bar: true
-categories:
-- Java
-tags:
-- Java@15
+categories: java
 ---
 
 ## 1 阻塞队列API
@@ -18,7 +15,7 @@ tags:
 
 ## 2 类图
 
-![](Java源码-ArrayBlockingQueue/202211221522904.png)
+![](./java源码-0x07-ArrayBlockingQueue/202211221522904.png)
 
 ## 3 构造方法
 
@@ -86,8 +83,6 @@ public void put(E e) throws InterruptedException {
     }
 ```
 
-
-
 ```java
 // ArrayBlockingQueue.java
 private void enqueue(E e) { // 元素入队操作
@@ -119,8 +114,6 @@ public E take() throws InterruptedException {
 }
 ```
 
-
-
 ```java
 // ArrayBlockingQueue.java
 private E dequeue() {
@@ -150,4 +143,3 @@ private E dequeue() {
 | 锁数量           | 1                                  |
 | 线程阻塞机制     | ReentrantLock条件队列阻塞/通知唤醒 |
 | 生产者消费者用锁 | 共用同一个锁                       |
-

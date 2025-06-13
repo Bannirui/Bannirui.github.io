@@ -1,11 +1,8 @@
 ---
-title: Java源码-AQS
+title: java源码-0x06-AQS
 date: 2023-03-11 13:49:20
 category_bar: true
-categories:
-- Java
-tags:
-- Java@15
+categories: java
 ---
 
 摘要
@@ -158,7 +155,7 @@ public class AQSTest {
 
 ### 3.1 类图
 
-![](Java源码-AQS/1150150-20220218001926234-697481967.png)
+![](./java源码-0x06-AQS/1150150-20220218001926234-697481967.png)
 
 - Lock定义了ReentrantLock的顶层抽象，我们只关注#lock(...)和#unLock(...)
 - ReentrantLock中有3个内部类，FairSync和NonfairSync分别代表着公平锁和非公平锁的实现，他们父类是Sync
@@ -169,13 +166,13 @@ public class AQSTest {
 
 ReentrantLock中属性sync，构造方法仅仅是指定sync是FairSync还是NonfairSync的实例，默认是NonFairSync
 
-![](Java源码-AQS/1150150-20220218004148083-900495659.png)
+![](./java源码-0x06-AQS/1150150-20220218004148083-900495659.png)
 
 ###  3.3 ReentrantLock#lock(...)方法
 
  时序
 
-![](Java源码-AQS/1150150-20220218114951074-1257964797.png)
+![](./java源码-0x06-AQS/1150150-20220218114951074-1257964797.png)
 
 #### 3.3.1 AQS#acquire(...)
 
@@ -284,5 +281,3 @@ final boolean acquireQueued(final Node node, int arg) { // 正常情况该方法
     }
 }
 ```
-
-

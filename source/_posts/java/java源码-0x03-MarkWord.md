@@ -1,14 +1,13 @@
 ---
-title: Java源码-0x03-MarkWord
+title: java源码-0x03-MarkWord
 category_bar: true
 date: 2024-03-09 10:36:09
-categories: Java
-tags: Java@15
+categories: java
 ---
 
 ### 1 类结构
 
-![](./Java源码-0x03-MarkWord/1709952220.png)
+![](./java源码-0x03-MarkWord/1709952220.png)
 
 ```cpp
 #if __WORDSIZE == 64
@@ -25,7 +24,7 @@ typedef unsigned long int	uintptr_t;
 
 ### 2 布局
 
-![](./Java源码-0x03-MarkWord/1709952617.png)
+![](./java源码-0x03-MarkWord/1709952617.png)
 
 关于不同状态的翻译，下面贴上源码中的注释作为对比
 
@@ -45,24 +44,24 @@ typedef unsigned long int	uintptr_t;
 
 ### 3 偏向锁
 
-![](./Java源码-0x03-MarkWord/1709953739.png)
+![](./java源码-0x03-MarkWord/1709953739.png)
 
 我是基于jdk15进行的学习，官网可以看到openjdk15的特性，其中之一就是默认关闭了偏向锁
 
 文件`src/hotspot/share/runtime/globals.hpp`
 
-![](./Java源码-0x03-MarkWord/1709956991.png)
+![](./java源码-0x03-MarkWord/1709956991.png)
 
 #### 3.1 验证UseBiasedLocking
 
 ##### 3.1.1 默认
 
-![](./Java源码-0x03-MarkWord/1709954073.png)
+![](./java源码-0x03-MarkWord/1709954073.png)
 
 ##### 3.1.2 手动关闭
 
-![](./Java源码-0x03-MarkWord/1709954256.png)
+![](./java源码-0x03-MarkWord/1709954256.png)
 
 ##### 3.1.3 手动开启
 
-![](./Java源码-0x03-MarkWord/1709954338.png)
+![](./java源码-0x03-MarkWord/1709954338.png)

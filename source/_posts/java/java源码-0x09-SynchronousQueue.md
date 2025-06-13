@@ -1,16 +1,13 @@
 ---
-title: Java源码-SynchronousQueue
+title: java源码-0x09-SynchronousQueue
 date: 2023-03-11 13:48:55
 category_bar: true
-categories:
-- Java
-tags:
-- Java@15
+categories: java
 ---
 
 ## 1 类图
 
-![](Java源码-SynchronousQueue/202211221522904.png)
+![](./java源码-0x09-SynchronousQueue/202211221522904.png)
 
 ## 2 构造方法
 

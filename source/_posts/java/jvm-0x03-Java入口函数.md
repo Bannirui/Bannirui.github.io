@@ -1,9 +1,8 @@
 ---
-title: JVM-0x01-Java入口函数
+title: jvm-0x03-Java入口函数
 date: 2023-04-28 13:18:56
 category_bar: true
-tags:  [ JVM@15 ]
-categories: [ JVM ]
+categories: jvm
 ---
 
 这个函数涉及过程比较多，按照功能将其拆分成小的模块。
@@ -64,7 +63,7 @@ categories: [ JVM ]
     SelectVersion(argc, argv, &main_class);
 ```
 
-### 2 {% post_link JVM-0x02-设置运行环境参数 设置运行环境参数 %}
+### 2 {% post_link java/jvm-0x04-设置运行环境参数 %}
 
 ```c
     /**
@@ -85,9 +84,9 @@ categories: [ JVM ]
 
 时序图如下：
 
-![](JVM-0x01-Java入口函数/image-20230428143738915.png)
+![](./jvm-0x03-Java入口函数/image-20230428143738915.png)
 
-### 3 {% post_link JVM-0x04-加载JVM 加载JVM动态链接库 %}
+### 3 {% post_link java/jvm-0x06-加载JVM %}
 
 JVM启动的前置准备，JVM的启动函数。
 
@@ -107,7 +106,7 @@ JVM启动的前置准备，JVM的启动函数。
     }
 ```
 
-### 4 {% post_link JVM-0x06-JVM启动参数 解析JVM启动参数 %}
+### 4 {% post_link java/jvm-0x08-JVM启动参数 %}
 
 JVM启动的前置准备，JVM的启动参数。
 
@@ -131,7 +130,7 @@ JVM启动的前置准备，JVM的启动参数。
     }
 ```
 
-### 5 {% post_link JVM-0x07-JVM启动 启动JVM %}
+### 5 {% post_link java/jvm-0x09-JVM启动 %}
 
 根据前置准备好的信息，正式启动JVM。
 
@@ -168,4 +167,4 @@ JVM启动的前置准备，JVM的启动参数。
 
 上述一系列流程如下图，JVM的启动核心逻辑在JavaMain函数中。
 
-![](JVM-0x01-Java入口函数/image-20230504165958744.png)
+![](./jvm-0x03-Java入口函数/image-20230504165958744.png)

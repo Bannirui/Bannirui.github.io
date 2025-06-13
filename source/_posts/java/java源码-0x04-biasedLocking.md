@@ -1,9 +1,8 @@
 ---
-title: Java源码-0x04-biasedLocking
+title: java源码-0x04-biasedLocking
 category_bar: true
 date: 2024-03-09 23:53:05
-categories: Java
-tags: Java@15
+categories: java
 ---
 
 偏向锁相关的实现都在文件`src/hotspot/share/runtime/biasedLocking.cpp`中

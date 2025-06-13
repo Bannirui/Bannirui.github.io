@@ -1,11 +1,8 @@
 ---
-title: Java源码-ThreadPoolExecutor
+title: java源码-0x0D-ThreadPoolExecutor
 date: 2023-03-11 13:49:09
 category_bar: true
-categories:
-- Java
-tags:
-- Java@15
+categories: java
 ---
 
 ## 1 Executors工具类创建ThreadPoolExecutor
@@ -22,7 +19,7 @@ tags:
 
 ## 2 类图
 
-![](Java源码-ThreadPoolExecutor/202211171808449.png)
+![](./java源码-0x0D-ThreadPoolExecutor/202211171808449.png)
 
 ## 3 构造方法
 
@@ -417,7 +414,7 @@ final void runWorker(Worker w) {
 
 
 
-![](Java源码-ThreadPoolExecutor/202211212301110.png)
+![](./java源码-0x0D-ThreadPoolExecutor/202211212301110.png)
 
 ### 4.4 工作线程保活
 
@@ -493,4 +490,3 @@ private Runnable getTask() {
     }
 }
 ```
-

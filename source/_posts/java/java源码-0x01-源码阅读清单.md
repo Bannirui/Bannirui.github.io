@@ -1,9 +1,8 @@
 ---
-title: Java源码-0x01-源码阅读清单
+title: java源码-0x01-源码阅读清单
 category_bar: true
 date: 2024-03-07 12:19:28
-categories: Java
-tags: Java@15
+categories: java
 ---
 
 整体计划是将Java的源码事无巨细地过一遍
@@ -44,7 +43,7 @@ tags: Java@15
 
 #### <a id="1">1 java.lang</a>
 
-- {% post_link Java源码-0x02-Object Object %}
+- {% post_link java/java源码-0x02-Object Object %}
 
 - [ ] String
 
