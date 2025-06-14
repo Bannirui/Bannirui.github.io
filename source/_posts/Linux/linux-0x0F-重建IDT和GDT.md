@@ -1,5 +1,5 @@
 ---
-title: Linux-0x0F-重建IDT和GDT
+title: linux-0x0F-重建IDT和GDT
 category_bar: true
 date: 2025-06-02 18:09:58
 categories: linux
@@ -33,7 +33,7 @@ startup_32:
 	xorl %eax,%eax
 ```
 
-![](./Linux-0x0F-重建IDT和GDT/1748859258.png)
+![](./linux-0x0F-重建IDT和GDT/1748859258.png)
 
 {% post_link Linux/linux-0x0C-切换CPU保护模式 %}经过这一跳，此时CPU的模式已经切换到了32位保护模式，CPU执行的代码指令地址来到了0低地址空间，但是还有2件事情待办
 
