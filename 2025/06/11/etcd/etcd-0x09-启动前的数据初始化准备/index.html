@@ -19,17 +19,19 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="要结合etcd-0x10-数据流转状态，先熟悉数据怎么交互的     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;">
+    <meta name="description" content="要结合etcd-0x0A-数据流转状态，先熟悉数据怎么交互的 假使系统启动的时候已经有WAL或者snap日志，系统会从WAL日志进行恢复启动。但是总归会存在一种场景是系统首次启动的时候，没有任何历史遗留的数据，这种时候就需要特殊处理。 在raftexample&#x2F;raft.go中 1234567&#x2F;&#x2F; 这个地方为什么要设计成这样 因为选主拉票流程需要依赖有Voters 所以这个地方手动让raft感知到">
 <meta property="og:type" content="article">
 <meta property="og:title" content="etcd-0x09-启动前的数据初始化准备">
 <meta property="og:url" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x09-%E5%90%AF%E5%8A%A8%E5%89%8D%E7%9A%84%E6%95%B0%E6%8D%AE%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%86%E5%A4%87/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="要结合etcd-0x10-数据流转状态，先熟悉数据怎么交互的     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;">
+<meta property="og:description" content="要结合etcd-0x0A-数据流转状态，先熟悉数据怎么交互的 假使系统启动的时候已经有WAL或者snap日志，系统会从WAL日志进行恢复启动。但是总归会存在一种场景是系统首次启动的时候，没有任何历史遗留的数据，这种时候就需要特殊处理。 在raftexample&#x2F;raft.go中 1234567&#x2F;&#x2F; 这个地方为什么要设计成这样 因为选主拉票流程需要依赖有Voters 所以这个地方手动让raft感知到">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x09-%E5%90%AF%E5%8A%A8%E5%89%8D%E7%9A%84%E6%95%B0%E6%8D%AE%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%86%E5%A4%87/1750234391.png">
 <meta property="article:published_time" content="2025-06-11T06:35:13.000Z">
-<meta property="article:modified_time" content="2025-06-11T07:36:48.759Z">
+<meta property="article:modified_time" content="2025-06-18T08:13:25.427Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2025/06/11/etcd/etcd-0x09-%E5%90%AF%E5%8A%A8%E5%89%8D%E7%9A%84%E6%95%B0%E6%8D%AE%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%86%E5%A4%87/1750234391.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -247,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          48 字
+          1.1k 字
         
       </span>
     
@@ -258,7 +260,7 @@
         
         
         
-          1 分钟
+          10 分钟
         
       </span>
     
@@ -317,7 +319,7 @@
         aria-expanded="true"
       >
         etcd
-        <span class="list-group-count">(14)</span>
+        <span class="list-group-count">(16)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -421,37 +423,55 @@
     
       
       
-        <a href="/2025/06/11/etcd/etcd-0x10-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x10-数据流转状态"
+        <a href="/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x0A-数据流转状态"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">etcd-0x10-数据流转状态</span>
+          <span class="category-post">etcd-0x0A-数据流转状态</span>
         </a>
       
     
       
       
-        <a href="/2025/06/11/etcd/etcd-0x11-Storage%E7%BB%84%E4%BB%B6/" title="etcd-0x11-Storage组件"
+        <a href="/2025/06/11/etcd/etcd-0x0B-Storage%E7%BB%84%E4%BB%B6/" title="etcd-0x0B-Storage组件"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">etcd-0x11-Storage组件</span>
+          <span class="category-post">etcd-0x0B-Storage组件</span>
         </a>
       
     
       
       
-        <a href="/2025/06/12/etcd/etcd-0x12-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/" title="etcd-0x12-线程模型"
+        <a href="/2025/06/12/etcd/etcd-0x0C-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/" title="etcd-0x0C-线程模型"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">etcd-0x12-线程模型</span>
+          <span class="category-post">etcd-0x0C-线程模型</span>
         </a>
       
     
       
       
-        <a href="/2025/06/12/etcd/etcd-0x13-%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B/" title="etcd-0x13-消息类型"
+        <a href="/2025/06/12/etcd/etcd-0x0D-%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B/" title="etcd-0x0D-消息类型"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">etcd-0x13-消息类型</span>
+          <span class="category-post">etcd-0x0D-消息类型</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/06/16/etcd/etcd-0x0E-term%E4%B8%BA0%E7%9A%84%E5%B0%8F%E8%AE%BE%E8%AE%A1%E9%A9%B1%E5%8A%A8%E6%9C%AC%E6%9C%BA%E6%B5%81%E7%A8%8B/" title="etcd-0x0E-term为0的小设计驱动本机流程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">etcd-0x0E-term为0的小设计驱动本机流程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/06/18/etcd/etcd-0x0F-%E6%80%8E%E4%B9%88%E8%A7%A6%E5%8F%91%E7%9A%84%E9%80%89%E4%B8%BB/" title="etcd-0x0F-怎么触发的选主"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">etcd-0x0F-怎么触发的选主</span>
         </a>
       
     
@@ -478,8 +498,23 @@
             
               <div class="markdown-body">
                 
-                <p>要结合<a href="/2025/06/11/etcd/etcd-0x10-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x10-数据流转状态">etcd-0x10-数据流转状态</a>，先熟悉数据怎么交互的</p>
+                <p>要结合<a href="/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x0A-数据流转状态">etcd-0x0A-数据流转状态</a>，先熟悉数据怎么交互的</p>
+<p>假使系统启动的时候已经有WAL或者snap日志，系统会从WAL日志进行恢复启动。但是总归会存在一种场景是系统首次启动的时候，没有任何历史遗留的数据，这种时候就需要特殊处理。</p>
+<p>在<code>raftexample/raft.go</code>中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 这个地方为什么要设计成这样 因为选主拉票流程需要依赖有Voters 所以这个地方手动让raft感知到Voters是谁</span><br><span class="hljs-keyword">if</span> oldwal || rc.join &#123;<br>	rc.node = raft.RestartNode(c)<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>	<span class="hljs-comment">// 人为模拟AppendEntries和ApplyConfChange 目的是让raft#trk#Config#Voters里面有整个集群的节点信息 后面Leader心跳定时到期后Follower升级成Candidate发送竞选Leader消息才知道发给谁</span><br>	rc.node = raft.StartNode(c, rpeers)<br>&#125;<br></code></pre></td></tr></table></figure>
 
+<p>至于手动准备的Voters怎么使用的就看<a href="/2025/06/18/etcd/etcd-0x0F-%E6%80%8E%E4%B9%88%E8%A7%A6%E5%8F%91%E7%9A%84%E9%80%89%E4%B8%BB/" title="etcd-0x0F-怎么触发的选主">etcd-0x0F-怎么触发的选主</a></p>
+<h3 id="1-手动AppendEntries"><a href="#1-手动AppendEntries" class="headerlink" title="1 手动AppendEntries"></a>1 手动AppendEntries</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 方法的名称可能有误导 并不是真正的启动节点</span><br><span class="hljs-comment">// raft是典型的EDA架构 log entry就是线程事件循环的事件源</span><br><span class="hljs-comment">// 在系统最开始启动时 磁盘上是干净的 没有任何log entry 所以这个地方仅仅在给启动做准备工作</span><br><span class="hljs-comment">// 人为构建LogEntry 模拟AppendEntries和applyConfChange的流程 让raft节点的Voters能感知到整个集群的配置</span><br><span class="hljs-comment">// 1 初始化节点角色是Follower 等心跳超时事件进来 发现自己是Follower 触发选主</span><br><span class="hljs-comment">// 2 造LogEntry 复位Voters 在选主流程中要用到</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rn *RawNode)</span></span> Bootstrap(peers []Peer) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(peers) == <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;must provide at least one peer to Bootstrap&quot;</span>)<br>	&#125;<br>	<span class="hljs-comment">// 在初始化storage的时候会默认放上一个哨兵 它的index=0 这个地方拿到的lastIndex=0 语义是在storage#ents中最后一条数据的index</span><br>	lastIndex, err := rn.raft.raftLog.storage.LastIndex()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> lastIndex != <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-comment">// 这个地方为什么要这样校验呢 因为能调用这个方法的地方只有一个 就是raft启动时候节点机器是干净的 没有snap 也没有wal 需要手工造日志entry 让后面的选主流程能走下去</span><br>		<span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;can&#x27;t bootstrap a nonempty Storage&quot;</span>)<br>	&#125;<br><br>	<span class="hljs-comment">// We&#x27;ve faked out initial entries above, but nothing has been</span><br>	<span class="hljs-comment">// persisted. Start with an empty HardState (thus the first Ready will</span><br>	<span class="hljs-comment">// emit a HardState update for the app to persist).</span><br>	rn.prevHardSt = emptyState<br><br>	<span class="hljs-comment">// TODO(tbg): remove StartNode and give the application the right tools to</span><br>	<span class="hljs-comment">// bootstrap the initial membership in a cleaner way.</span><br>	<span class="hljs-comment">// 角色初始化为Follower 为什么是Follower 因为心跳超时事件后发现自己是Follower就会触发选主</span><br>	rn.raft.becomeFollower(<span class="hljs-number">1</span>, None)<br>	<span class="hljs-comment">// 集群的配置 模拟成RPC 既然是模拟 这个地方就假装收到了Leader的AppendEntries就行</span><br>	<span class="hljs-comment">// 下面就模拟收到AppendEntries的候选流程先放到unstable中 因为是模拟的 所以并不需要对这些模拟的RPC进行回复 直接commit然后应用到raft状态机</span><br>	ents := <span class="hljs-built_in">make</span>([]pb.Entry, <span class="hljs-built_in">len</span>(peers))<br>	<span class="hljs-keyword">for</span> i, peer := <span class="hljs-keyword">range</span> peers &#123;<br>		cc := pb.ConfChange&#123;Type: pb.ConfChangeAddNode, NodeID: peer.ID, Context: peer.Context&#125;<br>		data, err := cc.Marshal()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br><br>		ents[i] = pb.Entry&#123;Type: pb.EntryConfChange, Term: <span class="hljs-number">1</span>, Index: <span class="hljs-type">uint64</span>(i + <span class="hljs-number">1</span>), Data: data&#125;<br>	&#125;<br>	<span class="hljs-comment">// 缓存到unstable中</span><br>	rn.raft.raftLog.<span class="hljs-built_in">append</span>(ents...)<br><br>	<span class="hljs-comment">// Now apply them, mainly so that the application can call Campaign</span><br>	<span class="hljs-comment">// immediately after StartNode in tests. Note that these nodes will</span><br>	<span class="hljs-comment">// be added to raft twice: here and when the application&#x27;s Ready</span><br>	<span class="hljs-comment">// loop calls ApplyConfChange. The calls to addNode must come after</span><br>	<span class="hljs-comment">// all calls to raftLog.append so progress.next is set after these</span><br>	<span class="hljs-comment">// bootstrapping entries (it is an error if we try to append these</span><br>	<span class="hljs-comment">// entries since they have already been committed).</span><br>	<span class="hljs-comment">// We do not set raftLog.applied so the application will be able</span><br>	<span class="hljs-comment">// to observe all conf changes via Ready.CommittedEntries.</span><br>	<span class="hljs-comment">//</span><br>	<span class="hljs-comment">// TODO(bdarnell): These entries are still unstable; do we need to preserve</span><br>	<span class="hljs-comment">// the invariant that committed &lt; unstable?</span><br>	<span class="hljs-comment">// 模拟这些日志被集群大多数节点认可 也就是直接commit就行</span><br>	rn.raft.raftLog.committed = <span class="hljs-type">uint64</span>(<span class="hljs-built_in">len</span>(ents))<br>	<span class="hljs-keyword">for</span> _, peer := <span class="hljs-keyword">range</span> peers &#123;<br>		<span class="hljs-comment">// 应用到状态机 这边就会轮询把集群中节点都加到Voters中</span><br>		rn.raft.applyConfChange(pb.ConfChange&#123;NodeID: peer.ID, Type: pb.ConfChangeAddNode&#125;.AsV2())<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-raft处理ConfChangeAddNode消息"><a href="#2-raft处理ConfChangeAddNode消息" class="headerlink" title="2 raft处理ConfChangeAddNode消息"></a>2 raft处理ConfChangeAddNode消息</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// ConfChangeAddNode类型的消息已经被raft执行完 unstable-&gt;commit</span><br><span class="hljs-comment">// 现在要把应用到raft状态机</span><br><span class="hljs-comment">// raft#trk会根据类型ConfChangeAddNode把集群节点id加到raft#trk#Config#Voters中</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *raft)</span></span> applyConfChange(cc pb.ConfChangeV2) pb.ConfState &#123;<br>	<span class="hljs-comment">// 匿名函数</span><br>	cfg, trk, err := <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (tracker.Config, tracker.ProgressMap, <span class="hljs-type">error</span>) &#123;<br>		changer := confchange.Changer&#123;<br>			Tracker:   r.trk,<br>			LastIndex: r.raftLog.lastIndex(),<br>		&#125;<br>		<span class="hljs-keyword">if</span> cc.LeaveJoint() &#123;<br>			<span class="hljs-keyword">return</span> changer.LeaveJoint()<br>		&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> autoLeave, ok := cc.EnterJoint(); ok &#123;<br>			<span class="hljs-comment">// 把集群节点id加到Voters</span><br>			<span class="hljs-keyword">return</span> changer.EnterJoint(autoLeave, cc.Changes...)<br>		&#125;<br>		<span class="hljs-keyword">return</span> changer.Simple(cc.Changes...)<br>	&#125;()<br><br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-comment">// TODO(tbg): return the error to the caller.</span><br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> r.switchToConfig(cfg, trk)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-集群节点加到Voters中"><a href="#3-集群节点加到Voters中" class="headerlink" title="3 集群节点加到Voters中"></a>3 集群节点加到Voters中</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// raft#trk#Config#Voters中维护着集群节点 每个raft节点可以通过这个Voters知道谁跟自己在同一个集群 发送拉票请求的时候知道可以向谁发起拉票</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c Changer)</span></span> makeVoter(cfg *tracker.Config, trk tracker.ProgressMap, id <span class="hljs-type">uint64</span>) &#123;<br>	pr := trk[id]<br>	<span class="hljs-keyword">if</span> pr == <span class="hljs-literal">nil</span> &#123;<br>		c.initProgress(cfg, trk, id, <span class="hljs-literal">false</span> <span class="hljs-comment">/* isLearner */</span>)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	pr.IsLearner = <span class="hljs-literal">false</span><br>	nilAwareDelete(&amp;cfg.Learners, id)<br>	nilAwareDelete(&amp;cfg.LearnersNext, id)<br>	incoming(cfg.Voters)[id] = <span class="hljs-keyword">struct</span>&#123;&#125;&#123;&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>最终会执行到<code>initProgress</code>方法中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 把id加到了Voters中</span><br>incoming(cfg.Voters)[id] = <span class="hljs-keyword">struct</span>&#123;&#125;&#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>至此raft就知道谁跟自己同处一个集群了，后面发生了竞选Leader也知道可以向谁拉票</p>
+<img src="/2025/06/11/etcd/etcd-0x09-%E5%90%AF%E5%8A%A8%E5%89%8D%E7%9A%84%E6%95%B0%E6%8D%AE%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%86%E5%A4%87/1750234391.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -571,9 +606,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/06/11/etcd/etcd-0x10-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x10-数据流转状态">
+                      <a href="/2025/06/11/etcd/etcd-0x0A-%E6%95%B0%E6%8D%AE%E6%B5%81%E8%BD%AC%E7%8A%B6%E6%80%81/" title="etcd-0x0A-数据流转状态">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">etcd-0x10-数据流转状态</span>
+                        <span class="hidden-mobile">etcd-0x0A-数据流转状态</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

@@ -1,0 +1,871 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="JVM启动的前置准备，JVM启动需要的参数。 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jvm-0x08-JVM启动参数">
+<meta property="og:url" content="https://bannirui.github.io/2023/05/04/java/jvm-0x08-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="JVM启动的前置准备，JVM启动需要的参数。 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-04T07:38:32.000Z">
+<meta property="article:modified_time" content="2025-06-16T01:49:38.170Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>jvm-0x08-JVM启动参数 - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="jvm-0x08-JVM启动参数"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-05-04 15:38" pubdate>
+          2023年5月4日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="jvm"
+        id="heading-6ce80d8ef01f5e98f941f200bba3baee" role="tab" data-toggle="collapse" href="#collapse-6ce80d8ef01f5e98f941f200bba3baee"
+        aria-expanded="true"
+      >
+        jvm
+        <span class="list-group-count">(10)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-6ce80d8ef01f5e98f941f200bba3baee"
+           role="tabpanel" aria-labelledby="heading-6ce80d8ef01f5e98f941f200bba3baee">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-0x00-编译openjdk"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x00-编译openjdk</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-0x01-在Linux上编译openjdk22"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x01-在Linux上编译openjdk22</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-0x02-启动入口"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x02-启动入口</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-0x03-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-0x03-Java入口函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x03-Java入口函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-0x04-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-0x04-设置运行环境参数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x04-设置运行环境参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-0x05-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-0x05-pthread系统调用"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x05-pthread系统调用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x06-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-0x06-加载JVM"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x06-加载JVM</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x07-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-0x07-加载动态链接库"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x07-加载动态链接库</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x08-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-0x08-JVM启动参数"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">jvm-0x08-JVM启动参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x09-JVM%E5%90%AF%E5%8A%A8/" title="jvm-0x09-JVM启动"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x09-JVM启动</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">jvm-0x08-JVM启动参数</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>JVM启动的前置准备，JVM启动需要的参数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 从jdk入口main函数的启动参数以及解析出来的jre路径 解析出启动JVM的参数</span><br><span class="hljs-comment"> * @param pargc 1</span><br><span class="hljs-comment"> *              main函数启动参数有2个</span><br><span class="hljs-comment"> *                - /jdk/build/macosx-x86_64-server-slowdebug/jdk/bin/java</span><br><span class="hljs-comment"> *                - VMLoaderTest</span><br><span class="hljs-comment"> *              第2个VMLoaderTest是用来告知JVM启动后要解析的class字节码文件</span><br><span class="hljs-comment"> * @param pargv VMLoaderTest</span><br><span class="hljs-comment"> * @param pmode 解析结果 JVM启动方式</span><br><span class="hljs-comment"> *                        - 1 Class启动</span><br><span class="hljs-comment"> *                        - 2 Jar启动</span><br><span class="hljs-comment"> * @param pwhat 解析结果 JVM启动入口</span><br><span class="hljs-comment"> *                        - VMLoaderTest 这个类的class字节码文件</span><br><span class="hljs-comment"> * @param pret 解析结果 JVM退出方式</span><br><span class="hljs-comment"> *                       - 0 正常退出</span><br><span class="hljs-comment"> * @param jrepath jre路径 /jdk/build/macosx-x86_64-server-slowdebug/jdk/bin/java</span><br><span class="hljs-comment"> * @return</span><br><span class="hljs-comment"> */</span><br><span class="hljs-type">static</span> jboolean<br><span class="hljs-title function_">ParseArguments</span><span class="hljs-params">(<span class="hljs-type">int</span> *pargc, <span class="hljs-type">char</span> ***pargv,</span><br><span class="hljs-params">               <span class="hljs-type">int</span> *pmode, <span class="hljs-type">char</span> **pwhat,</span><br><span class="hljs-params">               <span class="hljs-type">int</span> *pret, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *jrepath)</span><br>&#123;<br>    <span class="hljs-type">int</span> argc = *pargc;<br>    <span class="hljs-type">char</span> **argv = *pargv;<br>    <span class="hljs-type">int</span> mode = LM_UNKNOWN;<br>    <span class="hljs-type">char</span> *arg;<br><br>    *pret = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">while</span> ((arg = *argv) != <span class="hljs-number">0</span> &amp;&amp; *arg == <span class="hljs-string">&#x27;-&#x27;</span>) &#123;<br>        <span class="hljs-type">char</span> *option = <span class="hljs-literal">NULL</span>;<br>        <span class="hljs-type">char</span> *value = <span class="hljs-literal">NULL</span>;<br>        <span class="hljs-type">int</span> kind = GetOpt(&amp;argc, &amp;argv, &amp;option, &amp;value);<br>        jboolean has_arg = value != <span class="hljs-literal">NULL</span> &amp;&amp; JLI_StrLen(value) &gt; <span class="hljs-number">0</span>;<br>        jboolean has_arg_any_len = value != <span class="hljs-literal">NULL</span>;<br><br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Option to set main entry point</span><br><span class="hljs-comment"> */</span><br>        <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-jar&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            ARG_CHECK(argc, ARG_ERROR2, arg);<br>            mode = checkMode(mode, LM_JAR, arg);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--module&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;--module=&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-m&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            REPORT_ERROR (has_arg, ARG_ERROR5, arg);<br>            SetMainModule(value);<br>            mode = checkMode(mode, LM_MODULE, arg);<br>            <span class="hljs-keyword">if</span> (has_arg) &#123;<br>               *pwhat = value;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--source&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;--source=&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            REPORT_ERROR (has_arg, ARG_ERROR13, arg);<br>            mode = LM_SOURCE;<br>            <span class="hljs-keyword">if</span> (has_arg) &#123;<br>                <span class="hljs-type">const</span> <span class="hljs-type">char</span> *prop = <span class="hljs-string">&quot;-Djdk.internal.javac.source=&quot;</span>;<br>                <span class="hljs-type">size_t</span> size = JLI_StrLen(prop) + JLI_StrLen(value) + <span class="hljs-number">1</span>;<br>                <span class="hljs-type">char</span> *propValue = (<span class="hljs-type">char</span> *)JLI_MemAlloc(size);<br>                JLI_Snprintf(propValue, size, <span class="hljs-string">&quot;%s%s&quot;</span>, prop, value);<br>                AddOption(propValue, <span class="hljs-literal">NULL</span>);<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--class-path&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;--class-path=&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-classpath&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-cp&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            REPORT_ERROR (has_arg_any_len, ARG_ERROR1, arg);<br>            SetClassPath(value);<br>            <span class="hljs-keyword">if</span> (mode != LM_SOURCE) &#123;<br>                mode = LM_CLASS;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--list-modules&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            listModules = JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--show-resolved-modules&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            showResolvedModules = JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--validate-modules&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Djdk.module.validation=true&quot;</span>, <span class="hljs-literal">NULL</span>);<br>            validateModules = JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--describe-module&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;--describe-module=&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-d&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            REPORT_ERROR (has_arg_any_len, ARG_ERROR12, arg);<br>            describeModule = value;<br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Parse white-space options</span><br><span class="hljs-comment"> */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (has_arg) &#123;<br>            <span class="hljs-keyword">if</span> (kind == VM_LONG_OPTION) &#123;<br>                AddOption(option, <span class="hljs-literal">NULL</span>);<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (kind == VM_LONG_OPTION_WITH_ARGUMENT) &#123;<br>                AddLongFormOption(option, value);<br>            &#125;<br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * Error missing argument</span><br><span class="hljs-comment"> */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!has_arg &amp;&amp; (JLI_StrCmp(arg, <span class="hljs-string">&quot;--module-path&quot;</span>) == <span class="hljs-number">0</span> ||<br>                                JLI_StrCmp(arg, <span class="hljs-string">&quot;-p&quot;</span>) == <span class="hljs-number">0</span> ||<br>                                JLI_StrCmp(arg, <span class="hljs-string">&quot;--upgrade-module-path&quot;</span>) == <span class="hljs-number">0</span>)) &#123;<br>            REPORT_ERROR (has_arg, ARG_ERROR4, arg);<br><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!has_arg &amp;&amp; (IsModuleOption(arg) || IsLongFormModuleOption(arg))) &#123;<br>            REPORT_ERROR (has_arg, ARG_ERROR6, arg);<br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * The following cases will cause the argument parsing to stop</span><br><span class="hljs-comment"> */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-help&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-h&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-?&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            printUsage = JNI_TRUE;<br>            <span class="hljs-keyword">return</span> JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--help&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            printUsage = JNI_TRUE;<br>            printTo = USE_STDOUT;<br>            <span class="hljs-keyword">return</span> JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-version&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            printVersion = JNI_TRUE;<br>            <span class="hljs-keyword">return</span> JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--version&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            printVersion = JNI_TRUE;<br>            printTo = USE_STDOUT;<br>            <span class="hljs-keyword">return</span> JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-showversion&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            showVersion = JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--show-version&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            showVersion = JNI_TRUE;<br>            printTo = USE_STDOUT;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--dry-run&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            dryRun = JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-X&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            printXUsage = JNI_TRUE;<br>            <span class="hljs-keyword">return</span> JNI_TRUE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--help-extra&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            printXUsage = JNI_TRUE;<br>            printTo = USE_STDOUT;<br>            <span class="hljs-keyword">return</span> JNI_TRUE;<br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * The following case checks for -XshowSettings OR -XshowSetting:SUBOPT.</span><br><span class="hljs-comment"> * In the latter case, any SUBOPT value not recognized will default to &quot;all&quot;</span><br><span class="hljs-comment"> */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-XshowSettings&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;-XshowSettings:&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            showSettings = arg;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-Xdiag&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Dsun.java.launcher.diag=true&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--show-module-resolution&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Djdk.module.showModuleResolution=true&quot;</span>, <span class="hljs-literal">NULL</span>);<br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * The following case provide backward compatibility with old-style</span><br><span class="hljs-comment"> * command line options.</span><br><span class="hljs-comment"> */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-fullversion&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            JLI_ReportMessage(<span class="hljs-string">&quot;%s full version \&quot;%s\&quot;&quot;</span>, _launcher_name, GetFullVersion());<br>            <span class="hljs-keyword">return</span> JNI_FALSE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;--full-version&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            JLI_ShowMessage(<span class="hljs-string">&quot;%s %s&quot;</span>, _launcher_name, GetFullVersion());<br>            <span class="hljs-keyword">return</span> JNI_FALSE;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-verbosegc&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-verbose:gc&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-t&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Xt&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-tm&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Xtm&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-debug&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Xdebug&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-noclassgc&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Xnoclassgc&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-Xfuture&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            JLI_ReportErrorMessage(ARG_DEPRECATED, <span class="hljs-string">&quot;-Xfuture&quot;</span>);<br>            AddOption(<span class="hljs-string">&quot;-Xverify:all&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-verify&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Xverify:all&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-verifyremote&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            AddOption(<span class="hljs-string">&quot;-Xverify:remote&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-noverify&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-comment">/*</span><br><span class="hljs-comment">             * Note that no &#x27;deprecated&#x27; message is needed here because the VM</span><br><span class="hljs-comment">             * issues &#x27;deprecated&#x27; messages for -noverify and -Xverify:none.</span><br><span class="hljs-comment">             */</span><br>            AddOption(<span class="hljs-string">&quot;-Xverify:none&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCCmp(arg, <span class="hljs-string">&quot;-ss&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;-oss&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;-ms&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCCmp(arg, <span class="hljs-string">&quot;-mx&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">char</span> *tmp = JLI_MemAlloc(JLI_StrLen(arg) + <span class="hljs-number">6</span>);<br>            <span class="hljs-built_in">sprintf</span>(tmp, <span class="hljs-string">&quot;-X%s&quot;</span>, arg + <span class="hljs-number">1</span>); <span class="hljs-comment">/* skip &#x27;-&#x27; */</span><br>            AddOption(tmp, <span class="hljs-literal">NULL</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCmp(arg, <span class="hljs-string">&quot;-checksource&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-cs&quot;</span>) == <span class="hljs-number">0</span> ||<br>                   JLI_StrCmp(arg, <span class="hljs-string">&quot;-noasyncgc&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-comment">/* No longer supported */</span><br>            JLI_ReportErrorMessage(ARG_WARN, arg);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (JLI_StrCCmp(arg, <span class="hljs-string">&quot;-splash:&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>            ; <span class="hljs-comment">/* Ignore machine independent options already handled */</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ProcessPlatformOption(arg)) &#123;<br>            ; <span class="hljs-comment">/* Processing of platform dependent options */</span><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">/* java.class.path set on the command line */</span><br>            <span class="hljs-keyword">if</span> (JLI_StrCCmp(arg, <span class="hljs-string">&quot;-Djava.class.path=&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>                _have_classpath = JNI_TRUE;<br>            &#125;<br>            AddOption(arg, <span class="hljs-literal">NULL</span>);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (*pwhat == <span class="hljs-literal">NULL</span> &amp;&amp; --argc &gt;= <span class="hljs-number">0</span>) &#123;<br>        *pwhat = *argv++;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (*pwhat == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-comment">/* LM_UNKNOWN okay for options that exit */</span><br>        <span class="hljs-keyword">if</span> (!listModules &amp;&amp; !describeModule &amp;&amp; !validateModules) &#123;<br>            *pret = <span class="hljs-number">1</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (mode == LM_UNKNOWN) &#123;<br>        <span class="hljs-comment">/* default to LM_CLASS if -m, -jar and -cp options are</span><br><span class="hljs-comment">         * not specified */</span><br>        <span class="hljs-keyword">if</span> (!_have_classpath) &#123;<br>            SetClassPath(<span class="hljs-string">&quot;.&quot;</span>);<br>        &#125;<br>        mode = IsSourceFile(arg) ? LM_SOURCE : LM_CLASS;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (mode == LM_CLASS &amp;&amp; IsSourceFile(arg)) &#123;<br>        <span class="hljs-comment">/* override LM_CLASS mode if given a source file */</span><br>        mode = LM_SOURCE;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (mode == LM_SOURCE) &#123;<br>        AddOption(<span class="hljs-string">&quot;--add-modules=ALL-DEFAULT&quot;</span>, <span class="hljs-literal">NULL</span>);<br>        *pwhat = SOURCE_LAUNCHER_MAIN_ENTRY;<br>        <span class="hljs-comment">// adjust (argc, argv) so that the name of the source file</span><br>        <span class="hljs-comment">// is included in the args passed to the source launcher</span><br>        <span class="hljs-comment">// main entry class</span><br>        *pargc = argc + <span class="hljs-number">1</span>;<br>        *pargv = argv - <span class="hljs-number">1</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span> (argc &gt;= <span class="hljs-number">0</span>) &#123;<br>            *pargc = argc;<br>            *pargv = argv;<br>        &#125;<br>    &#125;<br><br>    *pmode = mode;<br><br>    <span class="hljs-keyword">return</span> JNI_TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jvm/" class="category-chain-item">jvm</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>jvm-0x08-JVM启动参数</div>
+      <div>https://bannirui.github.io/2023/05/04/java/jvm-0x08-JVM启动参数/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年5月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/05/04/java/jvm-0x09-JVM%E5%90%AF%E5%8A%A8/" title="jvm-0x09-JVM启动">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">jvm-0x09-JVM启动</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/04/java/jvm-0x06-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-0x06-加载JVM">
+                        <span class="hidden-mobile">jvm-0x06-加载JVM</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '8ee0af61799c404b5076792fe16f1c12'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

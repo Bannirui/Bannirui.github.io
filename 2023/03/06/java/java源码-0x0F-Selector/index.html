@@ -1,0 +1,1175 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="对操作系统而言： 1 多路复用就是os提供了系统调用，能一次性知道多个fd的状态。 2 不同的操作系统类型有不同的实现方式，实现方式即使是轮询也是发生在kernel中，其效率肯定远远大于在内核外的轮询。  select 数组容量限制fd数量的无差别轮询O(N) 发生内存拷贝 poll 没有fd数量限制的链表无差别轮询O(N) 发生内存拷贝 epoll 近乎O(1)时间复杂度  就Java而言，封装">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java源码-0x0F-Selector">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="对操作系统而言： 1 多路复用就是os提供了系统调用，能一次性知道多个fd的状态。 2 不同的操作系统类型有不同的实现方式，实现方式即使是轮询也是发生在kernel中，其效率肯定远远大于在内核外的轮询。  select 数组容量限制fd数量的无差别轮询O(N) 发生内存拷贝 poll 没有fd数量限制的链表无差别轮询O(N) 发生内存拷贝 epoll 近乎O(1)时间复杂度  就Java而言，封装">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/2022-11-04_3.39.27.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162242013.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162241501.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162240074.png">
+<meta property="article:published_time" content="2023-03-06T14:49:17.000Z">
+<meta property="article:modified_time" content="2025-06-16T01:49:38.125Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/2022-11-04_3.39.27.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>java源码-0x0F-Selector - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="java源码-0x0F-Selector"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-06 22:49" pubdate>
+          2023年3月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          76 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="java"
+        id="heading-93f725a07423fe1c889f448b33d21f46" role="tab" data-toggle="collapse" href="#collapse-93f725a07423fe1c889f448b33d21f46"
+        aria-expanded="true"
+      >
+        java
+        <span class="list-group-count">(15)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-93f725a07423fe1c889f448b33d21f46"
+           role="tabpanel" aria-labelledby="heading-93f725a07423fe1c889f448b33d21f46">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java源码-0x01-源码阅读清单"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x01-源码阅读清单</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x02-Object/" title="java源码-0x02-Object"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x02-Object</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x03-MarkWord</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x04-biasedLocking</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x05-宏定义</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x06-AQS</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x07-ArrayBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/" title="java源码-0x08-LinkedBlockingQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x08-LinkedBlockingQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x09-SynchronousQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x0A-COW</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0B-synchronized/" title="java源码-0x0B-synchronized"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x0B-synchronized</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x0C-Thread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x0D-ThreadPoolExecutor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/04/java/java%E6%BA%90%E7%A0%81-0x0E-Timer/" title="java源码-0x0E-Timer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java源码-0x0E-Timer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">java源码-0x0F-Selector</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">java源码-0x0F-Selector</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>对操作系统而言：</p>
+<p>1 多路复用就是os提供了系统调用，能一次性知道多个fd的状态。</p>
+<p>2 不同的操作系统类型有不同的实现方式，实现方式即使是轮询也是发生在kernel中，其效率肯定远远大于在内核外的轮询。</p>
+<ul>
+<li>select 数组容量限制fd数量的无差别轮询O(N) 发生内存拷贝</li>
+<li>poll 没有fd数量限制的链表无差别轮询O(N) 发生内存拷贝</li>
+<li>epoll 近乎O(1)时间复杂度</li>
+</ul>
+<p>就Java而言，封装统一API，追根溯源是依赖OS的实现方式。</p>
+<h2 id="一-Demo"><a href="#一-Demo" class="headerlink" title="一 Demo"></a>一 Demo</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.nio;<br><br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.net.InetSocketAddress;<br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.util.Iterator;<br><span class="hljs-keyword">import</span> java.util.Set;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;&#123;<span class="hljs-doctag">@link</span> Selector&#125;就是复用器 在java nio下的一种对多路复用的具体实现&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;select&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;poll&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;epoll&lt;/li&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;kqueue&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;&lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/21</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SelectorTest</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-comment">// 服务端创建 监听端口</span><br>        <span class="hljs-type">ServerSocketChannel</span> <span class="hljs-variable">channel</span> <span class="hljs-operator">=</span> ServerSocketChannel.open();<br>        channel.configureBlocking(<span class="hljs-literal">false</span>);<br>        channel.bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(<span class="hljs-number">9001</span>));<br><br>        <span class="hljs-comment">// 创建一个复用器</span><br>        <span class="hljs-type">Selector</span> <span class="hljs-variable">selector</span> <span class="hljs-operator">=</span> Selector.open();<br>        channel.register(selector, SelectionKey.OP_ACCEPT); <span class="hljs-comment">// 把channel注册到复用器</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">ret</span> <span class="hljs-operator">=</span> selector.select();<span class="hljs-comment">// 阻塞调用</span><br>        Set&lt;SelectionKey&gt; selectionKeys = selector.selectedKeys(); <span class="hljs-comment">// 拿到事件就绪的channel</span><br><br>        <span class="hljs-comment">// 以下就是根据业务展开了</span><br>        Iterator&lt;SelectionKey&gt; it = selectionKeys.iterator();<br>        <span class="hljs-keyword">while</span> (it.hasNext())&#123;<br>            <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">sk</span> <span class="hljs-operator">=</span> it.next();<br>            it.remove();<br>            sk.isValid();<br>            sk.isWritable();<br>            sk.isReadable();<br>            sk.isAcceptable();<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>重点API：</p>
+<ul>
+<li>Selector.open()</li>
+<li>serverSocketChannel.register()</li>
+<li>selector.select()</li>
+</ul>
+<p>整体执行流程：</p>
+<ul>
+<li>根据不同的OS类型，JDK适配操作系统创建不同的复用器实现，即open()方法。</li>
+<li>一个复用器管理N个Channel，在恰当时机告知业务层有哪些Channel已经事件到达。<ul>
+<li>每个Channel跟复用器的关联通过register()方法实现，</li>
+<li>让复用器对该Channel某种类型事件(连接、可读、可写)进行监听。</li>
+</ul>
+</li>
+<li>恰当的时机就是select()方法。</li>
+</ul>
+<h2 id="二-源码剖析"><a href="#二-源码剖析" class="headerlink" title="二 源码剖析"></a>二 源码剖析</h2><h3 id="1-Java-IO多路复用器创建"><a href="#1-Java-IO多路复用器创建" class="headerlink" title="1 Java IO多路复用器创建"></a>1 Java IO多路复用器创建</h3><h4 id="1-1-Selector-open"><a href="#1-1-Selector-open" class="headerlink" title="1.1 Selector.open()"></a>1.1 Selector.open()</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 打开Selector</span><br><span class="hljs-type">Selector</span> <span class="hljs-variable">selector</span> <span class="hljs-operator">=</span> Selector.open();<br></code></pre></td></tr></table></figure>
+
+<p>跟进到如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">return</span> SelectorProvider.provider().openSelector();<br></code></pre></td></tr></table></figure>
+
+<p>对于一个实现没有直接给创建出来，而是通过一个所谓的Provider这样的中间者，这样做的方式应该是通过抽象一层，提供统一API，方便代码扩展。</p>
+<ul>
+<li>IO多路复用器是OS的实现，不同系统实现不同。</li>
+<li>JDK版本存在跨平台性，不同系统版本不同。</li>
+<li>在Java语言层面根据不同的JDK版本，可以感知到不同的运行系统，封装对应系统的复用器实现。</li>
+</ul>
+<p>那么就可知：</p>
+<ul>
+<li>Provider是依赖系统类型的。</li>
+<li>Provider提供了统一API创建具体的复用器实现。</li>
+</ul>
+<h4 id="1-2-Provider复用器提供器创建"><a href="#1-2-Provider复用器提供器创建" class="headerlink" title="1.2 Provider复用器提供器创建"></a>1.2 Provider复用器提供器创建</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">SelectorProvider.provider()<br></code></pre></td></tr></table></figure>
+
+<h5 id="1-2-1-provider-方法"><a href="#1-2-1-provider-方法" class="headerlink" title="1.2.1 provider()方法"></a>1.2.1 provider()方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Returns the system-wide default selector provider for this invocation of</span><br><span class="hljs-comment">     * the Java virtual machine.</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * &lt;p&gt; The first invocation of this method locates the default provider</span><br><span class="hljs-comment">     * object as follows: &lt;/p&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * &lt;ol&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     *   &lt;li&gt;&lt;p&gt; If the system property</span><br><span class="hljs-comment">     *   &lt;tt&gt;java.nio.channels.spi.SelectorProvider&lt;/tt&gt; is defined then it is</span><br><span class="hljs-comment">     *   taken to be the fully-qualified name of a concrete provider class.</span><br><span class="hljs-comment">     *   The class is loaded and instantiated; if this process fails then an</span><br><span class="hljs-comment">     *   unspecified error is thrown.  &lt;/p&gt;&lt;/li&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     *   &lt;li&gt;&lt;p&gt; If a provider class has been installed in a jar file that is</span><br><span class="hljs-comment">     *   visible to the system class loader, and that jar file contains a</span><br><span class="hljs-comment">     *   provider-configuration file named</span><br><span class="hljs-comment">     *   &lt;tt&gt;java.nio.channels.spi.SelectorProvider&lt;/tt&gt; in the resource</span><br><span class="hljs-comment">     *   directory &lt;tt&gt;META-INF/services&lt;/tt&gt;, then the first class name</span><br><span class="hljs-comment">     *   specified in that file is taken.  The class is loaded and</span><br><span class="hljs-comment">     *   instantiated; if this process fails then an unspecified error is</span><br><span class="hljs-comment">     *   thrown.  &lt;/p&gt;&lt;/li&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     *   &lt;li&gt;&lt;p&gt; Finally, if no provider has been specified by any of the above</span><br><span class="hljs-comment">     *   means then the system-default provider class is instantiated and the</span><br><span class="hljs-comment">     *   result is returned.  &lt;/p&gt;&lt;/li&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * &lt;/ol&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * &lt;p&gt; Subsequent invocations of this method return the provider that was</span><br><span class="hljs-comment">     * returned by the first invocation.  &lt;/p&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span>  The system-wide default selector provider</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> SelectorProvider <span class="hljs-title function_">provider</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">synchronized</span> (lock) &#123;<br>        <span class="hljs-keyword">if</span> (provider != <span class="hljs-literal">null</span>)<br>            <span class="hljs-keyword">return</span> provider;<br>        <span class="hljs-keyword">return</span> AccessController.doPrivileged(<br>            <span class="hljs-keyword">new</span> <span class="hljs-title class_">PrivilegedAction</span>&lt;SelectorProvider&gt;() &#123;<br>                <span class="hljs-keyword">public</span> SelectorProvider <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                    <span class="hljs-keyword">if</span> (loadProviderFromProperty()) <span class="hljs-comment">// VM参数指定</span><br>                        <span class="hljs-keyword">return</span> provider;<br>                    <span class="hljs-keyword">if</span> (loadProviderAsService()) <span class="hljs-comment">// SPI指定</span><br>                        <span class="hljs-keyword">return</span> provider;<br>                    provider = sun.nio.ch.DefaultSelectorProvider.create(); <span class="hljs-comment">// 默认</span><br>                    <span class="hljs-keyword">return</span> provider;<br>                &#125;<br>            &#125;);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>根据方法名称以及JavaDoc可知Provider创建优先级：</p>
+<ul>
+<li>VM参数指定一个Provider。</li>
+<li>SPI机制指定Provider。</li>
+<li>适配JDK版本的默认Provider。</li>
+</ul>
+<h5 id="1-2-2-sun-nio-ch-DefaultSelectorProvider-create"><a href="#1-2-2-sun-nio-ch-DefaultSelectorProvider-create" class="headerlink" title="1.2.2 sun.nio.ch.DefaultSelectorProvider.create()"></a>1.2.2 sun.nio.ch.DefaultSelectorProvider.create()</h5><p>通过全局搜索openjdk源码发现有3个实现，不同系统类型，该实现不同。</p>
+<img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/2022-11-04_3.39.27.png" srcset="/img/loading.gif" lazyload class="">
+
+<ul>
+<li><p>solaris：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Returns the default SelectorProvider.</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> SelectorProvider <span class="hljs-title function_">create</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">String</span> <span class="hljs-variable">osname</span> <span class="hljs-operator">=</span> AccessController<br>        .doPrivileged(<span class="hljs-keyword">new</span> <span class="hljs-title class_">GetPropertyAction</span>(<span class="hljs-string">&quot;os.name&quot;</span>));<br>    <span class="hljs-keyword">if</span> (osname.equals(<span class="hljs-string">&quot;SunOS&quot;</span>))<br>        <span class="hljs-keyword">return</span> createProvider(<span class="hljs-string">&quot;sun.nio.ch.DevPollSelectorProvider&quot;</span>);<br>    <span class="hljs-keyword">if</span> (osname.equals(<span class="hljs-string">&quot;Linux&quot;</span>))<br>        <span class="hljs-keyword">return</span> createProvider(<span class="hljs-string">&quot;sun.nio.ch.EPollSelectorProvider&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">sun</span>.nio.ch.PollSelectorProvider();<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>macosx：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> SelectorProvider <span class="hljs-title function_">create</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">sun</span>.nio.ch.KQueueSelectorProvider();<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>windows：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> SelectorProvider <span class="hljs-title function_">create</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">sun</span>.nio.ch.WindowsSelectorProvider();<br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="1-3-通过提供器Provider创建复用器Selector"><a href="#1-3-通过提供器Provider创建复用器Selector" class="headerlink" title="1.3 通过提供器Provider创建复用器Selector"></a>1.3 通过提供器Provider创建复用器Selector</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">Provider.openSelector()<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Linux：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EPollSelectorProvider</span><br>    <span class="hljs-keyword">extends</span> <span class="hljs-title class_">SelectorProviderImpl</span><br>&#123;<br>    <span class="hljs-keyword">public</span> AbstractSelector <span class="hljs-title function_">openSelector</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">EPollSelectorImpl</span>(<span class="hljs-built_in">this</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> Channel <span class="hljs-title function_">inheritedChannel</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-keyword">return</span> InheritedChannel.getChannel();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>macosx：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">KQueueSelectorProvider</span><br><span class="hljs-keyword">extends</span> <span class="hljs-title class_">SelectorProviderImpl</span><br>&#123;<br>    <span class="hljs-keyword">public</span> AbstractSelector <span class="hljs-title function_">openSelector</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">KQueueSelectorImpl</span>(<span class="hljs-built_in">this</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>windows：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WindowsSelectorProvider</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">SelectorProviderImpl</span> &#123;<br><br>    <span class="hljs-keyword">public</span> AbstractSelector <span class="hljs-title function_">openSelector</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">WindowsSelectorImpl</span>(<span class="hljs-built_in">this</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="1-4-从而可知不同的操作系统采用的复用器实现以及调用到系统调用"><a href="#1-4-从而可知不同的操作系统采用的复用器实现以及调用到系统调用" class="headerlink" title="1.4 从而可知不同的操作系统采用的复用器实现以及调用到系统调用"></a>1.4 从而可知不同的操作系统采用的复用器实现以及调用到系统调用</h4><p>Jdk8版本下：</p>
+<ul>
+<li>Linux -&gt; EPollSelectorProvider -&gt; <code>EPollSelectorImpl</code> -&gt; EPollArrayWrapper<ul>
+<li>Java_sun_nio_ch_EPollArrayWrapper_epollCreate -&gt; epoll_create</li>
+<li>Java_sun_nio_ch_EPollArrayWrapper_epollCtl -&gt; epoll_ctl</li>
+<li>Java_sun_nio_ch_EPollArrayWrapper_epollWait -&gt; epoll_wait</li>
+</ul>
+</li>
+<li>MacOS -&gt; KQueueSelectorProvider -&gt; <code>KQueueSelectorImpl</code> -&gt; KQueueArrayWrapper<ul>
+<li>Java_sun_nio_ch_KQueueArrayWrapper_init -&gt; kqueue</li>
+<li>Java_sun_nio_ch_KQueueArrayWrapper_register0 -&gt; EV_SET</li>
+<li>Java_sun_nio_ch_KQueueArrayWrapper_kevent0 -&gt; kevent</li>
+</ul>
+</li>
+<li>Windows -&gt; WindowsSelectorProvider -&gt; <code>WindowsSelectorImpl</code> -&gt; PollArrayWrapper<ul>
+<li>Java_sun_nio_ch_PollArrayWrapper_poll0 -&gt; PollArrayWrapper::ipoll -&gt; poll</li>
+</ul>
+</li>
+</ul>
+<p>Jdk11版本下：</p>
+<ul>
+<li>Linux -&gt; EPollSelectorProvider -&gt; <code>EPollSelectorImpl</code><ul>
+<li>Java_sun_nio_ch_EPoll_create -&gt; epoll_create</li>
+<li>Java_sun_nio_ch_EPoll_ctl -&gt; epoll_ctl</li>
+<li>Java_sun_nio_ch_EPoll_wait -&gt; epoll_wait</li>
+</ul>
+</li>
+<li>MacOS -&gt; KQueueSelectorProvider -&gt; <code>KQueueSelectorImpl</code><ul>
+<li>Java_sun_nio_ch_KQueue_create -&gt; kqueue</li>
+<li>Java_sun_nio_ch_KQueue_register -&gt; EV_SET</li>
+<li>Java_sun_nio_ch_KQueue_poll -&gt; kevent</li>
+</ul>
+</li>
+<li>Windows -&gt; WindowsSelectorProvider -&gt; <code>WindowsSelectorImpl</code><ul>
+<li>Java_sun_nio_ch_WindowsSelectorImpl_00024SubSelector_poll0 -&gt; select</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-Java-IO多路复用器流程"><a href="#2-Java-IO多路复用器流程" class="headerlink" title="2 Java IO多路复用器流程"></a>2 Java IO多路复用器流程</h3><img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162242013.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>类图关系明显使用了模板方法的设计模式，将通用API封装在顶层抽象，将具体实现延迟到具体实现类各自关注细节，假使将来有其他的OS平台系统调用可选，就可以只要简单继承SelectorImpl就行，也做到了对修改关闭，对功能开发这样的基本原则。</p>
+<h4 id="2-1Selector提供了select-抽象"><a href="#2-1Selector提供了select-抽象" class="headerlink" title="2.1Selector提供了select(...) 抽象"></a>2.1Selector提供了<code>select(...)</code> 抽象</h4><img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162241501.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>以select()为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Selector.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-type">int</span> <span class="hljs-title function_">select</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException;<br><br><span class="hljs-comment">// SelectorImpl</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">select</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.lockAndDoSelect(<span class="hljs-literal">null</span>, -<span class="hljs-number">1</span>);<br>&#125;<br><br><span class="hljs-comment">// SelectorImpl</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">lockAndDoSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123; <span class="hljs-comment">// 从Selector#select()过来 action=null timeout=-1</span><br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>) &#123; <span class="hljs-comment">// 管程锁</span><br>        <span class="hljs-built_in">this</span>.ensureOpen(); <span class="hljs-comment">// 通过AbstractSelector#selectorOpen标识判断</span><br>        <span class="hljs-keyword">if</span> (inSelect) <span class="hljs-comment">// 线程重入判断</span><br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalStateException</span>(<span class="hljs-string">&quot;select in progress&quot;</span>);<br>        inSelect = <span class="hljs-literal">true</span>; <span class="hljs-comment">// 在同步代码块中修改值 释放锁后修改回去 以此为线程重入的依据</span><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>.publicSelectedKeys) &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.doSelect(action, timeout);<br>            &#125;<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            inSelect = <span class="hljs-literal">false</span>;<br>        &#125;<br>    &#125;<br>&#125;<br><br><br><span class="hljs-comment">// SelectorImpl</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-type">int</span> <span class="hljs-title function_">doSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>        <span class="hljs-keyword">throws</span> IOException; <span class="hljs-comment">// 实现留给子类关注 macos的实现类在KQueueSelectorImpl</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="2-2-AbstractSelector提供了register-抽象"><a href="#2-2-AbstractSelector提供了register-抽象" class="headerlink" title="2.2 AbstractSelector提供了register()抽象"></a>2.2 AbstractSelector提供了<code>register()</code>抽象</h4><img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162240074.png" srcset="/img/loading.gif" lazyload class="">
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// SelectableChannel.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(Selector sel, <span class="hljs-type">int</span> ops)</span><br>    <span class="hljs-keyword">throws</span> ClosedChannelException<br>&#123; <span class="hljs-comment">// 向复用器sel注册当前Channel 关注Channel的ops事件</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.register(sel, ops, <span class="hljs-literal">null</span>);<br>&#125;<br><br><span class="hljs-comment">// SelectableChannel.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(Selector sel, <span class="hljs-type">int</span> ops, Object att)</span><br>        <span class="hljs-keyword">throws</span> ClosedChannelException; <span class="hljs-comment">// 向复用器sel注册Channel 对Channel的ops事件关注 Channel附加数据att</span><br><br><span class="hljs-comment">// AbstractSelectableChannel.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(Selector sel, <span class="hljs-type">int</span> ops, Object att)</span><br>    <span class="hljs-keyword">throws</span> ClosedChannelException<br>&#123; <span class="hljs-comment">// 向复用器sel注册Channel 对Channel的ops事件关注 Channel的附加数据att</span><br>    <span class="hljs-keyword">if</span> ((ops &amp; ~validOps()) != <span class="hljs-number">0</span>) <span class="hljs-comment">// 参数校验 确保复用器要关注的事件是有效的</span><br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>();<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">this</span>.isOpen()) <span class="hljs-comment">// 参数校验 确保channel是处于监听状态的</span><br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClosedChannelException</span>();<br>    <span class="hljs-keyword">synchronized</span> (regLock) &#123;<br>        <span class="hljs-keyword">if</span> (isBlocking())<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalBlockingModeException</span>();<br>        <span class="hljs-keyword">synchronized</span> (keyLock) &#123;<br>            <span class="hljs-comment">// re-check if channel has been closed</span><br>            <span class="hljs-keyword">if</span> (!isOpen()) <span class="hljs-comment">// 典型的Double-Check</span><br>                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClosedChannelException</span>();<br>            <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">k</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.findKey(sel); <span class="hljs-comment">// k代表的是注册在sel这个复用器上的channel</span><br>            <span class="hljs-keyword">if</span> (k != <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// channel已经注册过了复用器 这个方法再次被调用可能意味着修改某些参数</span><br>                k.attach(att); <span class="hljs-comment">// 可能Channel的附加数据att变更了(场景 写大量数据时分批写 每个tcp缓冲填满时不阻塞等待 Channel发送完第一批数据时 再次将Channel注册到复用器上 继续关注可写事件 将剩余没写完的数据挂到att上)</span><br>                k.interestOps(ops); <span class="hljs-comment">// 可能Channel关注的事件变更了</span><br>            &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// Channel首次向复用器上注册</span><br>                <span class="hljs-comment">// New registration</span><br>                k = ((AbstractSelector)sel).register(<span class="hljs-built_in">this</span>, ops, att); <span class="hljs-comment">// channel注册复用器成功后返回的SelectionKey相当于是对channel的封装</span><br>                <span class="hljs-built_in">this</span>.addKey(k); <span class="hljs-comment">// 把复用器注册成功的channel缓存到keys集合中</span><br>            &#125;<br>            <span class="hljs-keyword">return</span> k;<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// AbstractSelector</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(AbstractSelectableChannel ch,</span><br><span class="hljs-params">                                             <span class="hljs-type">int</span> ops, Object att)</span>; <span class="hljs-comment">// 将Channel注册到复用器上 关注Channel的ops事件 Channel携带的数据为att</span><br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(AbstractSelectableChannel ch,</span><br><span class="hljs-params">                                      <span class="hljs-type">int</span> ops,</span><br><span class="hljs-params">                                      Object attachment)</span><br>&#123; <span class="hljs-comment">// 将Channel注册到复用器上 关注Channel的ops事件 Channel携带了数据attachment</span><br>    <span class="hljs-keyword">if</span> (!(ch <span class="hljs-keyword">instanceof</span> SelChImpl))<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalSelectorException</span>();<br>    <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">k</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SelectionKeyImpl</span>((SelChImpl)ch, <span class="hljs-built_in">this</span>); <span class="hljs-comment">// 数据结构封装</span><br>    k.attach(attachment); <span class="hljs-comment">// Channel携带的数据</span><br><br>    <span class="hljs-comment">// register (if needed) before adding to key set</span><br>    <span class="hljs-built_in">this</span>.implRegister(k); <span class="hljs-comment">// channel注册复用器前置检查确认Channel处于Open状态</span><br><br>    <span class="hljs-comment">// add to the selector&#x27;s key set, removing it immediately if the selector</span><br>    <span class="hljs-comment">// is closed. The key is not in the channel&#x27;s key set at this point but</span><br>    <span class="hljs-comment">// it may be observed by a thread iterating over the selector&#x27;s key set.</span><br>    <span class="hljs-built_in">this</span>.keys.add(k); <span class="hljs-comment">// 监听的Channel 让复用器监听哪些Channel</span><br>    <span class="hljs-keyword">try</span> &#123;<br>        k.interestOps(ops); <span class="hljs-comment">// 让复用器监听Channel的什么事件 将事件(新增/移除/覆盖更新)缓存到updateKeys</span><br>    &#125; <span class="hljs-keyword">catch</span> (ClosedSelectorException e) &#123;<br>        <span class="hljs-keyword">assert</span> ch.keyFor(<span class="hljs-built_in">this</span>) == <span class="hljs-literal">null</span>;<br>        keys.remove(k);<br>        k.cancel();<br>        <span class="hljs-keyword">throw</span> e;<br>    &#125;<br>    <span class="hljs-keyword">return</span> k;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在register(…)过程中，并没有涉及系统调用发生，仅仅是将事件缓存在Java容器之中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// SelectionKeyImpl.java</span><br><span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> SelectionKey <span class="hljs-title function_">interestOps</span><span class="hljs-params">(<span class="hljs-type">int</span> ops)</span> &#123;<br>        ensureValid();<br>        <span class="hljs-keyword">if</span> ((ops &amp; ~channel().validOps()) != <span class="hljs-number">0</span>)<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">oldOps</span> <span class="hljs-operator">=</span> (<span class="hljs-type">int</span>) INTERESTOPS.getAndSet(<span class="hljs-built_in">this</span>, ops);<br>        <span class="hljs-keyword">if</span> (ops != oldOps) &#123;<br>            <span class="hljs-built_in">this</span>.selector.setEventOps(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// 将事件(新增/移除/覆盖更新) 缓存到updateKeys中</span><br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>    &#125;<br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEventOps</span><span class="hljs-params">(SelectionKeyImpl ski)</span>; <span class="hljs-comment">// 告知复用器处理事件的操作(新增/移除/更新...) 缓存在updateKeys 场景1(需要关注A这个Channel可读 将其注册到复用器上) 场景2(已经注册的A这个Channel可读事件 不需要再监听 让复用器移除) 场景3(已经注册的A这个Channel可读事件不需要再关注它的可读而是关注可写)</span><br></code></pre></td></tr></table></figure>
+
+<p>又是一个抽象，需要子类实现类去关注的。</p>
+<h4 id="2-3-AbstractSelector构造方法"><a href="#2-3-AbstractSelector构造方法" class="headerlink" title="2.3 AbstractSelector构造方法"></a>2.3 AbstractSelector构造方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractSelector.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Set&lt;SelectionKey&gt; keys; <span class="hljs-comment">// 缓存了SelectionKey(相当于对channel和复用器的封装) 也就是告诉复用器需要监听哪些Channel</span><br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Set&lt;SelectionKey&gt; selectedKeys; <span class="hljs-comment">// 在监听的对象keys中有事件发生的Channel -&gt; publicSelectedKeys(是selectedKeys的只读副本) -&gt; 暴露给应用层</span><br><br><span class="hljs-keyword">protected</span> <span class="hljs-title function_">SelectorImpl</span><span class="hljs-params">(SelectorProvider sp)</span> &#123; <span class="hljs-comment">// 属性初始化工作</span><br>    <span class="hljs-built_in">super</span>(sp);<br>    <span class="hljs-built_in">this</span>.keys = ConcurrentHashMap.newKeySet();<br>    <span class="hljs-built_in">this</span>.selectedKeys = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashSet</span>&lt;&gt;();<br>    <span class="hljs-built_in">this</span>.publicKeys = Collections.unmodifiableSet(keys);<br>    <span class="hljs-built_in">this</span>.publicSelectedKeys = Util.ungrowableSet(<span class="hljs-built_in">this</span>.selectedKeys); <span class="hljs-comment">// 这个就是select()的结果 又自己实现了数据结构 不支持写 相当于读写分离的设计 本质上引用指针指向的是selectedKeys</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-4-获取状态就绪Channel"><a href="#2-4-获取状态就绪Channel" class="headerlink" title="2.4 获取状态就绪Channel"></a>2.4 获取状态就绪Channel</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Demo.java</span><br>Iterator&lt;SelectionKey&gt; keyIterator = selector.selectedKeys().iterator();<br><br><span class="hljs-comment">// Selector.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> Set&lt;SelectionKey&gt; <span class="hljs-title function_">selectedKeys</span><span class="hljs-params">()</span>; <span class="hljs-comment">// SelectorImpl#publicSelectedKeys对应的本质就是SelectorImpl#selectedKeys 这个集合就是存放事件就绪的channel</span><br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> Set&lt;SelectionKey&gt; <span class="hljs-title function_">selectedKeys</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-built_in">this</span>.ensureOpen();<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.publicSelectedKeys; <span class="hljs-comment">// 返回了一个集合作为结果 那么只要关注这个集合的生成和添加过程就行</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>而这个<code>publicSelectedKeys</code>集合就是在AbstractSelector构造方法中定义的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractSelector.java</span><br><span class="hljs-built_in">this</span>.publicSelectedKeys = Util.ungrowableSet(<span class="hljs-built_in">this</span>.selectedKeys); <span class="hljs-comment">// 这个就是select()的结果 又自己实现了数据结构 不支持写 相当于读写分离的设计 本质上引用指针指向的是selectedKeys</span><br><br><span class="hljs-comment">// Util.java</span><br><span class="hljs-keyword">static</span> &lt;E&gt; Set&lt;E&gt; <span class="hljs-title function_">ungrowableSet</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Set&lt;E&gt; s)</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>&lt;E&gt;() &#123;<br><br>                <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">size</span><span class="hljs-params">()</span>                 &#123; <span class="hljs-keyword">return</span> s.size(); &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isEmpty</span><span class="hljs-params">()</span>          &#123; <span class="hljs-keyword">return</span> s.isEmpty(); &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">contains</span><span class="hljs-params">(Object o)</span> &#123; <span class="hljs-keyword">return</span> s.contains(o); &#125;<br>                <span class="hljs-keyword">public</span> Object[] toArray()         &#123; <span class="hljs-keyword">return</span> s.toArray(); &#125;<br>                <span class="hljs-keyword">public</span> &lt;T&gt; T[] toArray(T[] a)     &#123; <span class="hljs-keyword">return</span> s.toArray(a); &#125;<br>                <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span>          &#123; <span class="hljs-keyword">return</span> s.toString(); &#125;<br>                <span class="hljs-keyword">public</span> Iterator&lt;E&gt; <span class="hljs-title function_">iterator</span><span class="hljs-params">()</span>     &#123; <span class="hljs-keyword">return</span> s.iterator(); &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">equals</span><span class="hljs-params">(Object o)</span>   &#123; <span class="hljs-keyword">return</span> s.equals(o); &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">hashCode</span><span class="hljs-params">()</span>             &#123; <span class="hljs-keyword">return</span> s.hashCode(); &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">clear</span><span class="hljs-params">()</span>               &#123; s.clear(); &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">remove</span><span class="hljs-params">(Object o)</span>   &#123; <span class="hljs-keyword">return</span> s.remove(o); &#125;<br><br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">containsAll</span><span class="hljs-params">(Collection&lt;?&gt; coll)</span> &#123;<br>                    <span class="hljs-keyword">return</span> s.containsAll(coll);<br>                &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">removeAll</span><span class="hljs-params">(Collection&lt;?&gt; coll)</span> &#123;<br>                    <span class="hljs-keyword">return</span> s.removeAll(coll);<br>                &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">retainAll</span><span class="hljs-params">(Collection&lt;?&gt; coll)</span> &#123;<br>                    <span class="hljs-keyword">return</span> s.retainAll(coll);<br>                &#125;<br><br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">add</span><span class="hljs-params">(E o)</span>&#123;<br>                    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>();<br>                &#125;<br>                <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">addAll</span><span class="hljs-params">(Collection&lt;? extends E&gt; coll)</span> &#123;<br>                    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>();<br>                &#125;<br><br>        &#125;;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以将<code>publicSelectedKeys</code>看成是<code>selectedKeys</code>的副本。</p>
+<p>因此，只需要关注实现类里面这几个方法即可：</p>
+<ul>
+<li>构造方法</li>
+<li>setEventOps(…)方法</li>
+<li>doSelect(…)方法</li>
+</ul>
+<h3 id="3-Java-IO多路复用器不同平台实现"><a href="#3-Java-IO多路复用器不同平台实现" class="headerlink" title="3 Java IO多路复用器不同平台实现"></a>3 Java IO多路复用器不同平台实现</h3><h4 id="3-1-MacOSX平台KQueueSelectorImpl实现"><a href="#3-1-MacOSX平台KQueueSelectorImpl实现" class="headerlink" title="3.1 MacOSX平台KQueueSelectorImpl实现"></a>3.1 MacOSX平台KQueueSelectorImpl实现</h4><h5 id="3-1-1-构造方法"><a href="#3-1-1-构造方法" class="headerlink" title="3.1.1 构造方法"></a>3.1.1 构造方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// KQueueSelectorImpl.java</span><br><span class="hljs-comment">// maximum number of events to poll in one call to kqueue</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAX_KEVENTS</span> <span class="hljs-operator">=</span> <span class="hljs-number">256</span>;<br><br>KQueueSelectorImpl(SelectorProvider sp) <span class="hljs-keyword">throws</span> IOException &#123; <span class="hljs-comment">// sp是KQueueSelectorProvider的实例 除了发生一次kevent系统调用之外 这个构造器的主要作用就是定义两个容器 一个放注册到复用器里面的Channel 另一个处于就绪状态的Channel</span><br>    <span class="hljs-built_in">super</span>(sp);<br><br>    <span class="hljs-built_in">this</span>.kqfd = KQueue.create(); <span class="hljs-comment">// 系统调用创建内核事件队列 返回文件描述符 也就是kqueue实例</span><br>    <span class="hljs-built_in">this</span>.pollArrayAddress = KQueue.allocatePollArray(MAX_KEVENTS); <span class="hljs-comment">// os实现kqueue定义了kevent数据结构 申请指定数量的kevent内存 这一片内存作为每次kevent()系统调用状态就绪的事件存放</span><br><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">long</span> <span class="hljs-variable">fds</span> <span class="hljs-operator">=</span> IOUtil.makePipe(<span class="hljs-literal">false</span>); <span class="hljs-comment">// 文件描述符 [高32位 低32位]分别对应[读文件描述符 写文件描述符]</span><br>        <span class="hljs-built_in">this</span>.fd0 = (<span class="hljs-type">int</span>) (fds &gt;&gt;&gt; <span class="hljs-number">32</span>); <span class="hljs-comment">// 可读文件描述符</span><br>        <span class="hljs-built_in">this</span>.fd1 = (<span class="hljs-type">int</span>) fds; <span class="hljs-comment">// 可写文件描述符</span><br>    &#125; <span class="hljs-keyword">catch</span> (IOException ioe) &#123;<br>        KQueue.freePollArray(pollArrayAddress); <span class="hljs-comment">// 申请好的内存进行释放</span><br>        FileDispatcherImpl.closeIntFD(kqfd);<br>        <span class="hljs-keyword">throw</span> ioe;<br>    &#125;<br><br>    <span class="hljs-comment">// register one end of the socket pair for wakeups</span><br>    KQueue.register(kqfd, fd0, EVFILT_READ, EV_ADD); <span class="hljs-comment">// kqfd=kqueue系统调用文件描述符 fd0=一个可读文件描述符 EVFILT_READ=让kqueue关注fd0的可读事件 EV_ADD=构建一个fd0的kevent加到kqueue中 作用就是向kqueue新增一个事件 让kqueue监听fd0的可读状态</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>后面代码创建IO标识的fd并且向KQueue复用器注册一个事件，去关注这个fd的读状态，我还没明白此处的意图，先忽略。</p>
+<h5 id="3-1-2-setEventOps-…-方法"><a href="#3-1-2-setEventOps-…-方法" class="headerlink" title="3.1.2 setEventOps(…)方法"></a>3.1.2 setEventOps(…)方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEventOps</span><span class="hljs-params">(SelectionKeyImpl ski)</span> &#123; <span class="hljs-comment">// 告知复用器处理事件的操作(新增/移除/更新...)</span><br>    ensureOpen();<br>    <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>        <span class="hljs-built_in">this</span>.updateKeys.addLast(ski); <span class="hljs-comment">// 尝试更新updateKeys 新增事件 移除事件 覆盖更新事件</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h5 id="3-1-3-doSelect-…-方法"><a href="#3-1-3-doSelect-…-方法" class="headerlink" title="3.1.3 doSelect(…)方法"></a>3.1.3 doSelect(…)方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// KqueueSelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-title function_">doSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123; <span class="hljs-comment">// 从Selector#select()跟进来 action=null timeout=-1</span><br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// 这个方法是实现了SelectorImpl#deoSelect()预留的模板钩子 入口在SelectorImpl#lockAndDoSelect() 进入之前外面包了synchronized 这个地方再判断一下当前执行线程是否持有了管程锁</span><br><br>    <span class="hljs-type">long</span> <span class="hljs-variable">to</span> <span class="hljs-operator">=</span> Math.min(timeout, Integer.MAX_VALUE);  <span class="hljs-comment">// max kqueue timeout // to表示在有超时机制下还有多行时间可用 timeout=-1表示阻塞</span><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">blocking</span> <span class="hljs-operator">=</span> (to != <span class="hljs-number">0</span>); <span class="hljs-comment">// true</span><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">timedPoll</span> <span class="hljs-operator">=</span> (to &gt; <span class="hljs-number">0</span>); <span class="hljs-comment">// 标识是否还有超时时间</span><br><br>    <span class="hljs-type">int</span> numEntries;<br>    <span class="hljs-built_in">this</span>.processUpdateQueue(); <span class="hljs-comment">// 缓存fd跟key的映射 向内核多路复用器注册/移除事件 发生与OS内核的交互(注册事件/移除事件/变更事件) 但是其内部实现仅仅是一个宏</span><br>    <span class="hljs-built_in">this</span>.processDeregisterQueue();<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-built_in">this</span>.begin(blocking);<br><br>        <span class="hljs-keyword">do</span> &#123;<br>            <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> timedPoll ? System.nanoTime() : <span class="hljs-number">0</span>; <span class="hljs-comment">// 0</span><br>            numEntries = KQueue.poll(kqfd, <span class="hljs-built_in">this</span>.pollArrayAddress, MAX_KEVENTS, to); <span class="hljs-comment">// 发生一次系统调用 函数原型为JNIEXPORT jint JNICALL Java_sun_nio_ch_KQueue_poll(JNIEnv *env, jclass clazz, jint kqfd, jlong address, jint nevents, jlong timeout) 作用是从pollArrayAddress指向的kevent一片内存开始监听MAX_KEVENTS个事件 看看有多少个事件状态就绪了</span><br>            <span class="hljs-keyword">if</span> (numEntries == IOStatus.INTERRUPTED &amp;&amp; timedPoll) &#123; <span class="hljs-comment">// 系统调用中断(有可能是超时导致的) 如果客户端设置了超时限制 判定果真超时就将返回值修改为对应的结果</span><br>                <span class="hljs-comment">// timed poll interrupted so need to adjust timeout</span><br>                <span class="hljs-type">long</span> <span class="hljs-variable">adjust</span> <span class="hljs-operator">=</span> System.nanoTime() - startTime; <span class="hljs-comment">// 配置了超时时间 还剩多长时间可用</span><br>                to -= TimeUnit.MILLISECONDS.convert(adjust, TimeUnit.NANOSECONDS);<br>                <span class="hljs-keyword">if</span> (to &lt;= <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// 超时了</span><br>                    <span class="hljs-comment">// timeout expired so no retry</span><br>                    numEntries = <span class="hljs-number">0</span>;<br>                &#125;<br>            &#125;<br>        &#125; <span class="hljs-keyword">while</span> (numEntries == IOStatus.INTERRUPTED); <span class="hljs-comment">// 本质就是在允许的timeout时间范围内 如果系统调用是因为线程中断导致的 就一直尝试直到超时</span><br>        <span class="hljs-keyword">assert</span> IOStatus.check(numEntries);<br><br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        end(blocking);<br>    &#125; <span class="hljs-comment">// 截止目前 从内核拿到了numEntries表示pollArrayAddress指针开始有多少个Channel发生过事件 但这些Channel不一定全是关注的 所以需要继续过滤筛选</span><br>    <span class="hljs-built_in">this</span>.processDeregisterQueue(); <span class="hljs-comment">// 从复用器移除事件</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.processEvents(numEntries, action); <span class="hljs-comment">// action=null 内核告知了多少个Channel发生了事件 也将这些Channel存放在一片内存上 现在需要去轮询看看哪些是我们关注的</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>主要功能是：</p>
+<ul>
+<li>向OS内核IO多路复用器注册事件。</li>
+<li>OS内核复用器告知有多少个Channel发生了事件，并且将这些事件放在一片内存上(KQueueSelectorImpl::pollArrayAddress指针)。</li>
+<li>过滤OS复用器结果，筛选哪些是真正关注的。</li>
+</ul>
+<h6 id="3-1-3-1-向OS内核复用器注册事件"><a href="#3-1-3-1-向OS内核复用器注册事件" class="headerlink" title="3.1.3.1 向OS内核复用器注册事件"></a>3.1.3.1 向OS内核复用器注册事件</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// KQueueSelectorImpl.java</span><br><span class="hljs-built_in">this</span>.processUpdateQueue();<br><br><span class="hljs-comment">// KQueueSelectorImpl.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processUpdateQueue</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>        <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>            SelectionKeyImpl ski;<br>            <span class="hljs-keyword">while</span> ((ski = <span class="hljs-built_in">this</span>.updateKeys.pollFirst()) != <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 向复用器注册/移除这样操作的事件</span><br>                <span class="hljs-keyword">if</span> (ski.isValid()) &#123;<br>                    <span class="hljs-type">int</span> <span class="hljs-variable">fd</span> <span class="hljs-operator">=</span> ski.getFDVal();<br>                    <span class="hljs-comment">// add to fdToKey if needed</span><br>                    <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">previous</span> <span class="hljs-operator">=</span> fdToKey.putIfAbsent(fd, ski); <span class="hljs-comment">// fd对应的SelectionKey 只有这一个地方会添加fd的映射</span><br>                    <span class="hljs-keyword">assert</span> (previous == <span class="hljs-literal">null</span>) || (previous == ski);<br><br>                    <span class="hljs-type">int</span> <span class="hljs-variable">newEvents</span> <span class="hljs-operator">=</span> ski.translateInterestOps();<br>                    <span class="hljs-type">int</span> <span class="hljs-variable">registeredEvents</span> <span class="hljs-operator">=</span> ski.registeredEvents();<br>                    <span class="hljs-keyword">if</span> (newEvents != registeredEvents) &#123;<br><br>                        <span class="hljs-comment">// add or delete interest in read events</span><br>                        <span class="hljs-keyword">if</span> ((registeredEvents &amp; Net.POLLIN) != <span class="hljs-number">0</span>) &#123;<br>                            <span class="hljs-keyword">if</span> ((newEvents &amp; Net.POLLIN) == <span class="hljs-number">0</span>) &#123;<br>                                KQueue.register(kqfd, fd, EVFILT_READ, EV_DELETE); <span class="hljs-comment">// 宏</span><br>                            &#125;<br>                        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((newEvents &amp; Net.POLLIN) != <span class="hljs-number">0</span>) &#123;<br>                            KQueue.register(kqfd, fd, EVFILT_READ, EV_ADD);<br>                        &#125;<br><br>                        <span class="hljs-comment">// add or delete interest in write events</span><br>                        <span class="hljs-keyword">if</span> ((registeredEvents &amp; Net.POLLOUT) != <span class="hljs-number">0</span>) &#123;<br>                            <span class="hljs-keyword">if</span> ((newEvents &amp; Net.POLLOUT) == <span class="hljs-number">0</span>) &#123;<br>                                KQueue.register(kqfd, fd, EVFILT_WRITE, EV_DELETE);<br>                            &#125;<br>                        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((newEvents &amp; Net.POLLOUT) != <span class="hljs-number">0</span>) &#123;<br>                            KQueue.register(kqfd, fd, EVFILT_WRITE, EV_ADD);<br>                        &#125;<br><br>                        ski.registeredEvents(newEvents);<br>                    &#125;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br><span class="hljs-comment">// KQueue.java</span><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">native</span> <span class="hljs-type">int</span> <span class="hljs-title function_">register</span><span class="hljs-params">(<span class="hljs-type">int</span> kqfd, <span class="hljs-type">int</span> fd, <span class="hljs-type">int</span> filter, <span class="hljs-type">int</span> flags)</span>; <span class="hljs-comment">// 向kqueue注册事件 让复用器关注fd的filter事件(连接 可读 可写) flags=向kqueue注册事件(注册 移除...)</span><br><br><span class="hljs-comment">// KQueue.c</span><br>JNIEXPORT jint JNICALL<br><span class="hljs-title function_">Java_sun_nio_ch_KQueue_register</span><span class="hljs-params">(JNIEnv *env, jclass clazz, jint kqfd,</span><br><span class="hljs-params">                                jint fd, jint filter, jint flags)</span><br><br>&#123;<br>    struct kevent changes[<span class="hljs-number">1</span>];<br>    <span class="hljs-type">int</span> res;<br><br>    EV_SET(&amp;changes[<span class="hljs-number">0</span>], fd, filter, flags, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">// kevent实例 为这个kevent进行赋值 fd=属于fd的kevent filter=让kqueue关注fd的filter事件 flags=告诉kqueue如何处理这个kevent(添加 移除 ...)</span><br>    RESTARTABLE(kevent(kqfd, &amp;changes[<span class="hljs-number">0</span>], <span class="hljs-number">1</span>, NULL, <span class="hljs-number">0</span>, NULL), res); <span class="hljs-comment">// int kevent(int kq, const struct kevent *changelist, int nchanges, struct kevent *eventlist, int nevents, const struct timespec *timeout) 一次系统调用 向kqueue注册kevent事件 changelist=待监听事件 nchanges=待监听事件数量</span><br>    <span class="hljs-keyword">return</span> (res == -<span class="hljs-number">1</span>) ? errno : <span class="hljs-number">0</span>; <span class="hljs-comment">// 但凡changes注册发生失败就返回-1 超时返回0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>本质就是在客户端通过<code>channel.register(selector)</code>方式，让复用器监听哪些channel时，将这些事件封装到<code>updateKey</code>这个队列容器中，此时轮询队列中所有事件，注册到OS的复用器上。</p>
+<ul>
+<li><p>宏调用EV_SET对kevent数据结构赋值。</p>
+</li>
+<li><p>kevent中阈值描述了包括但不限于，让复用器关注哪个Channel的什么事件。</p>
+</li>
+<li><p>一次系统调用，将事件kevent注册到kqueue中。</p>
+</li>
+</ul>
+<h6 id="3-1-3-2-OS内核复用器返回状态就绪结果"><a href="#3-1-3-2-OS内核复用器返回状态就绪结果" class="headerlink" title="3.1.3.2 OS内核复用器返回状态就绪结果"></a>3.1.3.2 OS内核复用器返回状态就绪结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// KQueueSelectorImpl.java</span><br>numEntries = KQueue.poll(kqfd, <span class="hljs-built_in">this</span>.pollArrayAddress, MAX_KEVENTS, to);<br><br><span class="hljs-comment">// KQueue.java</span><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">native</span> <span class="hljs-type">int</span> <span class="hljs-title function_">poll</span><span class="hljs-params">(<span class="hljs-type">int</span> kqfd, <span class="hljs-type">long</span> pollAddress, <span class="hljs-type">int</span> nevents, <span class="hljs-type">long</span> timeout)</span><br>    <span class="hljs-keyword">throws</span> IOException; <span class="hljs-comment">// 本质是发生一次系统调用 给定超时时间为timeout毫秒 那些已经注册到kqueue队列的事件 监听其中nevents个 将这nevents个事件已经就绪的数量返回出来 并将就绪状态的kevent放在pollAddress这个指针指向的这一片内存上</span><br><br><span class="hljs-comment">// KQueue.c</span><br>JNIEXPORT jint JNICALL<br>    <span class="hljs-title function_">Java_sun_nio_ch_KQueue_poll</span><span class="hljs-params">(JNIEnv *env, jclass clazz, jint kqfd, jlong address,</span><br><span class="hljs-params">                                jint nevents, jlong timeout)</span><br>&#123; <span class="hljs-comment">// kqfd=kqueue()系统调用返回的fd 标识这个kqueue实例 给定超时时间为timeout毫秒 那些已经注册到kqueue队列的事件 监听其中nevents个 将这nevents个事件已经就绪的数量返回出来 并将就绪状态的kevent放在address这个指针指向的这一片内存上</span><br>    struct kevent *events = jlong_to_ptr(address); <span class="hljs-comment">// kevent数组首地址指针</span><br>    <span class="hljs-type">int</span> res;<br>    struct timespec ts;<br>    struct timespec *tsp; <span class="hljs-comment">// 超时时间</span><br><br>    <span class="hljs-keyword">if</span> (timeout &gt;= <span class="hljs-number">0</span>) &#123;<br>        ts.tv_sec = timeout / <span class="hljs-number">1000</span>; <span class="hljs-comment">// 秒</span><br>        ts.tv_nsec = (timeout % <span class="hljs-number">1000</span>) * <span class="hljs-number">1000000</span>; <span class="hljs-comment">// 纳秒</span><br>        tsp = &amp;ts;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        tsp = NULL;<br>    &#125;<br><br>    res = kevent(kqfd, NULL, <span class="hljs-number">0</span>, events, nevents, tsp); <span class="hljs-comment">// 系统调用 kqfd=kqueue实例 给定超时时间为tsp毫秒 那些已经注册到kqueue队列的事件 监听其中nevents个 将这nevents个事件已经就绪的数量返回出来 并将就绪状态的kevent放在events这个指针指向的这一片内存上</span><br>    <span class="hljs-keyword">if</span> (res &lt; <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// 发生异常</span><br>        <span class="hljs-keyword">if</span> (errno == EINTR) &#123;<br>            <span class="hljs-keyword">return</span> IOS_INTERRUPTED;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            JNU_ThrowIOExceptionWithLastError(env, <span class="hljs-string">&quot;kqueue failed&quot;</span>);<br>            <span class="hljs-keyword">return</span> IOS_THROWN;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> res; <span class="hljs-comment">// res个事件处于就绪状态</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h6 id="3-1-3-3-后置处理OS内核结果"><a href="#3-1-3-3-后置处理OS内核结果" class="headerlink" title="3.1.3.3 后置处理OS内核结果"></a>3.1.3.3 后置处理OS内核结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// KQueueSelectorImpl.java</span><br><span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.processEvents(numEntries, action); <span class="hljs-comment">// action=null 内核告知了多少个Channel发生了事件 也将这些Channel存放在一片内存上 现在需要去轮询看看哪些是我们关注的</span><br><br><span class="hljs-comment">// KQueueSelectorImpl.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processEvents</span><span class="hljs-params">(<span class="hljs-type">int</span> numEntries, Consumer&lt;SelectionKey&gt; action)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123;<br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">numKeysUpdated</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 内核系统调用已经返回了告知了有numTries个Channel发生过事件 但是这些发生过事件的不一定都是被关注的 需要从中判定出来哪些是应用层委托复用器关注的</span><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">interrupted</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br><br>    <span class="hljs-comment">// A file descriptor may be registered with kqueue with more than one</span><br>    <span class="hljs-comment">// filter and so there may be more than one event for a fd. The poll</span><br>    <span class="hljs-comment">// count is incremented here and compared against the SelectionKey&#x27;s</span><br>    <span class="hljs-comment">// &quot;lastPolled&quot; field. This ensures that the ready ops is updated rather</span><br>    <span class="hljs-comment">// than replaced when a file descriptor is polled by both the read and</span><br>    <span class="hljs-comment">// write filter.</span><br>    <span class="hljs-built_in">this</span>.pollCount++;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; numEntries; i++) &#123; <span class="hljs-comment">// pollArrayAddress指针指向[...]数组首地址 numEntries个kevent事件处于就绪状态 本质就是轮询数组元素</span><br>        <span class="hljs-type">long</span> <span class="hljs-variable">kevent</span> <span class="hljs-operator">=</span> KQueue.getEvent(<span class="hljs-built_in">this</span>.pollArrayAddress, i); <span class="hljs-comment">// 数组中元素 就是状态就绪的kevent事件</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">fd</span> <span class="hljs-operator">=</span> KQueue.getDescriptor(kevent); <span class="hljs-comment">// kevent事件对应的fd</span><br>        <span class="hljs-keyword">if</span> (fd == fd0) &#123;<br>            interrupted = <span class="hljs-literal">true</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">ski</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.fdToKey.get(fd); <span class="hljs-comment">// fd对应的SelectionKey 这个SelectionKey会在注册的时候触发缓存映射起来</span><br>            <span class="hljs-keyword">if</span> (ski != <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">rOps</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// Channel实际发生的事件</span><br>                <span class="hljs-type">short</span> <span class="hljs-variable">filter</span> <span class="hljs-operator">=</span> KQueue.getFilter(kevent); <span class="hljs-comment">// 当初注册时需要让kqueue关注kevent事件什么状态</span><br>                <span class="hljs-keyword">if</span> (filter == EVFILT_READ) &#123; <span class="hljs-comment">// 关注kevent的可读状态</span><br>                    rOps |= Net.POLLIN;<br>                &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (filter == EVFILT_WRITE) &#123; <span class="hljs-comment">// 关注kevent的可写状态</span><br>                    rOps |= Net.POLLOUT;<br>                &#125;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">updated</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">super</span>.processReadyEvents(rOps, ski, action); <span class="hljs-comment">// rOps=kqueue关注的kevent事件状态(可能是单一某个状态 也可能是多个状态的组合状态) action=null 过滤出os内核给出的kevent发生过事件变更的(上一次select选出过来一个Channel返回给客户端 但是迭代器使用完后没有移除 然后可能更新过关注的事件 现在发生的事件恰好就是第二次关注的)</span><br>                <span class="hljs-keyword">if</span> (updated &gt; <span class="hljs-number">0</span> &amp;&amp; ski.lastPolled != pollCount) &#123; <span class="hljs-comment">// 场景边界: 一个Channel注册到了多个复用器上或者一个Channel被关注多个事件</span><br>                    numKeysUpdated++;<br>                    ski.lastPolled = pollCount;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (interrupted) &#123;<br>        clearInterrupt();<br>    &#125;<br>    <span class="hljs-keyword">return</span> numKeysUpdated;<br>&#125;<br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processReadyEvents</span><span class="hljs-params">(<span class="hljs-type">int</span> rOps, // 当前实际发生的事件</span><br><span class="hljs-params">                                       SelectionKeyImpl ski,</span><br><span class="hljs-params">                                       Consumer&lt;SelectionKey&gt; action)</span> &#123; <span class="hljs-comment">// 返回值要么是0 要么是1 rOps是os从kqueue的kevent中拿来的</span><br>    <span class="hljs-keyword">if</span> (action != <span class="hljs-literal">null</span>) &#123;<br>        ski.translateAndSetReadyOps(rOps);<br>        <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123;<br>            action.accept(ski);<br>            ensureOpen();<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// action=null</span><br>        <span class="hljs-keyword">assert</span> Thread.holdsLock(publicSelectedKeys);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.selectedKeys.contains(ski)) &#123; <span class="hljs-comment">// 状态就绪的事件(有可能是上一轮没有通过迭代器remove的事件)</span><br>            <span class="hljs-keyword">if</span> (ski.translateAndUpdateReadyOps(rOps)) &#123; <span class="hljs-comment">// 尝试更新到已经发生过的事件中</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <span class="hljs-comment">// 发生的事件补充到了已经发生过的事件中</span><br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            ski.translateAndSetReadyOps(rOps); <span class="hljs-comment">// 将当前事件记录为已经发生过的事件</span><br>            <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// Channel发生过的事件(位操作来的 可能标识多个状态 可读 可写...)跟感兴趣事件与操作 只要感兴趣的事件在发生过的事件集合中 就表示找到了一个Channel是应用层需要复用器返回出去的</span><br>                <span class="hljs-built_in">this</span>.selectedKeys.add(ski); <span class="hljs-comment">// ski指向的这个Channel是应用层委托复用器关注的事件 该事件状态就绪</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>所以最终就是将状态就绪的Channel放在了<code>selectedKeys</code>容器中了，从AbstractSelector的构造方法可知将来返回给用户的结果<code>publicSelectedKeys</code>也就是此时的<code>selectedKeys</code>。</p>
+<p>有了KQueue的实现分析，下面的实现就比较简单了。</p>
+<h4 id="3-2-Linux平台EPollSelectorImpl实现"><a href="#3-2-Linux平台EPollSelectorImpl实现" class="headerlink" title="3.2 Linux平台EPollSelectorImpl实现"></a>3.2 Linux平台EPollSelectorImpl实现</h4><h5 id="3-2-1-构造方法"><a href="#3-2-1-构造方法" class="headerlink" title="3.2.1 构造方法"></a>3.2.1 构造方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// EPollSelectorImpl.java</span><br><br><span class="hljs-comment">// maximum number of events to poll in one call to epoll_wait</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">NUM_EPOLLEVENTS</span> <span class="hljs-operator">=</span> Math.min(IOUtil.fdLimit(), <span class="hljs-number">1024</span>);<br><br>EPollSelectorImpl(SelectorProvider sp) <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-built_in">super</span>(sp); <span class="hljs-comment">// 定义了两个集合 一个存放注册到复用器的Channel(事件+需要关注的事件状态) 另一个存放状态就绪的事件</span><br><br>    <span class="hljs-built_in">this</span>.epfd = EPoll.create(); <span class="hljs-comment">// 创建epoll实例</span><br>    <span class="hljs-built_in">this</span>.pollArrayAddress = EPoll.allocatePollArray(NUM_EPOLLEVENTS); <span class="hljs-comment">// 开辟一片内存存放那些OS系统调用结果(哪些Channel状态就绪了)</span><br><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">long</span> <span class="hljs-variable">fds</span> <span class="hljs-operator">=</span> IOUtil.makePipe(<span class="hljs-literal">false</span>); <span class="hljs-comment">// 高32位存放可读fd 低32位存放可写fd</span><br>        <span class="hljs-built_in">this</span>.fd0 = (<span class="hljs-type">int</span>) (fds &gt;&gt;&gt; <span class="hljs-number">32</span>); <span class="hljs-comment">// 可读fd</span><br>        <span class="hljs-built_in">this</span>.fd1 = (<span class="hljs-type">int</span>) fds; <span class="hljs-comment">// 可写fd</span><br>    &#125; <span class="hljs-keyword">catch</span> (IOException ioe) &#123;<br>        EPoll.freePollArray(pollArrayAddress);<br>        FileDispatcherImpl.closeIntFD(epfd);<br>        <span class="hljs-keyword">throw</span> ioe;<br>    &#125;<br><br>    <span class="hljs-comment">// register one end of the socket pair for wakeups</span><br>    EPoll.ctl(epfd, EPOLL_CTL_ADD, fd0, EPOLLIN); <span class="hljs-comment">// 向epoll实例添加一个事件 关注fd0可读状态</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>跟KQueue实现几乎一致，区别在于：</p>
+<ul>
+<li>依赖实现为epoll，创建的是epoll实例。</li>
+<li>KQueue一次系统调用返回的状态就绪结果数量上限为256个，EPoll一次系统调用返回的状态就绪结果数量上限为1024个(正常情况下一个进程fd可以关联的fd远不止1024个)。</li>
+</ul>
+<h5 id="3-2-2-setEventOps-…-方法"><a href="#3-2-2-setEventOps-…-方法" class="headerlink" title="3.2.2 setEventOps(…)方法"></a>3.2.2 setEventOps(…)方法</h5><p>跟KQueue实现是一样的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// EPollSelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEventOps</span><span class="hljs-params">(SelectionKeyImpl ski)</span> &#123;<br>        ensureOpen();<br>        <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>            updateKeys.addLast(ski);<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-2-3-doSelect-…-方法"><a href="#3-2-3-doSelect-…-方法" class="headerlink" title="3.2.3 doSelect(…)方法"></a>3.2.3 doSelect(…)方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// EPollSelector.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-title function_">doSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123;<br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>    <span class="hljs-comment">// epoll_wait timeout is int</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">to</span> <span class="hljs-operator">=</span> (<span class="hljs-type">int</span>) Math.min(timeout, Integer.MAX_VALUE);<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">blocking</span> <span class="hljs-operator">=</span> (to != <span class="hljs-number">0</span>);<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">timedPoll</span> <span class="hljs-operator">=</span> (to &gt; <span class="hljs-number">0</span>);<br><br>    <span class="hljs-type">int</span> numEntries;<br>    processUpdateQueue(); <span class="hljs-comment">// // 向内核注册事件(哪些Channel的什么事件) 可能是新增 可能是移除 也可能是覆盖更新</span><br>    processDeregisterQueue();<br>    <span class="hljs-keyword">try</span> &#123;<br>        begin(blocking);<br><br>        <span class="hljs-keyword">do</span> &#123; <span class="hljs-comment">// 在超时时段内 如果因为系统调用线程中断 就继续尝试到超时</span><br>            <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> timedPoll ? System.nanoTime() : <span class="hljs-number">0</span>;<br>            numEntries = EPoll.wait(epfd, pollArrayAddress, NUM_EPOLLEVENTS, to); <span class="hljs-comment">// epfd=epoll实例 那些已经注册epoll的事件中 多少个已经处于就绪状态 将数量返回(该结果数量上限为NUM_EPOLLEVENTS) 并将这些就绪的事件epoll_event放在pollArrayAddress指向的内存区域上</span><br>            <span class="hljs-keyword">if</span> (numEntries == IOStatus.INTERRUPTED &amp;&amp; timedPoll) &#123;<br>                <span class="hljs-comment">// timed poll interrupted so need to adjust timeout</span><br>                <span class="hljs-type">long</span> <span class="hljs-variable">adjust</span> <span class="hljs-operator">=</span> System.nanoTime() - startTime;<br>                to -= TimeUnit.MILLISECONDS.convert(adjust, TimeUnit.NANOSECONDS);<br>                <span class="hljs-keyword">if</span> (to &lt;= <span class="hljs-number">0</span>) &#123;<br>                    <span class="hljs-comment">// timeout expired so no retry</span><br>                    numEntries = <span class="hljs-number">0</span>;<br>                &#125;<br>            &#125;<br>        &#125; <span class="hljs-keyword">while</span> (numEntries == IOStatus.INTERRUPTED);<br>        <span class="hljs-keyword">assert</span> IOStatus.check(numEntries);<br><br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        end(blocking);<br>    &#125;<br>    processDeregisterQueue();<br>    <span class="hljs-keyword">return</span> processEvents(numEntries, action); <span class="hljs-comment">// 内核有numEntries个Channel发生了事件 从中筛选出客户端关注的有多少个</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h6 id="3-2-3-1-向OS内核复用器注册事件"><a href="#3-2-3-1-向OS内核复用器注册事件" class="headerlink" title="3.2.3.1 向OS内核复用器注册事件"></a>3.2.3.1 向OS内核复用器注册事件</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// EPollSelector.java</span><br>processUpdateQueue(); <span class="hljs-comment">// 向内核注册事件(哪些Channel的什么事件) 可能是新增 可能是移除 也可能是覆盖更新</span><br><br><span class="hljs-comment">// EPollSelector.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processUpdateQueue</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>    <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>        SelectionKeyImpl ski;<br>        <span class="hljs-keyword">while</span> ((ski = updateKeys.pollFirst()) != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">if</span> (ski.isValid()) &#123;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">fd</span> <span class="hljs-operator">=</span> ski.getFDVal();<br>                <span class="hljs-comment">// add to fdToKey if needed</span><br>                <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">previous</span> <span class="hljs-operator">=</span> fdToKey.putIfAbsent(fd, ski);<br>                <span class="hljs-keyword">assert</span> (previous == <span class="hljs-literal">null</span>) || (previous == ski);<br><br>                <span class="hljs-type">int</span> <span class="hljs-variable">newEvents</span> <span class="hljs-operator">=</span> ski.translateInterestOps();<br>                <span class="hljs-type">int</span> <span class="hljs-variable">registeredEvents</span> <span class="hljs-operator">=</span> ski.registeredEvents();<br>                <span class="hljs-keyword">if</span> (newEvents != registeredEvents) &#123;<br>                    <span class="hljs-keyword">if</span> (newEvents == <span class="hljs-number">0</span>) &#123;<br>                        <span class="hljs-comment">// remove from epoll</span><br>                        EPoll.ctl(epfd, EPOLL_CTL_DEL, fd, <span class="hljs-number">0</span>);<br>                    &#125; <span class="hljs-keyword">else</span> &#123;<br>                        <span class="hljs-keyword">if</span> (registeredEvents == <span class="hljs-number">0</span>) &#123;<br>                            <span class="hljs-comment">// add to epoll</span><br>                            EPoll.ctl(epfd, EPOLL_CTL_ADD, fd, newEvents); <span class="hljs-comment">// 向OS内核注册事件</span><br>                        &#125; <span class="hljs-keyword">else</span> &#123;<br>                            <span class="hljs-comment">// modify events</span><br>                            EPoll.ctl(epfd, EPOLL_CTL_MOD, fd, newEvents);<br>                        &#125;<br>                    &#125;<br>                    ski.registeredEvents(newEvents);<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// EPoll.java</span><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">native</span> <span class="hljs-type">int</span> <span class="hljs-title function_">ctl</span><span class="hljs-params">(<span class="hljs-type">int</span> epfd, <span class="hljs-type">int</span> opcode, <span class="hljs-type">int</span> fd, <span class="hljs-type">int</span> events)</span>;<br><br><span class="hljs-comment">// EPoll.c</span><br>JNIEXPORT jint JNICALL<br>    <span class="hljs-title function_">Java_sun_nio_ch_EPoll_ctl</span><span class="hljs-params">(JNIEnv *env, jclass clazz, jint epfd,</span><br><span class="hljs-params">                              jint opcode, jint fd, jint events)</span><br>&#123; <span class="hljs-comment">// 向epoll实例进行opcode(添加 移除...)一个事件 该事件关注fd的events状态</span><br>    struct epoll_event event;<br>    <span class="hljs-type">int</span> res;<br><br>    event.events = events;<br>    event.data.fd = fd;<br><br>    res = epoll_ctl(epfd, (<span class="hljs-type">int</span>)opcode, (<span class="hljs-type">int</span>)fd, &amp;event); <span class="hljs-comment">// 系统调用</span><br>    <span class="hljs-keyword">return</span> (res == <span class="hljs-number">0</span>) ? <span class="hljs-number">0</span> : errno;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>跟KQueue实现几乎一致，区别在于：</p>
+<ul>
+<li>EPoll注册事件的系统调用名称为epoll_ctl。</li>
+<li>EPoll使用的数据结构名称为epoll_event，采用手动赋值方式，没有借助宏。</li>
+<li>EPoll注册事件只能借助epoll_ctl一个一个操作，而KQueue可以轮询EV_SET赋值完kevent后，将整个changelist通过kevent一次性注册。</li>
+</ul>
+<h6 id="3-2-3-2-OS内核复用器返回状态就绪结果"><a href="#3-2-3-2-OS内核复用器返回状态就绪结果" class="headerlink" title="3.2.3.2 OS内核复用器返回状态就绪结果"></a>3.2.3.2 OS内核复用器返回状态就绪结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// EPollSelectorImpl.java</span><br>numEntries = EPoll.wait(epfd, pollArrayAddress, NUM_EPOLLEVENTS, to); <span class="hljs-comment">// epfd=epoll实例 那些已经注册epoll的事件中 多少个已经处于就绪状态 将数量返回(该结果数量上限为NUM_EPOLLEVENTS) 并将这些就绪的事件epoll_event放在pollArrayAddress指向的内存区域上</span><br><br><span class="hljs-comment">// EPoll.java</span><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">native</span> <span class="hljs-type">int</span> <span class="hljs-title function_">wait</span><span class="hljs-params">(<span class="hljs-type">int</span> epfd, <span class="hljs-type">long</span> pollAddress, <span class="hljs-type">int</span> numfds, <span class="hljs-type">int</span> timeout)</span><br>        <span class="hljs-keyword">throws</span> IOException; <span class="hljs-comment">// epfd=epoll实例 那些已经注册epoll的事件中 多少个已经处于就绪状态 将数量返回(该结果数量上限为numfds) 并将这些就绪的事件epoll_event放在pollAddress指向的内存区域上</span><br><br><br><span class="hljs-comment">// Epoll.c</span><br>JNIEXPORT jint JNICALL<br><span class="hljs-title function_">Java_sun_nio_ch_EPoll_wait</span><span class="hljs-params">(JNIEnv *env, jclass clazz, jint epfd,</span><br><span class="hljs-params">                           jlong address, jint numfds, jint timeout)</span><br>&#123; <span class="hljs-comment">// epfd=epoll实例 那些已经注册epoll的事件中 多少个已经处于就绪状态 将数量返回(该结果数量上限为numfds) 并将这些就绪的事件epoll_event放在address指向的内存区域上</span><br>    struct epoll_event *events = jlong_to_ptr(address);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">res</span> <span class="hljs-operator">=</span> epoll_wait(epfd, events, numfds, timeout); <span class="hljs-comment">// 一次系统调用 epfd=epoll实例 那些已经注册epoll的事件中 多少个已经处于就绪状态 将数量返回(该结果数量上限为numfds) 并将这些就绪的事件epoll_event放在events指向的内存区域上</span><br>    <span class="hljs-keyword">if</span> (res &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">if</span> (errno == EINTR) &#123;<br>            <span class="hljs-keyword">return</span> IOS_INTERRUPTED;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            JNU_ThrowIOExceptionWithLastError(env, <span class="hljs-string">&quot;epoll_wait failed&quot;</span>);<br>            <span class="hljs-keyword">return</span> IOS_THROWN;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>跟KQueue几乎一致，除了OS系统调用名称不同。</p>
+<h6 id="3-2-3-3-后置处理OS内核结果"><a href="#3-2-3-3-后置处理OS内核结果" class="headerlink" title="3.2.3.3 后置处理OS内核结果"></a>3.2.3.3 后置处理OS内核结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// EPollSelectorImpl.java</span><br><span class="hljs-keyword">return</span> processEvents(numEntries, action); <span class="hljs-comment">// 后置处理 内核有numEntries个Channel发生了事件 从中筛选出客户端关注的有多少个</span><br><br><span class="hljs-comment">// EPollSelectorImpl.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processEvents</span><span class="hljs-params">(<span class="hljs-type">int</span> numEntries, Consumer&lt;SelectionKey&gt; action)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123; <span class="hljs-comment">// 后置处理 内核有numEntries个Channel发生了事件 其中numKeysUpdated个是客户端关注的</span><br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">interrupted</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">numKeysUpdated</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;numEntries; i++) &#123;<br>        <span class="hljs-type">long</span> <span class="hljs-variable">event</span> <span class="hljs-operator">=</span> EPoll.getEvent(pollArrayAddress, i); <span class="hljs-comment">// 通过指针偏移方式寻址 本质就是轮询数组元素 每个元素就是状态就绪的Channel事件</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">fd</span> <span class="hljs-operator">=</span> EPoll.getDescriptor(event);<br>        <span class="hljs-keyword">if</span> (fd == fd0) &#123;<br>            interrupted = <span class="hljs-literal">true</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">ski</span> <span class="hljs-operator">=</span> fdToKey.get(fd); <span class="hljs-comment">// 从映射缓存中匹配出SelectionKey(Channel+复用器)</span><br>            <span class="hljs-keyword">if</span> (ski != <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">rOps</span> <span class="hljs-operator">=</span> EPoll.getEvents(event); <span class="hljs-comment">// 事件发生的类型</span><br>                numKeysUpdated += processReadyEvents(rOps, ski, action); <span class="hljs-comment">// 父类方法</span><br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (interrupted) &#123;<br>        clearInterrupt();<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> numKeysUpdated;<br>&#125;<br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processReadyEvents</span><span class="hljs-params">(<span class="hljs-type">int</span> rOps, // 当前实际发生的事件</span><br><span class="hljs-params">                                       SelectionKeyImpl ski,</span><br><span class="hljs-params">                                       Consumer&lt;SelectionKey&gt; action)</span> &#123; <span class="hljs-comment">// 返回值要么是0 要么是1 rOps是os从kqueue的kevent中拿来的</span><br>    <span class="hljs-keyword">if</span> (action != <span class="hljs-literal">null</span>) &#123;<br>        ski.translateAndSetReadyOps(rOps);<br>        <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123;<br>            action.accept(ski);<br>            ensureOpen();<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// action=null</span><br>        <span class="hljs-keyword">assert</span> Thread.holdsLock(publicSelectedKeys);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.selectedKeys.contains(ski)) &#123; <span class="hljs-comment">// 状态就绪的事件(有可能是上一轮没有通过迭代器remove的事件)</span><br>            <span class="hljs-keyword">if</span> (ski.translateAndUpdateReadyOps(rOps)) &#123; <span class="hljs-comment">// 尝试更新到已经发生过的事件中</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <span class="hljs-comment">// 发生的事件补充到了已经发生过的事件中</span><br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            ski.translateAndSetReadyOps(rOps); <span class="hljs-comment">// 将当前事件记录为已经发生过的事件</span><br>            <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// Channel发生过的事件(位操作来的 可能标识多个状态 可读 可写...)跟感兴趣事件与操作 只要感兴趣的事件在发生过的事件集合中 就表示找到了一个Channel是应用层需要复用器返回出去的</span><br>                <span class="hljs-built_in">this</span>.selectedKeys.add(ski); <span class="hljs-comment">// ski指向的这个Channel是应用层委托复用器关注的事件 该事件状态就绪</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>跟KQueue几乎一致。</p>
+<h4 id="3-3-PollSelectorImpl实现"><a href="#3-3-PollSelectorImpl实现" class="headerlink" title="3.3 PollSelectorImpl实现"></a>3.3 PollSelectorImpl实现</h4><h5 id="3-3-1-构造方法"><a href="#3-3-1-构造方法" class="headerlink" title="3.3.1 构造方法"></a>3.3.1 构造方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// PollSelectorImpl.java</span><br>PollSelectorImpl(SelectorProvider sp) <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-built_in">super</span>(sp);<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> pollArrayCapacity * SIZE_POLLFD;<br>    <span class="hljs-built_in">this</span>.pollArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AllocatedNativeObject</span>(size, <span class="hljs-literal">false</span>);<br><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">long</span> <span class="hljs-variable">fds</span> <span class="hljs-operator">=</span> IOUtil.makePipe(<span class="hljs-literal">false</span>);<br>        <span class="hljs-built_in">this</span>.fd0 = (<span class="hljs-type">int</span>) (fds &gt;&gt;&gt; <span class="hljs-number">32</span>);<br>        <span class="hljs-built_in">this</span>.fd1 = (<span class="hljs-type">int</span>) fds;<br>    &#125; <span class="hljs-keyword">catch</span> (IOException ioe) &#123;<br>        pollArray.free();<br>        <span class="hljs-keyword">throw</span> ioe;<br>    &#125;<br><br>    <span class="hljs-comment">// wakeup support</span><br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>) &#123;<br>        setFirst(fd0, Net.POLLIN);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>跟KQueue和EPoll的差别很大，Poll没有创建数据结构实例：</p>
+<ul>
+<li>KQueue创建了kqueue实例</li>
+<li>EPoll创建了epoll实例</li>
+</ul>
+<p>由此已经可以猜测出：</p>
+<ul>
+<li>OS内核系统调用形参不需要实例</li>
+<li>没有数据结构存放状态就绪的Channel，也就意味着poll只能知道多少个Channel状态就绪，却不知道它们是哪些</li>
+</ul>
+<h5 id="3-3-2-setEventOps-…-方法"><a href="#3-3-2-setEventOps-…-方法" class="headerlink" title="3.3.2 setEventOps(…)方法"></a>3.3.2 setEventOps(…)方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// PollSelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEventOps</span><span class="hljs-params">(SelectionKeyImpl ski)</span> &#123;<br>        ensureOpen();<br>        <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>            updateKeys.addLast(ski);<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>跟EPoll一样。</p>
+<h5 id="3-3-3-doSelect-…-方法"><a href="#3-3-3-doSelect-…-方法" class="headerlink" title="3.3.3 doSelect(…)方法"></a>3.3.3 doSelect(…)方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// PollSelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-title function_">doSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123;<br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">to</span> <span class="hljs-operator">=</span> (<span class="hljs-type">int</span>) Math.min(timeout, Integer.MAX_VALUE); <span class="hljs-comment">// max poll timeout</span><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">blocking</span> <span class="hljs-operator">=</span> (to != <span class="hljs-number">0</span>);<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">timedPoll</span> <span class="hljs-operator">=</span> (to &gt; <span class="hljs-number">0</span>);<br><br>    processUpdateQueue(); <span class="hljs-comment">// 用户注册的事件向OS内核注册</span><br>    processDeregisterQueue();<br>    <span class="hljs-keyword">try</span> &#123;<br>        begin(blocking);<br><br>        <span class="hljs-type">int</span> numPolled;<br>        <span class="hljs-keyword">do</span> &#123;<br>            <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> timedPoll ? System.nanoTime() : <span class="hljs-number">0</span>;<br>            numPolled = poll(pollArray.address(), pollArraySize, to); <span class="hljs-comment">// 系统调用 注册了pollArraySize个Channel待监听 它们以数组形式存储 首地址是pollArray.address()</span><br>            <span class="hljs-keyword">if</span> (numPolled == IOStatus.INTERRUPTED &amp;&amp; timedPoll) &#123;<br>                <span class="hljs-comment">// timed poll interrupted so need to adjust timeout</span><br>                <span class="hljs-type">long</span> <span class="hljs-variable">adjust</span> <span class="hljs-operator">=</span> System.nanoTime() - startTime;<br>                to -= TimeUnit.MILLISECONDS.convert(adjust, TimeUnit.NANOSECONDS);<br>                <span class="hljs-keyword">if</span> (to &lt;= <span class="hljs-number">0</span>) &#123;<br>                    <span class="hljs-comment">// timeout expired so no retry</span><br>                    numPolled = <span class="hljs-number">0</span>;<br>                &#125;<br>            &#125;<br>        &#125; <span class="hljs-keyword">while</span> (numPolled == IOStatus.INTERRUPTED);<br>        <span class="hljs-keyword">assert</span> numPolled &lt;= pollArraySize;<br><br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        end(blocking);<br>    &#125;<br><br>    processDeregisterQueue();<br>    <span class="hljs-keyword">return</span> processEvents(action); <span class="hljs-comment">// 后置处理</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h6 id="3-3-3-1-向OS内核复用器注册事件"><a href="#3-3-3-1-向OS内核复用器注册事件" class="headerlink" title="3.3.3.1 向OS内核复用器注册事件"></a>3.3.3.1 向OS内核复用器注册事件</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// PollSelectorImpl.java</span><br>processUpdateQueue(); <span class="hljs-comment">// 用户注册的事件向OS内核注册</span><br><br><span class="hljs-comment">// PollSelectorImpl.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processUpdateQueue</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>    <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>        SelectionKeyImpl ski;<br>        <span class="hljs-keyword">while</span> ((ski = updateKeys.pollFirst()) != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">newEvents</span> <span class="hljs-operator">=</span> ski.translateInterestOps();<br>            <span class="hljs-keyword">if</span> (ski.isValid()) &#123;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> ski.getIndex();<br>                <span class="hljs-keyword">assert</span> index &gt;= <span class="hljs-number">0</span> &amp;&amp; index &lt; pollArraySize;<br>                <span class="hljs-keyword">if</span> (index &gt; <span class="hljs-number">0</span>) &#123;<br>                    <span class="hljs-keyword">assert</span> pollKeys.get(index) == ski;<br>                    <span class="hljs-keyword">if</span> (newEvents == <span class="hljs-number">0</span>) &#123;<br>                        <span class="hljs-built_in">this</span>.remove(ski); <span class="hljs-comment">// 移除事件</span><br>                    &#125; <span class="hljs-keyword">else</span> &#123;<br>                        <span class="hljs-built_in">this</span>.update(ski, newEvents); <span class="hljs-comment">// 覆盖更新</span><br>                    &#125;<br>                &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (newEvents != <span class="hljs-number">0</span>) &#123;<br>                    <span class="hljs-built_in">this</span>.add(ski, newEvents); <span class="hljs-comment">// 新增事件</span><br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// PollSelectorImpl.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">add</span><span class="hljs-params">(SelectionKeyImpl ski, <span class="hljs-type">int</span> ops)</span> &#123; <span class="hljs-comment">// 新增事件 将事件体挂在pollArray数组中</span><br>    expandIfNeeded();<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> pollArraySize; <span class="hljs-comment">// 即将写第几个事件</span><br>    <span class="hljs-keyword">assert</span> index &gt; <span class="hljs-number">0</span>;<br>    putDescriptor(index, ski.getFDVal()); <span class="hljs-comment">// 操作指针写阈值</span><br>    putEventOps(index, ops); <span class="hljs-comment">// 操作指针写阈值</span><br>    putReventOps(index, <span class="hljs-number">0</span>); <span class="hljs-comment">// 操作指针写阈值</span><br>    ski.setIndex(index);<br>    pollArraySize++;<br><br>    pollKeys.add(ski);<br>    <span class="hljs-keyword">assert</span> pollKeys.size() == pollArraySize;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Poll跟EPoll比较，差异很明显，注册不存在系统调用，仅仅是在用户层按照内核约定的时间数据结构准备好放在一个数组中，即pollArray指针指向的内存。</p>
+<h6 id="3-3-3-2-OS内核复用器返回状态就绪结果"><a href="#3-3-3-2-OS内核复用器返回状态就绪结果" class="headerlink" title="3.3.3.2 OS内核复用器返回状态就绪结果"></a>3.3.3.2 OS内核复用器返回状态就绪结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// PollSelectorImpl.java</span><br>numPolled = poll(pollArray.address(), pollArraySize, to); <span class="hljs-comment">// 系统调用 注册了pollArraySize个Channel待监听 它们以数组形式存储 首地址是pollArray.address()</span><br><br><br><span class="hljs-comment">// PollSelectorImpl.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">native</span> <span class="hljs-type">int</span> <span class="hljs-title function_">poll</span><span class="hljs-params">(<span class="hljs-type">long</span> pollAddress, <span class="hljs-type">int</span> numfds, <span class="hljs-type">int</span> timeout)</span>;<br><br><span class="hljs-comment">// PollSelectorImpl.c</span><br>JNIEXPORT jint JNICALL<br>    <span class="hljs-title function_">Java_sun_nio_ch_PollSelectorImpl_poll</span><span class="hljs-params">(JNIEnv *env, jclass clazz,</span><br><span class="hljs-params">                                          jlong address, jint numfds,</span><br><span class="hljs-params">                                          jint timeout)</span><br>&#123; <span class="hljs-comment">// address=待监听的Channel集合地址 numfds=监听多少个</span><br>    struct pollfd *a;<br>    <span class="hljs-type">int</span> res;<br><br>    a = (struct pollfd *) jlong_to_ptr(address); <span class="hljs-comment">// 数组首地址</span><br>    res = poll(a, numfds, timeout); <span class="hljs-comment">// 系统调用</span><br>    <span class="hljs-keyword">if</span> (res &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">if</span> (errno == EINTR) &#123;<br>            <span class="hljs-keyword">return</span> IOS_INTERRUPTED;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            JNU_ThrowIOExceptionWithLastError(env, <span class="hljs-string">&quot;poll failed&quot;</span>);<br>            <span class="hljs-keyword">return</span> IOS_THROWN;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> (jint) res; <span class="hljs-comment">// 在numfds个Channel中 res个事件就绪</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Poll跟EPoll区别：</p>
+<ul>
+<li>EPoll不仅能知道多少个事件就绪，还知道它们是谁。</li>
+<li>Poll只能知道多少个事件就绪，不知道它们是谁，如果想知道还得用户层轮询一遍。</li>
+</ul>
+<p>这样的效率差距可想而知。</p>
+<h6 id="3-3-3-3-后置处理OS内核结果"><a href="#3-3-3-3-后置处理OS内核结果" class="headerlink" title="3.3.3.3 后置处理OS内核结果"></a>3.3.3.3 后置处理OS内核结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// PollSelector.java</span><br><span class="hljs-keyword">return</span> processEvents(action); <span class="hljs-comment">// 后置处理 OS内核已经告诉我们在pollArraySize个事件中 有多少个事件处于就绪状态了</span><br><br><span class="hljs-comment">// PollSelector.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processEvents</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123; <span class="hljs-comment">// 从OS系统调用已知多少个事件就绪 轮询哪些监听事件 找出就绪事件分别是谁</span><br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br>    <span class="hljs-keyword">assert</span> pollArraySize &gt; <span class="hljs-number">0</span> &amp;&amp; pollArraySize == pollKeys.size();<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">numKeysUpdated</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt; pollArraySize; i++) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">rOps</span> <span class="hljs-operator">=</span> getReventOps(i);<br>        <span class="hljs-keyword">if</span> (rOps != <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">ski</span> <span class="hljs-operator">=</span> pollKeys.get(i);<br>            <span class="hljs-keyword">assert</span> ski.getFDVal() == getDescriptor(i);<br>            <span class="hljs-keyword">if</span> (ski.isValid()) &#123;<br>                numKeysUpdated += processReadyEvents(rOps, ski, action);<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">// check for interrupt</span><br>    <span class="hljs-keyword">if</span> (getReventOps(<span class="hljs-number">0</span>) != <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">assert</span> <span class="hljs-title function_">getDescriptor</span><span class="hljs-params">(<span class="hljs-number">0</span>)</span> == fd0;<br>        clearInterrupt();<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> numKeysUpdated;<br>&#125;<br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processReadyEvents</span><span class="hljs-params">(<span class="hljs-type">int</span> rOps, // 当前实际发生的事件</span><br><span class="hljs-params">                                       SelectionKeyImpl ski,</span><br><span class="hljs-params">                                       Consumer&lt;SelectionKey&gt; action)</span> &#123; <span class="hljs-comment">// 返回值要么是0 要么是1 rOps是os从kqueue的kevent中拿来的</span><br>    <span class="hljs-keyword">if</span> (action != <span class="hljs-literal">null</span>) &#123;<br>        ski.translateAndSetReadyOps(rOps);<br>        <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123;<br>            action.accept(ski);<br>            ensureOpen();<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// action=null</span><br>        <span class="hljs-keyword">assert</span> Thread.holdsLock(publicSelectedKeys);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.selectedKeys.contains(ski)) &#123; <span class="hljs-comment">// 状态就绪的事件(有可能是上一轮没有通过迭代器remove的事件)</span><br>            <span class="hljs-keyword">if</span> (ski.translateAndUpdateReadyOps(rOps)) &#123; <span class="hljs-comment">// 尝试更新到已经发生过的事件中</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <span class="hljs-comment">// 发生的事件补充到了已经发生过的事件中</span><br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            ski.translateAndSetReadyOps(rOps); <span class="hljs-comment">// 将当前事件记录为已经发生过的事件</span><br>            <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// Channel发生过的事件(位操作来的 可能标识多个状态 可读 可写...)跟感兴趣事件与操作 只要感兴趣的事件在发生过的事件集合中 就表示找到了一个Channel是应用层需要复用器返回出去的</span><br>                <span class="hljs-built_in">this</span>.selectedKeys.add(ski); <span class="hljs-comment">// ski指向的这个Channel是应用层委托复用器关注的事件 该事件状态就绪</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Poll跟EPoll区别在于：</p>
+<ul>
+<li>Poll只知道就绪状态事件的数量，不知道它们具体哪些，所以需要用户层程序进行轮询。</li>
+<li>EPoll在OS内核中就返回了就绪的事件，用户层直接去取就行。</li>
+</ul>
+<h4 id="3-4-Windows平台WindowsSelectorImpl实现"><a href="#3-4-Windows平台WindowsSelectorImpl实现" class="headerlink" title="3.4 Windows平台WindowsSelectorImpl实现"></a>3.4 Windows平台WindowsSelectorImpl实现</h4><h5 id="3-4-1-构造方法"><a href="#3-4-1-构造方法" class="headerlink" title="3.4.1 构造方法"></a>3.4.1 构造方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// WindowsSelectorImpl.java</span><br>WindowsSelectorImpl(SelectorProvider sp) <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-built_in">super</span>(sp);<br>    pollWrapper = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PollArrayWrapper</span>(INIT_CAP);<br>    wakeupPipe = Pipe.open();<br>    wakeupSourceFd = ((SelChImpl)wakeupPipe.source()).getFDVal();<br><br>    <span class="hljs-comment">// Disable the Nagle algorithm so that the wakeup is more immediate</span><br>    <span class="hljs-type">SinkChannelImpl</span> <span class="hljs-variable">sink</span> <span class="hljs-operator">=</span> (SinkChannelImpl)wakeupPipe.sink();<br>    (sink.sc).socket().setTcpNoDelay(<span class="hljs-literal">true</span>);<br>    wakeupSinkFd = ((SelChImpl)sink).getFDVal();<br><br>    pollWrapper.addWakeupSocket(wakeupSourceFd, <span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-2-setEventOps-…-方法"><a href="#3-4-2-setEventOps-…-方法" class="headerlink" title="3.4.2 setEventOps(…)方法"></a>3.4.2 setEventOps(…)方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// WindowsSelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEventOps</span><span class="hljs-params">(SelectionKeyImpl ski)</span> &#123;<br>    ensureOpen();<br>    <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>        updateKeys.addLast(ski);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-4-3-doSelect-…-方法"><a href="#3-4-3-doSelect-…-方法" class="headerlink" title="3.4.3 doSelect(…)方法"></a>3.4.3 doSelect(…)方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// WindowsSelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-title function_">doSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123;<br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br>    <span class="hljs-built_in">this</span>.timeout = timeout; <span class="hljs-comment">// set selector timeout</span><br>    processUpdateQueue(); <span class="hljs-comment">// 事件注册</span><br>    processDeregisterQueue();<br>    <span class="hljs-keyword">if</span> (interruptTriggered) &#123;<br>        resetWakeupSocket();<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br>    <span class="hljs-comment">// Calculate number of helper threads needed for poll. If necessary</span><br>    <span class="hljs-comment">// threads are created here and start waiting on startLock</span><br>    adjustThreadsCount();<br>    finishLock.reset(); <span class="hljs-comment">// reset finishLock</span><br>    <span class="hljs-comment">// Wakeup helper threads, waiting on startLock, so they start polling.</span><br>    <span class="hljs-comment">// Redundant threads will exit here after wakeup.</span><br>    startLock.startThreads();<br>    <span class="hljs-comment">// do polling in the main thread. Main thread is responsible for</span><br>    <span class="hljs-comment">// first MAX_SELECTABLE_FDS entries in pollArray.</span><br>    <span class="hljs-keyword">try</span> &#123;<br>        begin();<br>        <span class="hljs-keyword">try</span> &#123;<br>            subSelector.poll();<br>        &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;<br>            finishLock.setException(e); <span class="hljs-comment">// Save this exception</span><br>        &#125;<br>        <span class="hljs-comment">// Main thread is out of poll(). Wakeup others and wait for them</span><br>        <span class="hljs-keyword">if</span> (threads.size() &gt; <span class="hljs-number">0</span>)<br>            finishLock.waitForHelperThreads();<br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        end();<br>    &#125;<br>    <span class="hljs-comment">// Done with poll(). Set wakeupSocket to nonsignaled  for the next run.</span><br>    finishLock.checkForException();<br>    processDeregisterQueue();<br>    <span class="hljs-type">int</span> <span class="hljs-variable">updated</span> <span class="hljs-operator">=</span> updateSelectedKeys(action); <span class="hljs-comment">// 后置处理</span><br>    <span class="hljs-comment">// Done with poll(). Set wakeupSocket to nonsignaled  for the next run.</span><br>    resetWakeupSocket();<br>    <span class="hljs-keyword">return</span> updated;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h6 id="3-4-3-1-向OS内核复用器注册事件"><a href="#3-4-3-1-向OS内核复用器注册事件" class="headerlink" title="3.4.3.1 向OS内核复用器注册事件"></a>3.4.3.1 向OS内核复用器注册事件</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// WindowSelectorImpl.java</span><br>processUpdateQueue(); <span class="hljs-comment">// 事件注册</span><br><br><span class="hljs-comment">// WindowsSelector.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processUpdateQueue</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">assert</span> Thread.holdsLock(<span class="hljs-built_in">this</span>);<br><br>    <span class="hljs-keyword">synchronized</span> (updateLock) &#123;<br>        SelectionKeyImpl ski;<br><br>        <span class="hljs-comment">// new registrations</span><br>        <span class="hljs-keyword">while</span> ((ski = newKeys.pollFirst()) != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">if</span> (ski.isValid()) &#123;<br>                growIfNeeded();<br>                channelArray[totalChannels] = ski;<br>                ski.setIndex(totalChannels);<br>                pollWrapper.putEntry(totalChannels, ski); <span class="hljs-comment">// 真正的写</span><br>                totalChannels++;<br>                <span class="hljs-type">MapEntry</span> <span class="hljs-variable">previous</span> <span class="hljs-operator">=</span> fdMap.put(ski);<br>                <span class="hljs-keyword">assert</span> previous == <span class="hljs-literal">null</span>;<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-comment">// changes to interest ops</span><br>        <span class="hljs-keyword">while</span> ((ski = updateKeys.pollFirst()) != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">events</span> <span class="hljs-operator">=</span> ski.translateInterestOps();<br>            <span class="hljs-type">int</span> <span class="hljs-variable">fd</span> <span class="hljs-operator">=</span> ski.getFDVal();<br>            <span class="hljs-keyword">if</span> (ski.isValid() &amp;&amp; fdMap.containsKey(fd)) &#123;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> ski.getIndex();<br>                <span class="hljs-keyword">assert</span> index &gt;= <span class="hljs-number">0</span> &amp;&amp; index &lt; totalChannels;<br>                pollWrapper.putEventOps(index, events);<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h6 id="3-4-3-2-OS内核复用器返回状态就绪结果"><a href="#3-4-3-2-OS内核复用器返回状态就绪结果" class="headerlink" title="3.4.3.2 OS内核复用器返回状态就绪结果"></a>3.4.3.2 OS内核复用器返回状态就绪结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// WindowsSelectorImpl.java</span><br>subSelector.poll(); <span class="hljs-comment">// 发起系统调用</span><br><br><span class="hljs-comment">// WindowsSelectorImpl.java::SubSelector</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">poll</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException&#123; <span class="hljs-comment">// poll for the main thread</span><br>    <span class="hljs-keyword">return</span> poll0(pollWrapper.pollArrayAddress,<br>                 Math.min(totalChannels, MAX_SELECTABLE_FDS),<br>                 readFds, writeFds, exceptFds, timeout);<br>&#125;<br><br><span class="hljs-comment">// WindowsSelectorImpl.java::SubSelector</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">poll</span><span class="hljs-params">(<span class="hljs-type">int</span> index)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-comment">// poll for helper threads</span><br>    <span class="hljs-keyword">return</span>  poll0(pollWrapper.pollArrayAddress +<br>                  (pollArrayIndex * PollArrayWrapper.SIZE_POLLFD),<br>                  Math.min(MAX_SELECTABLE_FDS,<br>                           totalChannels - (index + <span class="hljs-number">1</span>) * MAX_SELECTABLE_FDS),<br>                  readFds, writeFds, exceptFds, timeout);<br>&#125;<br><br><span class="hljs-comment">// WindowsSelectorImpl.java::SubSelector</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">native</span> <span class="hljs-type">int</span> <span class="hljs-title function_">poll0</span><span class="hljs-params">(<span class="hljs-type">long</span> pollAddress, <span class="hljs-type">int</span> numfds,</span><br><span class="hljs-params">                         <span class="hljs-type">int</span>[] readFds, <span class="hljs-type">int</span>[] writeFds, <span class="hljs-type">int</span>[] exceptFds, <span class="hljs-type">long</span> timeout)</span>;<br><br><span class="hljs-comment">// WindowsSelectorImpl.c</span><br>JNIEXPORT jint JNICALL<br>    <span class="hljs-title function_">Java_sun_nio_ch_WindowsSelectorImpl_00024SubSelector_poll0</span><span class="hljs-params">(JNIEnv *env, jobject <span class="hljs-built_in">this</span>,</span><br><span class="hljs-params">                                                               jlong pollAddress, jint numfds,</span><br><span class="hljs-params">                                                               jintArray returnReadFds, jintArray returnWriteFds,</span><br><span class="hljs-params">                                                               jintArray returnExceptFds, jlong timeout)</span><br>&#123;<br>    <span class="hljs-type">DWORD</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    pollfd *fds = (pollfd *) pollAddress;<br>    <span class="hljs-type">int</span> i;<br>    FD_SET readfds, writefds, exceptfds;<br>    struct timeval timevalue, *tv;<br>    <span class="hljs-keyword">static</span> struct <span class="hljs-type">timeval</span> <span class="hljs-variable">zerotime</span> <span class="hljs-operator">=</span> &#123;<span class="hljs-number">0</span>, <span class="hljs-number">0</span>&#125;;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">read_count</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, write_count = <span class="hljs-number">0</span>, except_count = <span class="hljs-number">0</span>;<br><br>    ...<br><br>        <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; numfds; i++) &#123;<br>            <span class="hljs-keyword">if</span> (fds[i].events &amp; POLLIN) &#123;<br>                readfds.fd_array[read_count] = fds[i].fd;<br>                read_count++;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (fds[i].events &amp; (POLLOUT | POLLCONN))<br>            &#123;<br>                writefds.fd_array[write_count] = fds[i].fd;<br>                write_count++;<br>            &#125;<br>            exceptfds.fd_array[except_count] = fds[i].fd;<br>            except_count++;<br>        &#125;<br><br>    readfds.fd_count = read_count;<br>    writefds.fd_count = write_count;<br>    exceptfds.fd_count = except_count;<br><br>    ...<br><br>        <span class="hljs-keyword">if</span> ((result = select(<span class="hljs-number">0</span> , &amp;readfds, &amp;writefds, &amp;exceptfds, tv))<br>            == SOCKET_ERROR)<br>        &#123;<br>            ...<br>        &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h6 id="3-4-3-3-后置处理OS内核结果"><a href="#3-4-3-3-后置处理OS内核结果" class="headerlink" title="3.4.3.3 后置处理OS内核结果"></a>3.4.3.3 后置处理OS内核结果</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// WindowsSelectorImpl.java</span><br><span class="hljs-type">int</span> <span class="hljs-variable">updated</span> <span class="hljs-operator">=</span> updateSelectedKeys(action); <span class="hljs-comment">// 后置处理</span><br><br><br><span class="hljs-comment">// WindowsSelectorImpl.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">updateSelectedKeys</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action)</span> &#123;<br>    updateCount++;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">numKeysUpdated</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    numKeysUpdated += subSelector.processSelectedKeys(updateCount, action);<br>    <span class="hljs-keyword">for</span> (SelectThread t: threads) &#123;<br>        numKeysUpdated += t.subSelector.processSelectedKeys(updateCount, action);<br>    &#125;<br>    <span class="hljs-keyword">return</span> numKeysUpdated;<br>&#125;<br><br><span class="hljs-comment">// WindowsSelectorImpl.java::SubSelector</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processSelectedKeys</span><span class="hljs-params">(<span class="hljs-type">long</span> updateCount, Consumer&lt;SelectionKey&gt; action)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">numKeysUpdated</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    numKeysUpdated += processFDSet(updateCount, action, readFds,<br>                                   Net.POLLIN,<br>                                   <span class="hljs-literal">false</span>);<br>    numKeysUpdated += processFDSet(updateCount, action, writeFds,<br>                                   Net.POLLCONN |<br>                                   Net.POLLOUT,<br>                                   <span class="hljs-literal">false</span>);<br>    numKeysUpdated += processFDSet(updateCount, action, exceptFds,<br>                                   Net.POLLIN |<br>                                   Net.POLLCONN |<br>                                   Net.POLLOUT,<br>                                   <span class="hljs-literal">true</span>);<br>    <span class="hljs-keyword">return</span> numKeysUpdated;<br>&#125;<br><br><br><span class="hljs-comment">// WindowsSelectorImpl.java::SubSelector</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processFDSet</span><span class="hljs-params">(<span class="hljs-type">long</span> updateCount,</span><br><span class="hljs-params">                         Consumer&lt;SelectionKey&gt; action,</span><br><span class="hljs-params">                         <span class="hljs-type">int</span>[] fds, <span class="hljs-type">int</span> rOps,</span><br><span class="hljs-params">                         <span class="hljs-type">boolean</span> isExceptFds)</span><br>&#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">numKeysUpdated</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt;= fds[<span class="hljs-number">0</span>]; i++) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">desc</span> <span class="hljs-operator">=</span> fds[i];<br>        <span class="hljs-keyword">if</span> (desc == wakeupSourceFd) &#123;<br>            <span class="hljs-keyword">synchronized</span> (interruptLock) &#123;<br>                interruptTriggered = <span class="hljs-literal">true</span>;<br>            &#125;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br>        <span class="hljs-type">MapEntry</span> <span class="hljs-variable">me</span> <span class="hljs-operator">=</span> fdMap.get(desc);<br>        <span class="hljs-comment">// If me is null, the key was deregistered in the previous</span><br>        <span class="hljs-comment">// processDeregisterQueue.</span><br>        <span class="hljs-keyword">if</span> (me == <span class="hljs-literal">null</span>)<br>            <span class="hljs-keyword">continue</span>;<br>        <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">sk</span> <span class="hljs-operator">=</span> me.ski;<br><br>        <span class="hljs-comment">// The descriptor may be in the exceptfds set because there is</span><br>        <span class="hljs-comment">// OOB data queued to the socket. If there is OOB data then it</span><br>        <span class="hljs-comment">// is discarded and the key is not added to the selected set.</span><br>        <span class="hljs-keyword">if</span> (isExceptFds &amp;&amp;<br>            (sk.channel() <span class="hljs-keyword">instanceof</span> SocketChannelImpl) &amp;&amp;<br>            discardUrgentData(desc))<br>        &#123;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br><br>        <span class="hljs-type">int</span> <span class="hljs-variable">updated</span> <span class="hljs-operator">=</span> processReadyEvents(rOps, sk, action); <span class="hljs-comment">// 父类方法</span><br>        <span class="hljs-keyword">if</span> (updated &gt; <span class="hljs-number">0</span> &amp;&amp; me.updateCount != updateCount) &#123;<br>            me.updateCount = updateCount;<br>            numKeysUpdated++;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> numKeysUpdated;<br>&#125;<br>&#125;<br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">processReadyEvents</span><span class="hljs-params">(<span class="hljs-type">int</span> rOps, // 当前实际发生的事件</span><br><span class="hljs-params">                                       SelectionKeyImpl ski,</span><br><span class="hljs-params">                                       Consumer&lt;SelectionKey&gt; action)</span> &#123; <span class="hljs-comment">// 返回值要么是0 要么是1 rOps是os从kqueue的kevent中拿来的</span><br>    <span class="hljs-keyword">if</span> (action != <span class="hljs-literal">null</span>) &#123;<br>        ski.translateAndSetReadyOps(rOps);<br>        <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123;<br>            action.accept(ski);<br>            ensureOpen();<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// action=null</span><br>        <span class="hljs-keyword">assert</span> Thread.holdsLock(publicSelectedKeys);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.selectedKeys.contains(ski)) &#123; <span class="hljs-comment">// 状态就绪的事件(有可能是上一轮没有通过迭代器remove的事件)</span><br>            <span class="hljs-keyword">if</span> (ski.translateAndUpdateReadyOps(rOps)) &#123; <span class="hljs-comment">// 尝试更新到已经发生过的事件中</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <span class="hljs-comment">// 发生的事件补充到了已经发生过的事件中</span><br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            ski.translateAndSetReadyOps(rOps); <span class="hljs-comment">// 将当前事件记录为已经发生过的事件</span><br>            <span class="hljs-keyword">if</span> ((ski.nioReadyOps() &amp; ski.nioInterestOps()) != <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// Channel发生过的事件(位操作来的 可能标识多个状态 可读 可写...)跟感兴趣事件与操作 只要感兴趣的事件在发生过的事件集合中 就表示找到了一个Channel是应用层需要复用器返回出去的</span><br>                <span class="hljs-built_in">this</span>.selectedKeys.add(ski); <span class="hljs-comment">// ski指向的这个Channel是应用层委托复用器关注的事件 该事件状态就绪</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java/" class="category-chain-item">java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>java源码-0x0F-Selector</div>
+      <div>https://bannirui.github.io/2023/03/06/java/java源码-0x0F-Selector/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/07/ZK-3-8%E6%BA%90%E7%A0%81-07-NettyServerCnxn/" title="ZK@3.8源码-07-NettyServerCnxn">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">ZK@3.8源码-07-NettyServerCnxn</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-13-connect%E6%B5%81%E7%A8%8B/" title="Netty源码-13-connect流程">
+                        <span class="hidden-mobile">Netty源码-13-connect流程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '9b0b0856df0abd22cec0772b1310f8c7'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

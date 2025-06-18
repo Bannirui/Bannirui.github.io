@@ -1,0 +1,905 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 定位jdk的入口1.1 全局搜索main方法我对c\cpp的了解还停留在语言语法层面，对工程构建并不熟悉，因此只能使用原始的方式。 下个断点，然后启动Java进程再根据调用栈往回精确定位。   1.2 启动Java进程  代码就一行，只要能让Java进程运行起来，停在断点就行。 123456public class VMLoaderTest &amp;#123;    public static vo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jvm-0x02-启动入口">
+<meta property="og:url" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="1 定位jdk的入口1.1 全局搜索main方法我对c\cpp的了解还停留在语言语法层面，对工程构建并不熟悉，因此只能使用原始的方式。 下个断点，然后启动Java进程再根据调用栈往回精确定位。   1.2 启动Java进程  代码就一行，只要能让Java进程运行起来，停在断点就行。 123456public class VMLoaderTest &amp;#123;    public static vo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131417621.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131631218.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131959054.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427153405355.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427154208275.png">
+<meta property="article:published_time" content="2023-04-27T05:08:32.000Z">
+<meta property="article:modified_time" content="2025-06-16T01:49:38.151Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131417621.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>jvm-0x02-启动入口 - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="jvm-0x02-启动入口"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-27 13:08" pubdate>
+          2023年4月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          776 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="jvm"
+        id="heading-6ce80d8ef01f5e98f941f200bba3baee" role="tab" data-toggle="collapse" href="#collapse-6ce80d8ef01f5e98f941f200bba3baee"
+        aria-expanded="true"
+      >
+        jvm
+        <span class="list-group-count">(10)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-6ce80d8ef01f5e98f941f200bba3baee"
+           role="tabpanel" aria-labelledby="heading-6ce80d8ef01f5e98f941f200bba3baee">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-0x00-编译openjdk"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x00-编译openjdk</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-0x01-在Linux上编译openjdk22"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x01-在Linux上编译openjdk22</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-0x02-启动入口"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">jvm-0x02-启动入口</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-0x03-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-0x03-Java入口函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x03-Java入口函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-0x04-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-0x04-设置运行环境参数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x04-设置运行环境参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-0x05-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-0x05-pthread系统调用"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x05-pthread系统调用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x06-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-0x06-加载JVM"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x06-加载JVM</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x07-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-0x07-加载动态链接库"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x07-加载动态链接库</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x08-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-0x08-JVM启动参数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x08-JVM启动参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-0x09-JVM%E5%90%AF%E5%8A%A8/" title="jvm-0x09-JVM启动"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-0x09-JVM启动</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">jvm-0x02-启动入口</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="1-定位jdk的入口"><a href="#1-定位jdk的入口" class="headerlink" title="1 定位jdk的入口"></a>1 定位jdk的入口</h3><h4 id="1-1-全局搜索main方法"><a href="#1-1-全局搜索main方法" class="headerlink" title="1.1 全局搜索main方法"></a>1.1 全局搜索main方法</h4><p>我对c\cpp的了解还停留在语言语法层面，对工程构建并不熟悉，因此只能使用原始的方式。</p>
+<p>下个断点，然后启动Java进程再根据调用栈往回精确定位。</p>
+<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131417621.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="1-2-启动Java进程"><a href="#1-2-启动Java进程" class="headerlink" title="1.2 启动Java进程"></a>1.2 启动Java进程</h4><img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131631218.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>代码就一行，只要能让Java进程运行起来，停在断点就行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">VMLoaderTest</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;HELLO WORLD&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="1-3-调用栈"><a href="#1-3-调用栈" class="headerlink" title="1.3 调用栈"></a>1.3 调用栈</h4><p>从线程调用栈可以看出来1.1搜索出来的就是Jdk源码的入口main方法所在之处。</p>
+<p>即src&#x2F;java.base&#x2F;share&#x2F;native&#x2F;launcher&#x2F;main.c。</p>
+<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131959054.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="2-main方法"><a href="#2-main方法" class="headerlink" title="2 main方法"></a>2 main方法</h3><h4 id="2-1-场景"><a href="#2-1-场景" class="headerlink" title="2.1 场景"></a>2.1 场景</h4><p>指定一个明确的启动场景，方便更直观地理解代码流程。</p>
+<p>从1.2中可以知道写了一个叫VMLoaderTest.java的源码单文件，然后通过javac命令将其编译为字节码文件，该Java类为VMLoaderTest。</p>
+<p>然后通过java命令执行该该类的main方法，完整命令为<code>java VMLoaderTest</code>。</p>
+<p>而编译好的<code>java</code>可执行文件放在哪儿取决于编译的设置，比如我的路径是<code>build/macosx-x86_64-server-slowdebug/jdk/bin/java</code>。</p>
+<h4 id="2-2-启动参数"><a href="#2-2-启动参数" class="headerlink" title="2.2 启动参数"></a>2.2 启动参数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c">JNIEXPORT <span class="hljs-type">int</span><br><span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 通过java命令执行javac编译好的Java字节码</span><br><span class="hljs-comment">     * 即VMLoaderTest.java经过javac编译好的类是VMLoaderTest</span><br><span class="hljs-comment">     * 比如执行的是java VMLoaderTest</span><br><span class="hljs-comment">     * 那么这个地方main方法接收到的是2个参数</span><br><span class="hljs-comment">     *   - java可执行文件全路径</span><br><span class="hljs-comment">     *   - VMLoaderTest</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">int</span> margc;<br>    <span class="hljs-type">char</span>** margv;<br>    <span class="hljs-type">int</span> jargc;<br>    <span class="hljs-type">char</span>** jargv;<br>    <span class="hljs-type">const</span> jboolean const_javaw = JNI_FALSE;<br></code></pre></td></tr></table></figure>
+
+<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427153405355.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="2-2-解析启动参数"><a href="#2-2-解析启动参数" class="headerlink" title="2.2 解析启动参数"></a>2.2 解析启动参数</h4><p>没有在启动参数中指定预处理可选项的时候，解析出来的就是main方法的启动参数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs c">&#123;<br>       <span class="hljs-comment">// accommodate the NULL at the end</span><br>       <span class="hljs-comment">// 长度3的数组</span><br>       JLI_List args = JLI_List_new(argc + <span class="hljs-number">1</span>);<br>       <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;<br><br>       <span class="hljs-comment">// Add first arg, which is the app name</span><br>       <span class="hljs-comment">// 数组首元素就是编译好的java可执行文件全路径</span><br>       JLI_List_add(args, JLI_StringDup(argv[<span class="hljs-number">0</span>]));<br>       <span class="hljs-comment">// Append JDK_JAVA_OPTIONS</span><br>       <span class="hljs-keyword">if</span> (JLI_AddArgsFromEnvVar(args, JDK_JAVA_OPTIONS)) &#123; <span class="hljs-comment">// 从环境变量中加载键JDK_JAVA_OPTIONS对应的值放到列表args里面 没有配置这个环境变量这个分支不执行</span><br>           <span class="hljs-comment">// JLI_SetTraceLauncher is not called yet</span><br>           <span class="hljs-comment">// Show _JAVA_OPTIONS content along with JDK_JAVA_OPTIONS to aid diagnosis</span><br>           <span class="hljs-keyword">if</span> (getenv(JLDEBUG_ENV_ENTRY)) &#123;<br>               <span class="hljs-type">char</span> *tmp = getenv(<span class="hljs-string">&quot;_JAVA_OPTIONS&quot;</span>);<br>               <span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span> != tmp) &#123;<br>                   JLI_ReportMessage(ARG_INFO_ENVVAR, <span class="hljs-string">&quot;_JAVA_OPTIONS&quot;</span>, tmp);<br>               &#125;<br>           &#125;<br>       &#125;<br>       <span class="hljs-comment">// Iterate the rest of command line</span><br>       <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt; argc; i++) &#123;<br>           JLI_List argsInFile = JLI_PreprocessArg(argv[i], JNI_TRUE);<br>           <span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span> == argsInFile) &#123; <span class="hljs-comment">// 将VMLoaderTest放到args中 其实就是为了将来JVM初始化好回调到Java类中的main方法</span><br>               JLI_List_add(args, JLI_StringDup(argv[i]));<br>           &#125; <span class="hljs-keyword">else</span> &#123;<br>               <span class="hljs-type">int</span> cnt, idx;<br>               cnt = argsInFile-&gt;size;<br>               <span class="hljs-keyword">for</span> (idx = <span class="hljs-number">0</span>; idx &lt; cnt; idx++) &#123;<br>                   JLI_List_add(args, argsInFile-&gt;elements[idx]);<br>               &#125;<br>               <span class="hljs-comment">// Shallow free, we reuse the string to avoid copy</span><br>               JLI_MemFree(argsInFile-&gt;elements);<br>               JLI_MemFree(argsInFile);<br>           &#125;<br>       &#125;<br>       margc = args-&gt;size; <span class="hljs-comment">// main方法实际的启动参数</span><br>       <span class="hljs-comment">// add the NULL pointer at argv[argc]</span><br>       JLI_List_add(args, <span class="hljs-literal">NULL</span>); <span class="hljs-comment">// args数组中最后一个脚标占位了null</span><br>       margv = args-&gt;elements;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-3-调用JLI-Launch"><a href="#2-3-调用JLI-Launch" class="headerlink" title="2.3 调用JLI_Launch"></a>2.3 调用JLI_Launch</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 当启动执行Java时没有指定启动参数和可选项时</span><br><span class="hljs-comment"> * 即默认的方式 java xxx</span><br><span class="hljs-comment"> * 调用JLI_Launch的参数就是main方法的启动参数</span><br><span class="hljs-comment"> *   - margc=2</span><br><span class="hljs-comment"> *   - margv</span><br><span class="hljs-comment"> *     - /Users/dingrui/Dev/code/git/cpp/jdk/build/macosx-x86_64-server-slowdebug/jdk/bin/java</span><br><span class="hljs-comment"> *     - VMLoaderTest</span><br><span class="hljs-comment"> *   - jargc=0</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * pname标识的是program name</span><br><span class="hljs-comment"> * lname标识的是launcher name</span><br><span class="hljs-comment"> * 这2个是通过宏指定的</span><br><span class="hljs-comment"> *   - pname-&gt;java</span><br><span class="hljs-comment"> *   - lname-&gt;openjdk</span><br><span class="hljs-comment"> */</span><br>    <span class="hljs-keyword">return</span> JLI_Launch(margc, margv,<br>                   jargc, (<span class="hljs-type">const</span> <span class="hljs-type">char</span>**) jargv,<br>                   <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>,<br>                   VERSION_STRING,<br>                   DOT_VERSION,<br>                   (const_progname != <span class="hljs-literal">NULL</span>) ? const_progname : *margv,<br>                   (const_launcher != <span class="hljs-literal">NULL</span>) ? const_launcher : *margv,<br>                   jargc &gt; <span class="hljs-number">0</span>,<br>                   const_cpwildcard, const_javaw, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+
+
+
+<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427154208275.png" srcset="/img/loading.gif" lazyload class="">
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/jvm/" class="category-chain-item">jvm</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>jvm-0x02-启动入口</div>
+      <div>https://bannirui.github.io/2023/04/27/java/jvm-0x02-启动入口/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/28/java/jvm-0x03-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-0x03-Java入口函数">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">jvm-0x03-Java入口函数</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/26/IM%E8%81%8A%E5%A4%A9%E7%B3%BB%E7%BB%9F/" title="IM聊天系统">
+                        <span class="hidden-mobile">IM聊天系统</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'e8c05e555d682182c53f52a2f4231992'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
