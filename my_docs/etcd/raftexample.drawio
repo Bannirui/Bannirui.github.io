@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.16 Chrome/132.0.6834.196 Electron/34.2.0 Safari/537.36" version="26.0.16">
   <diagram name="第 1 页" id="fo40YNabmWwFxrmiHhFv">
-    <mxGraphModel dx="896" dy="1650" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="844" dy="1621" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -248,14 +248,23 @@
         <mxCell id="0QaNaLUbApqu2NJ__CYM-46" value="tickHeartbeat" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1770" y="300" width="150" height="25" as="geometry" />
         </mxCell>
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="UHzo4-Z_KMdyKpDEIGZQ-1" target="yWDyOvpvvpcrKdT5vdse-35">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1570" y="590" />
+              <mxPoint x="1650" y="590" />
+              <mxPoint x="1650" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="UHzo4-Z_KMdyKpDEIGZQ-1" value="msgsAfterAppend" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1530" y="550" width="80" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="yWDyOvpvvpcrKdT5vdse-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="UHzo4-Z_KMdyKpDEIGZQ-2" target="yWDyOvpvvpcrKdT5vdse-30">
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="UHzo4-Z_KMdyKpDEIGZQ-2" target="yWDyOvpvvpcrKdT5vdse-35">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1480" y="525" />
-              <mxPoint x="1480" y="645" />
+              <mxPoint x="1490" y="525" />
+              <mxPoint x="1490" y="650" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -281,7 +290,7 @@
         <mxCell id="UHzo4-Z_KMdyKpDEIGZQ-5" value="Folower" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="2020" y="280" width="57" height="57" as="geometry" />
         </mxCell>
-        <mxCell id="yWDyOvpvvpcrKdT5vdse-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="UHzo4-Z_KMdyKpDEIGZQ-11" target="yWDyOvpvvpcrKdT5vdse-25">
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="UHzo4-Z_KMdyKpDEIGZQ-11" target="yWDyOvpvvpcrKdT5vdse-35">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="UHzo4-Z_KMdyKpDEIGZQ-11" value="raft的事件循环" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
@@ -397,13 +406,35 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="yWDyOvpvvpcrKdT5vdse-25" value="ready清单" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1680" y="715" width="100" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="yWDyOvpvvpcrKdT5vdse-30" value="&lt;span style=&quot;font-size: 11px; text-wrap-mode: nowrap; background-color: rgb(255, 255, 255);&quot;&gt;把msgs打包到ready清单&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="1660" y="630" width="150" height="30" as="geometry" />
+          <mxGeometry x="1680" y="780" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="yWDyOvpvvpcrKdT5vdse-34" value="stepsOnAdvance" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1520" y="860" width="100" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="yWDyOvpvvpcrKdT5vdse-35" target="yWDyOvpvvpcrKdT5vdse-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-41" value="msgs放到ready清单" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="yWDyOvpvvpcrKdT5vdse-39">
+          <mxGeometry x="0.2366" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="yWDyOvpvvpcrKdT5vdse-35" target="yWDyOvpvvpcrKdT5vdse-34">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1730" y="690" />
+              <mxPoint x="1660" y="690" />
+              <mxPoint x="1660" y="873" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-42" value="msgsAfterAppend放到stepsOnAdvance" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="yWDyOvpvvpcrKdT5vdse-40">
+          <mxGeometry x="-0.2498" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yWDyOvpvvpcrKdT5vdse-35" value="打包ready清单" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1680" y="630" width="100" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
