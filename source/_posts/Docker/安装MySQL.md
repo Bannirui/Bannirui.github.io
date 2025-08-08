@@ -42,6 +42,15 @@ services:
 
 执行`docker-compose up -d`
 
+或者执行
+
+```sh
+docker run -d --name mysql8 \
+  -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=19920308 \
+  mysql:8
+```
+
 ### 3 新建mysql用户
 
 启动docker bash以root用户登陆
