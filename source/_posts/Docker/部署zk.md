@@ -98,6 +98,10 @@ services:
 ```sh
 docker-compose up -d
 ```
+现在新版本中命令已经变了
+```sh
+docker compose up -d
+```
 
 ### 4 ui管理
 
