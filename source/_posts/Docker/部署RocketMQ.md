@@ -145,3 +145,23 @@ mvn spring-boot:run
 ```
 
 访问后台链接 http://localhost:8080
+
+### 7 网络问题
+
+在broker的配置文件中用的地址是host.docker.internal，此时docker内的程序通信是没有问题的。
+
+现在需要在宿主机上的java程序新建topic，此时拿到的地址host.docker.internal在宿主机上就用不了了。
+
+```java
+            for (String brokerName : brokerNames) {
+                this.defaultMQAdminExt.createAndUpdateTopicConfig(clusterInfo.getBrokerAddrTable().get(brokerName).selectBrokerAddr(), topicConfig);
+                logger.info("topic {} created to {}", topicConfig.getTopicName(), clusterInfo.getBrokerAddrTable().get(brokerName).selectBrokerAddr());
+            }
+```
+
+解决方案不是很完美，但是可用
+
+- `ifconfig`拿到宿主机ip
+- 在broker配置文件夹中替换host.docker.internal为拿到的宿主机ip
+- 在docker中删除container
+- 重新`docker compose up -d`
