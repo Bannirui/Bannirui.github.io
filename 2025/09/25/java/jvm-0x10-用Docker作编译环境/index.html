@@ -19,30 +19,23 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 jdk编译参考官方文档 前言  大于openjdk11u的源码中都含有CompileCommands.gmk，修改即可解决openjdk在Clion中引入头文件问题。 Java源码换行注释后重新编译一下就行，即可解决class与src对应不上问题。  1.1 源码下载Git地址 123456789git clone git@github.com:Bannirui&#x2F;jdk.gitcd jdkgi">
+    <meta name="description" content="前面已经在macjvm-0x00-编译openjdk和linuxjvm-0x01-在Linux上编译openjdk22物理机上折腾过编译，之所以还在不厌其烦整编译，主要原因是我经常切换不同设备，很难保证环境工具的一致性，而且在物理机上编译确实可能对我现有的工具链产生侵入，所以这次又有docker上进行编译。想必这也是我最后一次做编译环境，后面就彻底统一了。 后面我尽量长期坚持更新源码笔记会在GIT">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm-0x00-编译openjdk">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/index.html">
+<meta property="og:title" content="jvm-0x10-用Docker作编译环境">
+<meta property="og:url" content="https://bannirui.github.io/2025/09/25/java/jvm-0x10-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="1 jdk编译参考官方文档 前言  大于openjdk11u的源码中都含有CompileCommands.gmk，修改即可解决openjdk在Clion中引入头文件问题。 Java源码换行注释后重新编译一下就行，即可解决class与src对应不上问题。  1.1 源码下载Git地址 123456789git clone git@github.com:Bannirui&#x2F;jdk.gitcd jdkgi">
+<meta property="og:description" content="前面已经在macjvm-0x00-编译openjdk和linuxjvm-0x01-在Linux上编译openjdk22物理机上折腾过编译，之所以还在不厌其烦整编译，主要原因是我经常切换不同设备，很难保证环境工具的一致性，而且在物理机上编译确实可能对我现有的工具链产生侵入，所以这次又有docker上进行编译。想必这也是我最后一次做编译环境，后面就彻底统一了。 后面我尽量长期坚持更新源码笔记会在GIT">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739895872.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739896129.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739984881.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739987381.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739988179.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739988290.png">
-<meta property="article:published_time" content="2023-03-10T15:18:14.000Z">
-<meta property="article:modified_time" content="2025-06-16T01:49:38.130Z">
+<meta property="article:published_time" content="2025-09-24T16:16:54.000Z">
+<meta property="article:modified_time" content="2025-09-25T12:42:12.345Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739895872.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>jvm-0x00-编译openjdk - HEX BLOG</title>
+  <title>jvm-0x10-用Docker作编译环境 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -231,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="jvm-0x00-编译openjdk"></span>
+            <span id="subtitle" data-typed-text="jvm-0x10-用Docker作编译环境"></span>
           
         </div>
 
@@ -242,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-10 23:18" pubdate>
-          2023年3月10日 晚上
+        <time datetime="2025-09-25 00:16" pubdate>
+          2025年9月25日 凌晨
         </time>
       </span>
     
@@ -254,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          733 字
+          557 字
         
       </span>
     
@@ -265,7 +258,7 @@
         
         
         
-          7 分钟
+          5 分钟
         
       </span>
     
@@ -340,7 +333,7 @@
       
         <a href="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-0x00-编译openjdk"
            class="list-group-item list-group-item-action
-           active">
+           ">
           <span class="category-post">jvm-0x00-编译openjdk</span>
         </a>
       
@@ -430,7 +423,7 @@
       
         <a href="/2025/09/25/java/jvm-0x10-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" title="jvm-0x10-用Docker作编译环境"
            class="list-group-item list-group-item-action
-           ">
+           active">
           <span class="category-post">jvm-0x10-用Docker作编译环境</span>
         </a>
       
@@ -453,62 +446,28 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">jvm-0x00-编译openjdk</h1>
+            <h1 id="seo-header">jvm-0x10-用Docker作编译环境</h1>
             
             
               <div class="markdown-body">
                 
-                <h3 id="1-jdk编译"><a href="#1-jdk编译" class="headerlink" title="1 jdk编译"></a>1 jdk编译</h3><p><a target="_blank" rel="noopener" href="https://openjdk.org/groups/build/doc/building.html">参考官方文档</a></p>
-<p>前言</p>
-<ul>
-<li>大于openjdk11u的源码中都含有CompileCommands.gmk，修改即可解决openjdk在Clion中引入头文件问题。</li>
-<li>Java源码换行注释后重新编译一下就行，即可解决class与src对应不上问题。</li>
-</ul>
-<h4 id="1-1-源码下载"><a href="#1-1-源码下载" class="headerlink" title="1.1 源码下载"></a>1.1 源码下载</h4><p><a target="_blank" rel="noopener" href="https://github.com/Bannirui/jdk.git">Git地址</a></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/jdk.git<br><span class="hljs-built_in">cd</span> jdk<br>git remote add upstream git@github.com:openjdk/jdk.git<br>git remote set-url --push upstream no_push<br>git remote -v<br>git fetch upstream<br>git checkout jdk-22+0<br>git rebase upstream/jdk-22+0<br>git checkout -b jdk_22_study<br></code></pre></td></tr></table></figure>
+                <p>前面已经在mac<a href="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-0x00-编译openjdk">jvm-0x00-编译openjdk</a>和linux<a href="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-0x01-在Linux上编译openjdk22">jvm-0x01-在Linux上编译openjdk22</a>物理机上折腾过编译，之所以还在不厌其烦整编译，主要原因是我经常切换不同设备，很难保证环境工具的一致性，而且在物理机上编译确实可能对我现有的工具链产生侵入，所以这次又有docker上进行编译。想必这也是我最后一次做编译环境，后面就彻底统一了。</p>
+<p>后面我尽量长期坚持更新源码笔记会在<a target="_blank" rel="noopener" href="https://github.com/Bannirui/jdk.git">GIT仓库</a>的<code>jdk_22_study</code>分支上。</p>
+<h3 id="1-Dockerfile"><a href="#1-Dockerfile" class="headerlink" title="1 Dockerfile"></a>1 Dockerfile</h3><p>不单单是编译jdk的必需依赖，还是我日常开发常用的工具环境，后面还有其他的我也会添加进来。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs Dockerfile"><span class="hljs-comment"># 使用官方Ubuntu22.04作为基础镜像</span><br><span class="hljs-keyword">FROM</span> --platform=linux/amd64 ubuntu:<span class="hljs-number">22.04</span><br><br><span class="hljs-comment"># 设置非交互模式 避免安装过程中阻塞</span><br><span class="hljs-keyword">ENV</span> DEBIAN_FRONTEND=noninteractive<br><br><span class="hljs-comment"># 更新源并安装所需工具</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; \</span><br><span class="language-bash">    apt-get install -y --no-install-recommends \</span><br><span class="language-bash">    <span class="hljs-comment"># gcc g++ make ld etc</span></span><br>    build-essential \<br>    <span class="hljs-comment"># x86 assembler</span><br>    nasm \                  <br>    <span class="hljs-comment"># ld objdump objcopy</span><br>    binutils \              <br>    <span class="hljs-comment"># mkfs dd支持</span><br>    dosfstools \            <br>    <span class="hljs-comment"># mount umount sync</span><br>    util-linux \<br>    <span class="hljs-comment"># cp rm等基础命令</span><br>    coreutils \<br>    git \<br>    wget \<br>    <span class="hljs-comment"># OpenJDK 21和编译openjdk-22源码需要的依赖</span><br>    openjdk-<span class="hljs-number">21</span>-jdk autoconf libasound2-dev libcups2-dev libfontconfig1-dev libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev file zip unzip gawk \<br>    &amp;&amp; rm -rf /var/lib/apt/lists/*<br><br><span class="hljs-comment"># 设置Java环境变量</span><br><span class="hljs-keyword">ENV</span> JAVA_HOME=/usr/lib/jvm/java-<span class="hljs-number">21</span>-openjdk-amd64<br><span class="hljs-keyword">ENV</span> PATH=<span class="hljs-string">&quot;$JAVA_HOME/bin:$PATH&quot;</span><br><br><span class="hljs-comment"># 设置工作目录</span><br><span class="hljs-keyword">VOLUME</span><span class="language-bash"> /home/dev</span><br><span class="hljs-keyword">WORKDIR</span><span class="language-bash"> /home/dev</span><br><br><span class="hljs-comment"># 容器启动后保持交互 shell</span><br><span class="hljs-keyword">CMD</span><span class="language-bash"> [<span class="hljs-string">&quot;/bin/bash&quot;</span>]</span><br></code></pre></td></tr></table></figure>
+<h3 id="2-准备docker环境"><a href="#2-准备docker环境" class="headerlink" title="2 准备docker环境"></a>2 准备docker环境</h3><h4 id="2-1-制作镜像"><a href="#2-1-制作镜像" class="headerlink" title="2.1 制作镜像"></a>2.1 制作镜像</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sh">docker buildx build \<br>  --build-arg http_proxy=http://host.docker.internal:7890 \<br>  --build-arg https_proxy=http://host.docker.internal:7890 \<br>  --build-arg all_proxy=socks5://host.docker.internal:7890 \<br>  -t my-linux-dev ./docker --platform linux/amd64<br></code></pre></td></tr></table></figure>
 
-<h4 id="1-2-系统工具准备"><a href="#1-2-系统工具准备" class="headerlink" title="1.2 系统工具准备"></a>1.2 系统工具准备</h4><ul>
-<li>AppStore安装xcode</li>
-<li>brew install autoconf</li>
-<li>brew install make</li>
-<li>brew install libtool</li>
-<li>brew install freetype</li>
-</ul>
-<h4 id="1-3-环境变量"><a href="#1-3-环境变量" class="headerlink" title="1.3 环境变量"></a>1.3 环境变量</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># 编译openjdk源码时的编译设置</span><br><span class="hljs-comment"># 设定语言选项，必须设置</span><br><span class="hljs-built_in">export</span> LANG=C<br><span class="hljs-built_in">export</span> CC=/usr/bin/clang<br><span class="hljs-built_in">export</span> CXX=/usr/bin/clang++<br><span class="hljs-comment"># 跳过clang的一些严格的语法检查</span><br><span class="hljs-built_in">export</span> COMPILER_WARNINGS_FATAL=<span class="hljs-literal">false</span><br><span class="hljs-comment"># 链接时使用的参数</span><br><span class="hljs-built_in">export</span> LFLAGS=<span class="hljs-string">&#x27;-Xlinker -lstdc++&#x27;</span><br><span class="hljs-comment"># 是否使用clang</span><br><span class="hljs-built_in">export</span> USE_CLANG=<span class="hljs-literal">true</span><br><span class="hljs-comment"># 使用64位数据模型</span><br><span class="hljs-built_in">export</span> LP64=1<br><span class="hljs-comment"># 告诉编译平台是64位，不然会按32位来编译</span><br><span class="hljs-built_in">export</span> ARCH_DATA_MODEL=64<br><span class="hljs-comment"># 允许自动下载依赖</span><br><span class="hljs-built_in">export</span> ALLOW_DOWNLOADS=<span class="hljs-literal">true</span><br><span class="hljs-comment"># 并行编译的线程数</span><br><span class="hljs-built_in">export</span> HOTSPOT_BUILD_JOBS=2<br><span class="hljs-comment"># 是否跳过与先前版本的比较</span><br><span class="hljs-built_in">export</span> SKIP_COMPARE_IMAGES=<span class="hljs-literal">true</span><br><span class="hljs-comment"># 是否使用预编译头文件 加快编译速度</span><br><span class="hljs-built_in">export</span> USE_PRECOMPILED_HEADER=<span class="hljs-literal">true</span><br><span class="hljs-comment"># 是否使用增量编译</span><br><span class="hljs-built_in">export</span> INCREMENTAL_BUILD=<span class="hljs-literal">true</span><br><span class="hljs-comment"># 编译内容</span><br><span class="hljs-built_in">export</span> BUILD_LANGTOOLS=<span class="hljs-literal">true</span><br><span class="hljs-built_in">export</span> BUILD_JAXP=<span class="hljs-literal">true</span><br><span class="hljs-built_in">export</span> BUILD_JAXWS=<span class="hljs-literal">true</span><br><span class="hljs-built_in">export</span> BUILD_CORBA=<span class="hljs-literal">true</span><br><span class="hljs-built_in">export</span> BUILD_HOTSPOT=<span class="hljs-literal">true</span><br><span class="hljs-built_in">export</span> BUILD_JDK=<span class="hljs-literal">true</span><br><span class="hljs-comment"># 编译版本</span><br><span class="hljs-built_in">export</span> SKIP_DEBUG_BUILD=<span class="hljs-literal">true</span><br><span class="hljs-built_in">export</span> SKIP_FASTDEBUG_BUILD=<span class="hljs-literal">false</span><br><span class="hljs-built_in">export</span> DEBUG_NAME=debug<br><span class="hljs-comment"># 避开javaws和浏览器Java插件之类的部分的build</span><br><span class="hljs-built_in">export</span> BUILD_DEPLOY=<span class="hljs-literal">false</span><br><span class="hljs-built_in">export</span> BUILD_INSTALL=<span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+<h4 id="2-2-启动容器"><a href="#2-2-启动容器" class="headerlink" title="2.2 启动容器"></a>2.2 启动容器</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">docker run \<br>--<span class="hljs-built_in">ulimit</span> nofile=65535:65535 \<br>--cap-add=SYS_PTRACE \<br>--security-opt seccomp=unconfined \<br>--<span class="hljs-built_in">rm</span> -it \<br>--privileged \<br>--name my-linux-dev \<br>-v /etc/localtime:/etc/localtime:ro \<br>-v <span class="hljs-variable">$PWD</span>:/home/dev my-linux-dev<br></code></pre></td></tr></table></figure>
 
-<h4 id="1-4-Boot-JDK安装"><a href="#1-4-Boot-JDK安装" class="headerlink" title="1.4 Boot JDK安装"></a>1.4 Boot JDK安装</h4><img src="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739895872.png" srcset="/img/loading.gif" lazyload class="">
-<p>因为jdk15我在现在的电脑环境上已经编译不成功了，因为macos sdk新版本已经不维护某个工具了，因此先到homebrew上看看x86支持的最新的jdk是openjdk21<br>因此以jdk21为BootJDK来编译jdk22</p>
-<h4 id="1-5-字符集修改"><a href="#1-5-字符集修改" class="headerlink" title="1.5 字符集修改"></a>1.5 字符集修改</h4><img src="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739896129.png" srcset="/img/loading.gif" lazyload class="">
+<blockquote>
+<p>这里有个特别要注意的点就是参数<code>--ulimit nofile=65535:65535</code>因为在jdk的工程太过庞大，在编译过程中需要打开很多的文件，所以这个参数一定要给够</p>
+</blockquote>
+<h3 id="3-编译"><a href="#3-编译" class="headerlink" title="3 编译"></a>3 编译</h3><p>正式的编译过程就跟在物理机上一样了</p>
+<h4 id="3-1-configure"><a href="#3-1-configure" class="headerlink" title="3.1 configure"></a>3.1 configure</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sh">bash ./configure \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=<span class="hljs-variable">$JAVA_HOME</span> \<br>--with-target-bits=64 \<br>--disable-warnings-as-errors \<br>--with-extra-cxxflags=<span class="hljs-string">&quot;-std=c++14&quot;</span><br></code></pre></td></tr></table></figure>
 
-<h4 id="1-6-configure脚本"><a href="#1-6-configure脚本" class="headerlink" title="1.6 configure脚本"></a>1.6 configure脚本</h4><p>因为我在环境变量中指定<code>LDFLAGS</code>，而configure识别不出来，所以先执行<code>unset LDFLAGS</code>，再执行下面脚本</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell">bash ./configure \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=/usr/local/Cellar/openjdk@21/21.0.4 \<br>--with-target-bits=64 \<br>--disable-warnings-as-errors \<br>--enable-dtrace \<br>--with-extra-cxxflags=&quot;-std=c++14&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="3-2-make"><a href="#3-2-make" class="headerlink" title="3.2 make"></a>3.2 make</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=linux-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
 
-<p>如果提示有环境变量可能导致后续编译报错就先执行<code>unset ALT_PARALLEL_COMPILE_JOBS</code></p>
-<p>如果在linux上执行报错<code>Could not find required tool for ZIPEXE</code>就安装<code>zip</code></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo pacman -Ss zip<br>sudo pacman -S zip<br></code></pre></td></tr></table></figure>
-
-<h4 id="1-7-编译"><a href="#1-7-编译" class="headerlink" title="1.7 编译"></a>1.7 编译</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">make CONF=macosx-x86_64-server-slowdebug compile-commands<br><br>sudo make CONF=macosx-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
-
-<h4 id="1-8-验证编译结果"><a href="#1-8-验证编译结果" class="headerlink" title="1.8 验证编译结果"></a>1.8 验证编译结果</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/macosx-x86_64-server-slowdebug/jdk/bin/java -version<br></code></pre></td></tr></table></figure>
-<img src="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739984881.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="1-9-重新编译"><a href="#1-9-重新编译" class="headerlink" title="1.9 重新编译"></a>1.9 重新编译</h4><p>比如在jdk源码中进行了注释导致调试发现断点错行了，这个时候就需要重新编译。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo make CONF=macosx-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
-
-<h3 id="2-Clion调试jvm"><a href="#2-Clion调试jvm" class="headerlink" title="2 Clion调试jvm"></a>2 Clion调试jvm</h3><p>在jdk源码根目录下新建文件夹my_test用来放java源码文件</p>
-<ul>
-<li>先用javac编译java文件</li>
-<li>再用java执行class文件</li>
-</ul>
-<img src="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739987381.png" srcset="/img/loading.gif" lazyload class="">
-
-<p>麻烦的地方在于每新建一个新的java文件就要新增一个对应的调试配置</p>
-<h3 id="3-IDea调试java"><a href="#3-IDea调试java" class="headerlink" title="3 IDea调试java"></a>3 IDea调试java</h3><p>在调试Jdk源码过程中可能需要追踪c&#x2F;cpp甚至汇编指令，方便起见新建项目不需要package路径。</p>
-<h4 id="3-1-新建项目"><a href="#3-1-新建项目" class="headerlink" title="3.1 新建项目"></a>3.1 新建项目</h4><p><a target="_blank" rel="noopener" href="https://github.com/Bannirui/openjdk15-debug.git">Git地址</a></p>
-<img src="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739988179.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="3-2-新建SDK"><a href="#3-2-新建SDK" class="headerlink" title="3.2 新建SDK"></a>3.2 新建SDK</h4><p>用编译好的jdk作为自己项目的sdk，Sourcepath选择jdk源码路径src下所有文件，这样后面就可以随便写注释，写完注释只要重新build一下jdk源码就行</p>
-<img src="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/1739988290.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="3-3-运行java"><a href="#3-3-运行java" class="headerlink" title="3.3 运行java"></a>3.3 运行java</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">./build/linux-x86_64-server-slowdebug/jdk/bin/java -version<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -555,8 +514,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>jvm-0x00-编译openjdk</div>
-      <div>https://bannirui.github.io/2023/03/10/java/jvm-0x00-编译openjdk/</div>
+      <div>jvm-0x10-用Docker作编译环境</div>
+      <div>https://bannirui.github.io/2025/09/25/java/jvm-0x10-用Docker作编译环境/</div>
     </div>
     <div class="license-meta">
       
@@ -568,7 +527,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月10日</div>
+          <div>2025年9月25日</div>
         </div>
       
       
@@ -600,18 +559,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">java源码-0x0C-Thread</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/10/ZK-3-8%E6%BA%90%E7%A0%81-13-%E9%80%89%E4%B8%BB%E8%BF%87%E7%A8%8B%E9%80%9A%E4%BF%A1%E5%92%8C%E7%AE%97%E6%B3%95/" title="ZK@3.8源码-13-选主过程通信和算法">
-                        <span class="hidden-mobile">ZK@3.8源码-13-选主过程通信和算法</span>
+                      <a href="/2025/09/23/Linux/%E6%89%8B%E6%90%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" title="手搓操作系统">
+                        <span class="hidden-mobile">手搓操作系统</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -634,7 +587,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '4524e877d7d489dadd770f8230132106'
+            id: '898c7929ed9e89fdba39d1fe7e96ee07'
           }
         )
         var gitalk = new Gitalk(options);
