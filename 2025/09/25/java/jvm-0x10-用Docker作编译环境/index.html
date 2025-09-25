@@ -26,10 +26,12 @@
 <meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="前面已经在macjvm-0x00-编译openjdk和linuxjvm-0x01-在Linux上编译openjdk22物理机上折腾过编译，之所以还在不厌其烦整编译，主要原因是我经常切换不同设备，很难保证环境工具的一致性，而且在物理机上编译确实可能对我现有的工具链产生侵入，所以这次又有docker上进行编译。想必这也是我最后一次做编译环境，后面就彻底统一了。 后面我尽量长期坚持更新源码笔记会在GIT">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2025/09/25/java/jvm-0x10-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/1758805066.png">
 <meta property="article:published_time" content="2025-09-24T16:16:54.000Z">
-<meta property="article:modified_time" content="2025-09-25T12:42:12.345Z">
+<meta property="article:modified_time" content="2025-09-25T12:58:16.078Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2025/09/25/java/jvm-0x10-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/1758805066.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -247,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          557 字
+          586 字
         
       </span>
     
@@ -468,6 +470,11 @@
 <h4 id="3-2-make"><a href="#3-2-make" class="headerlink" title="3.2 make"></a>3.2 make</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=linux-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
 
 <h4 id="3-3-运行java"><a href="#3-3-运行java" class="headerlink" title="3.3 运行java"></a>3.3 运行java</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">./build/linux-x86_64-server-slowdebug/jdk/bin/java -version<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>最后，在mac+docker的方式不能调试，原因就是虚拟机里面跑虚拟机行不通</p>
+</blockquote>
+<img src="/2025/09/25/java/jvm-0x10-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/1758805066.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
