@@ -54,8 +54,29 @@ CMD ["/bin/bash"]
 ```
 ### 2 准备docker环境
 
-- 制作镜像 `docker build ./docker -t my-linux-dev`
-- 启动容器 `docker run --ulimit nofile=65535:65535 --rm -it --privileged --name my-linux-dev -v /etc/localtime:/etc/localtime:ro -v $PWD:/home/dev my-linux-dev`
+#### 2.1 制作镜像 
+
+```sh
+docker buildx build \
+  --build-arg http_proxy=http://host.docker.internal:7890 \
+  --build-arg https_proxy=http://host.docker.internal:7890 \
+  --build-arg all_proxy=socks5://host.docker.internal:7890 \
+  -t my-linux-dev ./docker --platform linux/amd64
+```
+
+#### 2.2 启动容器
+
+```sh
+docker run \
+--ulimit nofile=65535:65535 \
+--cap-add=SYS_PTRACE \
+--security-opt seccomp=unconfined \
+--rm -it \
+--privileged \
+--name my-linux-dev \
+-v /etc/localtime:/etc/localtime:ro \
+-v $PWD:/home/dev my-linux-dev
+```
 
 > 这里有个特别要注意的点就是参数`--ulimit nofile=65535:65535`因为在jdk的工程太过庞大，在编译过程中需要打开很多的文件，所以这个参数一定要给够
 
