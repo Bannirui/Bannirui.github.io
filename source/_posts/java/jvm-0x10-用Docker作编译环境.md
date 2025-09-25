@@ -108,3 +108,7 @@ make CONF=linux-x86_64-server-slowdebug
 ```sh
 ./build/linux-x86_64-server-slowdebug/jdk/bin/java -version
 ```
+
+> 最后，在mac+docker的方式不能调试，原因就是虚拟机里面跑虚拟机行不通
+
+![](./jvm-0x10-用Docker作编译环境/1758805066.png)
