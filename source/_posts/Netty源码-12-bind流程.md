@@ -527,7 +527,7 @@ private void register0(ChannelPromise promise) {
 AbstractChannel.this.doRegister();
 ```
 
-可以参考之前{% post_link Java源码-Selector Java中IO多路复用器实现 %}。
+可以参考之前{% post_link java/java源码-0x0F-Selector Java中IO多路复用器实现 %}。
 
 #### 3.2 Channel注册复用器之后 触发一些方法执行
 

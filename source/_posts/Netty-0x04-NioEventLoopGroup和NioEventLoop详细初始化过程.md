@@ -249,7 +249,7 @@ categories: [ Netty ]
 
 ### 2 公共成员\方法\组件
 
-#### 2.1 {% post_link Java源码-Selector SelectorProvider %}
+#### 2.1 {% post_link java/java源码-0x0F-Selector SelectorProvider %}
 
 SelectorProvider是java提供的类，屏蔽了OS的平台差异，对于我们用户而言，可以将其当成黑盒直接使用。
 

@@ -124,7 +124,7 @@ ReflectiveChannelFactory这个类也很简单，只提供了一个构造方法�
 
 ## 三 SelectorProvider
 
-关于SelectorProvider的分析，在{% post_link Java源码-Selector Java实现Selector %}中有涉及。
+关于SelectorProvider的分析，在{% post_link java/java源码-0x0F-Selector Java实现Selector %}中有涉及。
 
 现在我们只需要关心两个方法的实现：
 
