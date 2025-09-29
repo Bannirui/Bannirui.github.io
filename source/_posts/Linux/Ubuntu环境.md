@@ -27,6 +27,8 @@ categories: Linux
 2 键盘健位改键
 ---
 
+### 2.1 keycodes
+
 ```shell
 cd /usr/share/X11/xkb/keycodes/
 
@@ -34,6 +36,16 @@ sudo cp evdev evdev.bak
 ```
 
 将`LALT`和`LCTL`的值互换，然后保存，注销重启。
+
+#### 2.2 gssettings
+
+it also works as below
+
+```sh
+gsettings get org.gnome.desktop.input-sources xkb-options
+gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:swap_lalt_lctl']"
+gsettings get org.gnome.desktop.input-sources xkb-options
+```
 
 3 软件安装
 ---
