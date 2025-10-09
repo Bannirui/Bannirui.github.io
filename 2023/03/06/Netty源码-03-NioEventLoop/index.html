@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/202211112145377.png">
 <meta property="article:published_time" content="2023-03-06T13:11:02.000Z">
-<meta property="article:modified_time" content="2025-01-24T15:52:43.435Z">
+<meta property="article:modified_time" content="2025-09-28T01:39:37.950Z">
 <meta property="article:author" content="dingrui">
 <meta property="article:tag" content="1刷Netty">
 <meta name="twitter:card" content="summary_large_image">
@@ -577,7 +577,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="1-1-IO多路复用器"><a href="#1-1-IO多路复用器" class="headerlink" title="1.1 IO多路复用器"></a>1.1 IO多路复用器</h3><h4 id="1-1-1"><a href="#1-1-1" class="headerlink" title="1.1.1 "></a>1.1.1 <a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" title="Java源码-Selector">Java原生的IO多路复用器</a></h4><h4 id="1-1-2"><a href="#1-1-2" class="headerlink" title="1.1.2 "></a>1.1.2 <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-04-Selector/" title="Netty源码-04-Selector">Netty优化的IO多路复用器</a></h4><h3 id="1-2-非IO任务队列taskQueue"><a href="#1-2-非IO任务队列taskQueue" class="headerlink" title="1.2 非IO任务队列taskQueue"></a>1.2 非IO任务队列taskQueue</h3><h4 id="1-2-1-选择策略"><a href="#1-2-1-选择策略" class="headerlink" title="1.2.1 选择策略"></a>1.2.1 选择策略</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// NioEventLoopGroup.java</span><br><span class="hljs-type">SelectStrategyFactory</span> <span class="hljs-variable">selectStrategyFactory</span> <span class="hljs-operator">=</span> (SelectStrategyFactory) args[<span class="hljs-number">1</span>]; <span class="hljs-comment">// DefaultSelectStrategyFactory实例 任务选择策略(如何从taskQueue任务队列中选择一个任务)</span><br></code></pre></td></tr></table></figure>
+<h3 id="1-1-IO多路复用器"><a href="#1-1-IO多路复用器" class="headerlink" title="1.1 IO多路复用器"></a>1.1 IO多路复用器</h3><h4 id="1-1-1"><a href="#1-1-1" class="headerlink" title="1.1.1 "></a>1.1.1 <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector">Java原生的IO多路复用器</a></h4><h4 id="1-1-2"><a href="#1-1-2" class="headerlink" title="1.1.2 "></a>1.1.2 <a href="/2023/03/06/Netty%E6%BA%90%E7%A0%81-04-Selector/" title="Netty源码-04-Selector">Netty优化的IO多路复用器</a></h4><h3 id="1-2-非IO任务队列taskQueue"><a href="#1-2-非IO任务队列taskQueue" class="headerlink" title="1.2 非IO任务队列taskQueue"></a>1.2 非IO任务队列taskQueue</h3><h4 id="1-2-1-选择策略"><a href="#1-2-1-选择策略" class="headerlink" title="1.2.1 选择策略"></a>1.2.1 选择策略</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// NioEventLoopGroup.java</span><br><span class="hljs-type">SelectStrategyFactory</span> <span class="hljs-variable">selectStrategyFactory</span> <span class="hljs-operator">=</span> (SelectStrategyFactory) args[<span class="hljs-number">1</span>]; <span class="hljs-comment">// DefaultSelectStrategyFactory实例 任务选择策略(如何从taskQueue任务队列中选择一个任务)</span><br></code></pre></td></tr></table></figure>
 
 
 

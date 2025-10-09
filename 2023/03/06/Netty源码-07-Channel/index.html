@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/06/Netty%E6%BA%90%E7%A0%81-07-Channel/202211112316351.png">
 <meta property="article:published_time" content="2023-03-06T13:47:46.000Z">
-<meta property="article:modified_time" content="2025-01-24T15:52:43.437Z">
+<meta property="article:modified_time" content="2025-09-28T01:39:37.952Z">
 <meta property="article:author" content="dingrui">
 <meta property="article:tag" content="1刷Netty">
 <meta name="twitter:card" content="summary_large_image">
@@ -576,7 +576,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> T <span class="hljs-title function_">newChannel</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.constructor.newInstance(); <span class="hljs-comment">// 反射调用Channel的无参构造方法创建Channel NioSocketChannel充当客户端功能 它的创建时机在connect()的时候 NioServerSocketChannel充当服务端 它的创建时机在bind()的时候</span><br>    &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelException</span>(<span class="hljs-string">&quot;Unable to create Channel from class &quot;</span> + constructor.getDeclaringClass(), t);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>ReflectiveChannelFactory这个类也很简单，只提供了一个构造方法，需要指定Channel实现类对象，将来调用channelFactory的newChannel就可以通过类对象的无参构造方法反射创建Channel实例对象。</p>
-<h2 id="三-SelectorProvider"><a href="#三-SelectorProvider" class="headerlink" title="三 SelectorProvider"></a>三 SelectorProvider</h2><p>关于SelectorProvider的分析，在<a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" title="Java源码-Selector">Java实现Selector</a>中有涉及。</p>
+<h2 id="三-SelectorProvider"><a href="#三-SelectorProvider" class="headerlink" title="三 SelectorProvider"></a>三 SelectorProvider</h2><p>关于SelectorProvider的分析，在<a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector">Java实现Selector</a>中有涉及。</p>
 <p>现在我们只需要关心两个方法的实现：</p>
 <ul>
 <li>openServerSocketChannel</li>

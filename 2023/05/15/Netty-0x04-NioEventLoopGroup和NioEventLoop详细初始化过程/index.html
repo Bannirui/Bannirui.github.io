@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2023/05/15/Netty-0x04-NioEventLoopGroup%E5%92%8CNioEventLoop%E8%AF%A6%E7%BB%86%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/image-20230516221538606.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/05/15/Netty-0x04-NioEventLoopGroup%E5%92%8CNioEventLoop%E8%AF%A6%E7%BB%86%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/image-20230516224202667.png">
 <meta property="article:published_time" content="2023-05-15T15:09:42.000Z">
-<meta property="article:modified_time" content="2025-01-24T15:52:43.432Z">
+<meta property="article:modified_time" content="2025-09-28T01:39:37.950Z">
 <meta property="article:author" content="dingrui">
 <meta property="article:tag" content="2刷Netty">
 <meta name="twitter:card" content="summary_large_image">
@@ -575,7 +575,7 @@
 <li><p>workerGroup交给Netty进行推断，DEFAULT_EVENT_LOOP_THREADS</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">DEFAULT_EVENT_LOOP_THREADS = Math.max(<span class="hljs-number">1</span>, SystemPropertyUtil.getInt(<span class="hljs-string">&quot;io.netty.eventLoopThreads&quot;</span>, NettyRuntime.availableProcessors() * <span class="hljs-number">2</span>));<br></code></pre></td></tr></table></figure></li>
 </ul>
-<h3 id="2-公共成员-方法-组件"><a href="#2-公共成员-方法-组件" class="headerlink" title="2 公共成员\方法\组件"></a>2 公共成员\方法\组件</h3><h4 id="2-1"><a href="#2-1" class="headerlink" title="2.1 "></a>2.1 <a href="/2023/03/06/Java%E6%BA%90%E7%A0%81-Selector/" title="Java源码-Selector">SelectorProvider</a></h4><p>SelectorProvider是java提供的类，屏蔽了OS的平台差异，对于我们用户而言，可以将其当成黑盒直接使用。</p>
+<h3 id="2-公共成员-方法-组件"><a href="#2-公共成员-方法-组件" class="headerlink" title="2 公共成员\方法\组件"></a>2 公共成员\方法\组件</h3><h4 id="2-1"><a href="#2-1" class="headerlink" title="2.1 "></a>2.1 <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector">SelectorProvider</a></h4><p>SelectorProvider是java提供的类，屏蔽了OS的平台差异，对于我们用户而言，可以将其当成黑盒直接使用。</p>
 <p>SelectorProvider::provider提供了一个多路复用器的具体实现。</p>
 <h5 id="2-1-1-提供器"><a href="#2-1-1-提供器" class="headerlink" title="2.1.1 提供器"></a>2.1.1 提供器</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 提供给客户端一个SelectorProvider实例 将来用于创建Selector</span><br><span class="hljs-comment"> * 因为Slector本身是跨平台的 所以SelectorProvider跟它是配套的 也是跨平台的</span><br><span class="hljs-comment"> *   - macosx</span><br><span class="hljs-comment"> *     - select</span><br><span class="hljs-comment"> *     - poll</span><br><span class="hljs-comment"> *     - kqueue</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> SelectorProvider <span class="hljs-title function_">provider</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> Holder.INSTANCE;<br>&#125;<br></code></pre></td></tr></table></figure>
 
