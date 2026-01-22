@@ -2,7 +2,7 @@
 title: mac通过网线共享wifi
 category_bar: true
 date: 2024-09-28 11:59:18
-categories: Linux
+categories: 笔记
 ---
 
 关于共享mac的网络连接，网上大部分的资料和教程都是千篇一律的，mac在wlan连接的前提下共享网络给其他设备，根本原因是mac的网络分享使用的是wifi网卡。

@@ -2,7 +2,7 @@
 title: Linux安装Qt环境
 category_bar: true
 date: 2024-05-03 18:45:55
-categories: Linux
+categories: QT
 ---
 
 Linux的发行版中带GUI的很多都依赖Qt，所以我觉得直接安装Qt的核心包到系统中可能会替换掉核心依赖，也不利于以后的包清理工作。

@@ -2,7 +2,7 @@
 title: ssh连接到windows的wsl
 category_bar: true
 date: 2024-09-21 11:05:36
-categories: Linux
+categories: 笔记
 ---
 
 最近发现mac发热异常，并且伴随着没有规律的短暂性黑屏，想必是负载过重，结合实际的使用情况最终决定尝试一下如下方案

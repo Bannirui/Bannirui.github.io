@@ -2,7 +2,7 @@
 title: Mac环境
 category_bar: true
 date: 2024-05-01 22:45:02
-categories: Linux
+categories: 笔记
 ---
 
 ### 1 Chrome

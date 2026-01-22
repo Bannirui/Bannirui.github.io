@@ -2,7 +2,7 @@
 title: apt命令
 category_bar: true
 date: 2024-05-04 23:21:45
-categories: Linux
+categories: 笔记
 ---
 
 - apt search 包名 搜索

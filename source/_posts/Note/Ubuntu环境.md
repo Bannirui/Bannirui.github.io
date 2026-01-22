@@ -2,7 +2,7 @@
 title: Ubuntu环境
 category_bar: true
 date: 2024-05-01 22:45:29
-categories: Linux
+categories: 笔记
 ---
 
 零刻Ser6ProVest，配置是AMD-R7+32G+1T，刷了Ubuntu系统作为主力机。

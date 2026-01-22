@@ -2,7 +2,7 @@
 title: ArchLinux环境
 category_bar: true
 date: 2024-05-01 22:45:48
-categories: Linux
+categories: 笔记
 ---
 
 1 系统安装
