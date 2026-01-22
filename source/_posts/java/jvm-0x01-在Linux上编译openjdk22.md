@@ -45,7 +45,7 @@ git checkout jdk_22_study
 
 ```sh
 sudo apt install autoconf
-sudp apt install zip
+sudo apt install zip
 sudo apt-get install libasound2-dev
 sudo apt-get install libcups2-dev
 sudo apt-get install libfontconfig1-dev
