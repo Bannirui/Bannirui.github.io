@@ -1,0 +1,1166 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="主要想学到什么  自底向上回溯网络编程的发展 温习涉及到的名词  1 TCP\IP协议栈  作为一名普通的业务开发，我怎么使用OS在2个应用之间通信  OS直接将TCP\IP的实现暴露给用户 自此基础上进行封装再暴露给用户  2 socketsocket是在逻辑上对TCP\IP协议栈的抽象封装，在物理上是OS暴露用户层的接口 系统调用  socket 负责创建socket实例  connect 负">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty-0x07-我眼中的网络编程">
+<meta property="og:url" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="主要想学到什么  自底向上回溯网络编程的发展 温习涉及到的名词  1 TCP\IP协议栈  作为一名普通的业务开发，我怎么使用OS在2个应用之间通信  OS直接将TCP\IP的实现暴露给用户 自此基础上进行封装再暴露给用户  2 socketsocket是在逻辑上对TCP\IP协议栈的抽象封装，在物理上是OS暴露用户层的接口 系统调用  socket 负责创建socket实例  connect 负">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518214107228.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518222908047.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518234650181.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518235609869.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230519001214882.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230519095748203.png">
+<meta property="article:published_time" content="2023-05-18T13:34:15.000Z">
+<meta property="article:modified_time" content="2025-01-24T15:52:43.433Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="网络">
+<meta property="article:tag" content="2刷Netty">
+<meta property="article:tag" content="Java@15">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518214107228.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Netty-0x07-我眼中的网络编程 - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Netty-0x07-我眼中的网络编程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-05-18 21:34" pubdate>
+          2023年5月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Netty"
+        id="heading-b26a1a0069605c69ea0c679b5e95fc17" role="tab" data-toggle="collapse" href="#collapse-b26a1a0069605c69ea0c679b5e95fc17"
+        aria-expanded="true"
+      >
+        Netty
+        <span class="list-group-count">(22)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-b26a1a0069605c69ea0c679b5e95fc17"
+           role="tabpanel" aria-labelledby="heading-b26a1a0069605c69ea0c679b5e95fc17">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/05/06/Netty/Netty-0x00-NioEventLoopGroup/" title="Netty-0x00-NioEventLoopGroup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x00-NioEventLoopGroup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/09/Netty/Netty-0x01-NioEventLoopGroup%E4%B8%8ENioEventLoop%E7%BB%84%E5%90%88%E5%85%B3%E7%B3%BB/" title="Netty-0x01-NioEventLoopGroup与NioEventLoop组合关系"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x01-NioEventLoopGroup与NioEventLoop组合关系</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/10/Netty/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" title="Netty-0x02-NioEventLoopGroup之任务管理"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x02-NioEventLoopGroup之任务管理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/11/Netty/Netty-0x03-NioEventLoop/" title="Netty-0x03-NioEventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x03-NioEventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/15/Netty/Netty-0x04-NioEventLoopGroup%E5%92%8CNioEventLoop%E8%AF%A6%E7%BB%86%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" title="Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/16/Netty/Netty-0x05-%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/" title="Netty-0x05-启动引导"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x05-启动引导</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/16/Netty/Netty-0x06-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96/" title="Netty-0x06-数据结构优化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x06-数据结构优化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" title="Netty-0x07-我眼中的网络编程"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Netty-0x07-我眼中的网络编程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-00-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/" title="Netty源码-00-源码调试环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-00-源码调试环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-01-NioEventLoopGroup/" title="Netty源码-01-NioEventLoopGroup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-01-NioEventLoopGroup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-02-FastThreadLocalThread/" title="Netty源码-02-FastThreadLocalThread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-02-FastThreadLocalThread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" title="Netty源码-03-NioEventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-03-NioEventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-04-Selector/" title="Netty源码-04-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-04-Selector</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-05-EventLoop/" title="Netty源码-05-EventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-05-EventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/" title="Netty源码-06-MpscQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-06-MpscQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-07-Channel/" title="Netty源码-07-Channel"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-07-Channel</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/" title="Netty源码-08-ChannelInitializer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-08-ChannelInitializer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-09-ServerBootstrapAcceptor/" title="Netty源码-09-ServerBootstrapAcceptor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-09-ServerBootstrapAcceptor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" title="Netty源码-10-ChannelFuture"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-10-ChannelFuture</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" title="Netty源码-11-Pipeline"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-11-Pipeline</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Netty/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Netty-0x07-我眼中的网络编程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>主要想学到什么</p>
+<ul>
+<li>自底向上回溯网络编程的发展</li>
+<li>温习涉及到的名词</li>
+</ul>
+<h3 id="1-TCP-IP协议栈"><a href="#1-TCP-IP协议栈" class="headerlink" title="1 TCP\IP协议栈"></a>1 TCP\IP协议栈</h3><img src="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518214107228.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>作为一名普通的业务开发，我怎么使用OS在2个应用之间通信</p>
+<ul>
+<li>OS直接将TCP\IP的实现暴露给用户</li>
+<li>自此基础上进行封装再暴露给用户</li>
+</ul>
+<h3 id="2-socket"><a href="#2-socket" class="headerlink" title="2 socket"></a>2 socket</h3><p>socket是在逻辑上对TCP\IP协议栈的抽象封装，在物理上是OS暴露用户层的接口</p>
+<p>系统调用</p>
+<ul>
+<li>socket 负责创建socket实例 </li>
+<li>connect 负责向server socket发起连接请求</li>
+<li>bind 显式将socket跟ip:port绑定</li>
+<li>listen 将主动socket转换为被动socket，只负责接收连接请求</li>
+<li>aceept 负责建立连接请求</li>
+<li>read 读数据</li>
+<li>write 写数据</li>
+</ul>
+<h4 id="2-1-手册"><a href="#2-1-手册" class="headerlink" title="2.1 手册"></a>2.1 手册</h4><h5 id="2-1-1-socket"><a href="#2-1-1-socket" class="headerlink" title="2.1.1 socket"></a>2.1.1 socket</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/socket.h&gt;</span></span><br><br><span class="hljs-type">int</span><br><span class="hljs-title function_">socket</span><span class="hljs-params">(<span class="hljs-type">int</span> domain, <span class="hljs-type">int</span> type, <span class="hljs-type">int</span> protocol)</span>;<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-1-2-connect"><a href="#2-1-2-connect" class="headerlink" title="2.1.2 connect"></a>2.1.2 connect</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/socket.h&gt;</span></span><br><br><span class="hljs-type">int</span><br><span class="hljs-title function_">connect</span><span class="hljs-params">(<span class="hljs-type">int</span> socket, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> sockaddr *address,</span><br><span class="hljs-params">    <span class="hljs-type">socklen_t</span> address_len)</span>;<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-1-3-bind"><a href="#2-1-3-bind" class="headerlink" title="2.1.3 bind"></a>2.1.3 bind</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/socket.h&gt;</span></span><br><br><span class="hljs-type">int</span><br><span class="hljs-title function_">bind</span><span class="hljs-params">(<span class="hljs-type">int</span> socket, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> sockaddr *address,</span><br><span class="hljs-params">    <span class="hljs-type">socklen_t</span> address_len)</span>;<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-1-4-listen"><a href="#2-1-4-listen" class="headerlink" title="2.1.4 listen"></a>2.1.4 listen</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/socket.h&gt;</span></span><br><br><span class="hljs-type">int</span><br><span class="hljs-title function_">listen</span><span class="hljs-params">(<span class="hljs-type">int</span> socket, <span class="hljs-type">int</span> backlog)</span>;<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-1-5-accept"><a href="#2-1-5-accept" class="headerlink" title="2.1.5 accept"></a>2.1.5 accept</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/socket.h&gt;</span></span><br><br><span class="hljs-type">int</span><br><span class="hljs-title function_">accept</span><span class="hljs-params">(<span class="hljs-type">int</span> socket, <span class="hljs-keyword">struct</span> sockaddr *<span class="hljs-keyword">restrict</span> address,</span><br><span class="hljs-params">    <span class="hljs-type">socklen_t</span> *<span class="hljs-keyword">restrict</span> address_len)</span>;<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-1-6-read"><a href="#2-1-6-read" class="headerlink" title="2.1.6 read"></a>2.1.6 read</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/uio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">pread</span><span class="hljs-params">(<span class="hljs-type">int</span> d, <span class="hljs-type">void</span> *buf, <span class="hljs-type">size_t</span> nbyte, <span class="hljs-type">off_t</span> offset)</span>;<br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">int</span> fildes, <span class="hljs-type">void</span> *buf, <span class="hljs-type">size_t</span> nbyte)</span>;<br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">preadv</span><span class="hljs-params">(<span class="hljs-type">int</span> d, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> iovec *iov, <span class="hljs-type">int</span> iovcnt, <span class="hljs-type">off_t</span> offset)</span>;<br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">readv</span><span class="hljs-params">(<span class="hljs-type">int</span> d, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> iovec *iov, <span class="hljs-type">int</span> iovcnt)</span>;<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-1-7-write"><a href="#2-1-7-write" class="headerlink" title="2.1.7 write"></a>2.1.7 write</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">pwrite</span><span class="hljs-params">(<span class="hljs-type">int</span> fildes, <span class="hljs-type">const</span> <span class="hljs-type">void</span> *buf, <span class="hljs-type">size_t</span> nbyte, <span class="hljs-type">off_t</span> offset)</span>;<br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">write</span><span class="hljs-params">(<span class="hljs-type">int</span> fildes, <span class="hljs-type">const</span> <span class="hljs-type">void</span> *buf, <span class="hljs-type">size_t</span> nbyte)</span>;<br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/uio.h&gt;</span></span><br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">writev</span><span class="hljs-params">(<span class="hljs-type">int</span> fildes, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> iovec *iov, <span class="hljs-type">int</span> iovcnt)</span>;<br><br><span class="hljs-type">ssize_t</span><br><span class="hljs-title function_">pwritev</span><span class="hljs-params">(<span class="hljs-type">int</span> fildes, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> iovec *iov, <span class="hljs-type">int</span> iovcnt,</span><br><span class="hljs-params">    <span class="hljs-type">off_t</span> offset)</span>;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-2-伪代码"><a href="#2-2-伪代码" class="headerlink" title="2.2 伪代码"></a>2.2 伪代码</h4><h5 id="2-2-1-服务端"><a href="#2-2-1-服务端" class="headerlink" title="2.2.1 服务端"></a>2.2.1 服务端</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/socket.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;netinet/in.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;arpa/inet.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> HOST    <span class="hljs-string">&quot;127.0.0.1&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> PORT    9527</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BACKLOG 50</span><br><br><span class="hljs-comment">// 服务端</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">server</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-comment">// server socket</span><br>    <span class="hljs-type">int</span> sfd = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> ((sfd = socket(AF_INET, SOCK_STREAM, <span class="hljs-number">0</span>)) &lt; <span class="hljs-number">0</span>)<br>    &#123;<br>        <span class="hljs-comment">// err</span><br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;服务端创建socket失败\n&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sockaddr_in</span> <span class="hljs-title">host</span> =</span> &#123;<span class="hljs-number">0</span>&#125;;<br>    host.sin_family = AF_INET;<br>    host.sin_port = htons(PORT);<br>    host.sin_addr.s_addr = htonl(INADDR_ANY);<br>    <span class="hljs-keyword">if</span> (bind(sfd, (<span class="hljs-type">void</span> *) &amp;host, <span class="hljs-keyword">sizeof</span>(host)) &lt; <span class="hljs-number">0</span>)<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;服务端绑定端口失败\n&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (listen(sfd, BACKLOG) &lt; <span class="hljs-number">0</span>)<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;服务端监听端口失败\n&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)<br>    &#123;<br>        <span class="hljs-comment">// 对端发起了连接 新建socket与之通信</span><br>        <span class="hljs-type">int</span> socket = <span class="hljs-number">0</span>;<br>        <span class="hljs-comment">// 用于接收对端的连接信息</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sockaddr_in</span> <span class="hljs-title">client_host</span> =</span> &#123;<span class="hljs-number">0</span>&#125;;<br>        <span class="hljs-comment">// 用于接收对端连接信息大小</span><br>        <span class="hljs-type">socklen_t</span> client_len = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">if</span> ((socket = accept(sfd, (<span class="hljs-type">void</span> *) &amp;client_host, &amp;client_len)) &lt; <span class="hljs-number">0</span>)<br>        &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;服务端接收连接失败\n&quot;</span>);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2023/5/19 读写</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-2-2-客户端"><a href="#2-2-2-客户端" class="headerlink" title="2.2.2 客户端"></a>2.2.2 客户端</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/socket.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;netinet/in.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;arpa/inet.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> HOST    <span class="hljs-string">&quot;127.0.0.1&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> PORT    9527</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BACKLOG 50</span><br><br><span class="hljs-comment">// 客户端</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">client</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-comment">// socket</span><br>    <span class="hljs-type">int</span> sfd = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> ((sfd = socket(AF_INET, SOCK_STREAM, <span class="hljs-number">0</span>)) &lt; <span class="hljs-number">0</span>)<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;客户端创建socket失败\n&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-comment">// 建立连接的对端信息</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sockaddr_in</span> <span class="hljs-title">remote</span> =</span> &#123;<span class="hljs-number">0</span>&#125;;<br>    remote.sin_family = AF_INET;<br>    remote.sin_port = htons(PORT);<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> remote_addr = <span class="hljs-number">0</span>;<br>    inet_pton(AF_INET, HOST, &amp;remote_addr);<br>    remote.sin_addr.s_addr = remote_addr;<br>    <span class="hljs-keyword">if</span> (connect(sfd, (<span class="hljs-type">void</span> *) &amp;remote, <span class="hljs-keyword">sizeof</span>(remote)) &lt; <span class="hljs-number">0</span>)<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;客户端连接失败\n&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-comment">// // <span class="hljs-doctag">TODO:</span> 2023/5/19 读写</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们一直说socket，socket是什么东西呢</p>
+<p>5元组，{协议，源ip，源port，目的ip，目的port}</p>
+<p>socket是负责端到端，两个进程间的通信，因此它一定是成对的</p>
+<img src="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518222908047.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="3-Java是运行在JVM里面的"><a href="#3-Java是运行在JVM里面的" class="headerlink" title="3 Java是运行在JVM里面的"></a>3 Java是运行在JVM里面的</h3><p>怎么调用socket相关方法呢</p>
+<h4 id="3-1-Java针对OS的fd进行封装"><a href="#3-1-Java针对OS的fd进行封装" class="headerlink" title="3.1 Java针对OS的fd进行封装"></a>3.1 Java针对OS的fd进行封装</h4><ul>
+<li>首先就要封装fd，对应的类是FileDescriptor</li>
+<li>其次封装Socket，真正对应OS的socket其实是SocksSocketImpl</li>
+<li>为了区分专门负责连接的被动Socket，在此基础上封装出来了Socket和ServerSocket，将绑定端口这个系统调用封装到了ServerSocket的构造方法中</li>
+<li>Socket还需要负责读写，因此组合了InputStream和OutputStream</li>
+<li>系统调用的read和write是通过工具类实现在JNI里面</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 它相当于直接映射着OS层的Socket</span><br><span class="hljs-comment"> * 实现是NioSocketImpl</span><br><span class="hljs-comment"> */</span><br>SocketImpl impl;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 开放给客户端使用的数据读写</span><br><span class="hljs-comment"> * 但是本身它们对接的是实现在NioSocketImpl中的SocketInputStream</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> InputStream in;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> OutputStream out;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> InputStream <span class="hljs-title function_">getInputStream</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-keyword">if</span> (isClosed())<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SocketException</span>(<span class="hljs-string">&quot;Socket is closed&quot;</span>);<br>    <span class="hljs-keyword">if</span> (!isConnected())<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SocketException</span>(<span class="hljs-string">&quot;Socket is not connected&quot;</span>);<br>    <span class="hljs-keyword">if</span> (isInputShutdown())<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SocketException</span>(<span class="hljs-string">&quot;Socket input is shutdown&quot;</span>);<br>    <span class="hljs-type">InputStream</span> <span class="hljs-variable">in</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.in;<br>    <span class="hljs-keyword">if</span> (in == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-comment">// wrap the input stream so that the close method closes this socket</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 核心在impl.getInPutStream()方法</span><br><span class="hljs-comment">         * 将来客户端通过从Socket实例获取的InputStram进行read的时候</span><br><span class="hljs-comment">         * 本质是通过impl.getInputStream()的返回值进行的read</span><br><span class="hljs-comment">         */</span><br>        in = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SocketInputStream</span>(<span class="hljs-built_in">this</span>, impl.getInputStream());<br>        <span class="hljs-keyword">if</span> (!IN.compareAndSet(<span class="hljs-built_in">this</span>, <span class="hljs-literal">null</span>, in)) &#123; <span class="hljs-comment">// 把in局部变量赋值给Socket的成员变量in 那么下一次执行getInputStream的时候就不会进入if分支</span><br>            in = <span class="hljs-built_in">this</span>.in;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> in;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> InputStream <span class="hljs-title function_">getInputStream</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InputStream</span>() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">read</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>            <span class="hljs-type">byte</span>[] a = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1</span>];<br>            <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> read(a, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);<br>            <span class="hljs-keyword">return</span> (n &gt; <span class="hljs-number">0</span>) ? (a[<span class="hljs-number">0</span>] &amp; <span class="hljs-number">0xff</span>) : -<span class="hljs-number">1</span>;<br>        &#125;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">byte</span>[] b, <span class="hljs-type">int</span> off, <span class="hljs-type">int</span> len)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>            <span class="hljs-keyword">return</span> NioSocketImpl.<span class="hljs-built_in">this</span>.read(b, off, len);<br>        &#125;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">available</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>            <span class="hljs-keyword">return</span> NioSocketImpl.<span class="hljs-built_in">this</span>.available();<br>        &#125;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">close</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>            NioSocketImpl.<span class="hljs-built_in">this</span>.close();<br>        &#125;<br>    &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>怎么封装</p>
+<ul>
+<li>把OS里面关键的标识fd封装成一个Java类</li>
+<li>OS中读写是纯粹的动作，操作对象是fd，读写本身不隶属于任何的struct</li>
+<li>而Java中我们封装出来的Socket类是要具有读写功能的，因此中间需要使用工具类的方式，将类的方法转交给JNI实现，将面向对象转换成面向过程</li>
+</ul>
+<img src="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518234650181.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="3-2-伪代码"><a href="#3-2-伪代码" class="headerlink" title="3.2 伪代码"></a>3.2 伪代码</h4><p>因为JDK是根据系统库函数做了一对一的封装，因此可以说跟C语言的开发几乎一样，区别仅仅在于</p>
+<ul>
+<li>C语言用的是库函数</li>
+<li>Java用的是JDK的封装类</li>
+</ul>
+<h5 id="3-2-1-服务端"><a href="#3-2-1-服务端" class="headerlink" title="3.2.1 服务端"></a>3.2.1 服务端</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">HOST</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;127.0.0.1&quot;</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">PORT</span> <span class="hljs-operator">=</span> <span class="hljs-number">9527</span>;<br><br><span class="hljs-comment">// 阻塞式服务端</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">blockingServer</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-type">ServerSocket</span> <span class="hljs-variable">serverSocket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerSocket</span>(PORT);<br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>        <span class="hljs-comment">// 阻塞点</span><br>        <span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> serverSocket.accept();<br>        <span class="hljs-comment">// 阻塞点</span><br>        socket.getInputStream().read();<br>        <span class="hljs-comment">// 阻塞点</span><br>        socket.getOutputStream().write(<span class="hljs-number">1</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="3-2-2-客户端"><a href="#3-2-2-客户端" class="headerlink" title="3.2.2 客户端"></a>3.2.2 客户端</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 阻塞式客户端</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">blockingClient</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Socket</span>();<br>    <span class="hljs-comment">// 阻塞点</span><br>    socket.connect(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(HOST, PORT));<br>    <span class="hljs-comment">// 阻塞点</span><br>    socket.getInputStream().read();<br>    <span class="hljs-comment">// 阻塞点</span><br>    socket.getOutputStream().write(<span class="hljs-number">1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-目前存在的问题"><a href="#4-目前存在的问题" class="headerlink" title="4 目前存在的问题"></a>4 目前存在的问题</h3><p>存在多个阻塞点，满足不了高并发的连接\读写请求</p>
+<ul>
+<li>accept是阻塞的系统调用</li>
+<li>read是阻塞的系统调用</li>
+<li>write是阻塞的系统调用</li>
+</ul>
+<p>我们需要一个机制</p>
+<ul>
+<li>这个机制能够不阻塞<ul>
+<li>比如调用accept获取连接，此时没有客户端发起连接，那就立马返回，告诉我没有连接进来</li>
+<li>比如调用read，此时socket没有可读数据，那就立马返回，告诉我没有可读数据</li>
+<li>比如调用write，此时socket不可写，那就立马返回，告诉我不可写</li>
+</ul>
+</li>
+<li>以上机制还有缺陷，就是虽然单个系统调用不阻塞了，如果我有大批量的socket需要检查状态<ul>
+<li>源源不断的socket发起连接</li>
+<li>也就是说有源源不断的socket通过accept创建出来<ul>
+<li>一批socket需要检查是否可读怎么办，需要我自己再调用read</li>
+<li>一批socket需要检查是否可写怎么办，需要我自己再调用write</li>
+</ul>
+</li>
+<li>虽然系统调用已经不阻塞了，但是面对这种批量的状态检测，需要发生大量的用户\内核切换，这个开销也是很大的</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-OS的非阻塞支撑"><a href="#5-OS的非阻塞支撑" class="headerlink" title="5 OS的非阻塞支撑"></a>5 OS的非阻塞支撑</h3><ul>
+<li>通过fcntl(fd control)系统调用指定Socket属性，支持非阻塞式编程</li>
+<li>提供了多路复用机制<ul>
+<li>所谓的多路复用就是我不再需要在用户层通过轮询的方式检查每个socket的状态，我可以一次性告诉OS的多路复用器，我要你对某个socket监测，监测它是否有连接进来，监测它是否可读，监测它是否可写</li>
+<li>然后等到某一个时机OS就将批量socket的状态一次性告诉我<ul>
+<li>这个时机就是调用多路复用器提供的一个系统调用的时候</li>
+<li>相当于把用户层的轮询放到了内核去做，省却了大量的内核切换</li>
+<li>OS对此做了大量的优化<ul>
+<li>存储批量socket的数据结构，不仅要存储，还要提供增删改查的能力，基本都是向红黑树发展</li>
+<li>告诉客户端有多少个socket状态是满足监测需求的，明确的个数</li>
+<li>不仅告诉有多少个socket状态就绪，还把socket直接罗列出来提供给调用方，免去了调用方再轮询一次进行筛选</li>
+<li>内核检查socket状态也从简单的轮询发展为中断回调</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-1-非阻塞式"><a href="#5-1-非阻塞式" class="headerlink" title="5.1 非阻塞式"></a>5.1 非阻塞式</h4><img src="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230518235609869.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="5-2-多路复用器"><a href="#5-2-多路复用器" class="headerlink" title="5.2 多路复用器"></a>5.2 多路复用器</h4><p>不同的平台，已经单个平台都有不同的实现</p>
+<p>以mac为例，提供的最优方案是kqueue</p>
+<h6 id="5-2-1-创建多路复用器实现的实例"><a href="#5-2-1-创建多路复用器实现的实例" class="headerlink" title="5.2.1 创建多路复用器实现的实例"></a>5.2.1 创建多路复用器实现的实例</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">kqueue</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span>;<br></code></pre></td></tr></table></figure>
+
+<h6 id="5-2-2-对哪个socket的什么类型事件感兴趣"><a href="#5-2-2-对哪个socket的什么类型事件感兴趣" class="headerlink" title="5.2.2 对哪个socket的什么类型事件感兴趣"></a>5.2.2 对哪个socket的什么类型事件感兴趣</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">EV_SET(&amp;kev, ident, filter, flags, fflags, data, udata);<br></code></pre></td></tr></table></figure>
+
+<h6 id="5-2-3-要监测的socket信息注册到多路复用器上"><a href="#5-2-3-要监测的socket信息注册到多路复用器上" class="headerlink" title="5.2.3 要监测的socket信息注册到多路复用器上"></a>5.2.3 要监测的socket信息注册到多路复用器上</h6><p>支持批量注册，也就是多路复用器提供了增删改查的能力</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">kevent</span><span class="hljs-params">(<span class="hljs-type">int</span> kq, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> kevent *changelist, <span class="hljs-type">int</span> nchanges,</span><br><span class="hljs-params">    <span class="hljs-keyword">struct</span> kevent *eventlist, <span class="hljs-type">int</span> nevents,</span><br><span class="hljs-params">    <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> timespec *timeout)</span>;<br></code></pre></td></tr></table></figure>
+
+<p>5.2.4 某一个时机客户端去询问多路复用器监测结果</p>
+<p>macos中提供的kevent函数，通过组合参数，达到两种效果</p>
+<ul>
+<li>注册</li>
+<li>结果</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">kevent</span><span class="hljs-params">(<span class="hljs-type">int</span> kq, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> kevent *changelist, <span class="hljs-type">int</span> nchanges,</span><br><span class="hljs-params">    <span class="hljs-keyword">struct</span> kevent *eventlist, <span class="hljs-type">int</span> nevents,</span><br><span class="hljs-params">    <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> timespec *timeout)</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="6-Java怎么去支持这个非阻塞方式的"><a href="#6-Java怎么去支持这个非阻塞方式的" class="headerlink" title="6 Java怎么去支持这个非阻塞方式的"></a>6 Java怎么去支持这个非阻塞方式的</h3><p>基本有两个思路</p>
+<ul>
+<li>继续升级已有的Socket类<ul>
+<li>代价小，向下直接兼容版本</li>
+<li>相当于构造方法提供一个形参，控制使用阻塞\非阻塞式的模式，直接对标OS的系统调用fcntl</li>
+<li>针对多路复用器，封装对应的Java中的多路复用器实现</li>
+<li>还是通过getInputStream\getOutputStream，对接的数据依然是byte数组，反序列化这件事情还得多一层结构</li>
+</ul>
+</li>
+<li>重新封装个类专门支持非阻塞式的Socket叫NioSocket<ul>
+<li>冗余代码过多，以后回头看就会发现整个系统设计比较傻逼</li>
+</ul>
+</li>
+</ul>
+<p>在此基础之上，Java专门提供了非阻塞的支持</p>
+<ul>
+<li>Buffer</li>
+<li>Channel</li>
+<li>Selector</li>
+</ul>
+<p>相当于没有了Socket，它去哪儿了</p>
+<p>可以这样粗略理解，Channel就是Socket，它是对Socket更高层次的抽象和封装</p>
+<img src="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230519001214882.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="7-为什么要有Netty"><a href="#7-为什么要有Netty" class="headerlink" title="7 为什么要有Netty"></a>7 为什么要有Netty</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SelectorTest</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">BUF_SIZE</span> <span class="hljs-operator">=</span> <span class="hljs-number">256</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">TIMEOUT</span> <span class="hljs-operator">=</span> <span class="hljs-number">3_000</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-comment">// 打开服务端Socket</span><br>        <span class="hljs-type">ServerSocketChannel</span> <span class="hljs-variable">serverSocketChannel</span> <span class="hljs-operator">=</span> ServerSocketChannel.open();<br>        <span class="hljs-comment">// 打开Selector</span><br>        <span class="hljs-type">Selector</span> <span class="hljs-variable">selector</span> <span class="hljs-operator">=</span> Selector.open();<br>        <span class="hljs-comment">// 服务端Socket监听端口 配置非阻塞模式</span><br>        serverSocketChannel.socket().bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(<span class="hljs-number">8080</span>));<br>        serverSocketChannel.configureBlocking(<span class="hljs-literal">false</span>);<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 将channel注册到selector中</span><br><span class="hljs-comment">         * 通常都是先注册一个OP_ACCEPT事件 然后在OP_ACCEPT到来时 再将这个channel的OP_READ注册到selector中</span><br><span class="hljs-comment">         */</span><br>        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-comment">// 阻塞等待channel IO可操作</span><br>            <span class="hljs-keyword">if</span> (selector.select(TIMEOUT) == <span class="hljs-number">0</span>) &#123;<br>                System.out.println(<span class="hljs-string">&quot;.&quot;</span>);<br>                <span class="hljs-keyword">continue</span>;<br>            &#125;<br>            <span class="hljs-comment">// 获取IO操作就绪的SelectionKey 通过SelectionKey可以知道哪些Channel的哪些IO操作已经就绪</span><br>            Iterator&lt;SelectionKey&gt; keyIterator = selector.selectedKeys().iterator();<br>            <span class="hljs-keyword">while</span> (keyIterator.hasNext()) &#123;<br>                <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> keyIterator.next();<br>                <span class="hljs-comment">// 当获取到一个SelectionKey后 就要将它删除 表示已经对这个IO事件进行了处理</span><br>                keyIterator.remove();<br>                <span class="hljs-keyword">if</span> (key.isAcceptable()) &#123;<br>                    <span class="hljs-comment">/**</span><br><span class="hljs-comment">                     * 当OP_ACCEPT事件到来时 就从ServerSocketChannel中获取一个SocketChannel代表客户端的连接</span><br><span class="hljs-comment">                     * 注意:</span><br><span class="hljs-comment">                     *   - 在OP_ACCEPT事件中 key.channel()返回的Channel是ServerSocketChannel</span><br><span class="hljs-comment">                     *   - 在OP_READ和OP_WRITE事件中 从key.channel()返回Channel是SocketChannel</span><br><span class="hljs-comment">                     */</span><br>                    <span class="hljs-type">SocketChannel</span> <span class="hljs-variable">clientChannel</span> <span class="hljs-operator">=</span> ((ServerSocketChannel) key.channel()).accept();<br>                    clientChannel.configureBlocking(<span class="hljs-literal">false</span>);<br>                    clientChannel.register(key.selector(), SelectionKey.OP_READ,<br>                            ByteBuffer.allocate(BUF_SIZE));<br>                &#125;<br>                <span class="hljs-keyword">if</span> (key.isReadable()) &#123;<br>                    <span class="hljs-type">SocketChannel</span> <span class="hljs-variable">clientChannel</span> <span class="hljs-operator">=</span> ((SocketChannel) key.channel());<br>                    <span class="hljs-type">ByteBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> ((ByteBuffer) key.attachment());<br>                    <span class="hljs-type">int</span> <span class="hljs-variable">bytesRead</span> <span class="hljs-operator">=</span> clientChannel.read(buf);<br>                    <span class="hljs-keyword">if</span> (bytesRead == -<span class="hljs-number">1</span>) &#123;<br>                        clientChannel.close();<br>                    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (bytesRead &gt; <span class="hljs-number">0</span>) &#123;<br>                        key.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);<br>                        System.out.println(<span class="hljs-string">&quot;Get data length: &quot;</span> + bytesRead);<br>                    &#125;<br>                &#125;<br>                <span class="hljs-keyword">if</span> (key.isValid() &amp;&amp; key.isWritable()) &#123;<br>                    <span class="hljs-type">ByteBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> ((ByteBuffer) key.attachment());<br>                    buf.flip();<br>                    <span class="hljs-type">SocketChannel</span> <span class="hljs-variable">clientChannel</span> <span class="hljs-operator">=</span> (SocketChannel) key.channel();<br>                    clientChannel.write(buf);<br>                    <span class="hljs-keyword">if</span> (!buf.hasRemaining()) &#123;<br>                        key.interestOps(SelectionKey.OP_READ);<br>                    &#125;<br>                    buf.compact();<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>现在已经有OS对非阻塞的支持，并且Java也开发了对应的封装，我们的业务开发可以直接使用三剑客，但是也会有很多问题</p>
+<ul>
+<li>重复性太强，每次写的很多代码都是业务无关，偏系统性的</li>
+<li>Java对Selector的封装有BUG，个人直接使用三剑客还要去关注怎么兜底</li>
+<li>细节性的优化，每个人都不尽相同</li>
+<li>Java喜欢造框架</li>
+</ul>
+<p>凡此种种，Netty出现了</p>
+<img src="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/image-20230519095748203.png" srcset="/img/loading.gif" lazyload class="">
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Netty/" class="category-chain-item">Netty</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%BD%91%E7%BB%9C/" class="print-no-link">#网络</a>
+      
+        <a href="/tags/2%E5%88%B7Netty/" class="print-no-link">#2刷Netty</a>
+      
+        <a href="/tags/Java-15/" class="print-no-link">#Java@15</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Netty-0x07-我眼中的网络编程</div>
+      <div>https://bannirui.github.io/2023/05/18/Netty/Netty-0x07-我眼中的网络编程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年5月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/10/18/VIM%E7%AC%94%E8%AE%B0/" title="VIM笔记">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">VIM笔记</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/18/%E8%AF%BB%E4%B9%A6-TCPIP%E8%AF%A6%E8%A7%A3/" title="读书-TCPIP详解">
+                        <span class="hidden-mobile">读书-TCPIP详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '35b00f245a7f2585518ec44bdc74e2a3'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1145 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="研究服务端的启动流程。 一 入口123456789&#x2F;&#x2F; AbstractBootstrap.java&#x2F;**     * 异步非阻塞方法     *     - 异步 比如main线程发起调用 真正的bind结果main线程并不是直接去取 而是将来真正bind成功的线程将结果回调     *     - 非阻塞 比如main线程发起调用 最后真正执行bind操作的是其他线程(Nio线程 NioEve">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty源码-12-bind流程">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="研究服务端的启动流程。 一 入口123456789&#x2F;&#x2F; AbstractBootstrap.java&#x2F;**     * 异步非阻塞方法     *     - 异步 比如main线程发起调用 真正的bind结果main线程并不是直接去取 而是将来真正bind成功的线程将结果回调     *     - 非阻塞 比如main线程发起调用 最后真正执行bind操作的是其他线程(Nio线程 NioEve">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/202211141943675.png">
+<meta property="article:published_time" content="2023-03-06T13:48:59.000Z">
+<meta property="article:modified_time" content="2026-01-22T09:01:47.944Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="1刷Netty">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/202211141943675.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Netty源码-12-bind流程 - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Netty源码-12-bind流程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-06 21:48" pubdate>
+          2023年3月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          45 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Netty"
+        id="heading-b26a1a0069605c69ea0c679b5e95fc17" role="tab" data-toggle="collapse" href="#collapse-b26a1a0069605c69ea0c679b5e95fc17"
+        aria-expanded="true"
+      >
+        Netty
+        <span class="list-group-count">(22)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-b26a1a0069605c69ea0c679b5e95fc17"
+           role="tabpanel" aria-labelledby="heading-b26a1a0069605c69ea0c679b5e95fc17">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/05/06/Netty/Netty-0x00-NioEventLoopGroup/" title="Netty-0x00-NioEventLoopGroup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x00-NioEventLoopGroup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/09/Netty/Netty-0x01-NioEventLoopGroup%E4%B8%8ENioEventLoop%E7%BB%84%E5%90%88%E5%85%B3%E7%B3%BB/" title="Netty-0x01-NioEventLoopGroup与NioEventLoop组合关系"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x01-NioEventLoopGroup与NioEventLoop组合关系</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/10/Netty/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" title="Netty-0x02-NioEventLoopGroup之任务管理"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x02-NioEventLoopGroup之任务管理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/11/Netty/Netty-0x03-NioEventLoop/" title="Netty-0x03-NioEventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x03-NioEventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/15/Netty/Netty-0x04-NioEventLoopGroup%E5%92%8CNioEventLoop%E8%AF%A6%E7%BB%86%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" title="Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/16/Netty/Netty-0x05-%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/" title="Netty-0x05-启动引导"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x05-启动引导</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/16/Netty/Netty-0x06-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96/" title="Netty-0x06-数据结构优化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x06-数据结构优化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" title="Netty-0x07-我眼中的网络编程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x07-我眼中的网络编程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-00-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/" title="Netty源码-00-源码调试环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-00-源码调试环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-01-NioEventLoopGroup/" title="Netty源码-01-NioEventLoopGroup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-01-NioEventLoopGroup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-02-FastThreadLocalThread/" title="Netty源码-02-FastThreadLocalThread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-02-FastThreadLocalThread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" title="Netty源码-03-NioEventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-03-NioEventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-04-Selector/" title="Netty源码-04-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-04-Selector</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-05-EventLoop/" title="Netty源码-05-EventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-05-EventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/" title="Netty源码-06-MpscQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-06-MpscQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-07-Channel/" title="Netty源码-07-Channel"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-07-Channel</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/" title="Netty源码-08-ChannelInitializer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-08-ChannelInitializer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-09-ServerBootstrapAcceptor/" title="Netty源码-09-ServerBootstrapAcceptor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-09-ServerBootstrapAcceptor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" title="Netty源码-10-ChannelFuture"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-10-ChannelFuture</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" title="Netty源码-11-Pipeline"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-11-Pipeline</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Netty/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Netty源码-12-bind流程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>研究服务端的启动流程。</p>
+<h2 id="一-入口"><a href="#一-入口" class="headerlink" title="一 入口"></a>一 入口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractBootstrap.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 异步非阻塞方法</span><br><span class="hljs-comment">     *     - 异步 比如main线程发起调用 真正的bind结果main线程并不是直接去取 而是将来真正bind成功的线程将结果回调</span><br><span class="hljs-comment">     *     - 非阻塞 比如main线程发起调用 最后真正执行bind操作的是其他线程(Nio线程 NioEventLoop线程)</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">bind</span><span class="hljs-params">(<span class="hljs-type">int</span> inetPort)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(inetPort));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">bind</span><span class="hljs-params">(SocketAddress localAddress)</span> &#123;<br>    <span class="hljs-built_in">this</span>.validate();<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.doBind(localAddress);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> ChannelFuture <span class="hljs-title function_">doBind</span><span class="hljs-params">(<span class="hljs-keyword">final</span> SocketAddress localAddress)</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 完成几个步骤</span><br><span class="hljs-comment">         *     - Netty的Channel创建(本质是通过反射方式 NioServerSocketChannel和NioSocketChannel的无参构造器)</span><br><span class="hljs-comment">         *     - Channel中维护几个重要组件</span><br><span class="hljs-comment">         *         - unsafe 操作读写</span><br><span class="hljs-comment">         *         - eventLoop Channel绑定的NioEventLoop Channel注册到这个NioEventLoop上的复用器Selector</span><br><span class="hljs-comment">         *         - pipeline 维护handler</span><br><span class="hljs-comment">         *     - 绑定关联Netty的Channel和NioEventLoop线程关系</span><br><span class="hljs-comment">         *     - Jdk的Channel注册到NioEventLoop的复用器Selector上</span><br><span class="hljs-comment">         *     - 注册复用器成功后发布事件</span><br><span class="hljs-comment">         *         - handlersAdded事件 -&gt; 会触发ChannelInitializer的方法回调</span><br><span class="hljs-comment">         *         - active事件</span><br><span class="hljs-comment">         *         - ...</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">ChannelFuture</span> <span class="hljs-variable">regFuture</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.initAndRegister();<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">Channel</span> <span class="hljs-variable">channel</span> <span class="hljs-operator">=</span> regFuture.channel(); <span class="hljs-comment">// 获取channel NioServerSocketChannel的实例</span><br>    <span class="hljs-keyword">if</span> (regFuture.cause() != <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> regFuture;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * Channel注册复用器是NioEventLoop线程的异步任务</span><br><span class="hljs-comment">         * 这里是为了保证注册复用器的操作先于bind</span><br><span class="hljs-comment">         *     - 复用器注册完触发ChannelInitializer方法回调 向pipeline中添加必要的handler 保证后续发生读写时 Channel都能依赖上完整的handler链</span><br><span class="hljs-comment">         *     - 前一个复用器注册时异步执行</span><br><span class="hljs-comment">         *         - 如果已经复用器注册已经完成 pipeline中handler已经初始化好 向NioEventLoop提交任务让它执行bind</span><br><span class="hljs-comment">         *         - 如果复用器注册还没完成 说明这个任务还在NioEventLoop的任务队列taskQueue中 这个时候再向NioEventLoop提交一个异步任务 这两个任务的顺序通过任务队列保证了相对顺序</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-keyword">if</span> (regFuture.isDone()) &#123;<br>        <span class="hljs-comment">// At this point we know that the registration was complete and successful.</span><br>        <span class="hljs-type">ChannelPromise</span> <span class="hljs-variable">promise</span> <span class="hljs-operator">=</span> channel.newPromise();<br>        doBind0(regFuture, channel, localAddress, promise); <span class="hljs-comment">// 此时Channel已经跟NioEventLoop线程绑定了 给boss线程添加个任务 让boss线程执行bind操作 这个地方也是真正启动boss线程的时机</span><br>        <span class="hljs-keyword">return</span> promise;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">// Registration future is almost always fulfilled already, but just in case it&#x27;s not.</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-type">PendingRegistrationPromise</span> <span class="hljs-variable">promise</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PendingRegistrationPromise</span>(channel);<br>        regFuture.addListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelFutureListener</span>() &#123; <span class="hljs-comment">// nio线程注册复用器是异步操作 给这个操作加个回调 等nio线程完成注册复用器之后 让它执行doBind0(...)</span><br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">operationComplete</span><span class="hljs-params">(ChannelFuture future)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                <span class="hljs-type">Throwable</span> <span class="hljs-variable">cause</span> <span class="hljs-operator">=</span> future.cause();<br>                <span class="hljs-keyword">if</span> (cause != <span class="hljs-literal">null</span>) &#123;<br>                    <span class="hljs-comment">// Registration on the EventLoop failed so fail the ChannelPromise directly to not cause an</span><br>                    <span class="hljs-comment">// IllegalStateException once we try to access the EventLoop of the Channel.</span><br>                    promise.setFailure(cause);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-comment">// Registration was successful, so set the correct executor to use.</span><br>                    <span class="hljs-comment">// See https://github.com/netty/netty/issues/2586</span><br>                    promise.registered();<br><br>                    doBind0(regFuture, channel, localAddress, promise); <span class="hljs-comment">// NioEventLoop线程执行bind(headHandler处理器真正处理) bind完成后通过向NioEventLoop提交异步任务方式 让NioEventLoop发布一个NioServerSocketChannel的active事件</span><br>                &#125;<br>            &#125;<br>        &#125;);<br>        <span class="hljs-keyword">return</span> promise;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里涉及两个步骤：</p>
+<ul>
+<li>initAndRegister(…)方法，Channel的实例化已经将Channel跟bossGroup中NioEventLoop线程绑定，也借此启动了NioEventLoop线程，让NioEventLoop将Channel持有的Jdk的Channel注册到了NioEventLoop的复用器上。</li>
+<li>doBind0(…)提交异步任务让这个Channel绑定的EventLoop线程执行bind操作。</li>
+</ul>
+<p>因为一个IO线程负责多个Channel，一个Channel由一个IO线程负责，非IO任务又是通过队列存取的，所以这儿的Channel注册复用器动作优先于Channel的listen动作。</p>
+<p>假设一个场景，如果在注册复用器的时候就指定了关注的事件集合，但是Socket还没执行bind和listen，就有客户端connect，这个场景下顺序是不对的，因此在注册复用的时候是不能关注事件的，必须要等待Socket打开之后才能让复用器关注事件。</p>
+<h2 id="二-Channel注册复用器"><a href="#二-Channel注册复用器" class="headerlink" title="二 Channel注册复用器"></a>二 Channel注册复用器</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 完成几个步骤</span><br><span class="hljs-comment">     *     - Netty的Channel创建(本质是通过反射方式 NioServerSocketChannel和NioSocketChannel的无参构造器)</span><br><span class="hljs-comment">     *     - Channel中维护几个重要组件</span><br><span class="hljs-comment">     *         - unsafe 操作读写</span><br><span class="hljs-comment">     *         - eventLoop Channel绑定的NioEventLoop Channel注册到这个NioEventLoop上的复用器Selector</span><br><span class="hljs-comment">     *         - pipeline 维护handler</span><br><span class="hljs-comment">     *     - 绑定关联Netty的Channel和NioEventLoop线程关系</span><br><span class="hljs-comment">     *     - Jdk的Channel注册到NioEventLoop的复用器Selector上</span><br><span class="hljs-comment">     *     - 注册复用器成功后发布事件</span><br><span class="hljs-comment">     *         - handlersAdded事件 -&gt; 会触发ChannelInitializer的方法回调</span><br><span class="hljs-comment">     *         - active事件</span><br><span class="hljs-comment">     *         - ...</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">final</span> ChannelFuture <span class="hljs-title function_">initAndRegister</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 具体实现是&#123;<span class="hljs-doctag">@link</span> NioServerSocketChannel&#125;的实例或者&#123;<span class="hljs-doctag">@link</span> NioSocketChannel&#125;的实例</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-type">Channel</span> <span class="hljs-variable">channel</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * &#123;<span class="hljs-doctag">@link</span> io.netty.channel.ChannelFactory#newChannel()&#125;-&gt;&#123;<span class="hljs-doctag">@link</span> ReflectiveChannelFactory#newChannel()&#125;-&gt;&#123;<span class="hljs-doctag">@link</span> NioServerSocketChannel&#125;或&#123;<span class="hljs-doctag">@link</span> NioSocketChannel&#125;的无参构造器</span><br><span class="hljs-comment">             *</span><br><span class="hljs-comment">             * 两个无参构造器分别是:</span><br><span class="hljs-comment">             * &#123;<span class="hljs-doctag">@link</span> NioServerSocketChannel#NioServerSocketChannel()&#125;</span><br><span class="hljs-comment">             * &#123;<span class="hljs-doctag">@link</span> NioSocketChannel#NioSocketChannel()&#125;</span><br><span class="hljs-comment">             *</span><br><span class="hljs-comment">             * &lt;p&gt;&lt;h3&gt;netty的channel实例化&lt;/h3&gt;&lt;/p&gt;</span><br><span class="hljs-comment">             * &lt;ul&gt;</span><br><span class="hljs-comment">             *     &lt;li&gt;创建jdk的ServerSocketChannel和SocketChannel封装成Netty中的NioServerSocketChannel和NioSocketChannel&lt;/li&gt;</span><br><span class="hljs-comment">             *     &lt;li&gt;给每个netty channel分配属性&lt;/li&gt;</span><br><span class="hljs-comment">             *     &lt;ul&gt;</span><br><span class="hljs-comment">             *         &lt;li&gt;id&lt;/li&gt;</span><br><span class="hljs-comment">             *         &lt;li&gt;unsafe实例&lt;/li&gt;</span><br><span class="hljs-comment">             *         &lt;li&gt;pipeline实例 pipeline中有两个handler(head和tail 它们不是哑节点)&lt;/li&gt;</span><br><span class="hljs-comment">             *     &lt;/ul&gt;</span><br><span class="hljs-comment">             *     &lt;li&gt;netty的NioServerSocketChannel组合jdk的ServerSocketChannel&lt;/li&gt;</span><br><span class="hljs-comment">             *     &lt;li&gt;NioServerSocketChannel关注OP_ACCEPT连接事件&lt;/li&gt;</span><br><span class="hljs-comment">             *     &lt;li&gt;NioSocketChannel关注OP_READ可读事件&lt;/li&gt;</span><br><span class="hljs-comment">             *     &lt;li&gt;设置jdk ServerSocketChannel的非阻塞模式&lt;/li&gt;</span><br><span class="hljs-comment">             * &lt;/ul&gt;</span><br><span class="hljs-comment">             *</span><br><span class="hljs-comment">             */</span><br>        channel = <span class="hljs-built_in">this</span>.channelFactory.newChannel(); <span class="hljs-comment">// 通过Factory触发NioServerSocketChannel和SocketChannel的反射创建实例</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">             *  - pipeline中添加个ChannelInitializer</span><br><span class="hljs-comment">             *      - 等待NioServerSocketChannel注册复用器后被回调</span><br><span class="hljs-comment">             *          - 添加workerHandler</span><br><span class="hljs-comment">             *          - 提交异步任务</span><br><span class="hljs-comment">             *              - 在pipeline中添加ServerBootstrapAcceptor</span><br><span class="hljs-comment">             */</span><br>        <span class="hljs-built_in">this</span>.init(channel);<br>    &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>        <span class="hljs-keyword">if</span> (channel != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-comment">// channel can be null if newChannel crashed (eg SocketException(&quot;too many open files&quot;))</span><br>            channel.unsafe().closeForcibly();<br>            <span class="hljs-comment">// as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultChannelPromise</span>(channel, GlobalEventExecutor.INSTANCE).setFailure(t);<br>        &#125;<br>        <span class="hljs-comment">// as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultChannelPromise</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FailedChannel</span>(), GlobalEventExecutor.INSTANCE).setFailure(t);<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 至此NioEventLoop线程还没启动</span><br><span class="hljs-comment">         * 在register(...)方法之前 已经完成的工作</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         *     - channel实例</span><br><span class="hljs-comment">         *         - pipeline实例化</span><br><span class="hljs-comment">         *             - pipeline中添加了&#123;<span class="hljs-doctag">@link</span> ChannelInitializer&#125;辅助类的实例 而这个辅助类的触发时机是在Channel跟EventLoop线程绑定之后</span><br><span class="hljs-comment">         *         - unsafe实例</span><br><span class="hljs-comment">         *         - 设置了jdk channel的非阻塞模式</span><br><span class="hljs-comment">         *     - bossGroup中仅仅实例化了特定数量的EventLoop 但是此时线程并没有被真正创建</span><br><span class="hljs-comment">         *     - Channel跟EventLoop没有关联</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * &lt;pre&gt;&#123;<span class="hljs-doctag">@code</span> this.config().group()&#125;返回的是&#123;<span class="hljs-doctag">@link</span> io.netty.channel.nio.NioEventLoopGroup&#125;实例&lt;/pre&gt;</span><br><span class="hljs-comment">         * 对于ServerBootstrap而言是bossGroup线程组</span><br><span class="hljs-comment">         * 对于Bootstrap而言只有一个group线程组</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * 线程组的register(...)方法就是从group中轮询出来一个NioEventLoop线程执行register(...)方法 Channel跟NioEventLoop关联起来并注册到NioEventLoop的Selector上</span><br><span class="hljs-comment">         *     - 注册复用器结束后 NioEventLoop线程发布一些事件让关注的handler执行</span><br><span class="hljs-comment">         *         - handlersAdd(...)事件 触发</span><br><span class="hljs-comment">         *         - ...</span><br><span class="hljs-comment">         *             - 添加ServerBootstrapAcceptor处理来自客户端的连接</span><br><span class="hljs-comment">         *             - NioEventLoop线程循环</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * 并且一旦Channel一旦跟EventLoop绑定 以后Channel的所有事件都由这个EventLoop线程处理</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-type">ChannelFuture</span> <span class="hljs-variable">regFuture</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span><br>        .config()<br>        .group() <span class="hljs-comment">// &#123;#link ServerBootstrap#group()&#125;或者&#123;@link Bootstrap#group()&#125;传进去的 比如在服务端就是boss线程组 客户端只有一个group</span><br>        .register(channel); <span class="hljs-comment">// 异步编程 这一步就是绑定Channel跟EventLoop线程 并且往NioEventLoop中扔了个异步任务 此时NioEventLoop线程被唤醒去执行注册复用器的动作</span><br>    <span class="hljs-keyword">if</span> (regFuture.cause() != <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 在register过程中发生异常</span><br>        <span class="hljs-keyword">if</span> (channel.isRegistered()) channel.close();<br>        <span class="hljs-keyword">else</span> channel.unsafe().closeForcibly();<br>    &#125;<br><br>    <span class="hljs-comment">// If we are here and the promise is not failed, it&#x27;s one of the following cases:</span><br>    <span class="hljs-comment">// 1) If we attempted registration from the event loop, the registration has been completed at this point.</span><br>    <span class="hljs-comment">//    i.e. It&#x27;s safe to attempt bind() or connect() now because the channel has been registered.</span><br>    <span class="hljs-comment">// 2) If we attempted registration from the other thread, the registration request has been successfully</span><br>    <span class="hljs-comment">//    added to the event loop&#x27;s task queue for later execution.</span><br>    <span class="hljs-comment">//    i.e. It&#x27;s safe to attempt bind() or connect() now:</span><br>    <span class="hljs-comment">//         because bind() or connect() will be executed *after* the scheduled registration task is executed</span><br>    <span class="hljs-comment">//         because register(), bind(), and connect() are all bound to the same thread.</span><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * // 执行到这 说明后续可以进行NioSocketChannel::connect()方法或者NioServerSocketChannel::bind()方法</span><br><span class="hljs-comment">         * 两种情况</span><br><span class="hljs-comment">         *     -1 register动作是在eventLoop中发起 那么到这里的时候 register一定已经完成了</span><br><span class="hljs-comment">         *     -2 如果register任务已经提交到eventLoop中 也就是进到了eventLoop中的taskQueue中 由于后续的connect和bind方法也会进入到同一个eventLoop的taskQueue中 所以一定会先执行register成功 再执行connect和bind方法</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-keyword">return</span> regFuture;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>3个步骤</p>
+<ul>
+<li>Channel创建。</li>
+<li>Channel初始化。</li>
+<li>Channel注册到bossGroup中NioEventLoop的复用器上。</li>
+</ul>
+<h3 id="1-Channel创建"><a href="#1-Channel创建" class="headerlink" title="1 Channel创建"></a>1 Channel创建</h3><a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-07-Channel/" title="Netty源码-07-Channel">前面已经分析过</a>
+
+<h3 id="2-Channel初始化"><a href="#2-Channel初始化" class="headerlink" title="2 Channel初始化"></a>2 Channel初始化</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">             *  - pipeline中添加个ChannelInitializer</span><br><span class="hljs-comment">             *      - 等待NioServerSocketChannel注册复用器后被回调</span><br><span class="hljs-comment">             *          - 添加workerHandler</span><br><span class="hljs-comment">             *          - 提交异步任务</span><br><span class="hljs-comment">             *              - 在pipeline中添加ServerBootstrapAcceptor</span><br><span class="hljs-comment">             */</span><br><span class="hljs-built_in">this</span>.init(channel);<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ServerBootstrap.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * - pipeline中添加个ChannelInitializer</span><br><span class="hljs-comment">     *     - 等待NioServerSocketChannel注册复用器后被回调</span><br><span class="hljs-comment">     *         - 添加workerHandler</span><br><span class="hljs-comment">     *         - 提交异步任务</span><br><span class="hljs-comment">     *             - 在pipeline中添加ServerBootstrapAcceptor</span><br><span class="hljs-comment">     */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">(Channel channel)</span> &#123; <span class="hljs-comment">// NioServerSocketChannel实例</span><br>    setChannelOptions(channel, newOptionsArray(), logger);<br>    setAttributes(channel, newAttributesArray());<br><br>    <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> channel.pipeline(); <span class="hljs-comment">// channel内部的pipeline实例 在创建NioServerSocketChannel的时候一起创建了pipeline实例</span><br><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">currentChildGroup</span> <span class="hljs-operator">=</span> childGroup; <span class="hljs-comment">// workerGroup</span><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">ChannelHandler</span> <span class="hljs-variable">currentChildHandler</span> <span class="hljs-operator">=</span> childHandler; <span class="hljs-comment">// workerHandler</span><br>    <span class="hljs-keyword">final</span> Entry&lt;ChannelOption&lt;?&gt;, Object&gt;[] currentChildOptions = newOptionsArray(childOptions);<br>    <span class="hljs-keyword">final</span> Entry&lt;AttributeKey&lt;?&gt;, Object&gt;[] currentChildAttrs = newAttributesArray(childAttrs);<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 往ServerSocketChannel的pipeline中添加一个handler 这个handler是ChannelInitializer的实例 该处涉及到pipeline中的辅助类ChannelInitializer 它本身也是一个handler(Inbound类型) 它的作用仅仅是辅助其他的handler加入到pipeline中</span><br><span class="hljs-comment">         * ChannelInitializer的initChannel方法触发时机是在Channel注册到NioEventLoop复用器之后(NioEventLoop启动执行注册操作) 那么到时候会发生回调</span><br><span class="hljs-comment">         *     - 添加一个ServerBootstrap指定的bossHandler(也可能没指定) 比如指定了workerHandler 那么回调执行后 pipeline存在 headHandler-workerHandler-tailHandler</span><br><span class="hljs-comment">         *     - 向NioEventLoop提交添加handler的异步任务</span><br><span class="hljs-comment">         *         - 等NioEventLoop把这个异步任务执行完了之后 pipeline中变成 head-workerHandler-ServerBootstrapAcceptor-tail</span><br><span class="hljs-comment">         */</span><br>    p.addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;Channel&gt;() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Channel ch)</span> &#123; <span class="hljs-comment">// ChannelInitializer的这个方法会在Channel注册到EventLoop线程上复用器之后被回调</span><br>            <span class="hljs-keyword">final</span> <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">pipeline</span> <span class="hljs-operator">=</span> ch.pipeline(); <span class="hljs-comment">// NioServerSocketChannel的pipeline</span><br>            <span class="hljs-type">ChannelHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> config.handler(); <span class="hljs-comment">// 这个handler是在ServerBootstrap::handler()方法中指定的workerHandler</span><br>            <span class="hljs-keyword">if</span> (handler != <span class="hljs-literal">null</span>) pipeline.addLast(handler); <span class="hljs-comment">// 将bossHandler添加到NioServerSocket的pipeline中</span><br><br>            ch.eventLoop().execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123; <span class="hljs-comment">// 往NioEventLoop线程添加一个任务 boss的NioEventLoop线程会执行这个任务 就是给Channel指定一个处理器 处理器的功能是接收客户端请求</span><br>                <span class="hljs-meta">@Override</span><br>                <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                    pipeline.addLast(<br>                        <span class="hljs-comment">// 添加一个handler到pipeline中 ServerBootstrapAcceptor这个handler目的是用来接收客户端请求的</span><br>                        <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerBootstrapAcceptor</span>(<br>                            ch, <span class="hljs-comment">// NioServerSocketChannel</span><br>                            currentChildGroup, <span class="hljs-comment">// workerGroup</span><br>                            currentChildHandler, <span class="hljs-comment">// workerHandler</span><br>                            currentChildOptions,<br>                            currentChildAttrs<br>                        )<br>                    );<br>                &#125;<br>            &#125;);<br>        &#125;<br>    &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-Channel注册到NioEventLoop"><a href="#3-Channel注册到NioEventLoop" class="headerlink" title="3 Channel注册到NioEventLoop"></a>3 Channel注册到NioEventLoop</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractBootstrap.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 至此NioEventLoop线程还没启动</span><br><span class="hljs-comment">         * 在register(...)方法之前 已经完成的工作</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         *     - channel实例</span><br><span class="hljs-comment">         *         - pipeline实例化</span><br><span class="hljs-comment">         *             - pipeline中添加了&#123;<span class="hljs-doctag">@link</span> ChannelInitializer&#125;辅助类的实例 而这个辅助类的触发时机是在Channel跟EventLoop线程绑定之后</span><br><span class="hljs-comment">         *         - unsafe实例</span><br><span class="hljs-comment">         *         - 设置了jdk channel的非阻塞模式</span><br><span class="hljs-comment">         *     - bossGroup中仅仅实例化了特定数量的EventLoop 但是此时线程并没有被真正创建</span><br><span class="hljs-comment">         *     - Channel跟EventLoop没有关联</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * &lt;pre&gt;&#123;<span class="hljs-doctag">@code</span> this.config().group()&#125;返回的是&#123;<span class="hljs-doctag">@link</span> io.netty.channel.nio.NioEventLoopGroup&#125;实例&lt;/pre&gt;</span><br><span class="hljs-comment">         * 对于ServerBootstrap而言是bossGroup线程组</span><br><span class="hljs-comment">         * 对于Bootstrap而言只有一个group线程组</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * 线程组的register(...)方法就是从group中轮询出来一个NioEventLoop线程执行register(...)方法 Channel跟NioEventLoop关联起来并注册到NioEventLoop的Selector上</span><br><span class="hljs-comment">         *     - 注册复用器结束后 NioEventLoop线程发布一些事件让关注的handler执行</span><br><span class="hljs-comment">         *         - handlersAdd(...)事件 触发</span><br><span class="hljs-comment">         *         - ...</span><br><span class="hljs-comment">         *             - 添加ServerBootstrapAcceptor处理来自客户端的连接</span><br><span class="hljs-comment">         *             - NioEventLoop线程循环</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * 并且一旦Channel一旦跟EventLoop绑定 以后Channel的所有事件都由这个EventLoop线程处理</span><br><span class="hljs-comment">         * 所谓的注册指的是将Java的Channel注册到复用器Selector上</span><br><span class="hljs-comment">         *     - 逻辑绑定映射关系 Netty Channel跟NioEventLoop关系绑定</span><br><span class="hljs-comment">         *     - 物理注册复用器</span><br><span class="hljs-comment">         *         - 通过向NioEventLoop提交任务方式启动NioEventLoop线程</span><br><span class="hljs-comment">         *         - NioEventLoop线程将Jdk的Channel注册到Selector复用器上</span><br><span class="hljs-comment">         *             - Socket注册复用器 不关注事件</span><br><span class="hljs-comment">         *             - 触发事件 让pipeline中的handler关注响应(此刻pipeline中有head ChannelInitializer实例 tail)</span><br><span class="hljs-comment">         *                 - 发布handlerAdd事件 触发ChannelInitializer方法执行</span><br><span class="hljs-comment">         *                 - 发布register事件</span><br><span class="hljs-comment">         */</span><br><span class="hljs-type">ChannelFuture</span> <span class="hljs-variable">regFuture</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span><br>    .config()<br>    .group() <span class="hljs-comment">// &#123;#link ServerBootstrap#group()&#125;或者&#123;@link Bootstrap#group()&#125;传进去的 比如在服务端就是boss线程组 客户端只有一个group</span><br>    .register(channel);<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// EventLoopGroup.java</span><br>ChannelFuture <span class="hljs-title function_">register</span><span class="hljs-params">(Channel channel)</span>;<br><br><span class="hljs-comment">// SingleThreadEventLoop.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">register</span><span class="hljs-params">(Channel channel)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.register(<span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultChannelPromise</span>(channel, <span class="hljs-built_in">this</span>)); <span class="hljs-comment">// 实例化一个Promise 将当前channel带进到promise中去</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// SingleThreadEventLoop.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * &lt;p&gt;涉及3个方法&lt;/p&gt;</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * &lt;p&gt;</span><br><span class="hljs-comment">     *     &lt;ul&gt;&lt;pre&gt;&#123;<span class="hljs-doctag">@code</span> channel()&#125;&lt;/pre&gt;返回的初始化好了的&#123;<span class="hljs-doctag">@link</span> io.netty.channel.socket.nio.NioServerSocketChannel&#125;实例 发生在&#123;<span class="hljs-doctag">@link</span> NioServerSocketChannel#NioServerSocketChannel()&#125;&lt;/ul&gt;</span><br><span class="hljs-comment">     *     &lt;ul&gt;&lt;pre&gt;&#123;<span class="hljs-doctag">@code</span> unsafe()&#125;&lt;/pre&gt;返回的是初始化channel实例的时候给每个channel分配的&#123;<span class="hljs-doctag">@link</span> io.netty.channel.Channel.Unsafe&#125;实例 对象类型是&#123;<span class="hljs-doctag">@link</span> io.netty.channel.nio.AbstractNioMessageChannel.NioMessageUnsafe&#125; 发生在&#123;<span class="hljs-doctag">@link</span> AbstractChannel#AbstractChannel(Channel)&#125;&lt;/ul&gt;</span><br><span class="hljs-comment">     *     &lt;ul&gt;&lt;pre&gt;&#123;<span class="hljs-doctag">@code</span> register()&#125;&lt;/pre&gt;执行的是&#123;<span class="hljs-doctag">@link</span> io.netty.channel.nio.AbstractNioMessageChannel.NioMessageUnsafe&#125;的register(...)方法 实现是在其父类中&#123;<span class="hljs-doctag">@link</span> io.netty.channel.AbstractChannel.AbstractUnsafe#register(EventLoop, ChannelPromise)&#125;&lt;/ul&gt;</span><br><span class="hljs-comment">     * &lt;/p&gt;</span><br><span class="hljs-comment">     */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">register</span><span class="hljs-params">(<span class="hljs-keyword">final</span> ChannelPromise promise)</span> &#123;<br>    promise<br>        .channel()<br>        .unsafe()<br>        .register(<span class="hljs-built_in">this</span>, promise); <span class="hljs-comment">// promise创建的时候关联了channel</span><br>    <span class="hljs-keyword">return</span> promise;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java::AbstractUnsafe</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">         * Java的Channel注册到复用器Selector上</span><br><span class="hljs-comment">         *     - 逻辑绑定映射关系 Netty Channel跟NioEventLoop关系绑定</span><br><span class="hljs-comment">         *     - 物理注册复用器</span><br><span class="hljs-comment">         *         - 通过向NioEventLoop提交任务方式启动NioEventLoop线程</span><br><span class="hljs-comment">         *         - NioEventLoop线程将Jdk的Channel注册到Selector复用器上</span><br><span class="hljs-comment">         *             - Socket注册复用器 不关注事件</span><br><span class="hljs-comment">         *             - 触发事件 让pipeline中的handler关注响应(此刻pipeline中有head ChannelInitializer实例 tail)</span><br><span class="hljs-comment">         *                 - 发布handlerAdd事件 触发ChannelInitializer方法执行</span><br><span class="hljs-comment">         *                 - 发布register事件</span><br><span class="hljs-comment">         */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">register</span><span class="hljs-params">(EventLoop eventLoop, <span class="hljs-keyword">final</span> ChannelPromise promise)</span> &#123;<br>    ObjectUtil.checkNotNull(eventLoop, <span class="hljs-string">&quot;eventLoop&quot;</span>);<br>    <span class="hljs-keyword">if</span> (isRegistered()) &#123; <span class="hljs-comment">// 判定Channel是有跟NioEventLoop线程绑定过了 一个Channel终身只能跟一个NioEventLoop线程绑定</span><br>        promise.setFailure(<span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalStateException</span>(<span class="hljs-string">&quot;registered to an event loop already&quot;</span>));<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (!isCompatible(eventLoop)) &#123; <span class="hljs-comment">// Channel只能跟NioEventLoop这种实现进行绑定 都是网络模型下的概念</span><br>        promise.setFailure(<span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalStateException</span>(<span class="hljs-string">&quot;incompatible event loop type: &quot;</span> + eventLoop.getClass().getName()));<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 绑定eventLoop线程</span><br><span class="hljs-comment">             * 将eventLoop实例设置给channel 从此这个channel就拥有了eventLoop 后续该channel的所有异步操作都要提交给这个eventLoop来执行</span><br><span class="hljs-comment">             *</span><br><span class="hljs-comment">             * IO的本质就是数据在IO设备和内存之间的复制 所有的复制操作都交给EventLoop处理</span><br><span class="hljs-comment">             */</span><br>    AbstractChannel.<span class="hljs-built_in">this</span>.eventLoop = eventLoop; <span class="hljs-comment">// 这就是所谓的绑定关系</span><br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 本质目的是为了保证某些操作的执行权永远在Nio线程中</span><br><span class="hljs-comment">             * 条件分支的判断是为了区别当前线程是不是eventLoop线程 比如从main线程跟着&#123;<span class="hljs-doctag">@link</span> AbstractBootstrap#bind(int)&#125;方法过来 main线程不是eventLoop就进行线程切换</span><br><span class="hljs-comment">             * 到这里为止 NioEventLoop中的Thread实例还没有创建</span><br><span class="hljs-comment">             */</span><br>    <span class="hljs-keyword">if</span> (eventLoop.inEventLoop()) &#123;<br>        <span class="hljs-built_in">this</span>.register0(promise);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// NioEventLoop线程负责任务执行 执行真正的操作 将Java的Channel注册到复用器上</span><br>            eventLoop.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>                <span class="hljs-meta">@Override</span><br>                <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                    AbstractUnsafe.<span class="hljs-built_in">this</span>.register0(promise);<br>                &#125;<br>            &#125;);<br>        &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>            closeForcibly();<br>            closeFuture.setClosed();<br>            safeSetFailure(promise, t);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>从这个地方就可以明白所谓的Channl注册到NioEventLoop的含义：</p>
+<ul>
+<li>将Channel跟NioEvnetLoop进行关系绑定。</li>
+<li>将Channel代表的系统Socket注册到NioEventLoop持有的IO多路复用器上 还不关注事件 因为NioServerSocketChannel还没打开。</li>
+<li>注册复用器之后 触发一些回调方法执行或者发布事件。<ul>
+<li>发布handlerAdded事件，触发ChannelInitializer方法回调。</li>
+<li>发布NioServerSocketChannel register事件。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java::AbstractUnsafe</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">         * - NioEventLoop线程执行 Jdk的Channel注册到复用器上</span><br><span class="hljs-comment">         * - 发布事件</span><br><span class="hljs-comment">         *     - 发布handlerAdd事件 触发ChannelInitializer方法执行</span><br><span class="hljs-comment">         *     - 发布register事件</span><br><span class="hljs-comment">         */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">register0</span><span class="hljs-params">(ChannelPromise promise)</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">// check if the channel is still open as it could be closed in the mean time when the register</span><br>        <span class="hljs-comment">// call was outside of the eventLoop</span><br>        <span class="hljs-keyword">if</span> (!promise.setUncancellable() || !ensureOpen(promise)) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-type">boolean</span> <span class="hljs-variable">firstRegistration</span> <span class="hljs-operator">=</span> neverRegistered;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 实际的注册</span><br><span class="hljs-comment">                 * jdk底层操作 将channel注册到selector复用器上</span><br><span class="hljs-comment">                 */</span><br>        AbstractChannel.<span class="hljs-built_in">this</span>.doRegister();<br>        neverRegistered = <span class="hljs-literal">false</span>;<br>        AbstractChannel.<span class="hljs-built_in">this</span>.registered = <span class="hljs-literal">true</span>; <span class="hljs-comment">// 标识Channel跟NioEventLoop绑定成功</span><br><br>        <span class="hljs-comment">// Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the</span><br>        <span class="hljs-comment">// user may already fire events through the pipeline in the ChannelFutureListener.</span><br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 *</span><br><span class="hljs-comment">                 * 事件响应式编程的体现点</span><br><span class="hljs-comment">                 * 当前的register操作已经成功 该事件应该被pipeline上所有关心register事件的handler感知</span><br><span class="hljs-comment">                 * 因此需要先确保pipeline上handler已经完备 也就是ChannelInitializer这个辅助类已经完成</span><br><span class="hljs-comment">                 */</span><br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 发布handlerAdd事件</span><br><span class="hljs-comment">                 * 让pipeline中handler关注handlerAdded(...)的handler执行</span><br><span class="hljs-comment">                 *     - 触发ChannelInitializer方法执行</span><br><span class="hljs-comment">                 */</span><br>        pipeline.invokeHandlerAddedIfNeeded();<br><br>        safeSetSuccess(promise); <span class="hljs-comment">// 设置当前promise状态为success 当前register()方法是在eventLoop中的线程中执行的 需要通知提交register操作的那个线程</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 发布register事件</span><br><span class="hljs-comment">                 * 让pipeline中handler关注channelRegistered(...)的handler执行</span><br><span class="hljs-comment">                 */</span><br>        pipeline.fireChannelRegistered();<br>        <span class="hljs-comment">// Only fire a channelActive if the channel has never been registered. This prevents firing</span><br>        <span class="hljs-comment">// multiple channel actives if the channel is deregistered and re-registered.</span><br>        <span class="hljs-keyword">if</span> (isActive()) &#123; <span class="hljs-comment">// active指channel已经打开</span><br>            <span class="hljs-keyword">if</span> (firstRegistration) &#123; <span class="hljs-comment">// 如果该channel是第一次执行register 那么往pipeline中丢一个fireChannelActive事件</span><br>                <span class="hljs-comment">/**</span><br><span class="hljs-comment">                         * 发布active事件</span><br><span class="hljs-comment">                         * 让pipeline中handler关注invokeChannelActive(...)的handler执行</span><br><span class="hljs-comment">                         */</span><br>                pipeline.fireChannelActive();<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (config().isAutoRead()) &#123;<br>                <span class="hljs-comment">// This channel was registered before and autoRead() is set. This means we need to begin read</span><br>                <span class="hljs-comment">// again so that we process inbound data.</span><br>                <span class="hljs-comment">//</span><br>                <span class="hljs-comment">// See https://github.com/netty/netty/issues/4805</span><br>                <span class="hljs-built_in">this</span>.beginRead(); <span class="hljs-comment">// 该channel已经register过了 让该channel立马去监听通道中的OP_READ事件</span><br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>        <span class="hljs-comment">// Close the channel directly to avoid FD leak.</span><br>        closeForcibly();<br>        closeFuture.setClosed();<br>        safeSetFailure(promise, t);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-1-Selector复用器注册"><a href="#3-1-Selector复用器注册" class="headerlink" title="3.1 Selector复用器注册"></a>3.1 Selector复用器注册</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java::AbstractUnsafe</span><br>AbstractChannel.<span class="hljs-built_in">this</span>.doRegister();<br></code></pre></td></tr></table></figure>
+
+<p>可以参考之前<a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector">Java中IO多路复用器实现</a>。</p>
+<h4 id="3-2-Channel注册复用器之后-触发一些方法执行"><a href="#3-2-Channel注册复用器之后-触发一些方法执行" class="headerlink" title="3.2 Channel注册复用器之后 触发一些方法执行"></a>3.2 Channel注册复用器之后 触发一些方法执行</h4><h5 id="3-2-1-发布handlerAdd事件"><a href="#3-2-1-发布handlerAdd事件" class="headerlink" title="3.2.1 发布handlerAdd事件"></a>3.2.1 发布handlerAdd事件</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java::AbstractUnsafe</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 发布handlerAdd事件</span><br><span class="hljs-comment">                 * 让pipeline中handler关注handlerAdded(...)的handler执行</span><br><span class="hljs-comment">                 *     - 触发ChannelInitializer方法执行</span><br><span class="hljs-comment">                 */</span><br>pipeline.invokeHandlerAddedIfNeeded();<br></code></pre></td></tr></table></figure>
+
+<a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/" title="Netty源码-08-ChannelInitializer">ChannelInitializer辅助类</a>原理。
+
+<h5 id="3-2-2-发布register事件"><a href="#3-2-2-发布register事件" class="headerlink" title="3.2.2 发布register事件"></a>3.2.2 发布register事件</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java::AbstractUnsafe</span><br><span class="hljs-comment">// 到此为止 Channel中pipeline中的handler已经完备了 可以对关注的事件进行关注了</span><br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 发布register事件</span><br><span class="hljs-comment">                 * 让pipeline中handler关注channelRegistered(...)的handler执行</span><br><span class="hljs-comment">                 */</span><br>pipeline.fireChannelRegistered();<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultChannelPipeline.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> ChannelPipeline <span class="hljs-title function_">fireChannelRegistered</span><span class="hljs-params">()</span> &#123;<br>    AbstractChannelHandlerContext.invokeChannelRegistered(head); <span class="hljs-comment">// 参数为pipeline中的head节点 明显的责任链模式 让链表上所有处理器都走一遍事件 InBound类型事件 从head-&gt;tail</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannelHandlerContext.java</span><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">invokeChannelRegistered</span><span class="hljs-params">(<span class="hljs-keyword">final</span> AbstractChannelHandlerContext next)</span> &#123; <span class="hljs-comment">// 责任链模式 pipeline上所有handler都处理一遍事件</span><br>    <span class="hljs-type">EventExecutor</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> next.executor();<br>    <span class="hljs-comment">// 线程切换 确保NioEventLoop的执行权</span><br>    <span class="hljs-keyword">if</span> (executor.inEventLoop()) &#123;<br>        next.invokeChannelRegistered();<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        executor.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                next.invokeChannelRegistered();<br>            &#125;<br>        &#125;);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">invokeChannelRegistered</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">if</span> (invokeHandler()) &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            ((ChannelInboundHandler) handler()).channelRegistered(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// head-&gt;tail</span><br>        &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>            invokeExceptionCaught(t);<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        fireChannelRegistered();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面一步已经执行过handlersAdded的回调，也就是执行过ChannelInitializer的方法，此时NioServerSocketChannel的pipeline中有head、workerHandler、SocketBootstrapAcceptor、tail。</p>
+<p>从head-&gt;tail上这个4个handler都要看一下invokeChannelRegistered这个方法有没有自己的实现。</p>
+<p>下面事件发布需要一个前提条件就是Channel已经打开。</p>
+<p>但是在Netty中Channel注册复用器属于前置动作：</p>
+<ul>
+<li>先于NioServerSocketChannel的bind(bind+listen)操作。</li>
+<li>先于NioSocketChannel的connect操作。</li>
+</ul>
+<p>因此Channel注册完复用器走到这时Channel还没有active。</p>
+<h2 id="三-bind操作"><a href="#三-bind操作" class="headerlink" title="三 bind操作"></a>三 bind操作</h2><p>在bind之前此时IO线程已经运行起来了，但是Channel注册复用器时候关注的事件集合是0，因此在bind操作之后还需要更新复用器的register。</p>
+<p>bind步骤：</p>
+<ul>
+<li>bind+listen</li>
+<li>更新register</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Channel中发生的读写数据操作都会按照InBound和OutBound类型交给pipeline 让关注的handler执行</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doBind0</span><span class="hljs-params">(<span class="hljs-keyword">final</span> ChannelFuture regFuture, <span class="hljs-keyword">final</span> Channel channel, <span class="hljs-keyword">final</span> SocketAddress localAddress, <span class="hljs-keyword">final</span> ChannelPromise promise)</span> &#123;<br>    <span class="hljs-comment">// This method is invoked before channelRegistered() is triggered.  Give user handlers a chance to set up</span><br>    <span class="hljs-comment">// the pipeline in its channelRegistered() implementation.</span><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 提交异步任务让NioEventLoop线程执行bind</span><br><span class="hljs-comment">         * 这个地方的bind对应OS的Socket编程中的bind和listen</span><br><span class="hljs-comment">         * 此时pipeline的handler(head workerHandler ServerBootstrapAcceptor tail) bind操作属于OutBound类型 因此从tail往前找handler headHandler负责真正执行bind和listen</span><br><span class="hljs-comment">         * NioEventLoop执行真正的bind操作 添加监听器处理异步操作结果 NioEventLoop执行bind结束后 它自己知道bind结果 处理ChannelFutureListener.CLOSE_ON_FAILURE的逻辑</span><br><span class="hljs-comment">         */</span><br>    channel.eventLoop().execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">if</span> (regFuture.isSuccess()) channel.bind(localAddress, promise).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);<br>            <span class="hljs-keyword">else</span> promise.setFailure(regFuture.cause());<br>        &#125;<br>    &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">bind</span><span class="hljs-params">(SocketAddress localAddress, ChannelPromise promise)</span> &#123; <span class="hljs-comment">// Channel上pipeline中handler 责任链处理</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.pipeline.bind(localAddress, promise);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultChannelPipeline.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> ChannelFuture <span class="hljs-title function_">bind</span><span class="hljs-params">(SocketAddress localAddress, ChannelPromise promise)</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * bind是交给pipeline来执行的 bind属于Outbound类型的操作 从pipeline的tail开始往前找 tailHandler-&gt;workerHandler-&gt;ServerBootstrapAcceptor-&gt;headHandler</span><br><span class="hljs-comment">         * head和tail的基类是AbstractChannelHandlerContext 具体实现维护在当前类的两个内部类中HeadContext和TailContext</span><br><span class="hljs-comment">         * &#123;<span class="hljs-doctag">@link</span> HeadContext&#125;</span><br><span class="hljs-comment">         * &#123;<span class="hljs-doctag">@link</span> TailContext&#125;</span><br><span class="hljs-comment">         * 最终bind的操作由headHandler来处理 执行了Jdk的Socket的bind和listen操作</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-keyword">return</span> tail.bind(localAddress, promise);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannelHandlerContext.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> ChannelFuture <span class="hljs-title function_">bind</span><span class="hljs-params">(<span class="hljs-keyword">final</span> SocketAddress localAddress, <span class="hljs-keyword">final</span> ChannelPromise promise)</span> &#123; <span class="hljs-comment">// 执行Jdk底层Socket逻辑 bind和listen</span><br>    ObjectUtil.checkNotNull(localAddress, <span class="hljs-string">&quot;localAddress&quot;</span>);<br>    <span class="hljs-keyword">if</span> (isNotValidPromise(promise, <span class="hljs-literal">false</span>)) <span class="hljs-keyword">return</span> promise;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">AbstractChannelHandlerContext</span> <span class="hljs-variable">next</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.findContextOutbound(MASK_BIND); <span class="hljs-comment">// 比如此刻pipeline中有4个handler(headHandler-&gt;logHandler-&gt;ServerBootstrapAcceptor-&gt;tailHandler) bind属于OutBound操作 从tailHandler往前找OutBound类型的handler 先找到了logHandler 但是它没有重写bind方法 而是直接调用模板方法(将任务继续往前传 让OutBound类型handler继续处理) 最终bind的实现在headHandler中</span><br>    <span class="hljs-type">EventExecutor</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> next.executor();<br>    <span class="hljs-comment">// 保证NioEventLoop处理同一个Channel 如果不是NioEventLoop在执行 就通过向NioEventLoop提交异步任务方式切换线程</span><br>    <span class="hljs-keyword">if</span> (executor.inEventLoop())<br>        next.invokeBind(localAddress, promise);<br>    <span class="hljs-keyword">else</span> &#123;<br>        safeExecute(executor, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                next.invokeBind(localAddress, promise);<br>            &#125;<br>        &#125;, promise, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>);<br>    &#125;<br>    <span class="hljs-keyword">return</span> promise;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// HeadContext</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">bind</span><span class="hljs-params">(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise)</span> &#123; <span class="hljs-comment">// bind最终实现在headHandler</span><br>    unsafe.bind(localAddress, promise);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">bind</span><span class="hljs-params">(<span class="hljs-keyword">final</span> SocketAddress localAddress, <span class="hljs-keyword">final</span> ChannelPromise promise)</span> &#123;<br>    assertEventLoop();<br><br>    <span class="hljs-keyword">if</span> (!promise.setUncancellable() || !ensureOpen(promise))<br>        <span class="hljs-keyword">return</span>;<br><br>    <span class="hljs-comment">// See: https://github.com/netty/netty/issues/576</span><br>    <span class="hljs-keyword">if</span> (Boolean.TRUE.equals(config().getOption(ChannelOption.SO_BROADCAST)) &amp;&amp;<br>        localAddress <span class="hljs-keyword">instanceof</span> InetSocketAddress &amp;&amp;<br>        !((InetSocketAddress) localAddress).getAddress().isAnyLocalAddress() &amp;&amp;<br>        !PlatformDependent.isWindows() &amp;&amp; !PlatformDependent.maybeSuperUser()) &#123;<br>        <span class="hljs-comment">// Warn a user about the fact that a non-root user can&#x27;t receive a</span><br>        <span class="hljs-comment">// broadcast packet on *nix if the socket is bound on non-wildcard address.</span><br>    &#125;<br><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">wasActive</span> <span class="hljs-operator">=</span> isActive(); <span class="hljs-comment">// Channel执行完bind操作之后 这个标识位是true 此时还没bind因此它是false</span><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 子类&#123;<span class="hljs-doctag">@link</span> io.netty.channel.socket.nio.NioServerSocketChannel#doBind(SocketAddress)&#125; 调用jdk的channel绑定端口的逻辑</span><br><span class="hljs-comment">                 */</span><br>        AbstractChannel.<span class="hljs-built_in">this</span>.doBind(localAddress);<br>    &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>        safeSetFailure(promise, t);<br>        closeIfClosed();<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (!wasActive &amp;&amp; isActive()) &#123; <span class="hljs-comment">// 确保bind操作成功 发布NioServerSocket的active的事件</span><br>        invokeLater(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                pipeline.fireChannelActive(); <span class="hljs-comment">// bind(bind+listen)成功了 截止当前服务端复用器关注的事件集合还是0 不关注事件 这个active事件会触发更新复用器关注NioServerSocketChannel的可读事件</span><br>            &#125;<br>        &#125;);<br>    &#125;<br><br>    safeSetSuccess(promise);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-Jdk的bind和listen"><a href="#1-Jdk的bind和listen" class="headerlink" title="1 Jdk的bind和listen"></a>1 Jdk的bind和listen</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 子类&#123;<span class="hljs-doctag">@link</span> io.netty.channel.socket.nio.NioServerSocketChannel#doBind(SocketAddress)&#125; 调用jdk的channel绑定端口的逻辑</span><br><span class="hljs-comment">                 */</span><br>AbstractChannel.<span class="hljs-built_in">this</span>.doBind(localAddress);<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-更新复用器register的selectionKey"><a href="#2-更新复用器register的selectionKey" class="headerlink" title="2 更新复用器register的selectionKey"></a>2 更新复用器register的selectionKey</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 异步任务 此时pipeline中的handler有4个</span><br><span class="hljs-comment">                 *     - head</span><br><span class="hljs-comment">                 *     - workerHandler</span><br><span class="hljs-comment">                 *     - ServerBootstrapAcceptor</span><br><span class="hljs-comment">                 *     - tail</span><br><span class="hljs-comment">                 *     </span><br><span class="hljs-comment">                 * 从head-&gt;tail开始关注NioServerSocketChannel的active事件</span><br><span class="hljs-comment">                 * 在head节点中埋点更新了复用器的register</span><br><span class="hljs-comment">                 */</span><br>invokeLater(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        pipeline.fireChannelActive(); <span class="hljs-comment">// bind(bind+listen)成功了 截止当前服务端复用器关注的事件集合还是0 不关注事件 这个active事件会触发更新复用器关注NioServerSocketChannel的可读事件</span><br>    &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// HeadContext</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">channelActive</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> &#123;<br>    ctx.fireChannelActive(); <span class="hljs-comment">// head-&gt;tail head将NioServerSocketChannel的active事件向后传播 让后面关注这个事件的handler继续处理</span><br><br>    readIfIsAutoRead(); <span class="hljs-comment">// 更新复用器register的地方</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">readIfIsAutoRead</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">if</span> (channel.config().isAutoRead()) &#123; <span class="hljs-comment">// 默认值就是true</span><br>        channel.read();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> Channel <span class="hljs-title function_">read</span><span class="hljs-params">()</span> &#123;<br>    pipeline.read();<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultChannelPipeline.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> ChannelPipeline <span class="hljs-title function_">read</span><span class="hljs-params">()</span> &#123;<br>    tail.read();<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannelHandlerContext.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> ChannelHandlerContext <span class="hljs-title function_">read</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">AbstractChannelHandlerContext</span> <span class="hljs-variable">next</span> <span class="hljs-operator">=</span> findContextOutbound(MASK_READ); <span class="hljs-comment">// 从tail-&gt;head往前找OutBound类型处理器 找到了head</span><br>    <span class="hljs-type">EventExecutor</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> next.executor();<br>    <span class="hljs-keyword">if</span> (executor.inEventLoop()) &#123;<br>        next.invokeRead();<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-type">Tasks</span> <span class="hljs-variable">tasks</span> <span class="hljs-operator">=</span> next.invokeTasks;<br>        <span class="hljs-keyword">if</span> (tasks == <span class="hljs-literal">null</span>) &#123;<br>            next.invokeTasks = tasks = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Tasks</span>(next);<br>        &#125;<br>        executor.execute(tasks.invokeReadTask);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">invokeRead</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">if</span> (invokeHandler()) &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            ((ChannelOutboundHandler) handler()).read(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// NioServerSocketChannel的active触发读发生在head中</span><br>        &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>            invokeExceptionCaught(t);<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        read();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// HeadContext</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">read</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> &#123;<br>    unsafe.beginRead();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">beginRead</span><span class="hljs-params">()</span> &#123; <span class="hljs-comment">// NioServerSocketChannel的active触发的读</span><br>    assertEventLoop();<br><br>    <span class="hljs-keyword">try</span> &#123;<br>        AbstractChannel.<span class="hljs-built_in">this</span>.doBeginRead();<br>    &#125; <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">final</span> Exception e) &#123;<br>        invokeLater(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                pipeline.fireExceptionCaught(e);<br>            &#125;<br>        &#125;);<br>        close(voidPromise());<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doBeginRead</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123; <span class="hljs-comment">// NioServerSocketChannel bind之后的active事件触发的读</span><br>    <span class="hljs-comment">// Channel.read() or ChannelHandlerContext.read() was called</span><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">selectionKey</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.selectionKey; <span class="hljs-comment">// 复用器待监听的Channel NioServerSocketChannel注册复用器时候关注的事件是0 也就是不关注事件 现在已经bind+listen好 需要更新监听状态 关注连接事件了</span><br>    <span class="hljs-keyword">if</span> (!selectionKey.isValid())<br>        <span class="hljs-keyword">return</span>;<br><br>    readPending = <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">interestOps</span> <span class="hljs-operator">=</span> selectionKey.interestOps(); <span class="hljs-comment">// 之前注册的时候感兴趣的事件</span><br>    <span class="hljs-keyword">if</span> ((interestOps &amp; readInterestOp) == <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// NioServerSocketChannel已经bind+listen好 需要关注可读事件(也就是连接事件) 因此现在更新复用器的register</span><br>        selectionKey.interestOps(interestOps | readInterestOp);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="四-流程图"><a href="#四-流程图" class="headerlink" title="四 流程图"></a>四 流程图</h2><p>至此NioServerSocketChannel相关流程图如下：</p>
+<img src="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-12-bind%E6%B5%81%E7%A8%8B/202211141943675.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>服务端彻底启动：</p>
+<ul>
+<li>Socket完成了bind</li>
+<li>Socket完成了listen</li>
+<li>注册IO多路复用器关注连接事件(16)</li>
+<li>IO线程阻塞在复用器上等待客户端的连接进来</li>
+</ul>
+<p>至于<a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-09-ServerBootstrapAcceptor/" title="Netty源码-09-ServerBootstrapAcceptor">ServerBootstrapAcceptor</a>的工作原理请移步。</p>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Netty/" class="category-chain-item">Netty</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/1%E5%88%B7Netty/" class="print-no-link">#1刷Netty</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Netty源码-12-bind流程</div>
+      <div>https://bannirui.github.io/2023/03/06/Netty/Netty源码-12-bind流程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-13-connect%E6%B5%81%E7%A8%8B/" title="Netty源码-13-connect流程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Netty源码-13-connect流程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" title="Netty源码-11-Pipeline">
+                        <span class="hidden-mobile">Netty源码-11-Pipeline</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'a153fda2ef6dc9354d2803df40bc4930'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
