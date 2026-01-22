@@ -2,7 +2,7 @@
 title: IDEA远程vim插件异常记录
 category_bar: true
 date: 2024-03-08 17:32:43
-categories: IDE
+categories: IDEA
 ---
 
 感谢jetbrains社区的帮助，虽然问题不大，但是如鲠在喉地难受。

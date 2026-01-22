@@ -2,7 +2,7 @@
 title: IDEA内置maven插件禁用http
 category_bar: true
 date: 2024-03-28 11:30:51
-categories: IDE
+categories: IDEA
 ---
 
 升级IDE之后，maven拉取包报错，禁用了http的域名
