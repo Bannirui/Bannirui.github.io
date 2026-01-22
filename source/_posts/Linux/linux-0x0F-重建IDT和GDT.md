@@ -2,7 +2,7 @@
 title: linux-0x0F-重建IDT和GDT
 category_bar: true
 date: 2025-06-02 18:09:58
-categories: linux
+categories: Linux源码
 ---
 
 ```asm

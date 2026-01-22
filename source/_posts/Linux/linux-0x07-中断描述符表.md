@@ -2,7 +2,7 @@
 title: linux-0x07-中断描述符表
 category_bar: true
 date: 2025-05-07 15:51:04
-categories: linux
+categories: Linux源码
 ---
 
 此时是禁用中断服务的，暂时不需要中断服务，因此告诉IDTR寄存器的那个中断描述符表是空的。

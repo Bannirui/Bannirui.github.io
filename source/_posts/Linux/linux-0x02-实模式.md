@@ -2,7 +2,7 @@
 title: linux-0x02-实模式
 category_bar: true
 date: 2025-04-22 15:34:07
-categories: linux
+categories: Linux源码
 ---
 
 CPU处理器上电后，默认会给两个寄存器赋值，让CPU寻址执行

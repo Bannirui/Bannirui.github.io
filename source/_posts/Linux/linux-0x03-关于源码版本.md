@@ -2,7 +2,7 @@
 title: linux-0x03-关于源码版本
 category_bar: true
 date: 2025-04-26 09:27:00
-categories: linux
+categories: Linux源码
 ---
 
 接{% post_link Linux/linux-0x00-源码编译 %}，之前选择的源码是[github仓库](https://github.com/torvalds/linux.git)master分支。尝试了几天发现有明显的阅读障碍，应该是经过这么多年发展，已经变成了究极体，很难成为小白入手资料，所以这次从古早版本入手。

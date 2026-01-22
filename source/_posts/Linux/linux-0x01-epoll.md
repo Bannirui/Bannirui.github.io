@@ -2,7 +2,7 @@
 title: linux-0x01-epoll
 category_bar: true
 date: 2025-04-15 13:35:12
-categories: linux
+categories: Linux源码
 ---
 
 多路复用器的实现，我觉得epoll和kqueue的实现应该是最牛的，今天就浅尝下epoll的代码。

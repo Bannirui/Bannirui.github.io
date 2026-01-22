@@ -2,7 +2,7 @@
 title: linux-0x0C-切换CPU保护模式
 category_bar: true
 date: 2025-05-11 10:48:03
-categories: linux
+categories: Linux源码
 ---
 
 为了这一步前面已经做了很多铺垫工作

@@ -2,7 +2,7 @@
 title: linux-0x06-13号BIOS中断
 category_bar: true
 date: 2025-05-06 10:29:36
-categories: linux
+categories: Linux源码
 ---
 
 13号中断是磁盘相关的中断。

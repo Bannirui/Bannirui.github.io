@@ -2,7 +2,7 @@
 title: linux-0x0B-A20
 category_bar: true
 date: 2025-05-11 10:30:05
-categories: linux
+categories: Linux源码
 ---
 
 ```asm

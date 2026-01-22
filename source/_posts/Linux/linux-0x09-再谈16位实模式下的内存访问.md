@@ -2,7 +2,7 @@
 title: linux-0x09-再谈16位实模式下的内存访问
 category_bar: true
 date: 2025-05-11 09:34:21
-categories: linux
+categories: Linux源码
 ---
 
 所谓cpu实模式就是cpu real-mode，cpu要寻的地址就是实际的物理地址。在16位模式下，寄存器用的是16bit，但是地址总线是20根，也就是地址空间是1<<20(Byte)=1Mb。

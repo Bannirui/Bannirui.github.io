@@ -2,7 +2,7 @@
 title: linux-0x04-引导代码
 category_bar: true
 date: 2025-04-27 16:09:56
-categories: linux
+categories: Linux源码
 ---
 
 前面{% post_link Linux/linux-0x02-实模式 %}已经把启动段代码加载到了0x07c00，CPU也跳转过去。开始执行引导代码了，下面就看看引导代码在干什么。

@@ -2,7 +2,7 @@
 title: linux-0x10-开启分页机制
 category_bar: true
 date: 2025-06-15 01:09:29
-categories: linux
+categories: Linux源码
 ---
 
 我看的这个版本分页映射的地址空间是8MB

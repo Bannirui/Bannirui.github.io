@@ -2,7 +2,7 @@
 title: linux-0x0D-代码的布局
 category_bar: true
 date: 2025-05-11 10:56:05
-categories: linux
+categories: Linux源码
 ---
 
 在{% post_link Linux/linux-0x0C-切换CPU保护模式 %}中的最后一跳就跳到了内核代码上，前面{% post_link Linux/linux-0x04-引导代码 %}已经讲了磁盘中代码是怎么被搬来搬去，但是当时没有讲磁盘中代码的布局。

@@ -2,7 +2,7 @@
 title: linux-0x05-10号BIOS中断
 category_bar: true
 date: 2025-04-28 15:25:56
-categories: linux
+categories: Linux源码
 ---
 
 BIOS提供了中断服务，以10号中断为例，跟字符显示有关的中断。

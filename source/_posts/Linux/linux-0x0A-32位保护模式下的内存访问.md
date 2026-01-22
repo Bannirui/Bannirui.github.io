@@ -2,7 +2,7 @@
 title: linux-0x0A-32位保护模式下的内存访问
 category_bar: true
 date: 2025-05-11 09:54:25
-categories: linux
+categories: Linux源码
 ---
 
 在{% post_link Linux/linux-0x09-再谈16位实模式下的内存访问 %}中谈过，CS、DS寄存器中存放的段基址。

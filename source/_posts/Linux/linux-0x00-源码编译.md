@@ -2,7 +2,7 @@
 title: linux-0x00-源码编译
 category_bar: true
 date: 2025-04-14 17:37:10
-categories: linux
+categories: Linux源码
 ---
 
 先fork项目，然后将源码下载到本地。
