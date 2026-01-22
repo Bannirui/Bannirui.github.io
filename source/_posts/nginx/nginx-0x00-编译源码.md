@@ -76,4 +76,4 @@ sudo /usr/local/nginx/sbin/nginx
 
 ![](./nginx-0x00-编译源码/1740104411.png)
 
-为了在IDea中阅读代码，要简单配置一下开发环境{% post_link Clion配置Makefile项目跳转功能 %}
+为了在IDea中阅读代码，要简单配置一下开发环境{% post_link IDEA/Clion配置Makefile项目跳转功能 %}

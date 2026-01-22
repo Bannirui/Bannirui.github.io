@@ -3,8 +3,8 @@ title: Tomcat-0x00-调试环境
 index_img: /img/Tomcat-0x00-调试环境.png
 date: 2023-04-15 10:43:29
 category_bar: true
-tags: [ Tomcat@11.0 ]
-categories: [ Tomcat ]
+tags: Tomcat@11.0
+categories: Tomcat源码
 ---
 
 ### 1 环境准备

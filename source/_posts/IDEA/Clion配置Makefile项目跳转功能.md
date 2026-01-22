@@ -2,8 +2,7 @@
 title: Clion配置Makefile项目跳转功能
 date: 2023-11-02 14:44:58
 category_bar: true
-categories: [ 'IDE' ]
-tags: [ 'Clion' ]
+categories: IDEA
 ---
 
 习惯了在Jetbrains系列上进行开发，自然而然也就用Clion阅读和开发C语言项目。但是该IDE对Makefile的支持远不如对Cmake的支持，比如用Clion打开Redis源码，无法进行函数跳转。
