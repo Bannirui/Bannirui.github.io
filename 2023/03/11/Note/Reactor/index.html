@@ -1,0 +1,1013 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="reactor&#x3D;多路复用+线程池 抽象出组件，符合单一职责设计模式 reactor组件负责亲请求接收和分发 1 单reactor单线程模型特点  一个reactor负责接收连接和读写请求，分发他们 一个handler线程负责所有读写请求的处理  1.1 reactor组件12345678910111213141516171819202122232425262728293031323334">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactor">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/Note/Reactor/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="reactor&#x3D;多路复用+线程池 抽象出组件，符合单一职责设计模式 reactor组件负责亲请求接收和分发 1 单reactor单线程模型特点  一个reactor负责接收连接和读写请求，分发他们 一个handler线程负责所有读写请求的处理  1.1 reactor组件12345678910111213141516171819202122232425262728293031323334">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-11T06:24:53.000Z">
+<meta property="article:modified_time" content="2026-01-22T09:47:40.803Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Reactor - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Reactor"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-11 14:24" pubdate>
+          2023年3月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="笔记"
+        id="heading-7051dc52c184c205e39aa54b4664ae9b" role="tab" data-toggle="collapse" href="#collapse-7051dc52c184c205e39aa54b4664ae9b"
+        aria-expanded="true"
+      >
+        笔记
+        <span class="list-group-count">(32)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-7051dc52c184c205e39aa54b4664ae9b"
+           role="tabpanel" aria-labelledby="heading-7051dc52c184c205e39aa54b4664ae9b">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/12/31/Note/ArchLinux%E5%AE%89%E8%A3%85%E8%93%9D%E7%89%99%E6%A8%A1%E5%9D%97/" title="ArchLinux安装蓝牙模块"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ArchLinux安装蓝牙模块</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Note/ArchLinux%E7%8E%AF%E5%A2%83/" title="ArchLinux环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ArchLinux环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/13/Note/GParted%E9%87%8D%E5%88%86%E5%8C%BA/" title="GParted重分区"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">GParted重分区</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/14/Note/JNI%E4%BD%BF%E7%94%A8/" title="JNI使用"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">JNI使用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Note/KQueue/" title="KQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">KQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/11/Note/Linux%E5%AE%89%E8%A3%85FreeCAD/" title="Linux安装FreeCAD"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Linux安装FreeCAD</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Note/Mac%E7%8E%AF%E5%A2%83/" title="Mac环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Mac环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Note/Reactor/" title="Reactor"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Reactor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Note/TCP/" title="TCP"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">TCP</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/01/Note/Ubuntu%E7%8E%AF%E5%A2%83/" title="Ubuntu环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Ubuntu环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/05/04/Note/apt%E5%91%BD%E4%BB%A4/" title="apt命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">apt命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/02/28/Note/archlinux%E7%BC%96%E8%AF%91bochs/" title="archlinux编译bochs"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">archlinux编译bochs</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/02/23/Note/archlinux%E7%BC%96%E8%AF%91kvmtool/" title="archlinux编译kvmtool"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">archlinux编译kvmtool</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/12/07/Note/cmake%E6%95%99%E7%A8%8B%E8%AE%B0%E5%BD%95/" title="cmake教程记录"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">cmake教程记录</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/02/28/Note/codestyle/" title="codestyle"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">codestyle</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/24/Note/ffmpeg%E5%B7%A5%E5%85%B7/" title="ffmpeg工具"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ffmpeg工具</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/09/28/Note/mac%E9%80%9A%E8%BF%87%E7%BD%91%E7%BA%BF%E5%85%B1%E4%BA%ABwifi/" title="mac通过网线共享wifi"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">mac通过网线共享wifi</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/25/Note/ssh%E8%BF%9C%E7%A8%8B%E4%B8%BB%E6%9C%BA/" title="ssh远程主机"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ssh远程主机</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/09/21/Note/ssh%E8%BF%9E%E6%8E%A5windows%E7%9A%84wsl/" title="ssh连接到windows的wsl"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">ssh连接到windows的wsl</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/01/25/Note/systemctl%E5%91%BD%E4%BB%A4/" title="systemctl命令"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">systemctl命令</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/%E7%AC%94%E8%AE%B0/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Reactor</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>reactor&#x3D;多路复用+线程池</p>
+<p>抽象出组件，符合单一职责设计模式</p>
+<p>reactor组件负责亲请求接收和分发</p>
+<h2 id="1-单reactor单线程模型"><a href="#1-单reactor单线程模型" class="headerlink" title="1 单reactor单线程模型"></a>1 单reactor单线程模型</h2><p>特点</p>
+<ul>
+<li>一个reactor负责接收连接和读写请求，分发他们</li>
+<li>一个handler线程负责所有读写请求的处理</li>
+</ul>
+<h3 id="1-1-reactor组件"><a href="#1-1-reactor组件" class="headerlink" title="1.1 reactor组件"></a>1.1 reactor组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactorsinglethread;<br><br><span class="hljs-keyword">import</span> java.net.InetSocketAddress;<br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.util.Iterator;<br><span class="hljs-keyword">import</span> java.util.Set;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;单reactor单线程&lt;/p&gt;</span><br><span class="hljs-comment"> * &lt;p&gt;弊端&lt;ul&gt;</span><br><span class="hljs-comment"> *     &lt;li&gt;服务端只能同时处理一个客户端的请求&lt;/li&gt;</span><br><span class="hljs-comment"> * &lt;/ul&gt;&lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Reactor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    <span class="hljs-comment">// 服务端socket</span><br>    ServerSocketChannel serverSocketChannel;<br>    <span class="hljs-comment">// 复用器</span><br>    Selector selector;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Reactor</span><span class="hljs-params">(<span class="hljs-type">int</span> port)</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// 创建 非阻塞 绑定 监听</span><br>            <span class="hljs-built_in">this</span>.serverSocketChannel = ServerSocketChannel.open();<br>            <span class="hljs-built_in">this</span>.serverSocketChannel.configureBlocking(<span class="hljs-literal">false</span>);<br>            <span class="hljs-built_in">this</span>.serverSocketChannel.bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(port));<br>            <span class="hljs-comment">// 注册复用器</span><br>            <span class="hljs-built_in">this</span>.selector = Selector.open();<br>            <span class="hljs-comment">// att用来处理连接请求</span><br>            <span class="hljs-built_in">this</span>.serverSocketChannel.register(<span class="hljs-built_in">this</span>.selector, SelectionKey.OP_ACCEPT, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Acceptor</span>(<span class="hljs-built_in">this</span>.serverSocketChannel, <span class="hljs-built_in">this</span>.selector));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * &lt;p&gt;一个reactor收到请求后 不管是连接请求还是读写请求 一股脑处理&lt;ul&gt;</span><br><span class="hljs-comment">     *     &lt;li&gt;如果请求是连接请求 处理的会很快 交给acceptor处理器&lt;/li&gt;</span><br><span class="hljs-comment">     *     &lt;li&gt;如果请求是读写请求 可能会包含着比较重的业务逻辑 分发给一个个的handler单独处理&lt;/li&gt;</span><br><span class="hljs-comment">     * &lt;/ul&gt;&lt;/p&gt;</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-comment">// os kqueue 收到的都是连接请求</span><br>                <span class="hljs-built_in">this</span>.selector.select();<br>                Set&lt;SelectionKey&gt; selectionKeys = <span class="hljs-built_in">this</span>.selector.selectedKeys();<br>                Iterator&lt;SelectionKey&gt; it = selectionKeys.iterator();<br>                <span class="hljs-keyword">while</span> (it.hasNext()) &#123;<br>                    <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">sk</span> <span class="hljs-operator">=</span> it.next();<br>                    it.remove();<br>                    <span class="hljs-comment">// 请求交给dispatch进行派发 此时进来的可能是连接请求 也有可能是读请求</span><br>                    <span class="hljs-built_in">this</span>.dispatch(sk);<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">dispatch</span><span class="hljs-params">(SelectionKey sk)</span> &#123;<br>        <span class="hljs-comment">// 不管是连接请求还是读请求 他们两个处理器的顶层都是Runnable Acceptor收到的是连接请求 Handler收到的是读请求</span><br>        <span class="hljs-type">Runnable</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> (Runnable) sk.attachment();<br>        r.run();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="1-2-acceptor组件"><a href="#1-2-acceptor组件" class="headerlink" title="1.2 acceptor组件"></a>1.2 acceptor组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactorsinglethread;<br><br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.nio.channels.SocketChannel;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;用于处理&#123;<span class="hljs-doctag">@link</span> Reactor&#125;中的连接请求&lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Acceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    ServerSocketChannel serverSocketChannel;<br>    Selector selector;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Acceptor</span><span class="hljs-params">(ServerSocketChannel serverSocketChannel, Selector selector)</span> &#123;<br>        <span class="hljs-built_in">this</span>.serverSocketChannel = serverSocketChannel;<br>        <span class="hljs-built_in">this</span>.selector = selector;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * &lt;p&gt;处理连接请求 进来的全部都是连接请求&lt;/p&gt;</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">SocketChannel</span> <span class="hljs-variable">socketChannel</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.serverSocketChannel.accept();<br>            System.out.println(<span class="hljs-string">&quot;-&gt;服务端 来自&quot;</span> + socketChannel.getRemoteAddress()+<span class="hljs-string">&quot;的连接请求&quot;</span>);<br>            <span class="hljs-comment">// 读写非阻塞 注册到复用器</span><br>            socketChannel.configureBlocking(<span class="hljs-literal">false</span>);<br>            socketChannel.register(<span class="hljs-built_in">this</span>.selector, SelectionKey.OP_READ, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Handler</span>(socketChannel));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br><br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="1-3-handler组件"><a href="#1-3-handler组件" class="headerlink" title="1.3 handler组件"></a>1.3 handler组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactorsinglethread;<br><br><span class="hljs-keyword">import</span> java.net.SocketAddress;<br><span class="hljs-keyword">import</span> java.nio.ByteBuffer;<br><span class="hljs-keyword">import</span> java.nio.channels.SocketChannel;<br><span class="hljs-keyword">import</span> java.nio.charset.StandardCharsets;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;接收&#123;<span class="hljs-doctag">@link</span> Reactor&#125;的读写请求&lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    SocketChannel socketChannel;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Handler</span><span class="hljs-params">(SocketChannel socketChannel)</span> &#123;<br>        <span class="hljs-built_in">this</span>.socketChannel = socketChannel;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * &lt;p&gt;处理读写请求&lt;/p&gt;</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">ByteBuffer</span> <span class="hljs-variable">b</span> <span class="hljs-operator">=</span> ByteBuffer.allocate(<span class="hljs-number">1024</span>);<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// 客户端信息</span><br>            <span class="hljs-type">SocketAddress</span> <span class="hljs-variable">remoteAddress</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.socketChannel.getRemoteAddress();<br>            <span class="hljs-built_in">this</span>.socketChannel.read(b);<br>            <span class="hljs-comment">// 收到了读请求的内容</span><br>            <span class="hljs-type">String</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(b.array(), StandardCharsets.UTF_8);<br>            <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> 2022/5/22 业务处理</span><br>            System.out.println(<span class="hljs-string">&quot;-&gt;服务端 来自&quot;</span> + remoteAddress + <span class="hljs-string">&quot;的一条消息=&quot;</span> + msg);<br>            <span class="hljs-comment">// 回写数据给客户端</span><br>            <span class="hljs-type">String</span> <span class="hljs-variable">echo</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;-&gt;客户端 服务端已经收到了你的信息=&quot;</span> + msg;<br>            <span class="hljs-built_in">this</span>.socketChannel.write(ByteBuffer.wrap(echo.getBytes(StandardCharsets.UTF_8)));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-4-服务端api"><a href="#1-4-服务端api" class="headerlink" title="1.4 服务端api"></a>1.4 服务端api</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactorsinglethread;<br><br><span class="hljs-keyword">import</span> debug.io.model.reactor.ClientTest;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SingleReactorSingleThreadTest</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">Reactor</span> <span class="hljs-variable">reactor</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Reactor</span>(ClientTest.PORT);<br>        reactor.run();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-单reactor多线程模型"><a href="#2-单reactor多线程模型" class="headerlink" title="2 单reactor多线程模型"></a>2 单reactor多线程模型</h2><p>特点</p>
+<ul>
+<li>一个reactor负责接收连接和读写请求，分发他们</li>
+<li>handler组件为每个读写请求分配单独的线程</li>
+</ul>
+<h3 id="2-1-reactor组件"><a href="#2-1-reactor组件" class="headerlink" title="2.1 reactor组件"></a>2.1 reactor组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactormultiplethread;<br><br><span class="hljs-keyword">import</span> java.net.InetSocketAddress;<br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.util.Iterator;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * &lt;p&gt;单reactor多线程&lt;/p&gt;</span><br><span class="hljs-comment"> * &lt;p&gt;相较于&#123;<span class="hljs-doctag">@link</span> debug.io.model.reactor.singlereactorsinglethread.Reactor&#125;版本 仅仅是在处理读写请求的时候加了个线程池&lt;/p&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Reactor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    ServerSocketChannel serverSocketChannel;<br>    Selector selector;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Reactor</span><span class="hljs-params">(<span class="hljs-type">int</span> port)</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-built_in">this</span>.serverSocketChannel = ServerSocketChannel.open();<br>            <span class="hljs-built_in">this</span>.serverSocketChannel.bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(port));<br>            <span class="hljs-built_in">this</span>.serverSocketChannel.configureBlocking(<span class="hljs-literal">false</span>);<br><br>            <span class="hljs-built_in">this</span>.selector = Selector.open();<br>            <span class="hljs-built_in">this</span>.serverSocketChannel.register(<span class="hljs-built_in">this</span>.selector, SelectionKey.OP_ACCEPT, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Acceptor</span>(<span class="hljs-built_in">this</span>.serverSocketChannel, <span class="hljs-built_in">this</span>.selector));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-built_in">this</span>.selector.select();<br>                Iterator&lt;SelectionKey&gt; it = <span class="hljs-built_in">this</span>.selector.selectedKeys().iterator();<br>                <span class="hljs-keyword">while</span> (it.hasNext()) &#123;<br>                    <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">sk</span> <span class="hljs-operator">=</span> it.next();<br>                    it.remove();<br>                    <span class="hljs-built_in">this</span>.dispatch(sk);<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">dispatch</span><span class="hljs-params">(SelectionKey sk)</span> &#123;<br>        <span class="hljs-type">Runnable</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> (Runnable) sk.attachment();<br>        r.run();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-acceptor组件"><a href="#2-2-acceptor组件" class="headerlink" title="2.2 acceptor组件"></a>2.2 acceptor组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactormultiplethread;<br><br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.nio.channels.SocketChannel;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Acceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    ServerSocketChannel ss;<br>    Selector sl;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Acceptor</span><span class="hljs-params">(ServerSocketChannel ss, Selector sl)</span> &#123;<br>        <span class="hljs-built_in">this</span>.ss = ss;<br>        <span class="hljs-built_in">this</span>.sl = sl;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">SocketChannel</span> <span class="hljs-variable">s</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.ss.accept();<br>            s.configureBlocking(<span class="hljs-literal">false</span>);<br>            s.register(<span class="hljs-built_in">this</span>.sl, SelectionKey.OP_READ, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Handler</span>(s));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-handler组件"><a href="#2-3-handler组件" class="headerlink" title="2.3 handler组件"></a>2.3 handler组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactormultiplethread;<br><br><span class="hljs-keyword">import</span> java.net.SocketAddress;<br><span class="hljs-keyword">import</span> java.nio.ByteBuffer;<br><span class="hljs-keyword">import</span> java.nio.channels.SocketChannel;<br><span class="hljs-keyword">import</span> java.nio.charset.StandardCharsets;<br><span class="hljs-keyword">import</span> java.util.concurrent.ExecutorService;<br><span class="hljs-keyword">import</span> java.util.concurrent.Executors;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ExecutorService</span> <span class="hljs-variable">EXECUTOR</span> <span class="hljs-operator">=</span> Executors.newFixedThreadPool(<span class="hljs-number">5</span>);<br><br>    SocketChannel s;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Handler</span><span class="hljs-params">(SocketChannel s)</span> &#123;<br>        <span class="hljs-built_in">this</span>.s = s;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">ByteBuffer</span> <span class="hljs-variable">b</span> <span class="hljs-operator">=</span> ByteBuffer.allocate(<span class="hljs-number">1024</span>);<br>            <span class="hljs-built_in">this</span>.s.read(b);<br>            EXECUTOR.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Process</span>(<span class="hljs-built_in">this</span>.s, b));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Process</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>        SocketChannel s;<br>        ByteBuffer b;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">Process</span><span class="hljs-params">(SocketChannel s, ByteBuffer b)</span> &#123;<br>            <span class="hljs-built_in">this</span>.s = s;<br>            <span class="hljs-built_in">this</span>.b = b;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-type">SocketAddress</span> <span class="hljs-variable">remoteAddress</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.s.getRemoteAddress();<br>                <span class="hljs-type">String</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(b.array(), StandardCharsets.UTF_8);<br>                System.out.println(<span class="hljs-string">&quot;-&gt;服务端 收到来自客户端的消息=&quot;</span> + msg);<br>                <span class="hljs-type">String</span> <span class="hljs-variable">echo</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;-&gt;客户端 服务端处理业务的线程=&quot;</span> + Thread.currentThread().getName();<br>                <span class="hljs-built_in">this</span>.s.write(ByteBuffer.wrap(echo.getBytes(StandardCharsets.UTF_8)));<br>            &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-4-服务端api"><a href="#2-4-服务端api" class="headerlink" title="2.4 服务端api"></a>2.4 服务端api</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.singlereactormultiplethread;<br><br><span class="hljs-keyword">import</span> debug.io.model.reactor.ClientTest;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">singleReactorMultipleThreadTest</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">Reactor</span> <span class="hljs-variable">reactor</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Reactor</span>(ClientTest.PORT);<br>        reactor.run();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="3-主从reactor模型"><a href="#3-主从reactor模型" class="headerlink" title="3 主从reactor模型"></a>3 主从reactor模型</h2><p>特点</p>
+<ul>
+<li>多个reactor负责请求的接收和派发<ul>
+<li>main 负责连接请求的接收和派发给acceptor</li>
+<li>sub 负责读写请求的接收和派发给handler 可以有一个或多个sub reactor</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-1-reactor组件"><a href="#3-1-reactor组件" class="headerlink" title="3.1 reactor组件"></a>3.1 reactor组件</h3><h4 id="3-1-1-main"><a href="#3-1-1-main" class="headerlink" title="3.1.1 main"></a>3.1.1 main</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.multiplereactormultiplethread;<br><br><span class="hljs-keyword">import</span> java.net.InetSocketAddress;<br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.util.Iterator;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MainReactor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    ServerSocketChannel ss;<br>    Selector sl;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">MainReactor</span><span class="hljs-params">(<span class="hljs-type">int</span> port)</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-built_in">this</span>.ss = ServerSocketChannel.open();<br>            <span class="hljs-built_in">this</span>.sl = Selector.open();<br>            <span class="hljs-built_in">this</span>.ss.configureBlocking(<span class="hljs-literal">false</span>);<br>            <span class="hljs-built_in">this</span>.ss.bind(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(port));<br>            <span class="hljs-built_in">this</span>.ss.register(<span class="hljs-built_in">this</span>.sl, SelectionKey.OP_ACCEPT, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Acceptor</span>(<span class="hljs-built_in">this</span>.ss));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-built_in">this</span>.sl.select();<br>                Iterator&lt;SelectionKey&gt; it = <span class="hljs-built_in">this</span>.sl.selectedKeys().iterator();<br>                <span class="hljs-keyword">while</span> (it.hasNext()) &#123;<br>                    <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">sk</span> <span class="hljs-operator">=</span> it.next();<br>                    it.remove();<br>                    <span class="hljs-built_in">this</span>.dispatch(sk);<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">dispatch</span><span class="hljs-params">(SelectionKey sk)</span> &#123;<br>        <span class="hljs-type">Runnable</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> (Runnable) sk.attachment();<br>        r.run();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h4 id="3-1-2-sub"><a href="#3-1-2-sub" class="headerlink" title="3.1.2 sub"></a>3.1.2 sub</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.multiplereactormultiplethread;<br><br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.util.Iterator;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SubReactor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    <span class="hljs-comment">// sub编号</span><br>    <span class="hljs-type">int</span> id;<br>    Selector sl;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SubReactor</span><span class="hljs-params">(<span class="hljs-type">int</span> id, Selector sl)</span> &#123;<br>        <span class="hljs-built_in">this</span>.id = id;<br>        <span class="hljs-built_in">this</span>.sl = sl;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-built_in">this</span>.sl.select();<br>                Iterator&lt;SelectionKey&gt; it = <span class="hljs-built_in">this</span>.sl.selectedKeys().iterator();<br>                <span class="hljs-keyword">while</span> (it.hasNext()) &#123;<br>                    <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">sk</span> <span class="hljs-operator">=</span> it.next();<br>                    it.remove();<br>                    <span class="hljs-built_in">this</span>.dispatch(sk);<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">dispatch</span><span class="hljs-params">(SelectionKey sk)</span> &#123;<br>        <span class="hljs-type">Runnable</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> (Runnable) sk.attachment();<br>        r.run();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-acceptor组件"><a href="#3-2-acceptor组件" class="headerlink" title="3.2 acceptor组件"></a>3.2 acceptor组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.multiplereactormultiplethread;<br><br><span class="hljs-keyword">import</span> java.nio.channels.SelectionKey;<br><span class="hljs-keyword">import</span> java.nio.channels.Selector;<br><span class="hljs-keyword">import</span> java.nio.channels.ServerSocketChannel;<br><span class="hljs-keyword">import</span> java.nio.channels.SocketChannel;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Acceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    ServerSocketChannel ss;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> idx;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SUB_REACTOR_CNT</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span>;<br>    <span class="hljs-keyword">private</span> SubReactor[] subReactors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SubReactor</span>[SUB_REACTOR_CNT];<br>    <span class="hljs-keyword">private</span> Thread[] threads = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>[SUB_REACTOR_CNT];<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Selector[] selectors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Selector</span>[SUB_REACTOR_CNT];<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Acceptor</span><span class="hljs-params">(ServerSocketChannel ss)</span> &#123;<br>        <span class="hljs-built_in">this</span>.ss = ss;<br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; SUB_REACTOR_CNT; i++) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-built_in">this</span>.selectors[i] = Selector.open();<br>            &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                e.printStackTrace();<br>            &#125;<br>            <span class="hljs-built_in">this</span>.subReactors[i] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SubReactor</span>(i, <span class="hljs-built_in">this</span>.selectors[i]);<br>            <span class="hljs-built_in">this</span>.threads[i] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(<span class="hljs-built_in">this</span>.subReactors[i]);<br>            <span class="hljs-built_in">this</span>.threads[i].start();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * mainReactor将连接请求都分发到acceptor中</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">SocketChannel</span> <span class="hljs-variable">s</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.ss.accept();<br>            s.configureBlocking(<span class="hljs-literal">false</span>);<br>            <span class="hljs-built_in">this</span>.selectors[<span class="hljs-built_in">this</span>.idx].wakeup();<br>            <span class="hljs-comment">// 让subReactor中携带的复用器关注读请求</span><br>            s.register(<span class="hljs-built_in">this</span>.selectors[<span class="hljs-built_in">this</span>.idx], SelectionKey.OP_READ, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Handler</span>(s));<br>            <span class="hljs-keyword">if</span> (++<span class="hljs-built_in">this</span>.idx == SUB_REACTOR_CNT) <span class="hljs-built_in">this</span>.idx = <span class="hljs-number">0</span>;<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-3-handler组件"><a href="#3-3-handler组件" class="headerlink" title="3.3 handler组件"></a>3.3 handler组件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.multiplereactormultiplethread;<br><br><span class="hljs-keyword">import</span> java.nio.ByteBuffer;<br><span class="hljs-keyword">import</span> java.nio.channels.SocketChannel;<br><span class="hljs-keyword">import</span> java.nio.charset.StandardCharsets;<br><span class="hljs-keyword">import</span> java.util.concurrent.ExecutorService;<br><span class="hljs-keyword">import</span> java.util.concurrent.Executors;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Handler</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    SocketChannel s;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ExecutorService</span> <span class="hljs-variable">EXECUTOR</span> <span class="hljs-operator">=</span> Executors.newFixedThreadPool(<span class="hljs-number">3</span>);<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Handler</span><span class="hljs-params">(SocketChannel s)</span> &#123;<br>        <span class="hljs-built_in">this</span>.s = s;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// 读</span><br>            <span class="hljs-type">ByteBuffer</span> <span class="hljs-variable">b</span> <span class="hljs-operator">=</span> ByteBuffer.allocate(<span class="hljs-number">1024</span>);<br>            <span class="hljs-built_in">this</span>.s.read(b);<br>            <span class="hljs-comment">// 封装任务提交线程池</span><br>            EXECUTOR.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Process</span>(<span class="hljs-built_in">this</span>.s, b));<br>        &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Process</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br>        SocketChannel s;<br>        ByteBuffer b;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">Process</span><span class="hljs-params">(SocketChannel s, ByteBuffer b)</span> &#123;<br>            <span class="hljs-built_in">this</span>.s = s;<br>            <span class="hljs-built_in">this</span>.b = b;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-type">String</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(<span class="hljs-built_in">this</span>.b.array(), StandardCharsets.UTF_8);<br>                System.out.println(<span class="hljs-string">&quot;handler-&gt; 收到来自&quot;</span> + <span class="hljs-built_in">this</span>.s.getRemoteAddress() + <span class="hljs-string">&quot;的消息=&quot;</span> + msg);<br>                <span class="hljs-comment">// 写</span><br>                <span class="hljs-built_in">this</span>.s.write(ByteBuffer.wrap(<span class="hljs-string">&quot;handler-&gt; 来自handler的回写&quot;</span>.getBytes(StandardCharsets.UTF_8)));<br>            &#125; <span class="hljs-keyword">catch</span> (Exception ignored) &#123;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-4-服务端api"><a href="#3-4-服务端api" class="headerlink" title="3.4 服务端api"></a>3.4 服务端api</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> debug.io.model.reactor.multiplereactormultiplethread;<br><br><span class="hljs-keyword">import</span> debug.io.model.reactor.ClientTest;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@since</span> 2022/5/22</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> dingrui</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MultipleReactorMultipleThreadTest</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">MainReactor</span> <span class="hljs-variable">mainReactor</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MainReactor</span>(ClientTest.PORT);<br>        mainReactor.run();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%AC%94%E8%AE%B0/" class="category-chain-item">笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Reactor</div>
+      <div>https://bannirui.github.io/2023/03/11/Note/Reactor/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/15/Tomcat/Tomcat-0x00-%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/" title="Tomcat-0x00-调试环境">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Tomcat-0x00-调试环境</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/11/Note/%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" title="网络模型">
+                        <span class="hidden-mobile">网络模型</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '287fdf2361a8e5e0c2fcdd0be63c48f7'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
