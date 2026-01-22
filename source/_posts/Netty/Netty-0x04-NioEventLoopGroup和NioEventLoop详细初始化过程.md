@@ -470,7 +470,7 @@ select策略，在Netty中NioEventLoop这个工作线程需要关注的事件包
 
 ### 3 NioEventLoop
 
-#### 3.1 {% post_link Netty-0x06-数据结构优化 创建队列实现MPSC %}
+#### 3.1 {% post_link Netty/Netty-0x06-数据结构优化 创建队列实现MPSC %}
 
 ```java
     private static Queue<Runnable> newTaskQueue(

@@ -8,7 +8,7 @@ tags:
 - 1刷Netty
 ---
 
-有过之前对服务端{% post_link Netty源码-12-bind流程 bind流程 %}的分析之后，客户端的connect流程就显得简单了。
+有过之前对服务端{% post_link Netty/Netty源码-12-bind流程 bind流程 %}的分析之后，客户端的connect流程就显得简单了。
 
 ## 一 入口
 
@@ -69,7 +69,7 @@ private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, fin
 
 核心方法有2个:
 
-* {% post_link Netty源码-12-bind流程 initAndRegister(...)方法在服务端bind流程中已经分析过 %}。
+* {% post_link Netty/Netty源码-12-bind流程 initAndRegister(...)方法在服务端bind流程中已经分析过 %}。
 * doResolveAndConnect0(...)方法。
 
 initAndRegister跟NioServerSocket中的bind(...)流程一样。

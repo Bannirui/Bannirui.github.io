@@ -228,7 +228,7 @@ final ChannelFuture initAndRegister() {
 
 ### 1 Channel创建
 
-{% post_link Netty源码-07-Channel 前面已经分析过 %}
+{% post_link Netty/Netty源码-07-Channel 前面已经分析过 %}
 
 ### 2 Channel初始化
 
@@ -543,7 +543,7 @@ AbstractChannel.this.doRegister();
 pipeline.invokeHandlerAddedIfNeeded();
 ```
 
-{% post_link Netty源码-08-ChannelInitializer ChannelInitializer辅助类 %}原理。
+{% post_link Netty/Netty源码-08-ChannelInitializer ChannelInitializer辅助类 %}原理。
 
 ##### 3.2.2 发布register事件
 
@@ -935,4 +935,4 @@ protected void doBeginRead() throws Exception { // NioServerSocketChannel bind�
 * 注册IO多路复用器关注连接事件(16)
 * IO线程阻塞在复用器上等待客户端的连接进来
 
-至于{% post_link Netty源码-09-ServerBootstrapAcceptor ServerBootstrapAcceptor %}的工作原理请移步。
+至于{% post_link Netty/Netty源码-09-ServerBootstrapAcceptor ServerBootstrapAcceptor %}的工作原理请移步。

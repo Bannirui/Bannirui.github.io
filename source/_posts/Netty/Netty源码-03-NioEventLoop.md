@@ -103,7 +103,7 @@ NioEventLoop构造起的作用就是为NioEventLoop这个组件初始化一些�
 
 #### 1.1.1 {% post_link java/java源码-0x0F-Selector Java原生的IO多路复用器 %}
 
-#### 1.1.2 {% post_link Netty源码-04-Selector Netty优化的IO多路复用器 %}
+#### 1.1.2 {% post_link Netty/Netty源码-04-Selector Netty优化的IO多路复用器 %}
 
 ### 1.2 非IO任务队列taskQueue
 
@@ -613,7 +613,7 @@ private int select(long deadlineNanos) throws IOException { // 阻塞方式执�
 }
 ```
 
-如果线程执行中发现复用器空轮询达到一定阈值，便会对{% post_link Netty源码-04-Selector 复用器做优化 %}。
+如果线程执行中发现复用器空轮询达到一定阈值，便会对{% post_link Netty/Netty源码-04-Selector 复用器做优化 %}。
 
 ##### 2.1.3.2 处理到达的IO事件
 
@@ -734,7 +734,7 @@ private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
 }
 ```
 
-{% post_link Netty源码-11-Pipeline IO事件的读写都是由具体的处理器去关注的。%}
+{% post_link Netty/Netty源码-11-Pipeline IO事件的读写都是由具体的处理器去关注的。%}
 
 ##### 2.1.3.3 非IO任务
 

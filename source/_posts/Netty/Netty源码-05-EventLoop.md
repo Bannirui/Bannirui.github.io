@@ -8,7 +8,7 @@ tags:
 - 1刷Netty
 ---
 
-前文已经了解过了{% post_link Netty源码-01-NioEventLoopGroup NioEventLoopGroup %}和{% post_link Netty源码-03-NioEventLoop NioEventLoop %}。
+前文已经了解过了{% post_link Netty/Netty源码-01-NioEventLoopGroup NioEventLoopGroup %}和{% post_link Netty/Netty源码-03-NioEventLoop NioEventLoop %}。
 
 在Netty中是用的是Reactor线程模型(IO多路复用器+多个线程)，真正处理业务流程的worker线程都是单个线程，一个线程处理多个Channel，一个Channel始终都是由特定的线程进行处理。
 
@@ -298,7 +298,7 @@ protected Queue<Runnable> newTaskQueue(int maxPendingTasks) { // DefaultEventLoo
 }
 ```
 
-{% post_link Netty源码-06-MpscQueue NioEventLoop中队列 %}实现跟DefaultEventLoop中队列实现不同
+{% post_link Netty/Netty源码-06-MpscQueue NioEventLoop中队列 %}实现跟DefaultEventLoop中队列实现不同
 
 ### 2 线程轮询
 

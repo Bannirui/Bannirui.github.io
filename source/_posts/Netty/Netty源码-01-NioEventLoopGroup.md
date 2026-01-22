@@ -24,7 +24,7 @@ tags:
 * EventExecutor是NioEventLoop的抽象。
 * NioEventLoopGroup是NioEventLoop管理器。
   * 管理NioEventLoop事件循环。
-  * 通过next()方法选择一个NioEventLoop事件循环器使用{% post_link Netty源码-03-NioEventLoop NioEventLoop线程 %}。
+  * 通过next()方法选择一个NioEventLoop事件循环器使用{% post_link Netty/Netty源码-03-NioEventLoop NioEventLoop线程 %}。
 
 ## 二 类图
 
@@ -230,7 +230,7 @@ public final class ThreadPerTaskExecutor implements Executor { // 只有一个ex
 }
 ```
 
-也就是将来在某个时机触发executor的execute()方法，为任务创建线程并执行。此处的线程并非直接使用的Java实现，而是在此基础上做了一些{% post_link Netty源码-02-FastThreadLocalThread 优化 %}。
+也就是将来在某个时机触发executor的execute()方法，为任务创建线程并执行。此处的线程并非直接使用的Java实现，而是在此基础上做了一些{% post_link Netty/Netty源码-02-FastThreadLocalThread 优化 %}。
 
 ##### 1.2.2 事件循环器
 
@@ -362,7 +362,7 @@ execute task...
 
 ##### 2.2.1 execute(...)
 
-{% post_link Netty源码-03-NioEventLoop 最终真正执行execute方法的就是EventLoop。%}
+{% post_link Netty/Netty源码-03-NioEventLoop 最终真正执行execute方法的就是EventLoop。%}
 
 ```java
 // Demo.java
