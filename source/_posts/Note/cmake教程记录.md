@@ -2,7 +2,8 @@
 title: cmake教程记录
 date: 2023-12-07 13:46:42
 category_bar: true
-categories: cmake
+categories: 笔记
+tag: cmake
 ---
 
 为什么要学cmake，先说一个我的使用场景。

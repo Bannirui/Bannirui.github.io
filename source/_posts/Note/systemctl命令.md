@@ -2,7 +2,8 @@
 title: systemctl命令
 date: 2024-01-25 09:40:46
 category_bar: true
-categories: Linux
+categories: 笔记
+tag: Linux
 ---
 
 1 格式

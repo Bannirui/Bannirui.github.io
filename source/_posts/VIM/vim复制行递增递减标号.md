@@ -5,7 +5,7 @@ category_bar: true
 categories: vim
 ---
 
-在之前的{% post_link VIM笔记 %}中有提到过Recording模式的实际使用，刚好在写博客的时候又遇到了实际的场景，在此记录一下。
+在之前的{% post_link VIM/VIM笔记 %}中有提到过Recording模式的实际使用，刚好在写博客的时候又遇到了实际的场景，在此记录一下。
 
 ![](vim复制行递增递减标号/2023-11-10_13-23-41.png)
 

@@ -2,8 +2,7 @@
 title: vim禁用markdown语法隐藏
 date: 2023-11-08 10:58:12
 category_bar: true
-categories: [ vim ]
-tags: [ vim插件 ]
+categories: vim
 ---
 
 1 vimrc配置

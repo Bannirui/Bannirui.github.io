@@ -2,7 +2,8 @@
 title: yay常用命令
 date: 2023-12-11 16:34:29
 category_bar: true
-categories: Linux
+categories: 笔记
+tag: Linux
 ---
 
 在archlinux常常依赖yay管理软件。

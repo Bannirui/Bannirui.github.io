@@ -2,7 +2,8 @@
 title: 安装KiCad
 date: 2023-12-13 22:38:46
 category_bar: true
-categories: KiCad
+categories: 笔记
+tag: KiCad
 ---
 
 设计类软件基本都是收费的，找到好用的开源软件是件幸事，EDA找到了[KiCad](https://www.kicad.org/)，3D建模找到了[FreeCAD](https://www.freecad.org/)。

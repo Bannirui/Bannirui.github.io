@@ -2,10 +2,7 @@
 title: 从Paxos到Zookeeper-分布式一致性原理与实践
 date: 2023-02-28 00:08:46
 category_bar: true
-tags:
-- 分布式
-categories:
-- 读书笔记
+categories: 笔记
 ---
 
 

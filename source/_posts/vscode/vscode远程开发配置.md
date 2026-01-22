@@ -2,7 +2,7 @@
 title: vscode远程开发配置
 date: 2024-02-25 21:07:23
 category_bar: true
-categories: IDE
+categories: vscode
 ---
 
 之前配置过{% post_link ssh远程主机 vim+ssh %}，最近也一直在使用。
