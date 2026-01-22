@@ -2,8 +2,8 @@
 title: 记一次Redis的PR提交
 date: 2023-11-07 14:40:19
 category_bar: true
-categories: [ 'Git' ]
-tags: [ 'PR提交' ]
+categories: SideProject
+tags: Redis
 ---
 
 虽然不同的开源项目有不同的Contribute的规范和要求，但是总体而言都是差不多的。最近再看redis源码，刚好提交了一次PR，在此记录一下整个流程。

@@ -2,10 +2,8 @@
 title: Spring源码-08-后置处理器ConfigurationClassPostProcessor
 date: 2023-03-11 00:28:17
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 Bean工厂后置处理器。
@@ -196,7 +194,7 @@ public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 
 ### 3.1 配置类解析
 
-{% post_link Spring源码-09-配置类解析器ConfigurationClassParser ConfigurationClassParser负责配置类的解析 %}
+{% post_link Spring/Spring源码-09-配置类解析器ConfigurationClassParser ConfigurationClassParser负责配置类的解析 %}
 
 ### 3.2 BeanDefinition注册Bean工厂
 
@@ -313,7 +311,7 @@ public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) 
 
 ### 4.2 Bean后置处理器注册
 
-{% post_link Spring源码-07-Bean工厂后置处理器 章节跳转 %}
+{% post_link Spring/Spring源码-07-Bean工厂后置处理器 章节跳转 %}
 
 ### 4.3 Bean后置处理器ImportAwareBeanPostProcessor
 

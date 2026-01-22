@@ -2,10 +2,8 @@
 title: Spring源码-07-Bean工厂后置处理器
 date: 2023-03-11 00:26:49
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 提供了对Bean工厂中BeanDefinition的修改能力。

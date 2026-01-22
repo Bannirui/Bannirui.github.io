@@ -2,10 +2,8 @@
 title: Spring源码-09-配置类解析器ConfigurationClassParser
 date: 2023-03-11 00:30:50
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 解析配置类。

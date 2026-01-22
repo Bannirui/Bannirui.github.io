@@ -2,10 +2,8 @@
 title: Spring源码-04-Bean工厂BeanFactory
 date: 2023-03-11 00:16:41
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 实现在DefaultListableRegistry。
@@ -263,5 +261,5 @@ protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {
 }
 ```
 
-## 6 {% post_link Spring源码-06-Bean工厂之getBean方法 getBean方法 %}
+## 6 {% post_link Spring/Spring源码-06-Bean工厂之getBean方法 getBean方法 %}
 

@@ -2,10 +2,8 @@
 title: Spring源码-01-Bean容器
 date: 2023-03-11 00:04:52
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 ## 1 类关系
@@ -96,7 +94,7 @@ public AbstractApplicationContext() {
 
 ### 3.2 注解Bean读取器
 
-{% post_link Spring源码-02-AnnotatedBeanDefinitionReader AnnotatedBeanDefinitionReader组件 %}。
+{% post_link Spring/Spring源码-02-AnnotatedBeanDefinitionReader AnnotatedBeanDefinitionReader组件 %}。
 
 完成了2个工作：
 
@@ -105,7 +103,7 @@ public AbstractApplicationContext() {
 
 | 后置处理器类                                                 |
 | ------------------------------------------------------------ |
-| {% post_link Spring源码-08-后置处理器ConfigurationClassPostProcessor ConfigurationClassPostProcessor %} |
+| {% post_link Spring/Spring源码-08-后置处理器ConfigurationClassPostProcessor ConfigurationClassPostProcessor %} |
 | AutowiredAnnotationBeanPostProcessor                         |
 | CommonAnnotationBeanPostProcessor                            |
 | InitDestroyAnnotationBeanPostProcessor                       |
@@ -113,5 +111,5 @@ public AbstractApplicationContext() {
 | EventListenerMethodProcessor                                 |
 | DefaultEventListenerFactory                                  |
 
-## 4 {% post_link Spring源码-03-容器refresh refresh %}
+## 4 {% post_link Spring/Spring源码-03-容器refresh refresh %}
 

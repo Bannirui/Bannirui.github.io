@@ -2,10 +2,8 @@
 title: Spring源码-02-AnnotatedBeanDefinitionReader
 date: 2023-03-11 00:10:13
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 AnnotatedBeanDefinitionReader，注解Bean读取器。
@@ -145,7 +143,7 @@ private static BeanDefinitionHolder registerPostProcessor(
 }
 ```
 
-{% post_link Spring源码-04-Bean工厂BeanFactory BeanDefinition注册IoC容器 %}。
+{% post_link Spring/Spring源码-04-Bean工厂BeanFactory BeanDefinition注册IoC容器 %}。
 
 ## 4 示意图
 

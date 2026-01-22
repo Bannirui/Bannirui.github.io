@@ -2,10 +2,8 @@
 title: Spring源码-10-容器refresh之registerBeanPostProcessors方法
 date: 2023-03-11 00:34:35
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 ```java
@@ -115,5 +113,5 @@ public static void registerBeanPostProcessors(
 }
 ```
 
-上述涉及到Bean后置处理器注册，在{% post_link Spring源码-04-Bean工厂BeanFactory BeanFactory %}中。
+上述涉及到Bean后置处理器注册，在{% post_link Spring/Spring源码-04-Bean工厂BeanFactory BeanFactory %}中。
 

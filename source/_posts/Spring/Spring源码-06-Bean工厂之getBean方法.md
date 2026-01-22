@@ -2,10 +2,8 @@
 title: Spring源码-06-Bean工厂之getBean方法
 date: 2023-03-11 00:23:18
 category_bar: true
-tags:
-- Spring@6.0.3
-categories:
-- Spring
+tags: Spring@6.0.3
+categories: Spring源码
 ---
 
 获取Bean实例。
