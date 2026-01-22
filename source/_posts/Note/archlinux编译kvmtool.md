@@ -2,7 +2,7 @@
 title: archlinux编译kvmtool
 date: 2024-02-23 10:09:20
 category_bar: true
-categories: Linux
+categories: 笔记
 ---
 
 本机环境

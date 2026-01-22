@@ -2,7 +2,7 @@
 title: archlinux编译bochs
 date: 2024-02-28 11:47:14
 category_bar: true
-categories: Linux
+categories: 笔记
 ---
 
 系统信息
@@ -138,4 +138,4 @@ bochs -q -f ./my_bochs_cfg
 
 ![](./archlinux编译bochs/1709132366.png)
 
-怎么配置ssh的远程gui，{% post_link ssh远程主机 %}
+怎么配置ssh的远程gui，{% post_link Note/ssh远程主机 %}

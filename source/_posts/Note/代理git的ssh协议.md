@@ -2,7 +2,7 @@
 title: 代理git的ssh协议
 date: 2024-01-24 14:36:42
 category_bar: true
-categories: Git
+categories: 笔记
 ---
 
 1 遇到的问题

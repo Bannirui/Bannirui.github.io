@@ -1,10 +1,8 @@
 ---
 title: stm32单片机开发环境
-index_img: /img/stm32单片机开发环境.png
 date: 2023-04-22 08:35:03
 category_bar: true
-tags: [ STM32 ]
-categories: [ 单片机 ]
+categories: 单片机
 ---
 ### 1 环境
 

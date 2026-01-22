@@ -2,7 +2,7 @@
 title: JNI使用
 date: 2023-05-14 10:44:19
 category_bar: true
-categories: Java
+categories: 笔记
 ---
 
 ### 1 项目结构

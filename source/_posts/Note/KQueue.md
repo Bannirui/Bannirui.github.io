@@ -2,10 +2,7 @@
 title: KQueue
 date: 2023-03-11 14:23:11
 category_bar: true
-tags:
-- KQueue
-categories:
-- 网络IO
+categories: 笔记
 ---
 
 ## 1 不使用KQueue

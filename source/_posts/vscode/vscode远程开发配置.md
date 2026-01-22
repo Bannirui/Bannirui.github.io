@@ -5,7 +5,7 @@ category_bar: true
 categories: vscode
 ---
 
-之前配置过{% post_link ssh远程主机 vim+ssh %}，最近也一直在使用。
+之前配置过{% post_link Note/ssh远程主机 vim+ssh %}，最近也一直在使用。
 
 我在vscode和IDE中一直也用的vim模拟器，所以很多时候还得gui+vim比较丝滑，因此配置一下vscode+ssh的方式。
 

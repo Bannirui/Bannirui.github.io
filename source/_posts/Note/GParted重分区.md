@@ -2,7 +2,7 @@
 title: GParted重分区
 date: 2023-12-13 19:08:43
 category_bar: true
-categories: Linux
+categories: 笔记
 ---
 
 今天安装软件的时候报错提示空间不够，`df -h`如下

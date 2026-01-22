@@ -2,10 +2,7 @@
 title: TCP
 date: 2023-03-11 14:13:52
 category_bar: true
-tags:
-- TCP/IP
-categories:
-- 网络IO
+categories: 笔记
 ---
 
 ## 1 TCP握手/挥手

@@ -2,7 +2,7 @@
 title: ffmpeg工具
 date: 2024-01-24 22:58:09
 category_bar: true
-categories: Linux
+categories: 笔记
 ---
 
 我上一次使用这个工具是转换视频的格式，后来大概了解了一下这个工具，在音视频领域属于底层基石的存在，该作者也是一名传奇人物。

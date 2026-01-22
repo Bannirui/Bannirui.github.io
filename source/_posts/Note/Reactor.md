@@ -2,10 +2,7 @@
 title: Reactor
 date: 2023-03-11 14:24:53
 category_bar: true
-tags:
-- 线程模型
-categories:
-- 网络IO
+categories: 笔记
 ---
 
 reactor=多路复用+线程池
