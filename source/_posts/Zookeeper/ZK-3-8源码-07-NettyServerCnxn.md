@@ -2,13 +2,11 @@
 title: ZK@3.8源码-07-NettyServerCnxn
 date: 2023-03-07 10:45:40
 category_bar: true
-tags:
-- ZK@3.8
-categories:
-- ZooKeeper
+tags: ZK@3.8
+categories: ZooKeeper源码
 ---
 
-经过{% post_link ZK-3-8源码-02-CnxnChannelHandler CnxnChannelHandler %}处理器的关联，目前Netty和ZK之间的关系如下：
+经过{% post_link Zookeeper/ZK-3-8源码-02-CnxnChannelHandler CnxnChannelHandler %}处理器的关联，目前Netty和ZK之间的关系如下：
 
 ![](ZK-3-8源码-07-NettyServerCnxn/image-20230307105459294.png)
 

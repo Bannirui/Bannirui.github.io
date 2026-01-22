@@ -2,10 +2,8 @@
 title: ZK@3.8源码-04-RequestThrottler
 date: 2023-03-06 17:46:17
 category_bar: true
-tags:
-- ZK@3.8
-categories:
-- ZooKeeper
+tags: ZK@3.8
+categories: ZooKeeper源码
 ---
 
 回顾一下创建时机，在ZK单机服务启动流程中启动节流器。
@@ -83,7 +81,7 @@ if (maxRequests > 0) {
 
 
 
-ZK服务真正处理请求，而ZK实例又将请求派发给`firstProcessor`指向的{% post_link ZK-3-8源码-06-RequestProcessor 职责链 %}。
+ZK服务真正处理请求，而ZK实例又将请求派发给`firstProcessor`指向的{% post_link Zookeeper/ZK-3-8源码-06-RequestProcessor 职责链 %}。
 
 ```java
 zks.submitRequestNow(request); // 真正立马要执行的请求控制权给到ZK服务 让其执行

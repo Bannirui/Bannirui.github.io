@@ -2,13 +2,11 @@
 title: ZK@3.8源码-12-FastLeaderElection组件
 date: 2023-03-09 10:53:41
 category_bar: true
-tags:
-- ZK@3.8
-categories:
-- ZooKeeper
+tags: ZK@3.8
+categories: ZooKeeper源码
 ---
 
-前文已经分析过{% post_link ZK-3-8源码-11-QuorumCnxManager组件 QuorumCnxManger %}组件关注的是选主投票的网络通信，现在FastLeaderElection组件关注的投票数据。
+前文已经分析过{% post_link Zookeeper/ZK-3-8源码-11-QuorumCnxManager组件 QuorumCnxManger %}组件关注的是选主投票的网络通信，现在FastLeaderElection组件关注的投票数据。
 
 ## 1 组件示意图
 

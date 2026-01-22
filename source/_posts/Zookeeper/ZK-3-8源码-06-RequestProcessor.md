@@ -2,17 +2,15 @@
 title: ZK@3.8源码-06-RequestProcessor
 date: 2023-03-06 17:59:59
 category_bar: true
-tags:
-- ZK@3.8
-categories:
-- ZooKeeper
+tags: ZK@3.8
+categories: ZooKeeper源码
 ---
 
 ZK请求处理责任链，ZK服务器要处理的请求都要经过这个职责链，该链表通过ZK实例中的`firstProcessor`维护着。
 
 ## 1 职责链创建时机
 
-回顾一下{% post_link ZK-3-8源码-01-服务端单机模式启动 ZK启动流程 %}。
+回顾一下{% post_link Zookeeper/ZK-3-8源码-01-服务端单机模式启动 ZK启动流程 %}。
 
 ```java
 /**
@@ -176,8 +174,8 @@ public void processRequest(final Request request) {
 
 逻辑复杂，但是流程简单。SyncRequestProcessor主要就负责两件事情：
 
-* 对请求创建事务日志记下来，这部分需要组件{% post_link ZK-3-8源码-08-ZKDatabase ZKDatabase%}完成。
-* 可能对内存数据打快照，这部分需要组件{% post_link ZK-3-8源码-05-FileTxnSnaplog FileTxnSnaplog%}完成。
+* 对请求创建事务日志记下来，这部分需要组件{% post_link Zookeeper/ZK-3-8源码-08-ZKDatabase ZKDatabase%}完成。
+* 可能对内存数据打快照，这部分需要组件{% post_link Zookeeper/ZK-3-8源码-05-FileTxnSnaplog FileTxnSnaplog%}完成。
 
 ```java
 /**
