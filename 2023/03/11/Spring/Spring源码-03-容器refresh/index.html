@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 refresh12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring源码-03-容器refresh">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="1 refresh12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/202212091645950.png">
+<meta property="article:published_time" content="2023-03-10T16:13:56.000Z">
+<meta property="article:modified_time" content="2026-01-22T08:45:50.370Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="Spring@6.0.3">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/202212091645950.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Spring源码-03-容器refresh - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Spring源码-03-容器refresh"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-11 00:13" pubdate>
+          2023年3月11日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          539 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          5 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Spring源码"
+        id="heading-87c18251c318fac4214d443ce91418ea" role="tab" data-toggle="collapse" href="#collapse-87c18251c318fac4214d443ce91418ea"
+        aria-expanded="true"
+      >
+        Spring源码
+        <span class="list-group-count">(11)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-87c18251c318fac4214d443ce91418ea"
+           role="tabpanel" aria-labelledby="heading-87c18251c318fac4214d443ce91418ea">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/03/10/Spring/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring源码-00-环境搭建"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-00-环境搭建</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" title="Spring源码-01-Bean容器"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-01-Bean容器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring源码-02-AnnotatedBeanDefinitionReader"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-02-AnnotatedBeanDefinitionReader</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" title="Spring源码-03-容器refresh"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Spring源码-03-容器refresh</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring源码-04-Bean工厂BeanFactory"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-04-Bean工厂BeanFactory</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-06-Bean%E5%B7%A5%E5%8E%82%E4%B9%8BgetBean%E6%96%B9%E6%B3%95/" title="Spring源码-06-Bean工厂之getBean方法"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-06-Bean工厂之getBean方法</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-07-Bean%E5%B7%A5%E5%8E%82%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" title="Spring源码-07-Bean工厂后置处理器"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-07-Bean工厂后置处理器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-08-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8ConfigurationClassPostProcessor/" title="Spring源码-08-后置处理器ConfigurationClassPostProcessor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-08-后置处理器ConfigurationClassPostProcessor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" title="Spring源码-09-配置类解析器ConfigurationClassParser"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-09-配置类解析器ConfigurationClassParser</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-10-容器refresh之registerBeanPostProcessors方法"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring源码-10-容器refresh之registerBeanPostProcessors方法</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Spring源码-03-容器refresh</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-refresh"><a href="#1-refresh" class="headerlink" title="1 refresh"></a>1 refresh</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractApplicationContext.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">refresh</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> BeansException, IllegalStateException &#123;<br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>.startupShutdownMonitor) &#123;<br>        <span class="hljs-type">StartupStep</span> <span class="hljs-variable">contextRefresh</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.applicationStartup.start(<span class="hljs-string">&quot;spring.context.refresh&quot;</span>);<br><br>        <span class="hljs-comment">// Prepare this context for refreshing.</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">			 * 1 容器启动前置准备</span><br><span class="hljs-comment">			 */</span><br>        <span class="hljs-built_in">this</span>.prepareRefresh();<br><br>        <span class="hljs-comment">// Tell the subclass to refresh the internal bean factory.</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">			 * 模板方法</span><br><span class="hljs-comment">			 * 从子类的实现(GenericApplicationContext)获取Bean工厂beanFactory(DefaultListableBeanFactory)</span><br><span class="hljs-comment">			 */</span><br>        <span class="hljs-type">ConfigurableListableBeanFactory</span> <span class="hljs-variable">beanFactory</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.obtainFreshBeanFactory();<br><br>        <span class="hljs-comment">// Prepare the bean factory for use in this context.</span><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">			 * 2 Bean工厂前置准备</span><br><span class="hljs-comment">			 */</span><br>        <span class="hljs-built_in">this</span>.prepareBeanFactory(beanFactory);<br><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// Allows post-processing of the bean factory in context subclasses.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 3 空实现</span><br><span class="hljs-comment">				 */</span><br>            <span class="hljs-built_in">this</span>.postProcessBeanFactory(beanFactory);<br><br>            <span class="hljs-type">StartupStep</span> <span class="hljs-variable">beanPostProcess</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.applicationStartup.start(<span class="hljs-string">&quot;spring.context.beans.post-process&quot;</span>);<br>            <span class="hljs-comment">// Invoke factory processors registered as beans in the context.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 4 调用所有注册的BeanFactoryPostProcessor的实例</span><br><span class="hljs-comment">				 *     - BeanFactoryPostProcessor</span><br><span class="hljs-comment">				 *     - BeanDefinitionRegistryPostProcessor</span><br><span class="hljs-comment">				 * Bean工厂后置处理器职责</span><br><span class="hljs-comment">				 *     - 作用对象是Bean工厂</span><br><span class="hljs-comment">				 *     - 现在还没有将用户BeanDefinition注册到Bean工厂中</span><br><span class="hljs-comment">				 *     - 特定的后置处理器作用是将用户BeanDefinition注册Bean工厂中</span><br><span class="hljs-comment">				 * ConfigurationClassPostProcessor作用的时机</span><br><span class="hljs-comment">				 *     - 解析配置类</span><br><span class="hljs-comment">				 *     - 注册BeanDefinition到Bean工厂</span><br><span class="hljs-comment">				 *     - 增强full型配置类</span><br><span class="hljs-comment">				 *     - 向Bean工厂注册一个Bean后置处理器ImportAwareBeanPostProcessor</span><br><span class="hljs-comment">				 */</span><br>            <span class="hljs-built_in">this</span>.invokeBeanFactoryPostProcessors(beanFactory);<br><br>            <span class="hljs-comment">// Register bean processors that intercept bean creation.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 5 Bean实例化初始化之前将后置处理器注册到容器中</span><br><span class="hljs-comment">				 * 后置处理器的职责</span><br><span class="hljs-comment">				 *     - BeanDefinition都已经注册到了Bean工厂中(DefaultListableBeanFactory的beanDefinitionMap)</span><br><span class="hljs-comment">				 *     - Spring可以根据BeanDefinition进行Bean的实例化和初始化</span><br><span class="hljs-comment">				 *     - 在此之前注册Bean的后置处理器</span><br><span class="hljs-comment">				 *         - 在Bean实例化前后回调</span><br><span class="hljs-comment">				 *         - 在Bean初始化前后回调</span><br><span class="hljs-comment">				 * 上面Bean工厂后置处理器执行结束之后 就已经将BeanDefinition都注册到Bean工厂beanDefinitionMap中了</span><br><span class="hljs-comment">				 * 现在将所有Bean工厂中BeanDefinition中是Bean后置处理器的都进行实例化注册到Bean工厂的beanPostProcessors中</span><br><span class="hljs-comment">				 */</span><br>            registerBeanPostProcessors(beanFactory);<br>            beanPostProcess.end();<br><br>            <span class="hljs-comment">// Initialize message source for this context.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 6 初始化信息源</span><br><span class="hljs-comment">				 *     - 国际化</span><br><span class="hljs-comment">				 */</span><br>            initMessageSource();<br><br>            <span class="hljs-comment">// Initialize event multicaster for this context.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 7 初始化容器事件传播器</span><br><span class="hljs-comment">				 */</span><br>            initApplicationEventMulticaster();<br><br>            <span class="hljs-comment">// Initialize other special beans in specific context subclasses.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 8 特定上下文子类中初始化特殊的Bean</span><br><span class="hljs-comment">				 */</span><br>            onRefresh();<br><br>            <span class="hljs-comment">// Check for listener beans and register them.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 9 监听器Bean</span><br><span class="hljs-comment">				 */</span><br>            registerListeners();<br><br>            <span class="hljs-comment">// Instantiate all remaining (non-lazy-init) singletons.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 10 实例化非延迟初始化单例</span><br><span class="hljs-comment">				 */</span><br>            finishBeanFactoryInitialization(beanFactory);<br><br>            <span class="hljs-comment">// Last step: publish corresponding event.</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">				 * 11 初始化容器生命周期事件处理器 发布容器生命周期事件</span><br><span class="hljs-comment">				 */</span><br>            finishRefresh();<br>        &#125;<br><br>        <span class="hljs-keyword">catch</span> (BeansException ex) &#123;<br>            <span class="hljs-keyword">if</span> (logger.isWarnEnabled()) &#123;<br>                logger.warn(<span class="hljs-string">&quot;Exception encountered during context initialization - &quot;</span> +<br>                            <span class="hljs-string">&quot;cancelling refresh attempt: &quot;</span> + ex);<br>            &#125;<br><br>            <span class="hljs-comment">// Destroy already created singletons to avoid dangling resources.</span><br>            destroyBeans();<br><br>            <span class="hljs-comment">// Reset &#x27;active&#x27; flag.</span><br>            cancelRefresh(ex);<br><br>            <span class="hljs-comment">// Propagate exception to caller.</span><br>            <span class="hljs-keyword">throw</span> ex;<br>        &#125;<br><br>        <span class="hljs-keyword">finally</span> &#123;<br>            <span class="hljs-comment">// Reset common introspection caches in Spring&#x27;s core, since we</span><br>            <span class="hljs-comment">// might not ever need metadata for singleton beans anymore...</span><br>            resetCommonCaches();<br>            contextRefresh.end();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-步骤"><a href="#2-步骤" class="headerlink" title="2 步骤"></a>2 步骤</h2><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>传送门</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>prepareRefresh方法</td>
+</tr>
+<tr>
+<td>2</td>
+<td>prepareBeanFactory方法</td>
+</tr>
+<tr>
+<td>3</td>
+<td>postProcessBeanFactory方法</td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法">invokeBeanFactoryPostProces</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-10-容器refresh之registerBeanPostProcessors方法">registerBeanPostProcessors方法</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>initMessageSource方法</td>
+</tr>
+<tr>
+<td>7</td>
+<td>initApplicationEventMulticaster方法</td>
+</tr>
+<tr>
+<td>8</td>
+<td>onRefresh方法</td>
+</tr>
+<tr>
+<td>9</td>
+<td>registerListeners方法</td>
+</tr>
+<tr>
+<td>10</td>
+<td>finishBeanFactoryInitialization方法</td>
+</tr>
+<tr>
+<td>11</td>
+<td>finishRefresh方法</td>
+</tr>
+</tbody></table>
+<h2 id="3-示意图"><a href="#3-示意图" class="headerlink" title="3 示意图"></a>3 示意图</h2><img src="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/202212091645950.png" srcset="/img/loading.gif" lazyload class="">
+
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Spring-6-0-3/" class="print-no-link">#Spring@6.0.3</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Spring源码-03-容器refresh</div>
+      <div>https://bannirui.github.io/2023/03/11/Spring/Spring源码-03-容器refresh/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring源码-04-Bean工厂BeanFactory">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Spring源码-04-Bean工厂BeanFactory</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring源码-02-AnnotatedBeanDefinitionReader">
+                        <span class="hidden-mobile">Spring源码-02-AnnotatedBeanDefinitionReader</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '3fde4ff9126ff024ed343350856190aa'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
