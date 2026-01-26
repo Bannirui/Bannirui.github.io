@@ -24,3 +24,10 @@ git checkout -b my_study
 
 ## 3 学习规划
 
+- [ ] 入口API
+- [ ] 核心调度
+- [ ] Write Path
+- [ ] Flush
+- [ ] Read Path
+- [ ] LSM的核心Compaction
+- [ ] Version
