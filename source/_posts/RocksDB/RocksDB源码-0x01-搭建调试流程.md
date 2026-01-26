@@ -49,7 +49,7 @@ foreach (TEST_SRC ${TEST_SOURCES})
 endforeach ()
 ```
 
-### 2.2 测试代码
+### 2.3 测试代码
 
 在tests下新建测试代码
 
