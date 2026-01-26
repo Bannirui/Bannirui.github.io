@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="我在git有详细的项目可以当作项目模板使用 在py中调用cpp涉及两个层面的东西  一是编译cpp的代码成库，用到scikit-build-core 二是让python能认识cpp代码，用到pybind11  之后就是工程性的问题了，在pip时机触发cpp代码编译成库，然后导出cpp符号绑定成python认识的就行。     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:">
+    <meta name="description" content="1 源码123456git clone git@github.com:Bannirui&#x2F;rocksdb.gitcd rocksdbgit remote add upstream git@github.com:facebook&#x2F;rocksdb.gitgit remote set-url --push upstream no_pushgit remote -vgit checkout -b my_st">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python和CPP混合编程">
-<meta property="og:url" content="https://bannirui.github.io/2026/01/23/Python/Python%E5%92%8CCPP%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:title" content="RocksDB源码-0x00-一头扎进存储">
+<meta property="og:url" content="https://bannirui.github.io/2026/01/26/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x00-%E4%B8%80%E5%A4%B4%E6%89%8E%E8%BF%9B%E5%AD%98%E5%82%A8/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="我在git有详细的项目可以当作项目模板使用 在py中调用cpp涉及两个层面的东西  一是编译cpp的代码成库，用到scikit-build-core 二是让python能认识cpp代码，用到pybind11  之后就是工程性的问题了，在pip时机触发cpp代码编译成库，然后导出cpp符号绑定成python认识的就行。     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:">
+<meta property="og:description" content="1 源码123456git clone git@github.com:Bannirui&#x2F;rocksdb.gitcd rocksdbgit remote add upstream git@github.com:facebook&#x2F;rocksdb.gitgit remote set-url --push upstream no_pushgit remote -vgit checkout -b my_st">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-01-23T07:38:12.000Z">
-<meta property="article:modified_time" content="2026-01-23T07:44:33.156Z">
+<meta property="article:published_time" content="2026-01-26T03:11:10.000Z">
+<meta property="article:modified_time" content="2026-01-26T03:26:44.470Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Python和CPP混合编程 - HEX BLOG</title>
+  <title>RocksDB源码-0x00-一头扎进存储 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Python和CPP混合编程"></span>
+            <span id="subtitle" data-typed-text="RocksDB源码-0x00-一头扎进存储"></span>
           
         </div>
 
@@ -235,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-23 15:38" pubdate>
-          2026年1月23日 下午
+        <time datetime="2026-01-26 11:11" pubdate>
+          2026年1月26日 上午
         </time>
       </span>
     
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          122 字
+          72 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          2 分钟
+          1 分钟
         
       </span>
     
@@ -312,17 +312,17 @@
     
     <div class="category row nomargin-x">
       <a class="category-item 
-          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Python"
-        id="heading-a7f5f35426b927411fc9231b56382173" role="tab" data-toggle="collapse" href="#collapse-a7f5f35426b927411fc9231b56382173"
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="RocksDB源码"
+        id="heading-5b56be0ef675356caa88aa11e85efe08" role="tab" data-toggle="collapse" href="#collapse-5b56be0ef675356caa88aa11e85efe08"
         aria-expanded="true"
       >
-        Python
-        <span class="list-group-count">(2)</span>
+        RocksDB源码
+        <span class="list-group-count">(1)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
-      <div class="category-collapse collapse show" id="collapse-a7f5f35426b927411fc9231b56382173"
-           role="tabpanel" aria-labelledby="heading-a7f5f35426b927411fc9231b56382173">
+      <div class="category-collapse collapse show" id="collapse-5b56be0ef675356caa88aa11e85efe08"
+           role="tabpanel" aria-labelledby="heading-5b56be0ef675356caa88aa11e85efe08">
         
         
           
@@ -331,19 +331,10 @@
     
       
       
-        <a href="/2026/01/23/Python/Python%E5%92%8CCPP%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B/" title="Python和CPP混合编程"
+        <a href="/2026/01/26/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x00-%E4%B8%80%E5%A4%B4%E6%89%8E%E8%BF%9B%E5%AD%98%E5%82%A8/" title="RocksDB源码-0x00-一头扎进存储"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">Python和CPP混合编程</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2024/09/13/Python/Python%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83/" title="Python虚拟环境"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">Python虚拟环境</span>
+          <span class="category-post">RocksDB源码-0x00-一头扎进存储</span>
         </a>
       
     
@@ -365,19 +356,16 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Python和CPP混合编程</h1>
+            <h1 id="seo-header">RocksDB源码-0x00-一头扎进存储</h1>
             
             
               <div class="markdown-body">
                 
-                <p><a target="_blank" rel="noopener" href="https://github.com/Bannirui/my-py-cpp.git">我在git有详细的项目可以当作项目模板使用</a></p>
-<p>在py中调用cpp涉及两个层面的东西</p>
-<ul>
-<li>一是编译cpp的代码成库，用到scikit-build-core</li>
-<li>二是让python能认识cpp代码，用到pybind11</li>
-</ul>
-<p>之后就是工程性的问题了，在pip时机触发cpp代码编译成库，然后导出cpp符号绑定成python认识的就行。</p>
+                <h2 id="1-源码"><a href="#1-源码" class="headerlink" title="1 源码"></a>1 源码</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/rocksdb.git<br><span class="hljs-built_in">cd</span> rocksdb<br>git remote add upstream git@github.com:facebook/rocksdb.git<br>git remote set-url --push upstream no_push<br>git remote -v<br>git checkout -b my_study<br></code></pre></td></tr></table></figure>
 
+<h2 id="2-编译"><a href="#2-编译" class="headerlink" title="2 编译"></a>2 编译</h2><p>用cmake管理项目，默认情况下报错找不到<code>gflags</code></p>
+<p>在Cmake的Options中添加<code>-DWITH_GFLAGS=OFF</code></p>
+<h2 id="3-学习规划"><a href="#3-学习规划" class="headerlink" title="3 学习规划"></a>3 学习规划</h2>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -404,7 +392,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Python/" class="category-chain-item">Python</a>
+  <a href="/categories/RocksDB%E6%BA%90%E7%A0%81/" class="category-chain-item">RocksDB源码</a>
   
   
 
@@ -424,8 +412,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Python和CPP混合编程</div>
-      <div>https://bannirui.github.io/2026/01/23/Python/Python和CPP混合编程/</div>
+      <div>RocksDB源码-0x00-一头扎进存储</div>
+      <div>https://bannirui.github.io/2026/01/26/RocksDB/RocksDB源码-0x00-一头扎进存储/</div>
     </div>
     <div class="license-meta">
       
@@ -437,7 +425,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年1月23日</div>
+          <div>2026年1月26日</div>
         </div>
       
       
@@ -469,18 +457,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/01/26/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x00-%E4%B8%80%E5%A4%B4%E6%89%8E%E8%BF%9B%E5%AD%98%E5%82%A8/" title="RocksDB源码-0x00-一头扎进存储">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">RocksDB源码-0x00-一头扎进存储</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/01/22/SideProject/c++%E5%AE%9E%E7%8E%B0http%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="c++实现http服务器">
-                        <span class="hidden-mobile">c++实现http服务器</span>
+                      <a href="/2026/01/23/Python/Python%E5%92%8CCPP%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B/" title="Python和CPP混合编程">
+                        <span class="hidden-mobile">Python和CPP混合编程</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -503,7 +485,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '9bf4ad80b5fa8b59e0b18c59a568b4ee'
+            id: '5cc3ca629af0451ac55eb01dcc159e08'
           }
         )
         var gitalk = new Gitalk(options);
