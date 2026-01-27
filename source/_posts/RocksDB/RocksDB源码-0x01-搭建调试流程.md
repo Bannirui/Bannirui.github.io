@@ -7,6 +7,10 @@ categories: RocksDB源码
 
 依然老规矩，不管什么类型的源码，都是场景驱动。所以后面肯定要Debug功能，提前把ctest的方式在源码工程搭建调通。后面每遇到一个功能点需要深入就调试跟进。
 
+大数据这一块跟MySQL基于B+树的理念完全不一样，还是需要配合文档食用
+
+> [RocksDB Wiki](https://github.com/facebook/rocksdb/wiki)
+
 ## 1 根目录下cmake
 
 在CMakeLists文件中添加
