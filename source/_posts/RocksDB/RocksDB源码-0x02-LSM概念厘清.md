@@ -21,6 +21,8 @@ categories: RocksDB源码
 
 一个共识是，想要提升写入性能，没有其他方法，只能是顺序写。所以下面在看RocksDB的时候就是从中找到一个答案: RocksDB是怎么做的顺序写，以及顺序写的数据怎么作为数据库结果查询呈现的。
 
+{%post_link RocksDB/RocksDB源码-0x03-DB-LSM-Tree核心实现%}
+
 ## 3 MySQL的B+树
 
 B树的特征就是检索性能，B+树是B树的变种，优势有
