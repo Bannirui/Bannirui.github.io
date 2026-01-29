@@ -16,4 +16,4 @@ _config.*.yml
 /build
 
 # drawio cache
-**.drawio.bkp
+**.bkp
