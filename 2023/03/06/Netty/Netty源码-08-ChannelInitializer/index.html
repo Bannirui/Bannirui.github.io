@@ -1,0 +1,1068 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一 回顾几个时机点 pipeline的初始化 用户向pipeline添加ChannelInitializer辅助实例 Channel注册到复用器之后回调  1 pipeline的初始化初始化Channel的时候触发了pipeline的初始化 12&#x2F;&#x2F; AbstractChannel.javapipeline &#x3D; this.newChannelPipeline(); &#x2F;&#x2F; 每个channel内部都会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty源码-08-ChannelInitializer">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="一 回顾几个时机点 pipeline的初始化 用户向pipeline添加ChannelInitializer辅助实例 Channel注册到复用器之后回调  1 pipeline的初始化初始化Channel的时候触发了pipeline的初始化 12&#x2F;&#x2F; AbstractChannel.javapipeline &#x3D; this.newChannelPipeline(); &#x2F;&#x2F; 每个channel内部都会">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/202211141420499.png">
+<meta property="article:published_time" content="2023-03-06T13:48:06.000Z">
+<meta property="article:modified_time" content="2026-01-30T15:51:05.111Z">
+<meta property="article:author" content="dingrui">
+<meta property="article:tag" content="1刷Netty">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/202211141420499.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Netty源码-08-ChannelInitializer - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Netty源码-08-ChannelInitializer"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-06 21:48" pubdate>
+          2023年3月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Netty"
+        id="heading-b26a1a0069605c69ea0c679b5e95fc17" role="tab" data-toggle="collapse" href="#collapse-b26a1a0069605c69ea0c679b5e95fc17"
+        aria-expanded="true"
+      >
+        Netty
+        <span class="list-group-count">(22)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-b26a1a0069605c69ea0c679b5e95fc17"
+           role="tabpanel" aria-labelledby="heading-b26a1a0069605c69ea0c679b5e95fc17">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/05/06/Netty/Netty-0x00-NioEventLoopGroup/" title="Netty-0x00-NioEventLoopGroup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x00-NioEventLoopGroup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/09/Netty/Netty-0x01-NioEventLoopGroup%E4%B8%8ENioEventLoop%E7%BB%84%E5%90%88%E5%85%B3%E7%B3%BB/" title="Netty-0x01-NioEventLoopGroup与NioEventLoop组合关系"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x01-NioEventLoopGroup与NioEventLoop组合关系</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/10/Netty/Netty-0x02-NioEventLoopGroup%E4%B9%8B%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86/" title="Netty-0x02-NioEventLoopGroup之任务管理"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x02-NioEventLoopGroup之任务管理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/11/Netty/Netty-0x03-NioEventLoop/" title="Netty-0x03-NioEventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x03-NioEventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/15/Netty/Netty-0x04-NioEventLoopGroup%E5%92%8CNioEventLoop%E8%AF%A6%E7%BB%86%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" title="Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x04-NioEventLoopGroup和NioEventLoop详细初始化过程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/16/Netty/Netty-0x05-%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC/" title="Netty-0x05-启动引导"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x05-启动引导</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/16/Netty/Netty-0x06-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96/" title="Netty-0x06-数据结构优化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x06-数据结构优化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/18/Netty/Netty-0x07-%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" title="Netty-0x07-我眼中的网络编程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x07-我眼中的网络编程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-00-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/" title="Netty源码-00-源码调试环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-00-源码调试环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-01-NioEventLoopGroup/" title="Netty源码-01-NioEventLoopGroup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-01-NioEventLoopGroup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-02-FastThreadLocalThread/" title="Netty源码-02-FastThreadLocalThread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-02-FastThreadLocalThread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-03-NioEventLoop/" title="Netty源码-03-NioEventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-03-NioEventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-04-Selector/" title="Netty源码-04-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-04-Selector</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-05-EventLoop/" title="Netty源码-05-EventLoop"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-05-EventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/" title="Netty源码-06-MpscQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-06-MpscQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-07-Channel/" title="Netty源码-07-Channel"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-07-Channel</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/" title="Netty源码-08-ChannelInitializer"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Netty源码-08-ChannelInitializer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-09-ServerBootstrapAcceptor/" title="Netty源码-09-ServerBootstrapAcceptor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-09-ServerBootstrapAcceptor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" title="Netty源码-10-ChannelFuture"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-10-ChannelFuture</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-11-Pipeline/" title="Netty源码-11-Pipeline"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-11-Pipeline</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Netty/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Netty源码-08-ChannelInitializer</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="一-回顾几个时机点"><a href="#一-回顾几个时机点" class="headerlink" title="一 回顾几个时机点"></a>一 回顾几个时机点</h2><ul>
+<li>pipeline的初始化</li>
+<li>用户向pipeline添加ChannelInitializer辅助实例</li>
+<li>Channel注册到复用器之后回调</li>
+</ul>
+<h3 id="1-pipeline的初始化"><a href="#1-pipeline的初始化" class="headerlink" title="1 pipeline的初始化"></a>1 pipeline的初始化</h3><p>初始化Channel的时候触发了pipeline的初始化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br>pipeline = <span class="hljs-built_in">this</span>.newChannelPipeline(); <span class="hljs-comment">// 每个channel内部都会创建一个pipeline 默认两个节点(head和tail 都不是哑节点 是有实际作用的)</span><br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannel.java</span><br><span class="hljs-keyword">protected</span> DefaultChannelPipeline <span class="hljs-title function_">newChannelPipeline</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 传入当前的channel</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultChannelPipeline</span>(<span class="hljs-built_in">this</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultChannelPipeline.java</span><br><span class="hljs-keyword">protected</span> <span class="hljs-title function_">DefaultChannelPipeline</span><span class="hljs-params">(Channel channel)</span> &#123;<br>    <span class="hljs-built_in">this</span>.channel = ObjectUtil.checkNotNull(channel, <span class="hljs-string">&quot;channel&quot;</span>);<br>    succeededFuture = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SucceededChannelFuture</span>(channel, <span class="hljs-literal">null</span>);<br>    voidPromise =  <span class="hljs-keyword">new</span> <span class="hljs-title class_">VoidChannelPromise</span>(channel, <span class="hljs-literal">true</span>);<br><br>    tail = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TailContext</span>(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// tail实现了ChannelInboundHandler</span><br>    head = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HeadContext</span>(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// head实现了ChannelOutboundHandler和ChannelInboundHandler</span><br><br>    head.next = tail; <span class="hljs-comment">// 双向链表</span><br>    tail.prev = head;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<img src="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/202211141420499.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>此时pipeline中只有两个处理器：</p>
+<ul>
+<li>head</li>
+<li>tail</li>
+</ul>
+<h3 id="2-向pipeline中添加ChannelInitializer实例"><a href="#2-向pipeline中添加ChannelInitializer实例" class="headerlink" title="2 向pipeline中添加ChannelInitializer实例"></a>2 向pipeline中添加ChannelInitializer实例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ServerBootstrap.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * - NioServerSocketChannel-&gt;pipeline中添加个ChannelInitializer</span><br><span class="hljs-comment">     *     - 等待NioServerSocketChannel注册复用器后被回调</span><br><span class="hljs-comment">     *         - 添加workerHandler</span><br><span class="hljs-comment">     *         - 提交异步任务</span><br><span class="hljs-comment">     *             - 在pipeline中添加ServerBootstrapAcceptor</span><br><span class="hljs-comment">     */</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">(Channel channel)</span> &#123; <span class="hljs-comment">// NioServerSocketChannel实例</span><br>    setChannelOptions(channel, newOptionsArray(), logger);<br>    setAttributes(channel, newAttributesArray());<br><br>    <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> channel.pipeline(); <span class="hljs-comment">// channel内部的pipeline实例 在创建NioServerSocketChannel的时候一起创建了pipeline实例</span><br><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">currentChildGroup</span> <span class="hljs-operator">=</span> childGroup; <span class="hljs-comment">// workerGroup</span><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">ChannelHandler</span> <span class="hljs-variable">currentChildHandler</span> <span class="hljs-operator">=</span> childHandler; <span class="hljs-comment">// workerHandler</span><br>    <span class="hljs-keyword">final</span> Entry&lt;ChannelOption&lt;?&gt;, Object&gt;[] currentChildOptions = newOptionsArray(childOptions);<br>    <span class="hljs-keyword">final</span> Entry&lt;AttributeKey&lt;?&gt;, Object&gt;[] currentChildAttrs = newAttributesArray(childAttrs);<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 往ServerSocketChannel的pipeline中添加一个handler 这个handler是ChannelInitializer的实例 该处涉及到pipeline中的辅助类ChannelInitializer 它本身也是一个handler(Inbound类型) 它的作用仅仅是辅助其他的handler加入到pipeline中</span><br><span class="hljs-comment">         * ChannelInitializer的initChannel方法触发时机是在Channel注册到NioEventLoop复用器之后(NioEventLoop启动执行注册操作) 那么到时候会发生回调</span><br><span class="hljs-comment">         *     - 添加一个ServerBootstrap指定的bossHandler(也可能没指定) 比如指定了workerHandler 那么回调执行后 pipeline存在 headHandler-workerHandler-tailHandler</span><br><span class="hljs-comment">         *     - 向NioEventLoop提交添加handler的异步任务</span><br><span class="hljs-comment">         *         - 等NioEventLoop把这个异步任务执行完了之后 pipeline中变成 head-workerHandler-ServerBootstrapAcceptor-tail</span><br><span class="hljs-comment">         */</span><br>    p.addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;Channel&gt;() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Channel ch)</span> &#123; <span class="hljs-comment">// ChannelInitializer的这个方法会在Channel注册到EventLoop线程上复用器之后被回调</span><br>            <span class="hljs-keyword">final</span> <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">pipeline</span> <span class="hljs-operator">=</span> ch.pipeline(); <span class="hljs-comment">// NioServerSocketChannel的pipeline</span><br>            <span class="hljs-type">ChannelHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> config.handler(); <span class="hljs-comment">// 这个handler是在ServerBootstrap::handler()方法中指定的workerHandler</span><br>            <span class="hljs-keyword">if</span> (handler != <span class="hljs-literal">null</span>) pipeline.addLast(handler); <span class="hljs-comment">// 将bossHandler添加到NioServerSocket的pipeline中</span><br><br>            ch.eventLoop().execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123; <span class="hljs-comment">// 往NioEventLoop线程添加一个任务 boss的NioEventLoop线程会执行这个任务 就是给Channel指定一个处理器 处理器的功能是接收客户端请求</span><br>                <span class="hljs-meta">@Override</span><br>                <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                    pipeline.addLast(<br>                        <span class="hljs-comment">// 添加一个handler到pipeline中 ServerBootstrapAcceptor这个handler目的是用来接收客户端请求的</span><br>                        <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerBootstrapAcceptor</span>(<br>                            ch, <span class="hljs-comment">// NioServerSocketChannel</span><br>                            currentChildGroup, <span class="hljs-comment">// workerGroup</span><br>                            currentChildHandler, <span class="hljs-comment">// workerHandler</span><br>                            currentChildOptions,<br>                            currentChildAttrs<br>                        )<br>                    );<br>                &#125;<br>            &#125;);<br>        &#125;<br>    &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultChannelPipeline.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> ChannelPipeline <span class="hljs-title function_">addLast</span><span class="hljs-params">(EventExecutorGroup group, String name, ChannelHandler handler)</span> &#123;<br>    <span class="hljs-keyword">final</span> AbstractChannelHandlerContext newCtx;<br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>) &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 判断handler是否被重复添加</span><br><span class="hljs-comment">             */</span><br>        checkMultiplicity(handler);<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 创建一个HandlerContext并添加到列表</span><br><span class="hljs-comment">             */</span><br>        newCtx = newContext(group, filterName(name, handler), handler);<br>        <span class="hljs-comment">// 添加HandlerContext</span><br>        <span class="hljs-built_in">this</span>.addLast0(newCtx);<br><br>        <span class="hljs-comment">// If the registered is false it means that the channel was not registered on an eventLoop yet.</span><br>        <span class="hljs-comment">// In this case we add the context to the pipeline and add a task that will call</span><br>        <span class="hljs-comment">// ChannelHandler.handlerAdded(...) once the channel is registered.</span><br>        <span class="hljs-keyword">if</span> (!registered) &#123; <span class="hljs-comment">// 当使用ChannelInitializer辅助类添加handler时候 Channel还没注册到复用器上 这时候进行标识等待回调</span><br>            newCtx.setAddPending();<br>            callHandlerCallbackLater(newCtx, <span class="hljs-literal">true</span>); <span class="hljs-comment">// newCtx就是对当前handler的封装</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>        &#125;<br><br>        <span class="hljs-type">EventExecutor</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> newCtx.executor();<br>        <span class="hljs-keyword">if</span> (!executor.inEventLoop()) &#123;<br>            <span class="hljs-comment">// 回调用户事件</span><br>            callHandlerAddedInEventLoop(newCtx, executor);<br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-built_in">this</span>.callHandlerAdded0(newCtx); <span class="hljs-comment">// 回调handler的添加事件(内部也会判断执行的时候Channel有没有注册到复用器上 严格保证回调执行时机是在Channel注册复用器之后)</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在Channel创建好了对其进行初始化，以NioServerSocketChannel为例，Netty向pipline中添加了一个handler，就是ChannelInitializer实例。</p>
+<ul>
+<li>pipeline中添加handler就是双链表的insert操作<ul>
+<li>添加到双链表</li>
+<li>此刻Channel还在初始化环节 Channel还没注册到复用器上</li>
+</ul>
+</li>
+<li>ChannelInitializer的方法等待时机被回调</li>
+</ul>
+<h3 id="3-Channel注册之后发布事件触发ChannelInitializer方法回调"><a href="#3-Channel注册之后发布事件触发ChannelInitializer方法回调" class="headerlink" title="3 Channel注册之后发布事件触发ChannelInitializer方法回调"></a>3 Channel注册之后发布事件触发ChannelInitializer方法回调</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractUnsafe.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 发布handlerAdd事件</span><br><span class="hljs-comment">                 * 让pipeline中handler关注handlerAdded(...)的handler执行</span><br><span class="hljs-comment">                 *     - 触发ChannelInitializer方法执行</span><br><span class="hljs-comment">                 */</span><br>pipeline.invokeHandlerAddedIfNeeded();<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultChannelPipeline.java</span><br><span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">invokeHandlerAddedIfNeeded</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">assert</span> channel.eventLoop().inEventLoop();<br>    <span class="hljs-keyword">if</span> (firstRegistration) &#123; <span class="hljs-comment">// 保证了这个方法只会在Channel注册到IO多路复用器上之后才会执行</span><br>        firstRegistration = <span class="hljs-literal">false</span>;<br>        <span class="hljs-comment">// We are now registered to the EventLoop. It&#x27;s time to call the callbacks for the ChannelHandlers,</span><br>        <span class="hljs-comment">// that were added before the registration was done.</span><br>        <span class="hljs-built_in">this</span>.callHandlerAddedForAllHandlers();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// DefaultChannelPipeline.java</span><br><br><span class="hljs-keyword">private</span> PendingHandlerCallback pendingHandlerCallbackHead; <span class="hljs-comment">// 但链表数据结构 挂着的都是等待Channel注册复用器成功后执行回调的handler(比如ChannelInitializer实例)</span><br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">callHandlerAddedForAllHandlers</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">final</span> PendingHandlerCallback pendingHandlerCallbackHead;<br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>) &#123;<br>        <span class="hljs-keyword">assert</span> !registered;<br><br>        <span class="hljs-comment">// This Channel itself was registered.</span><br>        <span class="hljs-built_in">this</span>.registered = <span class="hljs-literal">true</span>;<br><br>        pendingHandlerCallbackHead = <span class="hljs-built_in">this</span>.pendingHandlerCallbackHead;<br>        <span class="hljs-comment">// Null out so it can be GC&#x27;ed.</span><br>        <span class="hljs-built_in">this</span>.pendingHandlerCallbackHead = <span class="hljs-literal">null</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// This must happen outside of the synchronized(...) block as otherwise handlerAdded(...) may be called while</span><br>    <span class="hljs-comment">// holding the lock and so produce a deadlock if handlerAdded(...) will try to add another handler from outside</span><br>    <span class="hljs-comment">// the EventLoop.</span><br>    <span class="hljs-type">PendingHandlerCallback</span> <span class="hljs-variable">task</span> <span class="hljs-operator">=</span> pendingHandlerCallbackHead;<br>    <span class="hljs-keyword">while</span> (task != <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 轮询单链表</span><br>        task.execute();<br>        task = task.next;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">execute</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">EventExecutor</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> ctx.executor();<br>    <span class="hljs-comment">// 线程切换 NioEventLoop线程负责执行</span><br>    <span class="hljs-keyword">if</span> (executor.inEventLoop()) &#123;<br>        callHandlerAdded0(ctx);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            executor.execute(<span class="hljs-built_in">this</span>);<br>        &#125; <span class="hljs-keyword">catch</span> (RejectedExecutionException e) &#123;<br>            atomicRemoveFromHandlerList(ctx);<br>            ctx.setRemoved();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">callHandlerAdded0</span><span class="hljs-params">(<span class="hljs-keyword">final</span> AbstractChannelHandlerContext ctx)</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        ctx.callHandlerAdded(); <span class="hljs-comment">// NioServerSocketChannel在init初始化时向pipeline中添加ChannelInitializer实例 ctx就是对ChannelInitializer实例的封装</span><br>    &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>        <span class="hljs-type">boolean</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br>        <span class="hljs-keyword">try</span> &#123;<br>            atomicRemoveFromHandlerList(ctx);<br>            ctx.callHandlerRemoved();<br>            removed = <span class="hljs-literal">true</span>;<br>        &#125; <span class="hljs-keyword">catch</span> (Throwable t2) &#123;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (removed) &#123;<br>            fireExceptionCaught(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelPipelineException</span>(ctx.handler().getClass().getName() + <span class="hljs-string">&quot;.handlerAdded() has thrown an exception; removed.&quot;</span>, t));<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            fireExceptionCaught(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelPipelineException</span>(ctx.handler().getClass().getName() + <span class="hljs-string">&quot;.handlerAdded() has thrown an exception; also failed to remove.&quot;</span>, t));<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// AbstractChannelHandlerContext.java</span><br><span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">callHandlerAdded</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>    <span class="hljs-comment">// We must call setAddComplete before calling handlerAdded. Otherwise if the handlerAdded method generates</span><br>    <span class="hljs-comment">// any pipeline events ctx.handler() will miss them because the state will not allow it.</span><br>    <span class="hljs-keyword">if</span> (setAddComplete()) handler().handlerAdded(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// NioServerSocketChannel的初始化init时 向pipeline中添加的ChannelInitializer实例</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ChannelInitializer.java</span><br><span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handlerAdded</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-keyword">if</span> (ctx.channel().isRegistered()) &#123; <span class="hljs-comment">// 执行时机是在Channel注册到复用器之后(发布handlerAdded事件)</span><br>            <span class="hljs-comment">// This should always be true with our current DefaultChannelPipeline implementation.</span><br>            <span class="hljs-comment">// The good thing about calling initChannel(...) in handlerAdded(...) is that there will be no ordering</span><br>            <span class="hljs-comment">// surprises if a ChannelInitializer will add another ChannelInitializer. This is as all handlers</span><br>            <span class="hljs-comment">// will be added in the expected order.</span><br>            <span class="hljs-keyword">if</span> (initChannel(ctx)) &#123;<br><br>                <span class="hljs-comment">// We are done with init the Channel, removing the initializer now.</span><br>                removeState(ctx);<br>            &#125;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>调用链终于走到了ChannelInitializer中了。</p>
+<h2 id="二-ChannelInitializer源码"><a href="#二-ChannelInitializer源码" class="headerlink" title="二 ChannelInitializer源码"></a>二 ChannelInitializer源码</h2><h3 id="1-handlerAdded"><a href="#1-handlerAdded" class="headerlink" title="1 handlerAdded"></a>1 handlerAdded</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ChannelInitializer.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handlerAdded</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>    <span class="hljs-keyword">if</span> (ctx.channel().isRegistered()) &#123; <span class="hljs-comment">// 执行时机是在Channel注册到复用器之后(发布handlerAdded事件)</span><br>        <span class="hljs-comment">// This should always be true with our current DefaultChannelPipeline implementation.</span><br>        <span class="hljs-comment">// The good thing about calling initChannel(...) in handlerAdded(...) is that there will be no ordering</span><br>        <span class="hljs-comment">// surprises if a ChannelInitializer will add another ChannelInitializer. This is as all handlers</span><br>        <span class="hljs-comment">// will be added in the expected order.</span><br>        <span class="hljs-keyword">if</span> (initChannel(ctx)) &#123;<br><br>            <span class="hljs-comment">// We are done with init the Channel, removing the initializer now.</span><br>            removeState(ctx);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>    <span class="hljs-keyword">if</span> (initMap.add(ctx)) &#123; <span class="hljs-comment">// Guard against re-entrance.</span><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-built_in">this</span>.initChannel((C) ctx.channel()); <span class="hljs-comment">// initChannel(...)就是交给实例自己去关注实现的点</span><br>        &#125; <span class="hljs-keyword">catch</span> (Throwable cause) &#123;<br>            <span class="hljs-comment">// Explicitly call exceptionCaught(...) as we removed the handler before calling initChannel(...).</span><br>            <span class="hljs-comment">// We do so to prevent multiple calls to initChannel(...).</span><br>            exceptionCaught(ctx, cause);<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">pipeline</span> <span class="hljs-operator">=</span> ctx.pipeline();<br>            <span class="hljs-keyword">if</span> (pipeline.context(<span class="hljs-built_in">this</span>) != <span class="hljs-literal">null</span>) &#123;<br>                pipeline.remove(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// 将ChannelInitializer从pipeline中移除</span><br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-initChannel"><a href="#2-initChannel" class="headerlink" title="2 initChannel"></a>2 initChannel</h3><p>这个方法是ChannelInitializer提供的抽象方法，供用户自定具体实现。</p>
+<p>列举几个例子：</p>
+<h4 id="2-1-SerberBootstrap的init方法"><a href="#2-1-SerberBootstrap的init方法" class="headerlink" title="2.1 SerberBootstrap的init方法"></a>2.1 SerberBootstrap的init方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 往ServerSocketChannel的pipeline中添加一个handler 这个handler是ChannelInitializer的实例 该处涉及到pipeline中的辅助类ChannelInitializer 它本身也是一个handler(Inbound类型) 它的作用仅仅是辅助其他的handler加入到pipeline中</span><br><span class="hljs-comment">         * ChannelInitializer的initChannel方法触发时机是在Channel注册到NioEventLoop复用器之后(NioEventLoop启动执行注册操作) 那么到时候会发生回调</span><br><span class="hljs-comment">         *     - 添加一个ServerBootstrap指定的bossHandler(也可能没指定) 比如指定了workerHandler 那么回调执行后 pipeline存在 headHandler-workerHandler-tailHandler</span><br><span class="hljs-comment">         *     - 向NioEventLoop提交添加handler的异步任务</span><br><span class="hljs-comment">         *         - 等NioEventLoop把这个异步任务执行完了之后 pipeline中变成 head-workerHandler-ServerBootstrapAcceptor-tail</span><br><span class="hljs-comment">         */</span><br>p.addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;Channel&gt;() &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Channel ch)</span> &#123; <span class="hljs-comment">// ChannelInitializer的这个方法会在Channel注册到EventLoop线程上复用器之后被回调</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">pipeline</span> <span class="hljs-operator">=</span> ch.pipeline(); <span class="hljs-comment">// NioServerSocketChannel的pipeline</span><br>        <span class="hljs-type">ChannelHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> config.handler(); <span class="hljs-comment">// 这个handler是在ServerBootstrap::handler()方法中指定的workerHandler</span><br>        <span class="hljs-keyword">if</span> (handler != <span class="hljs-literal">null</span>) pipeline.addLast(handler); <span class="hljs-comment">// 将bossHandler添加到NioServerSocket的pipeline中</span><br><br>        ch.eventLoop().execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123; <span class="hljs-comment">// 往NioEventLoop线程添加一个任务 boss的NioEventLoop线程会执行这个任务 就是给Channel指定一个处理器 处理器的功能是接收客户端请求</span><br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                pipeline.addLast(<br>                    <span class="hljs-comment">// 添加一个handler到pipeline中 ServerBootstrapAcceptor这个handler目的是用来接收客户端请求的</span><br>                    <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerBootstrapAcceptor</span>(<br>                        ch, <span class="hljs-comment">// NioServerSocketChannel</span><br>                        currentChildGroup, <span class="hljs-comment">// workerGroup</span><br>                        currentChildHandler, <span class="hljs-comment">// workerHandler</span><br>                        currentChildOptions,<br>                        currentChildAttrs<br>                    )<br>                );<br>            &#125;<br>        &#125;);<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>假设bossHandler没有传，那么此时pipeline中有3个handler：</p>
+<ul>
+<li>head</li>
+<li>ServerBootstrapAcceptor</li>
+<li>tail</li>
+</ul>
+<h4 id="2-2-EchoServer的ServerBootstrap初始化"><a href="#2-2-EchoServer的ServerBootstrap初始化" class="headerlink" title="2.2 EchoServer的ServerBootstrap初始化"></a>2.2 EchoServer的ServerBootstrap初始化</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java">.childHandler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;SocketChannel&gt;() &#123; <span class="hljs-comment">// childHandler指定的handlers是给新创建的连接用的 服务端ServerSocketChannel在accept一个连接以后需要创建SocketChannel的实例 childHandler中设置的handler就是用于处理新创建的SocketChannel的 而不是用来处理ServerSocketChannel实例的</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception &#123; <span class="hljs-comment">// pipeline需要ChannelInitializer辅助类 借助辅助类可以指定多个handler组成pipeline 就是拦截器 在每个NioSocketChannel或NioServerSocketChannel实例内部都会有一个pipeline实例 并且还涉及到handler执行顺序</span><br>        <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> ch.pipeline();<br>        p.addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">EchoServerHandler</span>());<br>    &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-EchoClient的Bootstrap初始化"><a href="#2-3-EchoClient的Bootstrap初始化" class="headerlink" title="2.3 EchoClient的Bootstrap初始化"></a>2.3 EchoClient的Bootstrap初始化</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java">.handler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;SocketChannel&gt;() &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-type">ChannelPipeline</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> ch.pipeline();<br>        p.addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">EchoClientHandler</span>());<br>    &#125;<br>&#125;); <span class="hljs-comment">// 指定handler 客户端处理请求过程中使用的handlers</span><br></code></pre></td></tr></table></figure>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Netty/" class="category-chain-item">Netty</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/1%E5%88%B7Netty/" class="print-no-link">#1刷Netty</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Netty源码-08-ChannelInitializer</div>
+      <div>https://bannirui.github.io/2023/03/06/Netty/Netty源码-08-ChannelInitializer/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-09-ServerBootstrapAcceptor/" title="Netty源码-09-ServerBootstrapAcceptor">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Netty源码-09-ServerBootstrapAcceptor</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-07-Channel/" title="Netty源码-07-Channel">
+                        <span class="hidden-mobile">Netty源码-07-Channel</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '94e742bea8adb2918a1a4ab82528c4d7'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
