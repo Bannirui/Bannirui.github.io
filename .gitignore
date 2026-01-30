@@ -1,3 +1,6 @@
+.vscode
+.idea
+
 .DS_Store
 Thumbs.db
 db.json
@@ -13,7 +16,8 @@ _config.yml
 _config.*.yml
 
 # cmake or make build output
-/build
+cmake-build-**
+build-**
 
 # drawio cache
 **.bkp
