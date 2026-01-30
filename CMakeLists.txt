@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(hexo LANGUAGES NONE)
+project(hexo-blog LANGUAGES NONE)
 
 # 输出详细日志
 set(CMAKE_VERBOSE_MAKEFILE ON)
