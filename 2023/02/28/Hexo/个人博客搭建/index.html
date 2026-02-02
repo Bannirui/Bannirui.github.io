@@ -19,23 +19,21 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="GitHub Pages + Hexo组合搭建个人博客环境 1 Github1.1 创建仓库创建仓库{用户名}.github.io，将来即可根据域名https:&#x2F;&#x2F;{用户名}.github.io&#x2F;访问博客。 1.2 设置GitHub Pages  1.3 创建Token给Hexo使用配置全局变量GITHUB_TOKEN_FOR_HEXO   2 Hexo2.1 安装先">
+    <meta name="description" content="GitHub Pages + Hexo组合搭建个人博客环境 1 Github1.1 创建仓库创建仓库{用户名}.github.io，将来即可根据域名https:&#x2F;&#x2F;{用户名}.github.io&#x2F;访问博客。 1.2 设置GitHub Pages  1.3 创建Token给Hexo使用配置全局变量GITHUB_TOKEN_FOR_HEXO    2 build the">
 <meta property="og:type" content="article">
 <meta property="og:title" content="个人博客搭建">
 <meta property="og:url" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="GitHub Pages + Hexo组合搭建个人博客环境 1 Github1.1 创建仓库创建仓库{用户名}.github.io，将来即可根据域名https:&#x2F;&#x2F;{用户名}.github.io&#x2F;访问博客。 1.2 设置GitHub Pages  1.3 创建Token给Hexo使用配置全局变量GITHUB_TOKEN_FOR_HEXO   2 Hexo2.1 安装先">
+<meta property="og:description" content="GitHub Pages + Hexo组合搭建个人博客环境 1 Github1.1 创建仓库创建仓库{用户名}.github.io，将来即可根据域名https:&#x2F;&#x2F;{用户名}.github.io&#x2F;访问博客。 1.2 设置GitHub Pages  1.3 创建Token给Hexo使用配置全局变量GITHUB_TOKEN_FOR_HEXO    2 build the">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E8%AE%BE%E7%BD%AEgithubpages.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E5%88%9B%E5%BB%BAtoken%E7%BB%99hexo%E4%BD%BF%E7%94%A8.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230724214954727.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230724220948789.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230724221334912.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/1769794175.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801233940886.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801234607240.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801235632322.png">
 <meta property="article:published_time" content="2023-02-28T00:46:26.000Z">
-<meta property="article:modified_time" content="2026-01-22T09:26:48.104Z">
+<meta property="article:modified_time" content="2026-02-02T01:44:50.063Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E8%AE%BE%E7%BD%AEgithubpages.png">
@@ -256,7 +254,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          514 字
+          171 字
         
       </span>
     
@@ -267,7 +265,7 @@
         
         
         
-          5 分钟
+          2 分钟
         
       </span>
     
@@ -404,76 +402,25 @@
 <h4 id="1-3-创建Token给Hexo使用"><a href="#1-3-创建Token给Hexo使用" class="headerlink" title="1.3 创建Token给Hexo使用"></a>1.3 创建Token给Hexo使用</h4><p>配置全局变量GITHUB_TOKEN_FOR_HEXO</p>
 <img src="/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/%E5%88%9B%E5%BB%BAtoken%E7%BB%99hexo%E4%BD%BF%E7%94%A8.png" srcset="/img/loading.gif" lazyload class="">
 
-<h3 id="2-Hexo"><a href="#2-Hexo" class="headerlink" title="2 Hexo"></a>2 Hexo</h3><h4 id="2-1-安装"><a href="#2-1-安装" class="headerlink" title="2.1 安装"></a>2.1 安装</h4><p>先安装node，通过node安装Hexo</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">brew install node<br>npm install -g hexo-cli<br></code></pre></td></tr></table></figure>
 
-<p>升级插件<code>sudo npm update --save hexo-cli</code></p>
-<h4 id="2-2-创建项目"><a href="#2-2-创建项目" class="headerlink" title="2.2 创建项目"></a>2.2 创建项目</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo init hexo-blog<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-3-初始化启动"><a href="#2-3-初始化启动" class="headerlink" title="2.3 初始化启动"></a>2.3 初始化启动</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd hexo-blog<br>npm install<br>hexo s<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-4-安装Fluid主题"><a href="#2-4-安装Fluid主题" class="headerlink" title="2.4 安装Fluid主题"></a>2.4 安装Fluid主题</h4><a href="/2024/03/03/Hexo/Hexo%E4%B8%BB%E9%A2%98-Fluid/" title="Hexo主题-Fluid">Fluid主题配置</a>
-
-<p>配置项可以参考官网<a target="_blank" rel="noopener" href="https://github.com/fluid-dev/hexo-theme-fluid">Fluid官网</a>，根据README操作。</p>
-<h5 id="2-4-1-指定主题"><a href="#2-4-1-指定主题" class="headerlink" title="2.4.1 指定主题"></a>2.4.1 指定主题</h5><p>修改hexo配置，文件<code>根目录/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">theme:</span> <span class="hljs-string">fluid</span><br></code></pre></td></tr></table></figure>
-
-<h5 id="2-4-2-创建AboutMe"><a href="#2-4-2-创建AboutMe" class="headerlink" title="2.4.2 创建AboutMe"></a>2.4.2 创建AboutMe</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo new page about<br></code></pre></td></tr></table></figure>
-
-<p>修改<code>根目录/source/about/index.md</code>，添加<code>layout</code>属性</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs markdown">---<br>title: about<br>date: 2023-02-27 22:43:06<br><span class="hljs-section">layout: about</span><br><span class="hljs-section">---</span><br></code></pre></td></tr></table></figure>
-
-<h4 id="2-5-文章同名资源目录"><a href="#2-5-文章同名资源目录" class="headerlink" title="2.5 文章同名资源目录"></a>2.5 文章同名资源目录</h4><p>存放图片文件</p>
-<p>修改hexo配置文件，文件<code>根目录/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">post_asset_folder:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
-
-<h4 id="2-6-个性化页面"><a href="#2-6-个性化页面" class="headerlink" title="2.6 个性化页面"></a>2.6 个性化页面</h4><h5 id="2-6-1-浏览器tab页名称"><a href="#2-6-1-浏览器tab页名称" class="headerlink" title="2.6.1 浏览器tab页名称"></a>2.6.1 浏览器tab页名称</h5><p>hexo配置文件<code>根目录/_config.yml</code>中<code>title</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-number">5</span> <span class="hljs-comment"># Site</span><br><span class="hljs-attr">6 title:</span> <span class="hljs-string">光秃秃的猫子</span><br><span class="hljs-attr">7 subtitle:</span> <span class="hljs-string">&#x27;&#x27;</span><br><span class="hljs-attr">8 description:</span> <span class="hljs-string">&#x27;Bannirui博客&#x27;</span><br><span class="hljs-attr">9 keywords:</span><br><span class="hljs-attr">10 author:</span> <span class="hljs-string">Banirui</span><br><span class="hljs-attr">11 language:</span> <span class="hljs-string">zh-CN</span><br><span class="hljs-attr">12 timezone:</span> <span class="hljs-string">&#x27;&#x27;</span><br></code></pre></td></tr></table></figure>
-
-<h4 id="2-7-文章中图片链接"><a href="#2-7-文章中图片链接" class="headerlink" title="2.7 文章中图片链接"></a>2.7 文章中图片链接</h4><p>为了兼容markdown格式以及typora的相对路径</p>
-<h5 id="2-7-1-typora-setting"><a href="#2-7-1-typora-setting" class="headerlink" title="2.7.1 typora setting"></a>2.7.1 typora setting</h5><img src="/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230724214954727.png" srcset="/img/loading.gif" lazyload class="">
-
-<h5 id="2-7-2-plugin"><a href="#2-7-2-plugin" class="headerlink" title="2.7.2 plugin"></a>2.7.2 plugin</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">npm install hexo-image-link --save<br></code></pre></td></tr></table></figure>
-
-<h5 id="2-7-3-check"><a href="#2-7-3-check" class="headerlink" title="2.7.3 check"></a>2.7.3 check</h5><p>本地环境验证</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">hexo clean &amp;&amp; hexo g &amp;&amp; hexo s<br></code></pre></td></tr></table></figure>
-
-<img src="/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230724220948789.png" srcset="/img/loading.gif" lazyload class="">
-
-<h5 id="2-7-4-index-js"><a href="#2-7-4-index-js" class="headerlink" title="2.7.4 index.js"></a>2.7.4 index.js</h5><p>即编译好的图片是放在public文件夹下&#x2F;yyyy&#x2F;mm&#x2F;dd&#x2F;title&#x2F;img.png路径，如果发现hexo页面的图片路径不对，则修改插件hex-image-link的源码。</p>
-<img src="/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230724221334912.png" srcset="/img/loading.gif" lazyload class="">
-
-<h4 id="2-8-发布到GitHub"><a href="#2-8-发布到GitHub" class="headerlink" title="2.8 发布到GitHub"></a>2.8 发布到GitHub</h4><p>该部分的配置请看 <a href="/2024/03/03/Hexo/Hexo%E4%B8%BB%E9%A2%98-Fluid/" title="Hexo主题-Fluid">Hexo主题-Fluid</a></p>
-<h5 id="2-8-3-创建文章"><a href="#2-8-3-创建文章" class="headerlink" title="2.8.3 创建文章"></a>2.8.3 创建文章</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo new post &#123;文章名称&#125;<br></code></pre></td></tr></table></figure>
-<p>或者指定分类的目录<code>hexo new post 文章名称 -p /目录/文件名.md</code></p>
-<h5 id="2-8-4-发布访问"><a href="#2-8-4-发布访问" class="headerlink" title="2.8.4 发布访问"></a>2.8.4 发布访问</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hexo g -d<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-9-更换新设备"><a href="#2-9-更换新设备" class="headerlink" title="2.9 更换新设备"></a>2.9 更换新设备</h4><h5 id="2-9-1-reqirements"><a href="#2-9-1-reqirements" class="headerlink" title="2.9.1 reqirements"></a>2.9.1 reqirements</h5><p>install the requirements</p>
-<ul>
-<li><p>node</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">apt search node<br>sudo apt install nodejs<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>npm</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install npm<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>hexo-cli</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo npm install -g hexo-cli<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>gitalk</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo npm install hexo-plugin-gitalk --save<br></code></pre></td></tr></table></figure></li>
+<h3 id="2-build-the-blog"><a href="#2-build-the-blog" class="headerlink" title="2 build the blog"></a>2 build the blog</h3><ul>
+<li>1 clone the repo <code>git clone git@github.com:Bannirui/Bannirui.github.io.git</code>, then the default branch is hexo</li>
+<li>2 all of the settings are maintained in another private repo <code>dev-env-setting</code>, including<ul>
+<li>_configure.yml</li>
+<li>_config.fluid.yml</li>
+<li>_config.next.yml</li>
 </ul>
-<p>sync the config file and settings</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cd</span> ~/MyDev/env/os_script<br>./configure<br></code></pre></td></tr></table></figure>
-
-<ul>
-<li><p>_configure.yml</p>
 </li>
-<li><p>_config.fluid.yml</p>
-</li>
-<li><p>_config.next.yml</p>
-</li>
+<li>3 github publish key is the <code>zshrc</code></li>
 </ul>
-<h5 id="2-9-2-clone"><a href="#2-9-2-clone" class="headerlink" title="2.9.2 clone"></a>2.9.2 clone</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone git@github.com:Bannirui/Bannirui.github.io.git<br><br>cd Bannirui.github.io<br><br>sudo npm install<br><br>hexo s<br></code></pre></td></tr></table></figure>
+<p>addition, all the command are unnecessary executed manually, i have injected into cmake tool, just click it</p>
+<ul>
+<li>1 <code>npm install</code>, for relevant packages installing</li>
+<li>2 <code>hexo new post</code>, create new post</li>
+<li>3 <code>hexo s</code>, local http server</li>
+<li>4 <code>hexo g -d</code>, distribute on github site</li>
+</ul>
+<img src="/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/1769794175.png" srcset="/img/loading.gif" lazyload class="">
 
 <h5 id="2-9-3-报错"><a href="#2-9-3-报错" class="headerlink" title="2.9.3 报错"></a>2.9.3 报错</h5><img src="/2023/02/28/Hexo/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/image-20230801233940886.png" srcset="/img/loading.gif" lazyload class="">
 
