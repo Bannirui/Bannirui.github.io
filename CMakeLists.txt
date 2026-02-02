@@ -11,7 +11,6 @@ set(LIB_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(SITE_DIR ${CMAKE_SOURCE_DIR})
 
 include(${LIB_DIRECTORY}/node.cmake)
-include(${LIB_DIRECTORY}/hexo.cmake)
 
 # 系统检测 不同平台的home目录不相同
 if (APPLE)
@@ -33,7 +32,7 @@ if (NOT DEFINED ENV{GITHUB_TOKEN_FOR_HEXO})
     message("没有在.zshrc中配置环境变量GITHUB_TOKEN_FOR_HEXO")
 endif ()
 
-set(HEXO_SETTING_DIR "/home/dingrui/MyDev/env/dev-env-setting")
+set(HEXO_SETTING_DIR "${home}/MyDev/env/dev-env-setting")
 # hexo的配置文件
 if (NOT EXISTS "${SITE_DIR}/_config.yml")
     execute_process(

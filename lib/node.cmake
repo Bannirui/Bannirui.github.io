@@ -1,7 +1,12 @@
 include(FetchContent)
 
 set(NODE_VERSION v20.11.1)
-set(NODE_PLATFORM linux-x64)
+
+if (APPLE)
+        set(NODE_PLATFORM darwin-x64)
+elseif (UNIX)
+        set(NODE_PLATFORM linux-x64)
+endif ()
 
 FetchContent_Declare(
         nodejs
