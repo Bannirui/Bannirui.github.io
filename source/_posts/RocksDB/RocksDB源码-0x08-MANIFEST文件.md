@@ -5,12 +5,24 @@ date: 2026-01-30 14:32:42
 categories: RocksDB源码
 ---
 
-核心元数据，它的内容是二进制的
+## 1 manifest是什么
+
+核心元数据，它的内容是二进制的，本质是VersionEdit的顺序日志，而每个VersionEdit是描述一次元数据的变更，比如
+
+- 新建sst文件
+- 删除sst文件
+- flush
+- compaction
+- 新建cf
+
+manifest是历史操作日志，把所有的VersionEdit回放一遍就是当前最新的状态
 
 作用有两个
 
 - 1 VersionEdit的WAL
 - 2 SST元信息的真相来源
+
+## 2 dump出来的manifest内容
 
 用`rocksdb_ldb manifest_dump --db=/tmp/rocksdb_ctest_put`或者`rocksdb_ldb manifest_dump --path=MANIFEST-000005`命令dump某个文件
 
@@ -87,3 +99,17 @@ comparator: leveldb.BytewiseComparator
 By default, manifest file dump prints LSM trees as if 64 levels were configured, which is not necessarily true for the column family (CF) this manifest is associated with. Please consult other DB files, such as the OPTIONS file, to confirm.
 next_file_number 11 last_sequence 10  prev_log_number 0 max_column_family 0 min_log_number_to_keep 8
 ```
+
+上面dump出来的内容有哪些信息
+
+- 1 列簇名叫default，对应的id是0，系统内部引用的都是id
+- 2 log number=最近的一个被持久化的wal编号，等于8，意味着小于等于8的wal都已经持久化了，大于8的在crush时还没flush，需要replay
+- 3 comparator 是在建库的时候就定下的，不能更改，表示key的排序规则
+- 4 version#是内部递增的版本号，每次flush和compaction都会生成新的version版本号
+- 5 level 0 表示是level0的文件
+- 6 sst文件行
+  - 9 文件编号 表示sst文件的编号 也就是sst文件名和后缀
+  - 1374 文件大小 sst文件有多少个字节
+  - [1..10] sst覆盖的自增区间
+  - ['hello0' seq:1, type:1 .. 'hello9' seq:10, type:1] key的范围
+  - type:1 表示value的类型 1表示Put
