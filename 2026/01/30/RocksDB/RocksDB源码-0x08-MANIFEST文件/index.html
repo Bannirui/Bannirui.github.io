@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 manifest是什么核心元数据，它的内容是二进制的，本质是VersionEdit的顺序日志，而每个VersionEdit是描述一次元数据的变更，比如  新建sst文件 删除sst文件 flush compaction 新建cf  manifest是历史操作日志，把所有的VersionEdit回放一遍就是当前最新的状态 作用有两个  1 VersionEdit的WAL 2 SST元信息的真相来">
+    <meta name="description" content="1 manifest是什么核心元数据，它的内容是二进制的，本质是VersionEdit的顺序日志，而每个VersionEdit是描述一次元数据的变更，比如  新建sst文件 删除sst文件 flush compaction 新建cf  manifest文件记录的本质是在某个时刻  当前数据库结构中，哪些sst文件是被认为是有效的 以及这些sst文件是在什么样的wal边界条件下生成的 换言之 当前v">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RocksDB源码-0x08-MANIFEST文件">
 <meta property="og:url" content="https://bannirui.github.io/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x08-MANIFEST%E6%96%87%E4%BB%B6/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="1 manifest是什么核心元数据，它的内容是二进制的，本质是VersionEdit的顺序日志，而每个VersionEdit是描述一次元数据的变更，比如  新建sst文件 删除sst文件 flush compaction 新建cf  manifest是历史操作日志，把所有的VersionEdit回放一遍就是当前最新的状态 作用有两个  1 VersionEdit的WAL 2 SST元信息的真相来">
+<meta property="og:description" content="1 manifest是什么核心元数据，它的内容是二进制的，本质是VersionEdit的顺序日志，而每个VersionEdit是描述一次元数据的变更，比如  新建sst文件 删除sst文件 flush compaction 新建cf  manifest文件记录的本质是在某个时刻  当前数据库结构中，哪些sst文件是被认为是有效的 以及这些sst文件是在什么样的wal边界条件下生成的 换言之 当前v">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-01-30T06:32:42.000Z">
-<meta property="article:modified_time" content="2026-02-02T05:20:32.235Z">
+<meta property="article:modified_time" content="2026-02-03T03:17:20.983Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          565 字
+          673 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          5 分钟
+          6 分钟
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         RocksDB源码
-        <span class="list-group-count">(11)</span>
+        <span class="list-group-count">(12)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -421,7 +421,16 @@
     
       
       
-        <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x10-IDENTITY%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x10-IDENTITY文件"
+        <a href="/2026/02/03/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0B-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%9C%A8%E4%BB%80%E4%B9%88%E5%9C%B0%E6%96%B9/" title="RocksDB源码-0x0B-数据存在什么地方"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">RocksDB源码-0x0B-数据存在什么地方</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0A-IDENTITY%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x10-IDENTITY文件"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">RocksDB源码-0x10-IDENTITY文件</span>
@@ -459,11 +468,10 @@
 <li>compaction</li>
 <li>新建cf</li>
 </ul>
-<p>manifest是历史操作日志，把所有的VersionEdit回放一遍就是当前最新的状态</p>
-<p>作用有两个</p>
+<p>manifest文件记录的本质是在某个时刻</p>
 <ul>
-<li>1 VersionEdit的WAL</li>
-<li>2 SST元信息的真相来源</li>
+<li>当前数据库结构中，哪些sst文件是被认为是有效的</li>
+<li>以及这些sst文件是在什么样的wal边界条件下生成的 换言之 当前version生效时需要回放的wal是log number之后的wal日志</li>
 </ul>
 <h2 id="2-dump出来的manifest内容"><a href="#2-dump出来的manifest内容" class="headerlink" title="2 dump出来的manifest内容"></a>2 dump出来的manifest内容</h2><p>用<code>rocksdb_ldb manifest_dump --db=/tmp/rocksdb_ctest_put</code>或者<code>rocksdb_ldb manifest_dump --path=MANIFEST-000005</code>命令dump某个文件</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><code class="hljs sh">➜  rocksdb_ctest_put rocksdb_ldb manifest_dump --path=MANIFEST-000005<br>--------------- Column family <span class="hljs-string">&quot;default&quot;</span>  (ID 0) --------------<br><span class="hljs-built_in">log</span> number: 8<br>comparator: leveldb.BytewiseComparator<br>--- level 0 --- version<span class="hljs-comment"># 1 ---</span><br> 9:1374[1 .. 10][<span class="hljs-string">&#x27;hello0&#x27;</span> <span class="hljs-built_in">seq</span>:1, <span class="hljs-built_in">type</span>:1 .. <span class="hljs-string">&#x27;hello9&#x27;</span> <span class="hljs-built_in">seq</span>:10, <span class="hljs-built_in">type</span>:1]<br>--- level 1 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 2 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 3 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 4 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 5 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 6 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 7 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 8 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 9 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 10 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 11 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 12 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 13 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 14 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 15 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 16 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 17 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 18 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 19 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 20 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 21 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 22 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 23 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 24 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 25 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 26 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 27 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 28 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 29 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 30 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 31 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 32 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 33 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 34 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 35 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 36 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 37 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 38 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 39 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 40 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 41 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 42 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 43 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 44 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 45 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 46 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 47 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 48 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 49 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 50 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 51 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 52 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 53 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 54 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 55 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 56 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 57 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 58 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 59 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 60 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 61 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 62 --- version<span class="hljs-comment"># 1 ---</span><br>--- level 63 --- version<span class="hljs-comment"># 1 ---</span><br>By default, manifest file dump prints LSM trees as <span class="hljs-keyword">if</span> 64 levels were configured, <span class="hljs-built_in">which</span> is not necessarily <span class="hljs-literal">true</span> <span class="hljs-keyword">for</span> the column family (CF) this manifest is associated with. Please consult other DB files, such as the OPTIONS file, to confirm.<br>next_file_number 11 last_sequence 10  prev_log_number 0 max_column_family 0 min_log_number_to_keep 8<br></code></pre></td></tr></table></figure>
@@ -474,7 +482,7 @@
 <li>2 log number&#x3D;最近的一个被持久化的wal编号，等于8，意味着小于等于8的wal都已经持久化了，大于8的在crush时还没flush，需要replay</li>
 <li>3 comparator 是在建库的时候就定下的，不能更改，表示key的排序规则</li>
 <li>4 version#是内部递增的版本号，每次flush和compaction都会生成新的version版本号</li>
-<li>5 level 0 表示是level0的文件</li>
+<li>5 level 0 表示sst在第几层</li>
 <li>6 sst文件行<ul>
 <li>9 文件编号 表示sst文件的编号 也就是sst文件名和后缀</li>
 <li>1374 文件大小 sst文件有多少个字节</li>
@@ -484,7 +492,9 @@
 </ul>
 </li>
 </ul>
-
+<p>简而言之，manifest告诉我们每个cf在每一层有哪些sst文件，每个sst文件key range状态</p>
+<h2 id="3-manifest的用途"><a href="#3-manifest的用途" class="headerlink" title="3 manifest的用途"></a>3 manifest的用途</h2><p>manifest的目的就是为了有能力重建VersionSet，而VersionSet保证了RocksDB索引key分布在具体哪个SST文件的能力。</p>
+<a href="/2026/02/03/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0B-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%9C%A8%E4%BB%80%E4%B9%88%E5%9C%B0%E6%96%B9/" title="RocksDB源码-0x0B-数据存在什么地方">RocksDB源码-0x0B-数据存在什么地方</a>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
