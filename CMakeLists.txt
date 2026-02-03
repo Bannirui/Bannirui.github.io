@@ -89,14 +89,6 @@ add_custom_target(npm_install
         USES_TERMINAL
 )
 
-# hexo new post
-add_custom_target(hexo_new
-        COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post RocksDB源码-0x0A-IDENTITY文件 -p /RocksDB/RocksDB源码-0x0A-IDENTITY文件.md
-        WORKING_DIRECTORY ${SITE_DIR}
-        DEPENDS npm_install
-        USES_TERMINAL
-)
-
 # hexo s
 add_custom_target(hexo_server
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo s
@@ -108,6 +100,18 @@ add_custom_target(hexo_server
 # hexo g -d
 add_custom_target(hexo_deploy
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo g -d
+        WORKING_DIRECTORY ${SITE_DIR}
+        DEPENDS npm_install
+        USES_TERMINAL
+)
+
+# 博客目录
+set(POST_DIR "RocksDB")
+# 博客文章名
+set(POST_NAME "RocksDB源码-0x0C-VersionSet")
+# hexo new post
+add_custom_target(hexo_new
+        COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md
         WORKING_DIRECTORY ${SITE_DIR}
         DEPENDS npm_install
         USES_TERMINAL

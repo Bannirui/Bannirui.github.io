@@ -116,6 +116,4 @@ next_file_number 11 last_sequence 10  prev_log_number 0 max_column_family 0 min_
 
 ## 3 manifest的用途
 
-manifest的目的就是为了有能力重建VersionSet，而VersionSet保证了RocksDB索引key分布在具体哪个SST文件的能力。
-
-{%post_link RocksDB/RocksDB源码-0x0B-数据存在什么地方%}
+manifest的目的就是为了有能力重建VersionSet {%post_link RocksDB/RocksDB源码-0x0C-Version%}，而VersionSet保证了RocksDB索引key分布在具体哪个SST文件的能力 {%post_link RocksDB/RocksDB源码-0x0B-数据存在什么地方%}
