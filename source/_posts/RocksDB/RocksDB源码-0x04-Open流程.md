@@ -85,6 +85,18 @@ ls $(brew --prefix rocksdb)/bin
 - current文件 {%post_link RocksDB/RocksDB源码-0x07-CURRENT文件%}
 - manifest文件 {%post_link RocksDB/RocksDB源码-0x08-MANIFEST文件%}
 - options文件 {%post_link RocksDB/RocksDB源码-0x09-OPTIONS文件%}
-- IDENTITY文件 {%post_link RocksDB/RocksDB源码-0x10-IDENTITY文件%}
+- IDENTITY文件 {%post_link RocksDB/RocksDB源码-0x0A-IDENTITY文件%}
 - LOG文件是RocksDB自己的运行日志
 - LOCK 这是一个空文件，作用是当作一个互斥锁，防止两个RocksDB实例同时打开同一个db
+
+## 4 用磁盘上的文件恢复内存结构状态
+
+上面的这些目录和文件中，都会多多少少存在着数据，RocksDB需要用这些数据来恢复态，本质上恢复的不仅仅是数据本身，而是恢复如何解释数据
+
+### 4.1 manifest重建VersionSet
+
+{%post_link RocksDB/RocksDB源码-0x08-MANIFEST文件%}
+
+### 4.2 wal重建内存数据库
+
+{%post_link RocksDB/RocksDB源码-0x05-WAL%}

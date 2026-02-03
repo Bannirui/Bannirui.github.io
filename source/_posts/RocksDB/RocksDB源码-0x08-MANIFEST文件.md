@@ -15,12 +15,10 @@ categories: RocksDB源码
 - compaction
 - 新建cf
 
-manifest是历史操作日志，把所有的VersionEdit回放一遍就是当前最新的状态
+manifest文件记录的本质是在某个时刻
 
-作用有两个
-
-- 1 VersionEdit的WAL
-- 2 SST元信息的真相来源
+- 当前数据库结构中，哪些sst文件是被认为是有效的
+- 以及这些sst文件是在什么样的wal边界条件下生成的 换言之 当前version生效时需要回放的wal是log number之后的wal日志
 
 ## 2 dump出来的manifest内容
 
@@ -106,10 +104,18 @@ next_file_number 11 last_sequence 10  prev_log_number 0 max_column_family 0 min_
 - 2 log number=最近的一个被持久化的wal编号，等于8，意味着小于等于8的wal都已经持久化了，大于8的在crush时还没flush，需要replay
 - 3 comparator 是在建库的时候就定下的，不能更改，表示key的排序规则
 - 4 version#是内部递增的版本号，每次flush和compaction都会生成新的version版本号
-- 5 level 0 表示是level0的文件
+- 5 level 0 表示sst在第几层
 - 6 sst文件行
   - 9 文件编号 表示sst文件的编号 也就是sst文件名和后缀
   - 1374 文件大小 sst文件有多少个字节
   - [1..10] sst覆盖的自增区间
   - ['hello0' seq:1, type:1 .. 'hello9' seq:10, type:1] key的范围
   - type:1 表示value的类型 1表示Put
+  
+简而言之，manifest告诉我们每个cf在每一层有哪些sst文件，每个sst文件key range状态
+
+## 3 manifest的用途
+
+manifest的目的就是为了有能力重建VersionSet，而VersionSet保证了RocksDB索引key分布在具体哪个SST文件的能力。
+
+{%post_link RocksDB/RocksDB源码-0x0B-数据存在什么地方%}
