@@ -91,7 +91,7 @@ add_custom_target(npm_install
 
 # hexo new post
 add_custom_target(hexo_new
-        COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post RocksDB源码-0x0B-数据存在什么地方 -p /RocksDB/RocksDB源码-0x0B-数据存在什么地方.md
+        COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post RocksDB源码-0x0A-IDENTITY文件 -p /RocksDB/RocksDB源码-0x0A-IDENTITY文件.md
         WORKING_DIRECTORY ${SITE_DIR}
         DEPENDS npm_install
         USES_TERMINAL
