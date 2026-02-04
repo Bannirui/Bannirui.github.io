@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="记录的是配置信息，内容如下 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979">
+    <meta name="description" content="在RocksDB世界，两个重要的文件  wal RocksDB源码-0x05-WAL manifest RocksDB源码-0x08-MANIFEST文件  本质都是日志文件，因此抽象成统一的日志进行读写 1 wal1.1 读1.2 写2 manifest2.1 读在RocksDB源码-0x0C-Version读manifest重建VersionSet的时候读一个一个日志记录内容 12345678">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RocksDB源码-0x09-OPTIONS文件">
-<meta property="og:url" content="https://bannirui.github.io/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x09-OPTIONS%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:title" content="RocksDB源码-0x0F-日志记录">
+<meta property="og:url" content="https://bannirui.github.io/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0F-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="记录的是配置信息，内容如下 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979">
+<meta property="og:description" content="在RocksDB世界，两个重要的文件  wal RocksDB源码-0x05-WAL manifest RocksDB源码-0x08-MANIFEST文件  本质都是日志文件，因此抽象成统一的日志进行读写 1 wal1.1 读1.2 写2 manifest2.1 读在RocksDB源码-0x0C-Version读manifest重建VersionSet的时候读一个一个日志记录内容 12345678">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-01-30T06:57:10.000Z">
-<meta property="article:modified_time" content="2026-01-30T06:58:22.735Z">
+<meta property="article:published_time" content="2026-02-04T05:29:05.000Z">
+<meta property="article:modified_time" content="2026-02-04T05:40:51.875Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>RocksDB源码-0x09-OPTIONS文件 - HEX BLOG</title>
+  <title>RocksDB源码-0x0F-日志记录 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="RocksDB源码-0x09-OPTIONS文件"></span>
+            <span id="subtitle" data-typed-text="RocksDB源码-0x0F-日志记录"></span>
           
         </div>
 
@@ -235,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-30 14:57" pubdate>
-          2026年1月30日 下午
+        <time datetime="2026-02-04 13:29" pubdate>
+          2026年2月4日 下午
         </time>
       </span>
     
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          382 字
+          201 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          4 分钟
+          2 分钟
         
       </span>
     
@@ -414,7 +414,7 @@
       
         <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x09-OPTIONS%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x09-OPTIONS文件"
            class="list-group-item list-group-item-action
-           active">
+           ">
           <span class="category-post">RocksDB源码-0x09-OPTIONS文件</span>
         </a>
       
@@ -468,7 +468,7 @@
       
         <a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0F-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" title="RocksDB源码-0x0F-日志记录"
            class="list-group-item list-group-item-action
-           ">
+           active">
           <span class="category-post">RocksDB源码-0x0F-日志记录</span>
         </a>
       
@@ -491,13 +491,21 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">RocksDB源码-0x09-OPTIONS文件</h1>
+            <h1 id="seo-header">RocksDB源码-0x0F-日志记录</h1>
             
             
               <div class="markdown-body">
                 
-                <p>记录的是配置信息，内容如下</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br></pre></td><td class="code"><pre><code class="hljs txt">➜  rocksdb_ctest_put cat OPTIONS-000007<br># This is a RocksDB option file.<br>#<br># For detailed file format spec, please refer to the example file<br># in examples/rocksdb_option_file_example.ini<br>#<br><br>[Version]<br>  rocksdb_version=10.11.0<br>  options_file_version=1.1<br><br>[DBOptions]<br>  max_background_flushes=-1<br>  compaction_readahead_size=2097152<br>  max_manifest_file_size=1073741824<br>  strict_bytes_per_sync=false<br>  wal_bytes_per_sync=0<br>  max_manifest_space_amp_pct=500<br>  max_open_files=-1<br>  stats_history_buffer_size=1048576<br>  max_total_wal_size=0<br>  stats_persist_period_sec=600<br>  stats_dump_period_sec=600<br>  avoid_flush_during_shutdown=false<br>  max_subcompactions=1<br>  bytes_per_sync=0<br>  delayed_write_rate=16777216<br>  max_background_compactions=-1<br>  max_background_jobs=2<br>  delete_obsolete_files_period_micros=21600000000<br>  writable_file_max_buffer_size=1048576<br>  manifest_preallocation_size=4194304<br>  follower_catchup_retry_wait_ms=100<br>  file_checksum_gen_factory=nullptr<br>  allow_data_in_errors=false<br>  max_bgerror_resume_count=2147483647<br>  best_efforts_recovery=false<br>  wal_write_temperature=kUnknown<br>  write_identity_file=true<br>  write_dbid_to_manifest=true<br>  atomic_flush=false<br>  manual_wal_flush=false<br>  two_write_queues=false<br>  avoid_flush_during_recovery=false<br>  dump_malloc_stats=false<br>  info_log_level=DEBUG_LEVEL<br>  write_thread_slow_yield_usec=3<br>  allow_ingest_behind=false<br>  persist_stats_to_disk=false<br>  WAL_ttl_seconds=0<br>  bgerror_resume_retry_interval=1000000<br>  allow_concurrent_memtable_write=true<br>  paranoid_checks=true<br>  WAL_size_limit_MB=0<br>  wal_dir=/tmp/rocksdb_ctest_put/wal<br>  metadata_write_temperature=kUnknown<br>  lowest_used_cache_tier=kNonVolatileBlockTier<br>  keep_log_file_num=1000<br>  table_cache_numshardbits=6<br>  max_file_opening_threads=16<br>  unordered_write=false<br>  follower_refresh_catchup_period_ms=10000<br>  log_readahead_size=0<br>  enable_pipelined_write=false<br>  background_close_inactive_wals=false<br>  wal_recovery_mode=kPointInTimeRecovery<br>  follower_catchup_retry_count=10<br>  db_write_buffer_size=0<br>  allow_2pc=false<br>  skip_checking_sst_file_sizes_on_db_open=false<br>  skip_stats_update_on_db_open=false<br>  recycle_log_file_num=0<br>  db_host_id=__hostname__<br>  track_and_verify_wals_in_manifest=false<br>  use_fsync=false<br>  wal_compression=kNoCompression<br>  compaction_verify_record_count=true<br>  is_fd_close_on_exec=true<br>  enable_write_thread_adaptive_yield=true<br>  track_and_verify_wals=false<br>  error_if_exists=false<br>  enable_thread_tracking=false<br>  avoid_unnecessary_blocking_io=false<br>  allow_fallocate=true<br>  max_log_file_size=0<br>  advise_random_on_open=true<br>  create_missing_column_families=false<br>  max_write_batch_group_size_bytes=1048576<br>  use_adaptive_mutex=false<br>  prefix_seek_opt_in_only=false<br>  wal_filter=nullptr<br>  create_if_missing=true<br>  enforce_single_del_contracts=true<br>  allow_mmap_writes=false<br>  verify_sst_unique_id_in_manifest=true<br>  log_file_time_to_roll=0<br>  use_direct_io_for_flush_and_compaction=false<br>  flush_verify_memtable_count=true<br>  write_thread_max_yield_usec=100<br>  use_direct_reads=false<br>  allow_mmap_reads=false<br><br><br>[CFOptions &quot;default&quot;]<br>  memtable_avg_op_scan_flush_trigger=0<br>  memtable_op_scan_flush_trigger=0<br>  compression_manager=nullptr<br>  bottommost_file_compaction_delay=0<br>  memtable_veirfy_per_key_checksum_on_seek=false<br>  memtable_protection_bytes_per_key=0<br>  bottommost_compression=kDisableCompressionOption<br>  sample_for_compression=0<br>  blob_compression_type=kNoCompression<br>  paranoid_memory_checks=false<br>  blob_garbage_collection_age_cutoff=0.250000<br>  preclude_last_level_data_seconds=0<br>  compaction_options_universal=&#123;reduce_file_locking=false;allow_trivial_move=false;stop_style=kCompactionStopStyleTotalSize;max_read_amp=-1;min_merge_width=2;compression_size_percent=-1;max_size_amplification_percent=200;incremental=false;max_merge_width=4294967295;size_ratio=1;&#125;<br>  target_file_size_base=67108864<br>  memtable_whole_key_filtering=false<br>  blob_file_starting_level=0<br>  soft_pending_compaction_bytes_limit=68719476736<br>  compaction_options_fifo=&#123;trivial_copy_buffer_size=4096;allow_trivial_copy_when_change_temperature=false;age_for_warm=0;file_temperature_age_thresholds=;allow_compaction=false;max_table_files_size=1073741824;&#125;<br>  memtable_huge_page_size=0<br>  max_sequential_skip_in_iterations=8<br>  strict_max_successive_merges=false<br>  enable_blob_garbage_collection=false<br>  arena_block_size=1048576<br>  bottommost_compression_opts=&#123;use_zstd_dict_trainer=true;enabled=false;zstd_max_train_bytes=0;parallel_threads=1;max_compressed_bytes_per_kb=896;checksum=false;max_dict_bytes=0;strategy=0;max_dict_buffer_bytes=0;level=32767;window_bits=-14;&#125;<br>  target_file_size_multiplier=1<br>  max_bytes_for_level_multiplier_additional=1:1:1:1:1:1:1<br>  ttl=2592000<br>  max_write_buffer_number=2<br>  prepopulate_blob_cache=kDisable<br>  blob_compaction_readahead_size=0<br>  min_blob_size=0<br>  level0_stop_writes_trigger=36<br>  blob_garbage_collection_force_threshold=1.000000<br>  enable_blob_files=false<br>  level0_slowdown_writes_trigger=20<br>  default_write_temperature=kUnknown<br>  compression=kNoCompression<br>  level0_file_num_compaction_trigger=4<br>  block_protection_bytes_per_key=0<br>  prefix_extractor=nullptr<br>  max_bytes_for_level_multiplier=10.000000<br>  write_buffer_size=67108864<br>  uncache_aggressiveness=0<br>  disable_auto_compactions=false<br>  max_compaction_bytes=1677721600<br>  memtable_max_range_deletions=0<br>  compression_opts=&#123;use_zstd_dict_trainer=true;enabled=false;zstd_max_train_bytes=0;parallel_threads=1;max_compressed_bytes_per_kb=896;checksum=false;max_dict_bytes=0;strategy=0;max_dict_buffer_bytes=0;level=32767;window_bits=-14;&#125;<br>  hard_pending_compaction_bytes_limit=274877906944<br>  inplace_update_num_locks=10000<br>  periodic_compaction_seconds=0<br>  target_file_size_is_upper_bound=false<br>  experimental_mempurge_threshold=0.000000<br>  memtable_prefix_bloom_size_ratio=0.000000<br>  max_bytes_for_level_base=268435456<br>  paranoid_file_checks=false<br>  blob_file_size=268435456<br>  preserve_internal_time_seconds=0<br>  max_successive_merges=0<br>  verify_output_flags=0<br>  last_level_temperature=kUnknown<br>  table_factory=BlockBasedTable<br>  report_bg_io_stats=false<br>  persist_user_defined_timestamps=true<br>  sst_partitioner_factory=nullptr<br>  compaction_pri=kMinOverlappingRatio<br>  compaction_style=kCompactionStyleLevel<br>  memtable_factory=SkipListFactory<br>  comparator=leveldb.BytewiseComparator<br>  bloom_locality=0<br>  cf_allow_ingest_behind=false<br>  compaction_filter_factory=nullptr<br>  min_write_buffer_number_to_merge=1<br>  max_write_buffer_size_to_maintain=0<br>  compaction_filter=nullptr<br>  optimize_filters_for_hits=false<br>  default_temperature=kUnknown<br>  force_consistency_checks=true<br>  merge_operator=nullptr<br>  num_levels=7<br>  memtable_insert_with_hint_prefix_extractor=nullptr<br>  level_compaction_dynamic_level_bytes=false<br>  disallow_memtable_writes=false<br>  inplace_update_support=false<br><br>[TableOptions/BlockBasedTable &quot;default&quot;]<br>  num_file_reads_for_auto_readahead=2<br>  metadata_cache_options=&#123;unpartitioned_pinning=kFallback;partition_pinning=kFallback;top_level_index_pinning=kFallback;&#125;<br>  read_amp_bytes_per_bit=0<br>  verify_compression=false<br>  format_version=7<br>  detect_filter_construct_corruption=false<br>  whole_key_filtering=true<br>  super_block_alignment_size=0<br>  optimize_filters_for_memory=true<br>  decouple_partitioned_filters=true<br>  partition_filters=false<br>  initial_auto_readahead_size=8192<br>  max_auto_readahead_size=262144<br>  enable_index_compression=true<br>  checksum=kXXH3<br>  index_block_restart_interval=1<br>  pin_top_level_index_and_filter=true<br>  block_align=false<br>  block_size=4096<br>  index_type=kBinarySearch<br>  filter_policy=nullptr<br>  metadata_block_size=4096<br>  no_block_cache=false<br>  index_shortening=kShortenSeparators<br>  block_size_deviation=10<br>  super_block_alignment_space_overhead_ratio=128<br>  data_block_index_type=kDataBlockBinarySearch<br>  use_delta_encoding=true<br>  data_block_hash_table_util_ratio=0.750000<br>  cache_index_and_filter_blocks=false<br>  fail_if_no_udi_on_open=false<br>  user_defined_index_factory=nullptr<br>  prepopulate_block_cache=kDisable<br>  block_restart_interval=16<br>  pin_l0_filter_and_index_blocks_in_cache=false<br>  cache_index_and_filter_blocks_with_high_priority=true<br>  flush_block_policy_factory=FlushBlockBySizePolicyFactory<br></code></pre></td></tr></table></figure>
+                <p>在RocksDB世界，两个重要的文件</p>
+<ul>
+<li>wal <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x05-WAL/" title="RocksDB源码-0x05-WAL">RocksDB源码-0x05-WAL</a></li>
+<li>manifest <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x08-MANIFEST%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x08-MANIFEST文件">RocksDB源码-0x08-MANIFEST文件</a></li>
+</ul>
+<p>本质都是日志文件，因此抽象成统一的日志进行读写</p>
+<h2 id="1-wal"><a href="#1-wal" class="headerlink" title="1 wal"></a>1 wal</h2><h3 id="1-1-读"><a href="#1-1-读" class="headerlink" title="1.1 读"></a>1.1 读</h3><h3 id="1-2-写"><a href="#1-2-写" class="headerlink" title="1.2 写"></a>1.2 写</h3><h2 id="2-manifest"><a href="#2-manifest" class="headerlink" title="2 manifest"></a>2 manifest</h2><h3 id="2-1-读"><a href="#2-1-读" class="headerlink" title="2.1 读"></a>2.1 读</h3><p>在<a href="/2026/02/03/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0C-Version/" title="RocksDB源码-0x0C-Version">RocksDB源码-0x0C-Version</a>读manifest重建VersionSet的时候读一个一个日志记录内容</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * manifest的回放主循环</span><br><span class="hljs-comment"> * 3个条件</span><br><span class="hljs-comment"> * 1 防止manifest文件损坏导致的无限读下去</span><br><span class="hljs-comment"> * 2 任何一步有问题都停止读</span><br><span class="hljs-comment"> * 3 是按record为单位读的 不是按照行 因为manifest不是普通的文本文件 是有格式的文件</span><br><span class="hljs-comment"> * 4 防止Reader内部有错误</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">while</span> (reader.<span class="hljs-built_in">LastRecordEnd</span>() &lt; max_manifest_read_size_ &amp;&amp; s.<span class="hljs-built_in">ok</span>() &amp;&amp;<br>       reader.<span class="hljs-built_in">ReadRecord</span>(&amp;record, &amp;scratch) &amp;&amp; log_read_status-&gt;<span class="hljs-built_in">ok</span>())<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-写"><a href="#2-2-写" class="headerlink" title="2.2 写"></a>2.2 写</h3>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -544,8 +552,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>RocksDB源码-0x09-OPTIONS文件</div>
-      <div>https://bannirui.github.io/2026/01/30/RocksDB/RocksDB源码-0x09-OPTIONS文件/</div>
+      <div>RocksDB源码-0x0F-日志记录</div>
+      <div>https://bannirui.github.io/2026/02/04/RocksDB/RocksDB源码-0x0F-日志记录/</div>
     </div>
     <div class="license-meta">
       
@@ -557,7 +565,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年1月30日</div>
+          <div>2026年2月4日</div>
         </div>
       
       
@@ -589,18 +597,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0A-IDENTITY%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x0A-IDENTITY文件">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">RocksDB源码-0x0A-IDENTITY文件</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x08-MANIFEST%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x08-MANIFEST文件">
-                        <span class="hidden-mobile">RocksDB源码-0x08-MANIFEST文件</span>
+                      <a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0E-%E7%BC%96%E8%A7%A3%E7%A0%81/" title="RocksDB源码-0x0E-编解码">
+                        <span class="hidden-mobile">RocksDB源码-0x0E-编解码</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -623,7 +625,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'a2f73351245d1907cf2c0774113d8777'
+            id: 'c44470906bd7835b4cfb00b39d0aee82'
           }
         )
         var gitalk = new Gitalk(options);

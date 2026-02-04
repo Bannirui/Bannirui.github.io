@@ -19,16 +19,16 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 什么是VersionRocksDB源码-0x08-MANIFEST文件 配合manifest中的内容看更直观  RocksDB两手抓，一手抓没持久化的数据在内存，一手抓持久化的数据在SST，回放内存数据靠wal，溯源数据在SST的分布情况也需要一个机制，一类比wal就唤出了VersionSet。 从某个具体的CF视角看，它的每次SST变更就会产生一个VersionEdit，一群VersionE">
+    <meta name="description" content="1 什么是Version配合manifest中的内容看更直观 RocksDB源码-0x08-MANIFEST文件  RocksDB两手抓，一手抓没持久化的数据在内存，一手抓持久化的数据在SST，回放内存数据靠wal，溯源数据在SST的分布情况也需要一个机制，一类比wal就唤出了VersionSet。 从某个具体的CF视角看，它的每次SST变更就会产生一个VersionEdit，一群VersionE">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RocksDB源码-0x0C-Version">
 <meta property="og:url" content="https://bannirui.github.io/2026/02/03/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0C-Version/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="1 什么是VersionRocksDB源码-0x08-MANIFEST文件 配合manifest中的内容看更直观  RocksDB两手抓，一手抓没持久化的数据在内存，一手抓持久化的数据在SST，回放内存数据靠wal，溯源数据在SST的分布情况也需要一个机制，一类比wal就唤出了VersionSet。 从某个具体的CF视角看，它的每次SST变更就会产生一个VersionEdit，一群VersionE">
+<meta property="og:description" content="1 什么是Version配合manifest中的内容看更直观 RocksDB源码-0x08-MANIFEST文件  RocksDB两手抓，一手抓没持久化的数据在内存，一手抓持久化的数据在SST，回放内存数据靠wal，溯源数据在SST的分布情况也需要一个机制，一类比wal就唤出了VersionSet。 从某个具体的CF视角看，它的每次SST变更就会产生一个VersionEdit，一群VersionE">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2026/02/03/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0C-Version/1770100102.png">
 <meta property="article:published_time" content="2026-02-03T05:22:14.000Z">
-<meta property="article:modified_time" content="2026-02-04T01:49:24.974Z">
+<meta property="article:modified_time" content="2026-02-04T06:33:40.476Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2026/02/03/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0C-Version/1770100102.png">
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          543 字
+          1.4k 字
         
       </span>
     
@@ -260,7 +260,7 @@
         
         
         
-          5 分钟
+          12 分钟
         
       </span>
     
@@ -319,7 +319,7 @@
         aria-expanded="true"
       >
         RocksDB源码
-        <span class="list-group-count">(15)</span>
+        <span class="list-group-count">(16)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -466,6 +466,15 @@
         </a>
       
     
+      
+      
+        <a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0F-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" title="RocksDB源码-0x0F-日志记录"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">RocksDB源码-0x0F-日志记录</span>
+        </a>
+      
+    
   </div>
 
         
@@ -489,8 +498,7 @@
             
               <div class="markdown-body">
                 
-                <h2 id="1-什么是Version"><a href="#1-什么是Version" class="headerlink" title="1 什么是Version"></a>1 什么是Version</h2><a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x08-MANIFEST%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x08-MANIFEST文件">RocksDB源码-0x08-MANIFEST文件</a> 配合manifest中的内容看更直观
-
+                <h2 id="1-什么是Version"><a href="#1-什么是Version" class="headerlink" title="1 什么是Version"></a>1 什么是Version</h2><p>配合manifest中的内容看更直观 <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x08-MANIFEST%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x08-MANIFEST文件">RocksDB源码-0x08-MANIFEST文件</a> </p>
 <p>RocksDB两手抓，一手抓没持久化的数据在内存，一手抓持久化的数据在SST，回放内存数据靠wal，溯源数据在SST的分布情况也需要一个机制，一类比wal就唤出了VersionSet。</p>
 <p>从某个具体的CF视角看，它的每次SST变更就会产生一个VersionEdit，一群VersionEdit组成的概念就是这个CF的Version。再把视角扩大到所有CF，就形成了VersionSet。</p>
 <p>通过VersionSet，RocksDB就能拿着key定位到这个key在哪个sst文件里面。</p>
@@ -516,7 +524,21 @@
 <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x07-CURRENT%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x07-CURRENT文件">RocksDB源码-0x07-CURRENT文件</a>
 <a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x08-MANIFEST%E6%96%87%E4%BB%B6/" title="RocksDB源码-0x08-MANIFEST文件">RocksDB源码-0x08-MANIFEST文件</a>
 
-<h3 id="4-2"><a href="#4-2" class="headerlink" title="4.2"></a>4.2</h3><h3 id="4-3"><a href="#4-3" class="headerlink" title="4.3"></a>4.3</h3><h3 id="4-4"><a href="#4-4" class="headerlink" title="4.4"></a>4.4</h3>
+<h3 id="4-2-读manifest文件"><a href="#4-2-读manifest文件" class="headerlink" title="4.2 读manifest文件"></a>4.2 读manifest文件</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 顺序读取整个manifest文件 回放所有的VersionEdit 生成当前的version 至此RocksDB知道了自己有哪些sst 这些sst在第几层 key range是什么</span><br>handler.<span class="hljs-built_in">Iterate</span>(reader, &amp;log_read_status);<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-2-1-读取日志记录"><a href="#4-2-1-读取日志记录" class="headerlink" title="4.2.1 读取日志记录"></a>4.2.1 读取日志记录</h4><p>对于manifest，RocksDB把它和wal一样对待，都抽象成日志，所以读的时候单位是一条条日志记录而不是简单的一行一行</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">reader.<span class="hljs-built_in">ReadRecord</span>(&amp;record, &amp;scratch)<br></code></pre></td></tr></table></figure>
+
+<a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0F-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" title="RocksDB源码-0x0F-日志记录">RocksDB源码-0x0F-日志记录</a>里面有详细的解读
+
+<h3 id="4-3-反序列化"><a href="#4-3-反序列化" class="headerlink" title="4.3 反序列化"></a>4.3 反序列化</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 从manifest中拿到的一个个日志记录 拿到的是二进制 反序列出来得到对应的VersionEdit</span><br>s = edit.<span class="hljs-built_in">DecodeFrom</span>(record);<br></code></pre></td></tr></table></figure>
+
+<p>序列化&#x2F;反序列化是协议设计的选择和方案实现，在<a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0D-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1TLV/" title="RocksDB源码-0x0D-协议设计TLV">RocksDB源码-0x0D-协议设计TLV</a>里面有全面的介绍和RocksDB的手搓TLV的解析</p>
+<h3 id="4-4-VersionEdit回放到VersionSet"><a href="#4-4-VersionEdit回放到VersionSet" class="headerlink" title="4.4 VersionEdit回放到VersionSet"></a>4.4 VersionEdit回放到VersionSet</h3><p>上面反序列化拿到了VersionEdit</p>
+<h4 id="4-4-1-怎么还有事务的事情"><a href="#4-4-1-怎么还有事务的事情" class="headerlink" title="4.4.1 怎么还有事务的事情"></a>4.4.1 怎么还有事务的事情</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 一个VersionSet可能是单独的 也可能是属于一个事务组的</span><br><span class="hljs-comment">// 单独的好办直接回放到VersionSet就行</span><br><span class="hljs-comment">// 属于事务组的就要保证要么全部成功要么全部不要</span><br><span class="hljs-keyword">if</span> (edit.<span class="hljs-built_in">IsInAtomicGroup</span>()) &#123;<br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * 首先理解为什么VersionEdit会有事务概念</span><br><span class="hljs-comment">   * 举个例子 现在发生一次sst的compaction</span><br><span class="hljs-comment">   * 要把L1层的100.sst和L1层的101.sst合并成L2层的200.sst</span><br><span class="hljs-comment">   * 在磁盘上的步骤是</span><br><span class="hljs-comment">   * 1 写入200.sst</span><br><span class="hljs-comment">   * 2 删除100.sst</span><br><span class="hljs-comment">   * 3 删除101.sst</span><br><span class="hljs-comment">   * 在manifest对应的应该就是3个VersionEdit</span><br><span class="hljs-comment">   * 1 DeleteFile(L1, 100)</span><br><span class="hljs-comment">   * 2 DeleteFile(L1, 101)</span><br><span class="hljs-comment">   * 3 AddFile(L2, 200)</span><br><span class="hljs-comment">   * 这3个VersionEdit就必须得是在一个事务里面保证在恢复VersionSet的时候是原子的</span><br><span class="hljs-comment">   * 为什么呢 如果在2之后3之前宕机了 然后在重启恢复VersionSet的时候没以讲究事务语义就这么一条条VersionEdit进行恢复 最终重启后VersionSet里面</span><br><span class="hljs-comment">   * 1 DeleteFile(L1, 100)=&gt;L1的100.sst被删除了看不到了</span><br><span class="hljs-comment">   * 2 DeleteFile(L1, 101)=&gt;L1的101.sst被删除了看不到了</span><br><span class="hljs-comment">   * 3 AddFile(L2, 200)=&gt;crash导致没有被恢复到VersionSet VersionSet自然看不到L2的sst.200</span><br><span class="hljs-comment">   * 所以这就必须要求事务的原子性</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-keyword">if</span> (read_buffer_.<span class="hljs-built_in">IsFull</span>()) &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 一个事务组的VersionEdit凑齐了才一起回放到VersionSet里面</span><br><span class="hljs-comment">     * 怎么保证事务呢 下面代码可以分成3个阶段 最核心的就for循环</span><br><span class="hljs-comment">     * 1 OnAtomicGroupReplayBegin</span><br><span class="hljs-comment">     * 2 for循环</span><br><span class="hljs-comment">     * 3 OnAtomicGroupReplayEnd</span><br><span class="hljs-comment">     * 这是标准的事务处理范式 但是那是针对恢复文件 需要在文件内容的开头跟结尾打上标识表示一个事务的完整性</span><br><span class="hljs-comment">     * 但是现在是把VersionEdit恢复到VersionSet VersionSet是在内存里面 所以事情就变得简单了</span><br><span class="hljs-comment">     * 在for循环逐个回放VersionEdit 只要但凡一个VersionEdit有问题就最终会导致s.ok()不成立</span><br><span class="hljs-comment">     * 最终也会带着外层的while循环跳出进而当前函数返回false 调用方也会感知到恢复VersionSet这件事实 重启和Open失败</span><br><span class="hljs-comment">     * 这个设计在工程上我觉得很合理</span><br><span class="hljs-comment">     * 比如有3个VersionEdit在事务 回放到第2个的时候有问题了 也就是说内存操作出问题了 前面已经回放到内存上的那1个我自然不用管了 因为最终整个Open或者重启都会失败 整个进程都没的了</span><br><span class="hljs-comment">     */</span><br>    s = <span class="hljs-built_in">OnAtomicGroupReplayBegin</span>();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; s.<span class="hljs-built_in">ok</span>() &amp;&amp; i &lt; read_buffer_.<span class="hljs-built_in">replay_buffer</span>().<span class="hljs-built_in">size</span>();<br>         i++) &#123;<br>      <span class="hljs-keyword">auto</span>&amp; e = read_buffer_.<span class="hljs-built_in">replay_buffer</span>()[i];<br>      s = <span class="hljs-built_in">ApplyVersionEdit</span>(e, &amp;cfd);<br>      <span class="hljs-keyword">if</span> (s.<span class="hljs-built_in">ok</span>()) &#123;<br>        recovered_edits++;<br>      &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (s.<span class="hljs-built_in">ok</span>()) &#123;<br>      read_buffer_.<span class="hljs-built_in">Clear</span>();<br>      s = <span class="hljs-built_in">OnAtomicGroupReplayEnd</span>();<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-4-2-VersionEdit真正的核心"><a href="#4-4-2-VersionEdit真正的核心" class="headerlink" title="4.4.2 VersionEdit真正的核心"></a>4.4.2 VersionEdit真正的核心</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">s = <span class="hljs-built_in">ApplyVersionEdit</span>(edit, &amp;cfd);<br></code></pre></td></tr></table></figure>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
