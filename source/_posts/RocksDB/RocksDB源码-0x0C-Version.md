@@ -73,3 +73,21 @@ Version的数据结构是双链表
 ```
 
 ## 4 启动的时候从manifest构建恢复VersionSet
+
+VersionSet中有个函数Recover负责从manifest文件中重建VersionSet
+
+### 4.1 从CURRENT里面看看MANIFEST是哪个
+
+```cpp
+  // 从CURRENT文件中拿到当前的manifest文件名
+  std::string manifest_path;
+  Status s = GetCurrentManifestPath(dbname_, fs_.get(), is_retry,
+                                    &manifest_path, &manifest_file_number_);
+```
+
+{%post_link RocksDB/RocksDB源码-0x07-CURRENT文件%}
+{%post_link RocksDB/RocksDB源码-0x08-MANIFEST文件%}
+
+### 4.2
+### 4.3
+### 4.4
