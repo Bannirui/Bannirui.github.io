@@ -95,6 +95,11 @@ ls $(brew --prefix rocksdb)/bin
 
 ### 4.1 manifest重建VersionSet
 
+```cpp
+    // 顺序读取整个manifest文件 回放所有的VersionEdit 生成当前的version 至此RocksDB知道了自己有哪些sst 这些sst在第几层 key range是什么
+    handler.Iterate(reader, &log_read_status);
+```
+
 {%post_link RocksDB/RocksDB源码-0x08-MANIFEST文件%}
 
 ### 4.2 wal重建内存数据库
