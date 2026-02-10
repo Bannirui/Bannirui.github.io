@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="wal机制的作用是防crash，在crash发生后可以进行恢复 1234567891011121314➜  rocksdb_ctest_put tree.├── CURRENT├── IDENTITY├── LOCK├── LOG├── MANIFEST-000005├── OPTIONS-000007├── sst│   ├── flash_path│   │   └── 000009.sst│">
+    <meta name="description" content="1 wal机制的作用wal机制的作用是防crash，在crash发生后可以进行恢复。这个机制几乎在各个数据库都能见到。 2 wal文件目录和文件1234567891011121314➜  rocksdb_ctest_put tree.├── CURRENT├── IDENTITY├── LOCK├── LOG├── MANIFEST-000005├── OPTIONS-000007├── sst│">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RocksDB源码-0x05-WAL">
 <meta property="og:url" content="https://bannirui.github.io/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x05-WAL/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="wal机制的作用是防crash，在crash发生后可以进行恢复 1234567891011121314➜  rocksdb_ctest_put tree.├── CURRENT├── IDENTITY├── LOCK├── LOG├── MANIFEST-000005├── OPTIONS-000007├── sst│   ├── flash_path│   │   └── 000009.sst│">
+<meta property="og:description" content="1 wal机制的作用wal机制的作用是防crash，在crash发生后可以进行恢复。这个机制几乎在各个数据库都能见到。 2 wal文件目录和文件1234567891011121314➜  rocksdb_ctest_put tree.├── CURRENT├── IDENTITY├── LOCK├── LOG├── MANIFEST-000005├── OPTIONS-000007├── sst│">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-01-30T06:28:19.000Z">
-<meta property="article:modified_time" content="2026-01-30T08:37:06.991Z">
+<meta property="article:modified_time" content="2026-02-10T07:41:11.922Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          463 字
+          1.2k 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          4 分钟
+          10 分钟
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         RocksDB源码
-        <span class="list-group-count">(16)</span>
+        <span class="list-group-count">(17)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -473,6 +473,15 @@
         </a>
       
     
+      
+      
+        <a href="/2026/02/10/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x10-wal%E7%9A%84WriteBatch%E5%8D%8F%E8%AE%AE/" title="RocksDB源码-0x10-wal的WriteBatch协议"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">RocksDB源码-0x10-wal的WriteBatch协议</span>
+        </a>
+      
+    
   </div>
 
         
@@ -496,14 +505,14 @@
             
               <div class="markdown-body">
                 
-                <p>wal机制的作用是防crash，在crash发生后可以进行恢复</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs txt">➜  rocksdb_ctest_put tree<br>.<br>├── CURRENT<br>├── IDENTITY<br>├── LOCK<br>├── LOG<br>├── MANIFEST-000005<br>├── OPTIONS-000007<br>├── sst<br>│   ├── flash_path<br>│   │   └── 000009.sst<br>│   └── hard_drive<br>└── wal<br>    └── 000008.log<br></code></pre></td></tr></table></figure>
+                <h2 id="1-wal机制的作用"><a href="#1-wal机制的作用" class="headerlink" title="1 wal机制的作用"></a>1 wal机制的作用</h2><p>wal机制的作用是防crash，在crash发生后可以进行恢复。这个机制几乎在各个数据库都能见到。</p>
+<h2 id="2-wal文件目录和文件"><a href="#2-wal文件目录和文件" class="headerlink" title="2 wal文件目录和文件"></a>2 wal文件目录和文件</h2><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs txt">➜  rocksdb_ctest_put tree<br>.<br>├── CURRENT<br>├── IDENTITY<br>├── LOCK<br>├── LOG<br>├── MANIFEST-000005<br>├── OPTIONS-000007<br>├── sst<br>│   ├── flash_path<br>│   │   └── 000009.sst<br>│   └── hard_drive<br>└── wal<br>    └── 000008.log<br></code></pre></td></tr></table></figure>
 
 <p>wal目录下放的是当前正在使用或者刚切换下来的wal</p>
 <p>指定了wal目录就用指定的，没有指定就用db顶层目录放wal日志文件</p>
 <p>wal下archive目录里面放着的是已经不再写但是暂时还不能删除的wal</p>
-<p><code>rocksdb_ldb dump_wal --walfile=wal/000004.log --header --print_value</code>命令dump文件</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs sh">➜  rocksdb_ctest_wal rocksdb_ldb dump_wal --walfile=wal/000004.<span class="hljs-built_in">log</span> --header --print_value<br>Sequence,Count,ByteSize,Physical Offset,Key(s) : value<br>1,1,27,0,PUT(0) : 0x68656C6C6F30 : 0x776F726C6430<br>2,1,27,34,PUT(0) : 0x68656C6C6F31 : 0x776F726C6431<br>3,1,27,68,PUT(0) : 0x68656C6C6F32 : 0x776F726C6432<br>4,1,27,102,PUT(0) : 0x68656C6C6F33 : 0x776F726C6433<br>5,1,27,136,PUT(0) : 0x68656C6C6F34 : 0x776F726C6434<br>6,1,27,170,PUT(0) : 0x68656C6C6F35 : 0x776F726C6435<br>7,1,27,204,PUT(0) : 0x68656C6C6F36 : 0x776F726C6436<br>8,1,27,238,PUT(0) : 0x68656C6C6F37 : 0x776F726C6437<br>9,1,27,272,PUT(0) : 0x68656C6C6F38 : 0x776F726C6438<br>10,1,27,306,PUT(0) : 0x68656C6C6F39 : 0x776F726C6439<br>(Column family <span class="hljs-built_in">id</span>: [0] contained <span class="hljs-keyword">in</span> WAL are not opened <span class="hljs-keyword">in</span> DB. Applied default hex formatting <span class="hljs-keyword">for</span> user key. Specify --db=&lt;db_path&gt; to open DB <span class="hljs-keyword">for</span> better user key formatting <span class="hljs-keyword">if</span> it contains timestamp.)<br></code></pre></td></tr></table></figure>
+<h2 id="3-wal文件格式"><a href="#3-wal文件格式" class="headerlink" title="3 wal文件格式"></a>3 wal文件格式</h2><p><code>rocksdb_ldb dump_wal --walfile=wal/000004.log --header --print_value</code>命令dump文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs sh">➜  rocksdb_ctest_wal rocksdb_ldb dump_wal --walfile=wal/000004.<span class="hljs-built_in">log</span> --header --print_value<br>Sequence,Count,ByteSize,Physical Offset,Key(s) : value<br>1,       1,    27,      0,     PUT(0) : 0x68656C6C6F30 : 0x776F726C6430<br>2,       1,    27,      34,    PUT(0) : 0x68656C6C6F31 : 0x776F726C6431<br>3,       1,    27,      68,    PUT(0) : 0x68656C6C6F32 : 0x776F726C6432<br>4,       1,    27,      102,   PUT(0) : 0x68656C6C6F33 : 0x776F726C6433<br>5,       1,    27,      136,   PUT(0) : 0x68656C6C6F34 : 0x776F726C6434<br>6,       1,    27,      170,   PUT(0) : 0x68656C6C6F35 : 0x776F726C6435<br>7,       1,    27,      204,   PUT(0) : 0x68656C6C6F36 : 0x776F726C6436<br>8,       1,    27,      238,   PUT(0) : 0x68656C6C6F37 : 0x776F726C6437<br>9,       1,    27,      272,   PUT(0) : 0x68656C6C6F38 : 0x776F726C6438<br>10,      1,    27,      306,   PUT(0) : 0x68656C6C6F39 : 0x776F726C6439<br>(Column family <span class="hljs-built_in">id</span>: [0] contained <span class="hljs-keyword">in</span> WAL are not opened <span class="hljs-keyword">in</span> DB. Applied default hex formatting <span class="hljs-keyword">for</span> user key. Specify --db=&lt;db_path&gt; to open DB <span class="hljs-keyword">for</span> better user key formatting <span class="hljs-keyword">if</span> it contains timestamp.)<br></code></pre></td></tr></table></figure>
 
 <p>这几列内容分别表示</p>
 <ul>
@@ -514,6 +523,17 @@
 <li>第5列 PUT(0): PUT是操作动作，括号里的0表示Column Family ID。没有创建多列族，数据默认都写在ID为0的default列族里。</li>
 <li>第6列 key的16进制</li>
 <li>第7列 value的16进制</li>
+</ul>
+<h2 id="4-wal的过程"><a href="#4-wal的过程" class="headerlink" title="4 wal的过程"></a>4 wal的过程</h2><h3 id="4-1-wal回放前置准备"><a href="#4-1-wal回放前置准备" class="headerlink" title="4.1 wal回放前置准备"></a>4.1 wal回放前置准备</h3><h4 id="4-1-1-准备全量CF的VersionEdit容器"><a href="#4-1-1-准备全量CF的VersionEdit容器" class="headerlink" title="4.1.1 准备全量CF的VersionEdit容器"></a>4.1.1 准备全量CF的VersionEdit容器</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> cfd : *versions_-&gt;<span class="hljs-built_in">GetColumnFamilySet</span>()) &#123;<br>  <span class="hljs-comment">// 给每个CF都准备一个VersionEdit壳子 如果在wal过程中发生了sst变更就更新这个VersionEdit 最终wal结束 这个VersionEdit就是wal过程中的增量</span><br>  VersionEdit edit;<br>  edit.<span class="hljs-built_in">SetColumnFamily</span>(cfd-&gt;<span class="hljs-built_in">GetID</span>());<br>  version_edits-&gt;<span class="hljs-built_in">insert</span>(&#123;cfd-&gt;<span class="hljs-built_in">GetID</span>(), edit&#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-1-2-wal日志最小的文件编号要求"><a href="#4-1-2-wal日志最小的文件编号要求" class="headerlink" title="4.1.2 wal日志最小的文件编号要求"></a>4.1.2 wal日志最小的文件编号要求</h4><h5 id="4-1-2-1-系统级的wal要求下限"><a href="#4-1-2-1-系统级的wal要求下限" class="headerlink" title="4.1.2.1 系统级的wal要求下限"></a>4.1.2.1 系统级的wal要求下限</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 这是系统级的wal要求下限 保证memory table恢复一致+事务完整</span><br><span class="hljs-comment"> * wal的编号要求分系统级要求和数据安全级要求两个</span><br><span class="hljs-comment"> * 1 系统级要求比数据安全级的高 也就是系统级的wal编号小于数据安全级别的wal编号</span><br><span class="hljs-comment"> * 2 数据安全级的wal编号只能用来做memory table恢复一致性</span><br><span class="hljs-comment"> * 3 系统级别的wal编号还可以用不保证事务语义保证</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * 1 如果wal日志删除早了 会导致数据永久丢失</span><br><span class="hljs-comment"> * 2 如果wal日志删除晚了 会导致数据冗余在磁盘上浪费磁盘空间</span><br><span class="hljs-comment"> * 本质是支撑着未flush数据的最早wal</span><br><span class="hljs-comment"> * 只要一个wal对应的数据已经flush成sst并且被Version管理了那么这个wal就不用再参与到恢复</span><br><span class="hljs-comment"> * @return 系统crash后 为了恢复到一致状态+事务状态完整 必须保留的最早的wal日志</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">uint64_t</span> <span class="hljs-title">DBImpl::MinLogNumberToKeep</span><span class="hljs-params">()</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> versions_-&gt;<span class="hljs-built_in">min_log_number_to_keep</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="4-1-2-2-数据安全级的wal要求下限"><a href="#4-1-2-2-数据安全级的wal要求下限" class="headerlink" title="4.1.2.2 数据安全级的wal要求下限"></a>4.1.2.2 数据安全级的wal要求下限</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * wal恢复memory table的要求下限 这是数据安全级别的要求 能保证的是恢复memory table的一致性 这个要求是宽泛的</span><br><span class="hljs-comment"> * 如果是事务的两阶段提交 那么就要更严格的系统级的要求下限 保证memory table恢复一致+事务完整</span><br><span class="hljs-comment"> * </span><br><span class="hljs-comment"> * 为什么这个地方要讨论两阶段提交</span><br><span class="hljs-comment"> * wal的唯一用途就是恢复memory table 也就意味着一旦memory table里面的数据flush到了sst文件 wal文件的使命就完成了可以删除了</span><br><span class="hljs-comment"> * 两阶段提交的时候</span><br><span class="hljs-comment"> * 1 prepare阶段写入了wal</span><br><span class="hljs-comment"> * 2 此时还没完成commit所以数据对外是不可见的</span><br><span class="hljs-comment"> * 3 commit可能在未来的wal中</span><br><span class="hljs-comment"> * 所以如果只从memory table有没有flush到sst来判定wal可不可以删除 会导致prepare了还没commit的数据丢失 导致事务语义被破坏</span><br><span class="hljs-comment"> * 所以在两阶段提交模式下 wal的用途不单单是保证memory table能恢复一致 还用于事务状态机的恢复</span><br><span class="hljs-comment"> * 所以在两阶段下wal日志要更严格</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">uint64_t</span> <span class="hljs-title">MinLogNumberWithUnflushedData</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">PreComputeMinLogNumberWithUnflushedData</span>(<span class="hljs-literal">nullptr</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-WriteBatch逻辑协议"><a href="#4-2-WriteBatch逻辑协议" class="headerlink" title="4.2 WriteBatch逻辑协议"></a>4.2 WriteBatch逻辑协议</h3><p>一旦从wal文件里面读到内容，就涉及到两层协议的解析</p>
+<ul>
+<li>1 物理层协议 这个就是<a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0F-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" title="RocksDB源码-0x0F-日志记录">RocksDB源码-0x0F-日志记录</a></li>
+<li>2 逻辑层协议 <a href="/2026/02/10/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x10-wal%E7%9A%84WriteBatch%E5%8D%8F%E8%AE%AE/" title="RocksDB源码-0x10-wal的WriteBatch协议">RocksDB源码-0x10-wal的WriteBatch协议</a></li>
 </ul>
 
 <div id="gitalk-container"></div>
