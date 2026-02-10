@@ -25,9 +25,16 @@ categories: RocksDB源码
 
 其次在操作系统层面chunk是包含多个block大小的软件概念。
 
-RocksDB每次读文件的Block大小是32KB，RocksDB划分成多个fragment，每个fragment就是一个读写协议，包含协议头和协议体。每个record由1个或多个fragment组成。
+RocksDB每次读文件的Block大小是32KB，RocksDB划分成多个fragment，每个fragment就是一个读写协议，包含协议头和协议体，这个协议是物理协议。
 
-![](./RocksDB源码-0x0F-日志记录/1770280025.png)
+每个record由1个或多个fragment组成，record就是fragment物理协议体组成的，而record就是逻辑协议，当然也会有对应的协议设计，可能有协议头，也可能没有协议头。
+
+比如
+
+- VersionEdit协议就没有协议头，record直接就是VersionEdit
+- WriteBatch协议有协议头，record包含12字节的协议头
+
+![](./RocksDB源码-0x0F-日志记录/1770693110.png)
 
 ## 2 读
 
@@ -84,7 +91,7 @@ bool Reader::ReadMore(size_t* drop_size, uint8_t* error) {
 }
 ```
 
-### 2.2 从Block里面处理fragment
+### 2.2 从Block里面处理fragment物理协议
 
 ```cpp
 /**
@@ -98,7 +105,7 @@ uint8_t Reader::ReadPhysicalRecord(Slice* result, size_t* drop_size,
                                    uint64_t* fragment_checksum)
 ```
 
-### 2.3 record
+### 2.3 record逻辑协议
 
 #### 2.3.1 record就是一个fragment
 
