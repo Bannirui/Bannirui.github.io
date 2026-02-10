@@ -124,13 +124,9 @@ uint64_t DBImpl::MinLogNumberToKeep() {
   }
 ```
 
-### 4.2
+### 4.2 WriteBatch逻辑协议
 
-1 先从wal文件里面读内容然后解析物理协议拿到物理协议休
+一旦从wal文件里面读到内容，就涉及到两层协议的解析
 
-```cpp
-    // 从wal日志读 读取一个record出来 就是WriteBatch协议
-    bool read_record = reader->ReadRecord(
-        &record, &scratch, immutable_db_options_.wal_recovery_mode,
-        &record_checksum);
-```
+- 1 物理层协议 这个就是{%post_link RocksDB/RocksDB源码-0x0F-日志记录%}
+- 2 逻辑层协议 {%post_link RocksDB/RocksDB源码-0x10-wal的WriteBatch协议%}
