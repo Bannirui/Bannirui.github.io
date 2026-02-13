@@ -62,7 +62,34 @@ Status WriteBatchInternal::SetContents(WriteBatch* b, const Slice& contents) {
   b->rep_.assign(contents.data(), contents.size());
   b->content_flags_.store(ContentFlags::DEFERRED, std::memory_order_relaxed);
   return Status::OK();
-}
 ```
 
+## 4 WriteBatch布局
 
+只要是协议，就会有布局
+
+![](./RocksDB源码-0x10-wal的WriteBatch协议/1770778048.png)
+
+整个布局可以看作两个部分
+
+- 协议头12字节
+  - seq序号 8字节
+  - count 4字节 表示当前WriteBatch记录了几个put操作
+- 协议体 里面放着put的操作 可能1个可能多个 取决于count
+
+每个put record就是标准的TLV协议，为了压缩空间又有两个形态
+
+- 是默认cf tag+key的length+key+value的length+value
+- 不是默认cf tag+cf的id+key的length+key+value的length+value
+
+```cpp
+  // Sequence,Count,ByteSize,Physical Offset,Key(s) : value
+  // 1,       1,    27,      0,     PUT(0) : 0x68656C6C6F30 : 0x776F726C6430
+  // WriteBatch的协议布局
+  // 8字节seq序号+4字节count表示当前WriteBatch有多少个record+1字节的tag+变长整数cf_id+变长整数key的长度+key+变长整数value的长度+value
+  // sequence number是序号 类型是64位整数
+  // count是record记录里面的操作数量 类型是32位整数
+  // 一个WriteBatch也就是wal里面的一个日志记录至少包含这两个数 12字节
+  // 因为wal可能写到一半宕机或者被截断 拿这12字节作为record结构完整性校验的标准
+  static constexpr size_t kHeader = 12;
+```

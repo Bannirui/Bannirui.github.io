@@ -124,9 +124,123 @@ uint64_t DBImpl::MinLogNumberToKeep() {
   }
 ```
 
-### 4.2 WriteBatch逻辑协议
+### 4.2 处理一个wal record
+
+#### 4.2.1 拿到WriteBatch逻辑协议
 
 一旦从wal文件里面读到内容，就涉及到两层协议的解析
 
 - 1 物理层协议 这个就是{%post_link RocksDB/RocksDB源码-0x0F-日志记录%}
 - 2 逻辑层协议 {%post_link RocksDB/RocksDB源码-0x10-wal的WriteBatch协议%}
+
+```cpp
+  // 拿到WriteBatch协议 放在batch_to_use里面
+  process_status = InitializeWriteBatchForLogRecord(
+      record, reader, running_ts_sz, &batch, new_batch, batch_to_use,
+      record_checksum);
+```
+
+#### 4.2.2 跳过协议头
+
+```cpp
+/**
+ * 1个WriteBatch里面可能会有多个put record
+ * 解析里面每个put record
+ */
+Status WriteBatch::Iterate(Handler* handler) const {
+  if (rep_.size() < WriteBatchInternal::kHeader) {
+    return Status::Corruption("malformed WriteBatch (too small)");
+  }
+  // WriteBatch逻辑协议带头 所以要跳过头部 直接跳到put record部分
+  return WriteBatchInternal::Iterate(this, handler, WriteBatchInternal::kHeader,
+                                     rep_.size());
+}
+```
+
+#### 4.2.3 put record的批量处理
+
+```cpp
+// 在WriteBatch协议体里面处理每一个put操作的record 因为可能有多个put record 所以需要套个while
+// todo 在处理一批put record过程中可能出现失败 已经处理过的就不管了 那么怎么保证原子性的 用MVCC机制实现版本可见性保证原子性
+while (((s.ok() && !input.empty()) || UNLIKELY(s.IsTryAgain()))) {
+```
+
+怎么保证原子性和可见性的请见{%post_link RocksDB/RocksDB源码-0x11-MVCC%}
+
+#### 4.2.4 怎么处理每个put record的
+
+##### 4.2.4.1 TLV解码
+
+{%post_link RocksDB/RocksDB源码-0x0D-协议设计TLV%}
+
+所有的逻辑都在这个函数里面
+
+```cpp
+/**
+ * input里面放了1个或多个put record
+ * 单独的put record的流怎么处理的
+ * 协议格式是tag+cf id+key的len+key+value的len+value
+ * 这个函数拿到流的第一个byte解析出来put的类型tag 用默认cf的tag有固定值 识别出来决定在协议里面有没有cf的id编码
+ * 推进协议流拿到所有的出参
+ * 这个函数只负责从协议里面解析内容 不做处理
+ * @param input 入参 WriteBatch逻辑协议体 已经跳过了逻辑协议头 指向的就是1个或多个put record 除了这个其他的都是出参
+ * @param tag put record的类型
+ * @param column_family 出参 cf的id 只有当协议不是默认cf的时候才会解析id 默认cf的id就是0
+ * @param key 出参 键
+ * @param value 出参 值
+ */
+Status ReadRecordFromWriteBatch(Slice* input, char* tag,
+                                uint32_t* column_family, Slice* key,
+                                Slice* value, Slice* blob, Slice* xid,
+                                uint64_t* write_unix_time)
+```
+
+以其中一段为例
+
+```cpp
+  // 拿到协议的首字节 解码出tag 解码后推进丢掉这个字节
+  *tag = (*input)[0];
+  input->remove_prefix(1);
+  // 为了压缩设计 要是默认cf 在协议里面是抠掉cf id编码的 默认给cf是0 根据解码出来的tag看看协议里面有没有cf编码
+  *column_family = 0;  // default
+  switch (*tag) {
+    case kTypeColumnFamilyValue:
+      if (!GetVarint32(input, column_family)) {
+        return Status::Corruption("bad WriteBatch Put");
+      }
+      FALLTHROUGH_INTENDED;
+    // 很巧妙的设计 给默认cf压缩编码 比如
+    // 如果不是默认cf的put操作 那么就会命中第一个case分支先解码出cf的id 因为没有break会继续执行第二个case分支的逻辑一直到break为止 所有会解码出key和value
+    // 如果是默认cf的put操作 那么就会命中第二个case分支 只会解码出key和value 调用方只要给cf_id=0表示默认cf就行了
+    case kTypeValue:
+      if (!GetLengthPrefixedSlice(input, key) ||
+          !GetLengthPrefixedSlice(input, value)) {
+        return Status::Corruption("bad WriteBatch Put");
+      }
+      break;
+```
+
+##### 4.2.4.2 任务派发
+
+怎么往memory table里面写数据会根据不同的put record类型进行分发
+
+```cpp
+    // 2 上面已经解析出来了put record 派发业务处理 真正的处理逻辑在ProtectionInfoUpdater里面
+    switch (tag) {
+      case kTypeColumnFamilyValue:
+      case kTypeValue:
+        assert(wb->content_flags_.load(std::memory_order_relaxed) &
+               (ContentFlags::DEFERRED | ContentFlags::HAS_PUT));
+        s = handler->PutCF(column_family, key, value);
+        if (LIKELY(s.ok())) {
+          empty_batch = false;
+          found++;
+        }
+        break;
+```
+
+真正的处理逻辑实现在{%post_link RocksDB/ RocksDB源码-0x12-WAL的PutRecord到MemoryTable%}
+
+#### 4.2.5
+
+### 4.3 
