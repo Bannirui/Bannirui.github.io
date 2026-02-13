@@ -73,6 +73,31 @@ WriteBatch有且仅有一个成员
   static constexpr size_t kHeader = 12;
 ```
 
+### 3.1 协议头count字段
+
+#### 3.1.1 解码
+
+```cpp
+// 看看现在WriteBatch协议里面有几个put record
+uint32_t WriteBatchInternal::Count(const WriteBatch* b) {
+  // 跳过协议头前8个字节 解码出32位固定长度整数
+  return DecodeFixed32(b->rep_.data() + 8);
+}
+```
+
+#### 3.1.2 编码
+
+```cpp
+/**
+ * 在WriteBatch协议头的count上编码
+ * @param n WriteBatch里面有几个put record
+ */
+void WriteBatchInternal::SetCount(WriteBatch* b, uint32_t n) {
+  // 协议头前8个字节是seq序号 紧跟着4字节是32位固定长度整数
+  EncodeFixed32(&b->rep_[8], n);
+}
+```
+
 ## 4 构建WriteBatch
 
 ### 4.1 从wal的record构建

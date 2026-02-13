@@ -108,7 +108,7 @@ add_custom_target(hexo_deploy
 # 博客目录
 set(POST_DIR "RocksDB")
 # 博客文章名
-set(POST_NAME "RocksDB源码-0x15-读流程")
+set(POST_NAME "RocksDB源码-0x16-WriteThread串行执行器")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md
