@@ -27,7 +27,7 @@
 <meta property="og:description" content="1 wal机制的作用wal机制的作用是防crash，在crash发生后可以进行恢复。这个机制几乎在各个数据库都能见到。 2 wal文件目录和文件1234567891011121314➜  rocksdb_ctest_put tree.├── CURRENT├── IDENTITY├── LOCK├── LOG├── MANIFEST-000005├── OPTIONS-000007├── sst│">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-01-30T06:28:19.000Z">
-<meta property="article:modified_time" content="2026-02-10T07:41:11.922Z">
+<meta property="article:modified_time" content="2026-02-13T02:06:21.029Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.2k 字
+          2k 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          10 分钟
+          17 分钟
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         RocksDB源码
-        <span class="list-group-count">(17)</span>
+        <span class="list-group-count">(19)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -482,6 +482,24 @@
         </a>
       
     
+      
+      
+        <a href="/2026/02/11/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x11-MVCC/" title="RocksDB源码-0x11-MVCC"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">RocksDB源码-0x11-MVCC</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x12-WAL%E7%9A%84PutRecord%E5%88%B0MemoryTable/" title="RocksDB源码-0x12-WAL的PutRecord到MemoryTable"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">RocksDB源码-0x12-WAL的PutRecord到MemoryTable</span>
+        </a>
+      
+    
   </div>
 
         
@@ -530,12 +548,31 @@
 
 <h5 id="4-1-2-2-数据安全级的wal要求下限"><a href="#4-1-2-2-数据安全级的wal要求下限" class="headerlink" title="4.1.2.2 数据安全级的wal要求下限"></a>4.1.2.2 数据安全级的wal要求下限</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * wal恢复memory table的要求下限 这是数据安全级别的要求 能保证的是恢复memory table的一致性 这个要求是宽泛的</span><br><span class="hljs-comment"> * 如果是事务的两阶段提交 那么就要更严格的系统级的要求下限 保证memory table恢复一致+事务完整</span><br><span class="hljs-comment"> * </span><br><span class="hljs-comment"> * 为什么这个地方要讨论两阶段提交</span><br><span class="hljs-comment"> * wal的唯一用途就是恢复memory table 也就意味着一旦memory table里面的数据flush到了sst文件 wal文件的使命就完成了可以删除了</span><br><span class="hljs-comment"> * 两阶段提交的时候</span><br><span class="hljs-comment"> * 1 prepare阶段写入了wal</span><br><span class="hljs-comment"> * 2 此时还没完成commit所以数据对外是不可见的</span><br><span class="hljs-comment"> * 3 commit可能在未来的wal中</span><br><span class="hljs-comment"> * 所以如果只从memory table有没有flush到sst来判定wal可不可以删除 会导致prepare了还没commit的数据丢失 导致事务语义被破坏</span><br><span class="hljs-comment"> * 所以在两阶段提交模式下 wal的用途不单单是保证memory table能恢复一致 还用于事务状态机的恢复</span><br><span class="hljs-comment"> * 所以在两阶段下wal日志要更严格</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">uint64_t</span> <span class="hljs-title">MinLogNumberWithUnflushedData</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">PreComputeMinLogNumberWithUnflushedData</span>(<span class="hljs-literal">nullptr</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="4-2-WriteBatch逻辑协议"><a href="#4-2-WriteBatch逻辑协议" class="headerlink" title="4.2 WriteBatch逻辑协议"></a>4.2 WriteBatch逻辑协议</h3><p>一旦从wal文件里面读到内容，就涉及到两层协议的解析</p>
+<h3 id="4-2-处理一个wal-record"><a href="#4-2-处理一个wal-record" class="headerlink" title="4.2 处理一个wal record"></a>4.2 处理一个wal record</h3><h4 id="4-2-1-拿到WriteBatch逻辑协议"><a href="#4-2-1-拿到WriteBatch逻辑协议" class="headerlink" title="4.2.1 拿到WriteBatch逻辑协议"></a>4.2.1 拿到WriteBatch逻辑协议</h4><p>一旦从wal文件里面读到内容，就涉及到两层协议的解析</p>
 <ul>
 <li>1 物理层协议 这个就是<a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0F-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" title="RocksDB源码-0x0F-日志记录">RocksDB源码-0x0F-日志记录</a></li>
 <li>2 逻辑层协议 <a href="/2026/02/10/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x10-wal%E7%9A%84WriteBatch%E5%8D%8F%E8%AE%AE/" title="RocksDB源码-0x10-wal的WriteBatch协议">RocksDB源码-0x10-wal的WriteBatch协议</a></li>
 </ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 拿到WriteBatch协议 放在batch_to_use里面</span><br>process_status = <span class="hljs-built_in">InitializeWriteBatchForLogRecord</span>(<br>    record, reader, running_ts_sz, &amp;batch, new_batch, batch_to_use,<br>    record_checksum);<br></code></pre></td></tr></table></figure>
 
+<h4 id="4-2-2-跳过协议头"><a href="#4-2-2-跳过协议头" class="headerlink" title="4.2.2 跳过协议头"></a>4.2.2 跳过协议头</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 1个WriteBatch里面可能会有多个put record</span><br><span class="hljs-comment"> * 解析里面每个put record</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function">Status <span class="hljs-title">WriteBatch::Iterate</span><span class="hljs-params">(Handler* handler)</span> <span class="hljs-type">const</span> </span>&#123;<br>  <span class="hljs-keyword">if</span> (rep_.<span class="hljs-built_in">size</span>() &lt; WriteBatchInternal::kHeader) &#123;<br>    <span class="hljs-keyword">return</span> Status::<span class="hljs-built_in">Corruption</span>(<span class="hljs-string">&quot;malformed WriteBatch (too small)&quot;</span>);<br>  &#125;<br>  <span class="hljs-comment">// WriteBatch逻辑协议带头 所以要跳过头部 直接跳到put record部分</span><br>  <span class="hljs-keyword">return</span> WriteBatchInternal::<span class="hljs-built_in">Iterate</span>(<span class="hljs-keyword">this</span>, handler, WriteBatchInternal::kHeader,<br>                                     rep_.<span class="hljs-built_in">size</span>());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="4-2-3-put-record的批量处理"><a href="#4-2-3-put-record的批量处理" class="headerlink" title="4.2.3 put record的批量处理"></a>4.2.3 put record的批量处理</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 在WriteBatch协议体里面处理每一个put操作的record 因为可能有多个put record 所以需要套个while</span><br><span class="hljs-comment">// todo 在处理一批put record过程中可能出现失败 已经处理过的就不管了 那么怎么保证原子性的 用MVCC机制实现版本可见性保证原子性</span><br><span class="hljs-keyword">while</span> (((s.<span class="hljs-built_in">ok</span>() &amp;&amp; !input.<span class="hljs-built_in">empty</span>()) || <span class="hljs-built_in">UNLIKELY</span>(s.<span class="hljs-built_in">IsTryAgain</span>()))) &#123;<br></code></pre></td></tr></table></figure>
+
+<p>怎么保证原子性和可见性的请见<a href="/2026/02/11/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x11-MVCC/" title="RocksDB源码-0x11-MVCC">RocksDB源码-0x11-MVCC</a></p>
+<h4 id="4-2-4-怎么处理每个put-record的"><a href="#4-2-4-怎么处理每个put-record的" class="headerlink" title="4.2.4 怎么处理每个put record的"></a>4.2.4 怎么处理每个put record的</h4><h5 id="4-2-4-1-TLV解码"><a href="#4-2-4-1-TLV解码" class="headerlink" title="4.2.4.1 TLV解码"></a>4.2.4.1 TLV解码</h5><a href="/2026/02/04/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0D-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1TLV/" title="RocksDB源码-0x0D-协议设计TLV">RocksDB源码-0x0D-协议设计TLV</a>
+
+<p>所有的逻辑都在这个函数里面</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * input里面放了1个或多个put record</span><br><span class="hljs-comment"> * 单独的put record的流怎么处理的</span><br><span class="hljs-comment"> * 协议格式是tag+cf id+key的len+key+value的len+value</span><br><span class="hljs-comment"> * 这个函数拿到流的第一个byte解析出来put的类型tag 用默认cf的tag有固定值 识别出来决定在协议里面有没有cf的id编码</span><br><span class="hljs-comment"> * 推进协议流拿到所有的出参</span><br><span class="hljs-comment"> * 这个函数只负责从协议里面解析内容 不做处理</span><br><span class="hljs-comment"> * @param input 入参 WriteBatch逻辑协议体 已经跳过了逻辑协议头 指向的就是1个或多个put record 除了这个其他的都是出参</span><br><span class="hljs-comment"> * @param tag put record的类型</span><br><span class="hljs-comment"> * @param column_family 出参 cf的id 只有当协议不是默认cf的时候才会解析id 默认cf的id就是0</span><br><span class="hljs-comment"> * @param key 出参 键</span><br><span class="hljs-comment"> * @param value 出参 值</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function">Status <span class="hljs-title">ReadRecordFromWriteBatch</span><span class="hljs-params">(Slice* input, <span class="hljs-type">char</span>* tag,</span></span><br><span class="hljs-params"><span class="hljs-function">                                <span class="hljs-type">uint32_t</span>* column_family, Slice* key,</span></span><br><span class="hljs-params"><span class="hljs-function">                                Slice* value, Slice* blob, Slice* xid,</span></span><br><span class="hljs-params"><span class="hljs-function">                                <span class="hljs-type">uint64_t</span>* write_unix_time)</span></span><br></code></pre></td></tr></table></figure>
+
+<p>以其中一段为例</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 拿到协议的首字节 解码出tag 解码后推进丢掉这个字节</span><br>*tag = (*input)[<span class="hljs-number">0</span>];<br>input-&gt;<span class="hljs-built_in">remove_prefix</span>(<span class="hljs-number">1</span>);<br><span class="hljs-comment">// 为了压缩设计 要是默认cf 在协议里面是抠掉cf id编码的 默认给cf是0 根据解码出来的tag看看协议里面有没有cf编码</span><br>*column_family = <span class="hljs-number">0</span>;  <span class="hljs-comment">// default</span><br><span class="hljs-keyword">switch</span> (*tag) &#123;<br>  <span class="hljs-keyword">case</span> kTypeColumnFamilyValue:<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">GetVarint32</span>(input, column_family)) &#123;<br>      <span class="hljs-keyword">return</span> Status::<span class="hljs-built_in">Corruption</span>(<span class="hljs-string">&quot;bad WriteBatch Put&quot;</span>);<br>    &#125;<br>    FALLTHROUGH_INTENDED;<br>  <span class="hljs-comment">// 很巧妙的设计 给默认cf压缩编码 比如</span><br>  <span class="hljs-comment">// 如果不是默认cf的put操作 那么就会命中第一个case分支先解码出cf的id 因为没有break会继续执行第二个case分支的逻辑一直到break为止 所有会解码出key和value</span><br>  <span class="hljs-comment">// 如果是默认cf的put操作 那么就会命中第二个case分支 只会解码出key和value 调用方只要给cf_id=0表示默认cf就行了</span><br>  <span class="hljs-keyword">case</span> kTypeValue:<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">GetLengthPrefixedSlice</span>(input, key) ||<br>        !<span class="hljs-built_in">GetLengthPrefixedSlice</span>(input, value)) &#123;<br>      <span class="hljs-keyword">return</span> Status::<span class="hljs-built_in">Corruption</span>(<span class="hljs-string">&quot;bad WriteBatch Put&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">break</span>;<br></code></pre></td></tr></table></figure>
+
+<h5 id="4-2-4-2-任务派发"><a href="#4-2-4-2-任务派发" class="headerlink" title="4.2.4.2 任务派发"></a>4.2.4.2 任务派发</h5><p>怎么往memory table里面写数据会根据不同的put record类型进行分发</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 2 上面已经解析出来了put record 派发业务处理 真正的处理逻辑在ProtectionInfoUpdater里面</span><br><span class="hljs-keyword">switch</span> (tag) &#123;<br>  <span class="hljs-keyword">case</span> kTypeColumnFamilyValue:<br>  <span class="hljs-keyword">case</span> kTypeValue:<br>    <span class="hljs-built_in">assert</span>(wb-&gt;content_flags_.<span class="hljs-built_in">load</span>(std::memory_order_relaxed) &amp;<br>           (ContentFlags::DEFERRED | ContentFlags::HAS_PUT));<br>    s = handler-&gt;<span class="hljs-built_in">PutCF</span>(column_family, key, value);<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">LIKELY</span>(s.<span class="hljs-built_in">ok</span>())) &#123;<br>      empty_batch = <span class="hljs-literal">false</span>;<br>      found++;<br>    &#125;<br>    <span class="hljs-keyword">break</span>;<br></code></pre></td></tr></table></figure>
+
+<p>真正的处理逻辑实现在<a href="/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x12-WAL%E7%9A%84PutRecord%E5%88%B0MemoryTable/" title="RocksDB源码-0x12-WAL的PutRecord到MemoryTable">RocksDB源码-0x12-WAL的PutRecord到MemoryTable</a></p>
+<h4 id="4-2-5"><a href="#4-2-5" class="headerlink" title="4.2.5"></a>4.2.5</h4><h3 id="4-3"><a href="#4-3" class="headerlink" title="4.3"></a>4.3</h3>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
