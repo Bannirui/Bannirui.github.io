@@ -239,8 +239,17 @@ Status ReadRecordFromWriteBatch(Slice* input, char* tag,
         break;
 ```
 
-真正的处理逻辑实现在{%post_link RocksDB/ RocksDB源码-0x12-WAL的PutRecord到MemoryTable%}
+真正的处理逻辑实现在{%post_link RocksDB/RocksDB源码-0x12-WAL的PutRecord到MemoryTable%}
 
-#### 4.2.5
+#### 4.2.5 看看有没有刷盘任务要处理
 
-### 4.3 
+```cpp
+  // 已经把1个WAL文件回放到了内存 这批数据可能会导致内存被占满而触发产生了一个刷盘任务 因此这个时机看一下有没有刷盘任务要执行
+  process_status = MaybeWriteLevel0TableForRecovery(
+      has_valid_writes, read_only, wal_number, job_id, next_sequence,
+      version_edits, flushed);
+```
+
+关于内存刷盘持久化看{%post_link RocksDB/RocksDB源码-0x13-内存数据刷盘SST0%}
+
+至此，在启动时候从WAL恢复内存的流程就结束了。
