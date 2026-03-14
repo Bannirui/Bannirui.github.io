@@ -131,7 +131,7 @@ uint64_t DBImpl::MinLogNumberToKeep() {
 一旦从wal文件里面读到内容，就涉及到两层协议的解析
 
 - 1 物理层协议 这个就是{%post_link RocksDB/RocksDB源码-0x0F-日志记录%}
-- 2 逻辑层协议 {%post_link RocksDB/RocksDB源码-0x10-wal的WriteBatch协议%}
+- 2 逻辑层协议 {%post_link RocksDB/RocksDB源码-0x10-WriteBatch协议%}
 
 ```cpp
   // 拿到WriteBatch协议 放在batch_to_use里面

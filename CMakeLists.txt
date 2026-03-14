@@ -27,52 +27,37 @@ else ()
     endif()
 endif ()
 
+# 创建符号链接的函数
+function(create_symlink target_path source_path)
+    if (NOT EXISTS ${target_path})
+        execute_process(COMMAND ln -s ${source_path} ${target_path})
+    else()
+        execute_process(COMMAND ln -sf ${source_path} ${target_path})
+    endif()
+endfunction()
+
 # 发布github pages的token
-if (NOT DEFINED ENV{GITHUB_TOKEN_FOR_HEXO})
-    message("没有在.zshrc中配置环境变量GITHUB_TOKEN_FOR_HEXO")
+if (NOT DEFINED GITHUB_TOKEN_FOR_HEXO AND NOT DEFINED ENV{GITHUB_TOKEN_FOR_HEXO})
+    message(FATAL_ERROR "没有在.zshrc中配置环境变量GITHUB_TOKEN_FOR_HEXO")
 endif ()
 
-set(HEXO_SETTING_DIR "${home}/MyDev/env/dev-env-setting")
+set(HEXO_SETTING_DIR "${home}/MyEnv/dev-env-setting")
 # hexo的配置文件
-if (NOT EXISTS "${SITE_DIR}/_config.yml")
-    execute_process(
-            COMMAND ln -s ${HEXO_SETTING_DIR}/hexo/config/_config.yml ${SITE_DIR}/_config.yml
-    )
-else()
-    execute_process(
-            COMMAND ln -sf ${HEXO_SETTING_DIR}/hexo/config/_config.yml ${SITE_DIR}/_config.yml
-    )
-endif ()
-
+create_symlink("${SITE_DIR}/_config.yml" "${HEXO_SETTING_DIR}/hexo/config/_config.yml")
 # fluid主题的配置文件挂在根目录下
-if (NOT EXISTS "${SITE_DIR}/_config.fluid.yml")
-    execute_process(
-            COMMAND ln -s ${HEXO_SETTING_DIR}/hexo/config/_config.fluid.yml ${SITE_DIR}/_config.fluid.yml
-    )
-else()
-    execute_process(
-            COMMAND ln -s -f ${HEXO_SETTING_DIR}/hexo/config/_config.fluid.yml ${SITE_DIR}/_config.fluid.yml
-    )
-endif()
-
+create_symlink("${SITE_DIR}/_config.fluid.yml" "${HEXO_SETTING_DIR}/hexo/config/_config.fluid.yml")
 # next主题的配置文件 挂在 根目录下
-if (NOT EXISTS "${SITE_DIR}/_config.next.yml")
-    execute_process(
-            COMMAND ln -s ${HEXO_SETTING_DIR}/hexo/config/_config.next.yml ${SITE_DIR}/_config.next.yml
-    )
-else()
-    execute_process(
-            COMMAND ln -s -f ${HEXO_SETTING_DIR}/hexo/config/_config.next.yml ${SITE_DIR}/_config.next.yml
-    )
-endif ()
+create_symlink("${SITE_DIR}/_config.next.yml" "${HEXO_SETTING_DIR}/hexo/config/_config.next.yml")
 
 message(STATUS "hexo配置成功")
 
+# 如果在本机上可以用127地址
+# 如果在windows的wsl里面就要指定宿主机windows的地址
 set(PROXY_ENV
-        HTTP_PROXY=http://127.0.0.1:7890
-        HTTPS_PROXY=http://127.0.0.1:7890
-        http_proxy=http://127.0.0.1:7890
-        https_proxy=http://127.0.0.1:7890
+        HTTP_PROXY=http://192.168.31.168:7890
+        HTTPS_PROXY=http://192.168.31.168:7890
+        http_proxy=http://192.168.31.168:7890
+        https_proxy=http://192.168.31.168:7890
         NO_PROXY=localhost,127.0.0.1
 )
 
