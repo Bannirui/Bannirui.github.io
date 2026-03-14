@@ -26,12 +26,20 @@ Build a blog site via `GitHub Pages` and `Hexo`, also putting them into an archi
     ./configure.sh
     ```
 - 1.2 安装node依赖 执行make目标npm_install
+  - 点击cmake插件工具
+  - `cmake --build . --target npm_install`
 
 - 1.3 新建文章 执行make目标hexo_new
+  - 点击cmake插件工具
+  - `cmake --build . --target hexo_new`
 
 - 1.4 本地服务 执行make目标hexo_server
+  - 点击cmake插件工具
+  - `cmake --build . --target hexo_server`
 
 - 1.5 站点发布 执行make目标hexo_deploy
+  - 点击cmake插件工具
+  - `cmake --build . --target hexo_deploy`
 
 ### 2 Build In Docker
 
