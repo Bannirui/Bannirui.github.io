@@ -18,6 +18,7 @@ _config.*.yml
 # cmake or make build output
 cmake-build-**
 build-**
+[bB][uU][iI][lL][dD]
 
 # drawio cache
 **.bkp
