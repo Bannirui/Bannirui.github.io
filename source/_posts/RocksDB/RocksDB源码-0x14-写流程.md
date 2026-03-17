@@ -42,4 +42,6 @@ int main() {
 
 首先把键值对编码，见{%post_link RocksDB/RocksDB源码-0x10-WriteBatch协议%}
 
-## 3
+## 3 RocksDB的写并发控制
+
+见{%post_link RocksDB/RocksDB源码-0x16-WriteThread串行执行器%}
