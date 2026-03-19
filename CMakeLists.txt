@@ -16,14 +16,17 @@ include(${LIB_DIRECTORY}/node.cmake)
 if (APPLE)
     # mac
     set(home "/Users/dingrui")
+    set(HEXO_SETTING_DIR "${home}/MyDev/env/dev-env-setting")
 elseif (LINUX)
     # arch linux
     set(home "/home/dingrui")
+    set(HEXO_SETTING_DIR "${home}/MyEnv/dev-env-setting")
 else ()
     # windows wsl
     message(STATUS "注意当前系统平台类型为${CMAKE_SYSTEM_NAME}")
     if("Linux" STREQUAL ${CMAKE_SYSTEM_NAME})
         set(home "/home/dingrui")
+        set(HEXO_SETTING_DIR "${home}/MyEnv/dev-env-setting")
     endif()
 endif ()
 
@@ -41,7 +44,6 @@ if (NOT DEFINED GITHUB_TOKEN_FOR_HEXO AND NOT DEFINED ENV{GITHUB_TOKEN_FOR_HEXO}
     message(FATAL_ERROR "没有在.zshrc中配置环境变量GITHUB_TOKEN_FOR_HEXO")
 endif ()
 
-set(HEXO_SETTING_DIR "${home}/MyEnv/dev-env-setting")
 # hexo的配置文件
 create_symlink("${SITE_DIR}/_config.yml" "${HEXO_SETTING_DIR}/hexo/config/_config.yml")
 # fluid主题的配置文件挂在根目录下
