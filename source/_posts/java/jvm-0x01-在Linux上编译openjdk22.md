@@ -66,11 +66,7 @@ bash configure \
 --disable-warnings-as-errors
 ```
 
-看下build目录下生成的conf名称
-
-```sh
-linux-x86_64-server-slowdebug
-```
+看下build目录下生成的conf名称linux-x86_64-server-slowdebug
 
 ### 4 编译
 
