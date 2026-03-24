@@ -52,15 +52,18 @@ sudo apt-get install libfontconfig1-dev
 sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev
 ```
 
+比如在用windows的wsl时，要防止自动推导当前系统以及交叉编译，明确告知就是Linux平台，build和host参数要指定
+
 ```sh
-bash ./configure \
+bash configure \
+--build=x86_64-linux-gnu \
+--host=x86_64-linux-gnu \
+--target=x86_64-linux-gnu \
 --with-debug-level=slowdebug \
 --with-jvm-variants=server \
 --with-freetype=bundled \
---with-boot-jdk=/usr/lib/jvm/jdk-21.0.7-oracle-x64 \
---with-target-bits=64 \
---disable-warnings-as-errors \
---with-extra-cxxflags="-std=c++14"
+--with-boot-jdk=/home/dingrui/MyApp/jdk/jdk-21.0.10 \
+--disable-warnings-as-errors
 ```
 
 看下build目录下生成的conf名称
@@ -73,7 +76,13 @@ linux-x86_64-server-slowdebug
 
 ```sh
 make CONF=linux-x86_64-server-slowdebug compile-commands
-sudo make CONF=linux-x86_64-server-slowdebug
+
+make CONF=linux-x86_64-server-slowdebug
+```
+
+### 5 运行java
+
+```shell
 ./build/linux-x86_64-server-slowdebug/jdk/bin/java --version
 ```
 
