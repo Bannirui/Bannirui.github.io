@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x16-WriteThread%E4%B8%B2%E8%A1%8C%E6%89%A7%E8%A1%8C%E5%99%A8/1773728024.png">
 <meta property="article:published_time" content="2026-02-13T08:01:45.000Z">
-<meta property="article:modified_time" content="2026-03-17T06:13:51.236Z">
+<meta property="article:modified_time" content="2026-03-26T02:04:45.416Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x16-WriteThread%E4%B8%B2%E8%A1%8C%E6%89%A7%E8%A1%8C%E5%99%A8/1773728024.png">
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          958 字
+          1.1k 字
         
       </span>
     
@@ -260,7 +260,7 @@
         
         
         
-          8 分钟
+          9 分钟
         
       </span>
     
@@ -556,7 +556,8 @@
 
 <h4 id="3-2-3-依然保证所有线程时序"><a href="#3-2-3-依然保证所有线程时序" class="headerlink" title="3.2.3 依然保证所有线程时序"></a>3.2.3 依然保证所有线程时序</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 哪些需要交给Group将来由Leader一次性操作的已经准备好 上面挑选线程的时候分出来不能在一个Group处理的需要再按照时序挂到Group队列后面 由下一个Leader继续处理</span><br><span class="hljs-keyword">if</span> (rb != <span class="hljs-literal">nullptr</span>) &#123;<br>  rb-&gt;link_older = we;<br>  re-&gt;link_newer = <span class="hljs-literal">nullptr</span>;<br>  we-&gt;link_newer = rb;<br>  <span class="hljs-keyword">if</span> (!newest_writer_.<span class="hljs-built_in">compare_exchange_weak</span>(w, re)) &#123;<br>    <span class="hljs-keyword">while</span> (w-&gt;link_older != newest_writer) &#123;<br>      w = w-&gt;link_older;<br>    &#125;<br>    w-&gt;link_older = re;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h2 id="4"><a href="#4" class="headerlink" title="4"></a>4</h2>
+<h2 id="4-数据汇总"><a href="#4-数据汇总" class="headerlink" title="4 数据汇总"></a>4 数据汇总</h2><p>现在Group里面[leader…last_writer]区间是要提交的数据，要把这些数据汇总起来放到一起</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// WriteGroup类写了Iterator的begin和end函数 所以可以for循环</span><br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> writer : write_group) &#123;<br>  <span class="hljs-keyword">if</span> (!writer-&gt;<span class="hljs-built_in">CallbackFailed</span>()) &#123;<br>    <span class="hljs-comment">// 把线程要提交的数据拷贝一份到merged_batch上</span><br>    Status s = WriteBatchInternal::<span class="hljs-built_in">Append</span>(*merged_batch, writer-&gt;batch,<br>                                          <span class="hljs-comment">/*WAL_only*/</span> <span class="hljs-literal">true</span>);<br>    <span class="hljs-keyword">if</span> (!s.<span class="hljs-built_in">ok</span>()) &#123;<br>      tmp_batch-&gt;<span class="hljs-built_in">Clear</span>();<br>      <span class="hljs-keyword">return</span> s;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (WriteBatchInternal::<span class="hljs-built_in">IsLatestPersistentState</span>(writer-&gt;batch)) &#123;<br>      <span class="hljs-comment">// We only need to cache the last of such write batch</span><br>      *to_be_cached_state = writer-&gt;batch;<br>    &#125;<br>    (*write_with_wal)++;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 

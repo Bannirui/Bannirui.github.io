@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
 <meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png">
 <meta property="article:published_time" content="2025-06-13T14:47:26.000Z">
-<meta property="article:modified_time" content="2026-01-22T08:21:19.105Z">
+<meta property="article:modified_time" content="2026-03-26T02:08:44.377Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
@@ -250,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          251 字
+          289 字
         
       </span>
     
@@ -470,12 +470,13 @@
 <h3 id="3-生成make脚本"><a href="#3-生成make脚本" class="headerlink" title="3 生成make脚本"></a>3 生成make脚本</h3><p>先安装依赖</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install autoconf<br>sudo apt install zip<br>sudo apt-get install libasound2-dev<br>sudo apt-get install libcups2-dev<br>sudo apt-get install libfontconfig1-dev<br>sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev<br></code></pre></td></tr></table></figure>
 
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sh">bash ./configure \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=/usr/lib/jvm/jdk-21.0.7-oracle-x64 \<br>--with-target-bits=64 \<br>--disable-warnings-as-errors \<br>--with-extra-cxxflags=<span class="hljs-string">&quot;-std=c++14&quot;</span><br></code></pre></td></tr></table></figure>
+<p>比如在用windows的wsl时，要防止自动推导当前系统以及交叉编译，明确告知就是Linux平台，build和host参数要指定</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">bash configure \<br>--build=x86_64-linux-gnu \<br>--host=x86_64-linux-gnu \<br>--target=x86_64-linux-gnu \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=/home/dingrui/MyApp/jdk/jdk-21.0.10 \<br>--disable-warnings-as-errors<br></code></pre></td></tr></table></figure>
 
-<p>看下build目录下生成的conf名称</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">linux-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
+<p>看下build目录下生成的conf名称linux-x86_64-server-slowdebug</p>
+<h3 id="4-编译"><a href="#4-编译" class="headerlink" title="4 编译"></a>4 编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=linux-x86_64-server-slowdebug compile-commands<br><br>make CONF=linux-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
 
-<h3 id="4-编译"><a href="#4-编译" class="headerlink" title="4 编译"></a>4 编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=linux-x86_64-server-slowdebug compile-commands<br>sudo make CONF=linux-x86_64-server-slowdebug<br>./build/linux-x86_64-server-slowdebug/jdk/bin/java --version<br></code></pre></td></tr></table></figure>
+<h3 id="5-运行java"><a href="#5-运行java" class="headerlink" title="5 运行java"></a>5 运行java</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/linux-x86_64-server-slowdebug/jdk/bin/java --version<br></code></pre></td></tr></table></figure>
 
 <img src="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
