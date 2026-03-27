@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bannirui.github.io/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x16-WriteThread%E4%B8%B2%E8%A1%8C%E6%89%A7%E8%A1%8C%E5%99%A8/1773728024.png">
 <meta property="article:published_time" content="2026-02-13T08:01:45.000Z">
-<meta property="article:modified_time" content="2026-03-26T02:04:45.416Z">
+<meta property="article:modified_time" content="2026-03-27T07:09:50.036Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x16-WriteThread%E4%B8%B2%E8%A1%8C%E6%89%A7%E8%A1%8C%E5%99%A8/1773728024.png">
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          1.3k 字
         
       </span>
     
@@ -260,7 +260,7 @@
         
         
         
-          9 分钟
+          11 分钟
         
       </span>
     
@@ -558,6 +558,18 @@
 
 <h2 id="4-数据汇总"><a href="#4-数据汇总" class="headerlink" title="4 数据汇总"></a>4 数据汇总</h2><p>现在Group里面[leader…last_writer]区间是要提交的数据，要把这些数据汇总起来放到一起</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// WriteGroup类写了Iterator的begin和end函数 所以可以for循环</span><br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> writer : write_group) &#123;<br>  <span class="hljs-keyword">if</span> (!writer-&gt;<span class="hljs-built_in">CallbackFailed</span>()) &#123;<br>    <span class="hljs-comment">// 把线程要提交的数据拷贝一份到merged_batch上</span><br>    Status s = WriteBatchInternal::<span class="hljs-built_in">Append</span>(*merged_batch, writer-&gt;batch,<br>                                          <span class="hljs-comment">/*WAL_only*/</span> <span class="hljs-literal">true</span>);<br>    <span class="hljs-keyword">if</span> (!s.<span class="hljs-built_in">ok</span>()) &#123;<br>      tmp_batch-&gt;<span class="hljs-built_in">Clear</span>();<br>      <span class="hljs-keyword">return</span> s;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (WriteBatchInternal::<span class="hljs-built_in">IsLatestPersistentState</span>(writer-&gt;batch)) &#123;<br>      <span class="hljs-comment">// We only need to cache the last of such write batch</span><br>      *to_be_cached_state = writer-&gt;batch;<br>    &#125;<br>    (*write_with_wal)++;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-一次性写到WAL"><a href="#5-一次性写到WAL" class="headerlink" title="5 一次性写到WAL"></a>5 一次性写到WAL</h2><p>先从WriteBatch协议中拿到二进制格式</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 线程要提交的数据 二进制格式</span><br>Slice log_entry = WriteBatchInternal::<span class="hljs-built_in">Contents</span>(&amp;merged_batch);<br></code></pre></td></tr></table></figure>
+
+<p>然后把二进制数据写到WAL</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 把二进制的WriteBatch协议写到WAL中</span><br>io_s = log_writer-&gt;<span class="hljs-built_in">AddRecord</span>(write_options, log_entry, sequence);<br></code></pre></td></tr></table></figure>
+
+<h2 id="6-写到内存缓冲表"><a href="#6-写到内存缓冲表" class="headerlink" title="6 写到内存缓冲表"></a>6 写到内存缓冲表</h2><p>这个地方用到了经典的回调方式来解耦</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 1个WriteBatch里面可能会有多个put record</span><br><span class="hljs-comment"> * 这个地方的设计把数据和对数据的操作解耦</span><br><span class="hljs-comment"> * 1 对于WriteBatch而言 我只负责把数据遍历出来 怎么做我不关心</span><br><span class="hljs-comment"> * 2 对数据要怎么操作完全交给回调</span><br><span class="hljs-comment"> * 解析里面每个put record</span><br><span class="hljs-comment"> * @param handler Handler接口</span><br><span class="hljs-comment"> *                ProtectionInfoUpdater对象</span><br><span class="hljs-comment"> *                MemTableInserter</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function">Status <span class="hljs-title">WriteBatch::Iterate</span><span class="hljs-params">(Handler* handler)</span> <span class="hljs-type">const</span> </span>&#123;<br>  <span class="hljs-keyword">if</span> (rep_.<span class="hljs-built_in">size</span>() &lt; WriteBatchInternal::kHeader) &#123;<br>    <span class="hljs-keyword">return</span> Status::<span class="hljs-built_in">Corruption</span>(<span class="hljs-string">&quot;malformed WriteBatch (too small)&quot;</span>);<br>  &#125;<br>  <span class="hljs-comment">// WriteBatch逻辑协议带头 所以要跳过头部 直接跳到put record部分 把Handler回调接口丢进去 对数据的真正处理交给回调</span><br>  <span class="hljs-keyword">return</span> WriteBatchInternal::<span class="hljs-built_in">Iterate</span>(<span class="hljs-keyword">this</span>, handler, WriteBatchInternal::kHeader,<br>                                     rep_.<span class="hljs-built_in">size</span>());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>真正把数据写到内存表的实现是<code>class MemTableInserter : public WriteBatch::Handler</code></p>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
