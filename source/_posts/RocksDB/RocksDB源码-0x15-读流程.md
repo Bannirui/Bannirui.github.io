@@ -56,10 +56,7 @@ int main() {
     assert(!pinnable_val.IsPinned());
     auto s = Get(options, column_family, key, &pinnable_val);
     if (s.ok() && pinnable_val.IsPinned()) {
-      // 把内容从安全视图拷贝出来 为什么要在这个地方显式复制 因为不确定字符串有没有发生pin
-      // 1 发生了pin 也就是发生了zero-copy 那么实际的数据写到的位置并不是value的内存 需要拷贝出来
-      // 2 没有发生pin 也就是没有发生zero-copy 那么实际的数据写到的位置就是value的内存 不需要拷贝
-      // 所以综合起来 用一次显式的拷贝是最妥当的
+      // 什么时候才要显式复制内存 只有当内存不是我自己 我只负责托管内存生命周期
       value->assign(pinnable_val.data(), pinnable_val.size());
     }  // else value is already assigned
     return s;
@@ -71,4 +68,78 @@ int main() {
 - 一是性能优化{%post_link RocksDB/RocksDB源码-0x17-字符串性能优化Slice%}
 - 二是安全性的优化{%post_link RocksDB/RocksDB源码-0x18-字符串安全性优化PinnableSlice%}
 
-## 3
+## 3 构造LookupKey
+
+这个东西存在的目的是查询，把查询条件编码到了一起
+
+想象一下现在需要在有序集合中查询`Seek(key = (a, snapshot))`，转换成的语义是
+
+```sql
+WHERE key = a AND sequence <= snapshot
+ORDER BY sequence DESC
+LIMIT 1
+```
+
+直接看内存布局
+
+![](./RocksDB源码-0x15-读流程/1775554634.png)
+
+它的三个成员
+
+```cpp
+  const char* start_; // 整个LookupKey开始->给memtable用
+  const char* kstart_; // user_key开始->提取user_key
+  const char* end_; // 整个LookupKey结束
+```
+
+它的构造函数
+
+```cpp
+/**
+ * 本质是查找的是界key
+ * LookupKey=user_key+ts+sequence+type的编码结构 用于在有序结构中做版本查找
+ * 内存布局是 长度(这个长度表示LookupKey自己占了多少个字节)+user_key+ts+8字节数字(高56位seq 低8位type)
+ * 因为长度用的是变长整数 所以最多5个字节
+ */
+LookupKey::LookupKey(const Slice& _user_key, SequenceNumber s,
+                     const Slice* ts) {
+  size_t usize = _user_key.size();
+  size_t ts_sz = (nullptr == ts) ? 0 : ts->size();
+  // 前几个字节放的是长度 因为这个整数用的是变长编码 所以最多5字节 那么LookupKey最多占用的空间就是5+usize+ts_sz+8个字节
+  size_t needed = usize + ts_sz + 13;  // A conservative estimate
+  char* dst;
+  if (needed <= sizeof(space_)) { // 预分配了200字节的buffer 够用就用它 不够再申请个新的更大的buffer
+    dst = space_;
+  } else {
+    dst = new char[needed];
+  }
+  // buffer的起始 也就是LookupKey的地址
+  start_ = dst;
+  // NOTE: We don't support users keys of more than 2GB :)
+  // LookupKey有多大 编到开头的几个字节 编码完后dst指向的是user_key
+  dst = EncodeVarint32(dst, static_cast<uint32_t>(usize + ts_sz + 8));
+  // 记录user_key的地址
+  kstart_ = dst;
+  // 把user_key拷贝进来
+  memcpy(dst, _user_key.data(), usize);
+  // 指向ts地址
+  dst += usize;
+  // 把ts拷贝进来
+  if (nullptr != ts) {
+    memcpy(dst, ts->data(), ts_sz);
+    dst += ts_sz;
+  }
+  // 8字节 高56位放的是sequence number 低8位放的是type
+  EncodeFixed64(dst, PackSequenceAndType(s, kValueTypeForSeek));
+  dst += 8;
+  end_ = dst;
+}
+```
+
+准备snapshot读哪个版本
+
+
+
+## 4 先从memtable里面读
+## 5 memtable在落盘过程中
+## 6 SST查找
