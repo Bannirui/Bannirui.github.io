@@ -52,9 +52,38 @@ brew install llvm
 clangd --version
 ```
 
-## 5 使用
+## 5 不要打开gui
 
-```shell
-emacs . -nw
+在.zshrc中加入`alias emacs='emacs -nw'`
+
+## 6 jk替换esc
+
+### 6.1 开启evil-escape
+
+把`~/.doom.d/init.el`中
+
+```txt
+:editor
+(evil +everywhere)
 ```
 
+换成
+
+```txt
+:editor
+(evil +everywhere +escape)
+```
+
+### 6.2 键位设置
+
+`~/.doom.d/config.el`中添加
+
+```txt
+(setq evil-escape-key-sequence "jk" evil-escape-delay 0.2)
+```
+
+### 6.3 应用配置
+
+```shell
+doom sync
+```
