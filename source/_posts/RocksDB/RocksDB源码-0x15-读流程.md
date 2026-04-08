@@ -136,9 +136,7 @@ LookupKey::LookupKey(const Slice& _user_key, SequenceNumber s,
 }
 ```
 
-准备snapshot读哪个版本
-
-
+上面的流程看到会需要seq作为key的检索条件，这个seq就是MVCC读隔离发挥威力的地方{% post_link RocksDB/RocksDB源码-0x11-MVCC %}
 
 ## 4 先从memtable里面读
 ## 5 memtable在落盘过程中
