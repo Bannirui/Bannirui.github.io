@@ -106,3 +106,21 @@ doom sync
 ```shell
 doom sync
 ```
+
+## 9 输入q或者wq不要关闭Emacs
+
+在`~/.doom.d/config.el`添加
+
+```elisp
+;; 不要让:q退出Emacs 而只退出buffer
+;; q只关闭文件 不要关闭Emacs
+(evil-ex-define-cmd "q" #'kill-current-buffer)
+;; w不要关闭文件
+(evil-ex-define-cmd "w" #'save-buffer)
+;; wq不要关闭Emacs
+(evil-ex-define-cmd "wq" (lambda ()
+                           (interactive)
+                           (save-buffer)
+                           (kill-current-buffer)
+                           ))
+```
