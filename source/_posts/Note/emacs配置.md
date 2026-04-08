@@ -87,3 +87,22 @@ clangd --version
 ```shell
 doom sync
 ```
+
+## 7 常用快捷键
+
+- spc+w+w 切换窗口
+- spc+w+d 删除当前窗口
+- spc+c+c 命令行
+- spc+f+f 查找文件
+
+## 8 代码格式化
+
+### 8.1 Doom模块
+
+找到`~/.doom.d/init.el`里面放开注释`(format +onsave)  ; automated prettiness`
+
+### 8.2 同步配置
+
+```shell
+doom sync
+```
