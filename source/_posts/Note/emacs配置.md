@@ -138,3 +138,21 @@ doom sync
 - 在`~/.doom.d/init.el`中放开`       vterm             ; the best terminal emulation in Emacs`
 - 执行doom sync
 - 重启emacs
+
+## 12 vim的键位s
+
+doom emacs的默认s键位被snipe占用
+
+- 在`/Users/dingrui/.doom.d/config.el`添加
+
+```txt
+(after! evil-snipe
+  (map! :map evil-snipe-mode-map
+        :n "s" nil
+        :n "S" nil
+        :n "z" #'evil-snipe-s))
+```
+
+- 执行`doom sync`
+
+- 重启emacs
