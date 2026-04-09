@@ -94,6 +94,8 @@ doom sync
 - spc+w+d 删除当前窗口
 - spc+c+c 命令行
 - spc+f+f 查找文件
+- spc+o+p 目录树
+- spc+o+t 终端
 
 ## 8 代码格式化
 
@@ -124,3 +126,15 @@ doom sync
                            (kill-current-buffer)
                            ))
 ```
+
+## 10 目录树
+
+- 在`~/.doom.d/init.el`中放开`treemacs          ; a project drawer, like neotree but cooler`
+- 执行doom sync
+- 重启emacs
+
+## 11 终端
+
+- 在`~/.doom.d/init.el`中放开`       vterm             ; the best terminal emulation in Emacs`
+- 执行doom sync
+- 重启emacs
