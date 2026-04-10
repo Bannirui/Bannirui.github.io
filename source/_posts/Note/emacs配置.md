@@ -92,10 +92,17 @@ doom sync
 
 - spc+w+w 切换窗口
 - spc+w+d 删除当前窗口
-- spc+c+c 命令行
-- spc+f+f 查找文件
+- spc+c+c 编译
 - spc+o+p 目录树
 - spc+o+t 终端
+- spc+f+f 路径下搜索文件 没有就新建
+- spc+s+i 显示当前源码所有接口
+- spc+s+s 文件内搜索
+- spc+w+s 水平分屏
+- spc+w+v 垂直分屏
+- gd 跳转定义
+- gr 跳转引用
+- K 显示文档
 
 ## 8 代码格式化
 
