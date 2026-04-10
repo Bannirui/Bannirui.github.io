@@ -87,8 +87,35 @@ int main() {
 }
 ```
 
-## 3 调试
+## 3 编译调试
+
+### 3.1 用IDE
 
 我用的是clion，找到自己的这个target，进行编译/运行/调试
 
 ![](./RocksDB源码-0x01-搭建调试流程/1769410863.png)
+
+### 3.2 手动
+
+#### 3.2.1 配置
+
+```shell
+mkdir build
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -S . -B build
+```
+
+#### 3.2.2 编译
+
+编译整个RocksDB项目或者只编译自己的测试代码
+
+```shell
+cmake --build build -j8
+
+cmake --build build --target z_test_read -j8
+```
+
+#### 3.2.3 运行
+
+```shell
+./build/tests/z_test_read
+```
