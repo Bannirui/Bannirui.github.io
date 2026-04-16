@@ -90,16 +90,29 @@ doom sync
 
 ## 7 常用快捷键
 
+- spc+f+f 路径下搜索文件 没有就新建
+- spc+f+s 保存文件
+
 - spc+w+w 切换窗口
 - spc+w+d 删除当前窗口
+
 - spc+c+c 编译
+- spc+c+r 重命名
+
 - spc+o+p 目录树
+
 - spc+o+t 终端
-- spc+f+f 路径下搜索文件 没有就新建
+
 - spc+s+i 显示当前源码所有接口
 - spc+s+s 文件内搜索
+
 - spc+w+s 水平分屏
 - spc+w+v 垂直分屏
+- spc+w+c 关闭窗口
+- spc+w+w 切换窗口
+
+- spc+g+g 打开内置git工具
+
 - gd 跳转定义
 - gr 跳转引用
 - K 显示文档
