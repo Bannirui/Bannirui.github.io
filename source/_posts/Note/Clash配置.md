@@ -22,8 +22,8 @@ scutil --dns
 
 ## 2 配置到Clash
 
-把对应的ip粘贴到Clash的DNS配置，加在nameserver下面
+把对应的ip粘贴到Clash的DNS配置，加在nameserver下面，如果仅仅要改掉配置文件，下一次更新的时候远程配置文件还是会冲掉本地的配置，所以配置到全局扩展上
 
-![](./Clash配置/1775788914.png)
+![](./Clash配置/1776307930.png)
 
 
