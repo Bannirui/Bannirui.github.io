@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="在RocksDB源码-0x05-WAL里面有put record的批量处理，当时提出过如果中间过程出现异常，怎么保证原子性的。     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Banniru">
+    <meta name="description" content="在RocksDB源码-0x05-WAL里面有put record的批量处理，当时提出过如果中间过程出现异常，怎么保证原子性的。 1 读隔离12345678910&#x2F;&#x2F; 版本控制virtual SequenceNumber GetLastPublishedSequence() const &amp;#123;  if (last_seq_same_as_publish_seq_) &amp;#123;    &#x2F;&#x2F; 不">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RocksDB源码-0x11-MVCC">
 <meta property="og:url" content="https://bannirui.github.io/2026/02/11/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x11-MVCC/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="在RocksDB源码-0x05-WAL里面有put record的批量处理，当时提出过如果中间过程出现异常，怎么保证原子性的。     		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Banniru">
+<meta property="og:description" content="在RocksDB源码-0x05-WAL里面有put record的批量处理，当时提出过如果中间过程出现异常，怎么保证原子性的。 1 读隔离12345678910&#x2F;&#x2F; 版本控制virtual SequenceNumber GetLastPublishedSequence() const &amp;#123;  if (last_seq_same_as_publish_seq_) &amp;#123;    &#x2F;&#x2F; 不">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-02-11T05:50:05.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.487Z">
+<meta property="article:modified_time" content="2026-04-18T13:32:53.454Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          64 字
+          116 字
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         RocksDB源码
-        <span class="list-group-count">(23)</span>
+        <span class="list-group-count">(25)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -539,7 +539,7 @@
               <div class="markdown-body">
                 
                 <p>在<a href="/2026/01/30/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x05-WAL/" title="RocksDB源码-0x05-WAL">RocksDB源码-0x05-WAL</a>里面有put record的批量处理，当时提出过如果中间过程出现异常，怎么保证原子性的。</p>
-
+<h2 id="1-读隔离"><a href="#1-读隔离" class="headerlink" title="1 读隔离"></a>1 读隔离</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 版本控制</span><br><span class="hljs-function"><span class="hljs-keyword">virtual</span> SequenceNumber <span class="hljs-title">GetLastPublishedSequence</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123;<br>  <span class="hljs-keyword">if</span> (last_seq_same_as_publish_seq_) &#123;<br>    <span class="hljs-comment">// 不需要做读隔离 就用当前系统最大的seq</span><br>    <span class="hljs-keyword">return</span> versions_-&gt;<span class="hljs-built_in">LastSequence</span>();<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// 要做读隔离 拿当前可见的seq</span><br>    <span class="hljs-keyword">return</span> versions_-&gt;<span class="hljs-built_in">LastPublishedSequence</span>();<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
