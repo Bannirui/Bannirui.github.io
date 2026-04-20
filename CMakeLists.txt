@@ -91,9 +91,9 @@ add_custom_target(hexo_deploy
 )
 
 # 博客目录
-set(POST_DIR "Note")
+set(POST_DIR "RocksDB")
 # 博客文章名
-set(POST_NAME "Clash配置")
+set(POST_NAME "RocksDB源码-0x19-列簇的快照")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md

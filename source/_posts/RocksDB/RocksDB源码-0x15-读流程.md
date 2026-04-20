@@ -138,6 +138,8 @@ LookupKey::LookupKey(const Slice& _user_key, SequenceNumber s,
 
 上面的流程看到会需要seq作为key的检索条件，这个seq就是MVCC读隔离发挥威力的地方{% post_link RocksDB/RocksDB源码-0x11-MVCC %}
 
+在真正的读数据之前，非常重要的是拿到数据的快照{%post_link RocksDB/RocksDB源码-0x19-列簇的快照%}
+
 ## 4 先从memtable里面读
 ## 5 memtable在落盘过程中
 ## 6 SST查找
