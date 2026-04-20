@@ -239,7 +239,7 @@ Status ReadRecordFromWriteBatch(Slice* input, char* tag,
         break;
 ```
 
-真正的处理逻辑实现在{%post_link RocksDB/RocksDB源码-0x12-WAL的PutRecord到MemoryTable%}
+真正的处理逻辑实现在{%post_link RocksDB/RocksDB源码-0x12-内存数据MemoryTable%}
 
 #### 4.2.5 看看有没有刷盘任务要处理
 
