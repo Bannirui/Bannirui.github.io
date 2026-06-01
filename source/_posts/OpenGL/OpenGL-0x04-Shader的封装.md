@@ -98,7 +98,7 @@ GLFW负责初始化窗体，也会创建好OpenGL的Context，从里面可以拿
 这个要结合VBO+VAO一起
 
 - {% post_link OpenGL/OpenGL-0x03-VBO的封装 %}
-- {% post_link OpenGL/OpenGL-0x05-VAO %}
+- {% post_link OpenGL/OpenGL-0x05-VAO %}里面有详细的代码实现
 
 ## 5 uniform变量怎么传
 
