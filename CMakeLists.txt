@@ -91,9 +91,9 @@ add_custom_target(hexo_deploy
 )
 
 # 博客目录
-set(POST_DIR "RocksDB")
+set(POST_DIR "OpenGL")
 # 博客文章名
-set(POST_NAME "RocksDB源码-0x1A-冻结的MemTable")
+set(POST_NAME "OpenGL-0x00-一个完美的OpenGL教程")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md
