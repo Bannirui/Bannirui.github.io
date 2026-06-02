@@ -19,23 +19,25 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+    <meta name="description" content="1 结构和布局  这个类重要的成员有4个 12345678910111213141516171819202122&#x2F;** * 这个组件的作用 拿到某个时刻DB的读视图的原子打包 * 拿到了3大组件的快照版本 * 因为3个组件是分别独立进行数据更新的 *   1 写入会替换mem *   2 flush会改变冻结mem *   3 compaction会改变version * 如果没有SuperVer">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RocksDB源码-0x12-WAL的PutRecord到MemoryTable">
-<meta property="og:url" content="https://bannirui.github.io/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x12-WAL%E7%9A%84PutRecord%E5%88%B0MemoryTable/index.html">
+<meta property="og:title" content="RocksDB源码-0x19-列簇的快照">
+<meta property="og:url" content="https://bannirui.github.io/2026/04/20/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x19-%E5%88%97%E7%B0%87%E7%9A%84%E5%BF%AB%E7%85%A7/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+<meta property="og:description" content="1 结构和布局  这个类重要的成员有4个 12345678910111213141516171819202122&#x2F;** * 这个组件的作用 拿到某个时刻DB的读视图的原子打包 * 拿到了3大组件的快照版本 * 因为3个组件是分别独立进行数据更新的 *   1 写入会替换mem *   2 flush会改变冻结mem *   3 compaction会改变version * 如果没有SuperVer">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-02-13T02:03:18.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.487Z">
+<meta property="og:image" content="https://bannirui.github.io/2026/04/20/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x19-%E5%88%97%E7%B0%87%E7%9A%84%E5%BF%AB%E7%85%A7/1776652517.png">
+<meta property="article:published_time" content="2026-04-20T02:23:11.000Z">
+<meta property="article:modified_time" content="2026-06-01T13:28:04.890Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2026/04/20/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x19-%E5%88%97%E7%B0%87%E7%9A%84%E5%BF%AB%E7%85%A7/1776652517.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>RocksDB源码-0x12-WAL的PutRecord到MemoryTable - HEX BLOG</title>
+  <title>RocksDB源码-0x19-列簇的快照 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="RocksDB源码-0x12-WAL的PutRecord到MemoryTable"></span>
+            <span id="subtitle" data-typed-text="RocksDB源码-0x19-列簇的快照"></span>
           
         </div>
 
@@ -235,8 +237,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-02-13 10:03" pubdate>
-          2026年2月13日 上午
+        <time datetime="2026-04-20 10:23" pubdate>
+          2026年4月20日 上午
         </time>
       </span>
     
@@ -247,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          27 字
+          562 字
         
       </span>
     
@@ -258,7 +260,7 @@
         
         
         
-          1 分钟
+          5 分钟
         
       </span>
     
@@ -317,7 +319,7 @@
         aria-expanded="true"
       >
         RocksDB源码
-        <span class="list-group-count">(25)</span>
+        <span class="list-group-count">(27)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -493,10 +495,10 @@
     
       
       
-        <a href="/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x12-WAL%E7%9A%84PutRecord%E5%88%B0MemoryTable/" title="RocksDB源码-0x12-WAL的PutRecord到MemoryTable"
+        <a href="/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x12-%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AEMemoryTable/" title="RocksDB源码-0x12-内存数据MemoryTable"
            class="list-group-item list-group-item-action
-           active">
-          <span class="category-post">RocksDB源码-0x12-WAL的PutRecord到MemoryTable</span>
+           ">
+          <span class="category-post">RocksDB源码-0x12-内存数据MemoryTable</span>
         </a>
       
     
@@ -533,12 +535,23 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">RocksDB源码-0x12-WAL的PutRecord到MemoryTable</h1>
+            <h1 id="seo-header">RocksDB源码-0x19-列簇的快照</h1>
             
             
               <div class="markdown-body">
                 
-                
+                <h2 id="1-结构和布局"><a href="#1-结构和布局" class="headerlink" title="1 结构和布局"></a>1 结构和布局</h2><img src="/2026/04/20/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x19-%E5%88%97%E7%B0%87%E7%9A%84%E5%BF%AB%E7%85%A7/1776652517.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>这个类重要的成员有4个</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 这个组件的作用 拿到某个时刻DB的读视图的原子打包</span><br><span class="hljs-comment"> * 拿到了3大组件的快照版本</span><br><span class="hljs-comment"> * 因为3个组件是分别独立进行数据更新的</span><br><span class="hljs-comment"> *   1 写入会替换mem</span><br><span class="hljs-comment"> *   2 flush会改变冻结mem</span><br><span class="hljs-comment"> *   3 compaction会改变version</span><br><span class="hljs-comment"> * 如果没有SuperVersion的话 分别去拿这3个组件的指针 很容易拿到状态不一致的数据</span><br><span class="hljs-comment"> * 所以要把3个组件的数据绑定成一个不可以改变的快照</span><br><span class="hljs-comment"> * SuperVersion的重要性</span><br><span class="hljs-comment"> *   1 无锁读</span><br><span class="hljs-comment"> *   2 一致性保证不会读到一半数据结构发生变化</span><br><span class="hljs-comment"> *   3 生命周期安全 引用计数保证内存资源不会在读的过程中被回收</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">SuperVersion</span> &#123;<br>  ReadOnlyMemTable* mem; <span class="hljs-comment">// 当前写入表 正在写的内存表</span><br>  MemTableListVersion* imm; <span class="hljs-comment">// 冻结的MemTable 已经停止写入等待flush到SST</span><br>  Version* current; <span class="hljs-comment">// SST文件视图 levels+files</span><br><br>  <span class="hljs-comment">// 引用计数 保证在使用过程中 不至于发生内存被回收的情况</span><br>  std::atomic&lt;<span class="hljs-type">uint32_t</span>&gt; refs;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>3大组件</p>
+<ul>
+<li><a href="/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x12-%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AEMemoryTable/" title="RocksDB源码-0x12-内存数据MemoryTable">RocksDB源码-0x12-内存数据MemoryTable</a></li>
+<li><a href="/2026/04/20/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x1A-%E5%86%BB%E7%BB%93%E7%9A%84MemTable/" title="RocksDB源码-0x1A-冻结的MemTable">RocksDB源码-0x1A-冻结的MemTable</a></li>
+<li><a href="/2026/02/03/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x0C-Version/" title="RocksDB源码-0x0C-Version">RocksDB源码-0x0C-Version</a></li>
+</ul>
+<h2 id="2-怎么拿快照"><a href="#2-怎么拿快照" class="headerlink" title="2 怎么拿快照"></a>2 怎么拿快照</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">SuperVersion* <span class="hljs-title">ColumnFamilyData::GetThreadLocalSuperVersion</span><span class="hljs-params">(DBImpl* db)</span> </span>&#123;<br>  <span class="hljs-comment">// The SuperVersion is cached in thread local storage to avoid acquiring</span><br>  <span class="hljs-comment">// mutex when SuperVersion does not change since the last use. When a new</span><br>  <span class="hljs-comment">// SuperVersion is installed, the compaction or flush thread cleans up</span><br>  <span class="hljs-comment">// cached SuperVersion in all existing thread local storage. To avoid</span><br>  <span class="hljs-comment">// acquiring mutex for this operation, we use atomic Swap() on the thread</span><br>  <span class="hljs-comment">// local pointer to guarantee exclusive access. If the thread local pointer</span><br>  <span class="hljs-comment">// is being used while a new SuperVersion is installed, the cached</span><br>  <span class="hljs-comment">// SuperVersion can become stale. In that case, the background thread would</span><br>  <span class="hljs-comment">// have swapped in kSVObsolete. We re-check the value at when returning</span><br>  <span class="hljs-comment">// SuperVersion back to thread local, with an atomic compare and swap.</span><br>  <span class="hljs-comment">// The superversion will need to be released if detected to be stale.</span><br>  <span class="hljs-comment">// 取出当前thread-local的值 把它替换成当前线程正在用的</span><br>  <span class="hljs-type">void</span>* ptr = local_sv_-&gt;<span class="hljs-built_in">Swap</span>(SuperVersion::kSVInUse);<br>  <span class="hljs-comment">// Invariant:</span><br>  <span class="hljs-comment">// (1) Scrape (always) installs kSVObsolete in ThreadLocal storage</span><br>  <span class="hljs-comment">// (2) the Swap above (always) installs kSVInUse, ThreadLocal storage</span><br>  <span class="hljs-comment">// should only keep kSVInUse before ReturnThreadLocalSuperVersion call</span><br>  <span class="hljs-comment">// (if no Scrape happens).</span><br>  <span class="hljs-comment">// 防御性检查 保证不会重入 为什么这个地方要校验 如果不校验 这个函数外面会对引用计数+1 那么同一个对象的引用计数是2 将来释放的时候-1 影响对象的释放</span><br>  <span class="hljs-built_in">assert</span>(ptr != SuperVersion::kSVInUse);<br>  SuperVersion* sv = <span class="hljs-built_in">static_cast</span>&lt;SuperVersion*&gt;(ptr);<br>  <span class="hljs-keyword">if</span> (sv == SuperVersion::kSVObsolete) &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 看看有没有过期</span><br><span class="hljs-comment">     * 什么时候会过期呢</span><br><span class="hljs-comment">     *   1 写入会替换memTable</span><br><span class="hljs-comment">     *   2 flush会冻结mem</span><br><span class="hljs-comment">     *   3 compaction会改变Version</span><br><span class="hljs-comment">     * 当这些动作发生的时候 后台线程会标记已经过期</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-built_in">RecordTick</span>(ioptions_.stats, NUMBER_SUPERVERSION_ACQUIRES);<br>    <span class="hljs-comment">// 缓存失效了 要上锁 重新去拿最新的快照</span><br>    db-&gt;<span class="hljs-built_in">mutex</span>()-&gt;<span class="hljs-built_in">Lock</span>();<br>    sv = super_version_-&gt;<span class="hljs-built_in">Ref</span>();<br>    db-&gt;<span class="hljs-built_in">mutex</span>()-&gt;<span class="hljs-built_in">Unlock</span>();<br>  &#125;<br>  <span class="hljs-built_in">assert</span>(sv != <span class="hljs-literal">nullptr</span>);<br>  <span class="hljs-keyword">return</span> sv;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -585,8 +598,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>RocksDB源码-0x12-WAL的PutRecord到MemoryTable</div>
-      <div>https://bannirui.github.io/2026/02/13/RocksDB/RocksDB源码-0x12-WAL的PutRecord到MemoryTable/</div>
+      <div>RocksDB源码-0x19-列簇的快照</div>
+      <div>https://bannirui.github.io/2026/04/20/RocksDB/RocksDB源码-0x19-列簇的快照/</div>
     </div>
     <div class="license-meta">
       
@@ -598,7 +611,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年2月13日</div>
+          <div>2026年4月20日</div>
         </div>
       
       
@@ -630,9 +643,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/02/13/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x13-%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AE%E5%88%B7%E7%9B%98SST0/" title="RocksDB源码-0x13-内存数据刷盘SST0">
+                      <a href="/2026/04/20/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x1A-%E5%86%BB%E7%BB%93%E7%9A%84MemTable/" title="RocksDB源码-0x1A-冻结的MemTable">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">RocksDB源码-0x13-内存数据刷盘SST0</span>
+                        <span class="hidden-mobile">RocksDB源码-0x1A-冻结的MemTable</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -640,8 +653,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/11/RocksDB/RocksDB%E6%BA%90%E7%A0%81-0x11-MVCC/" title="RocksDB源码-0x11-MVCC">
-                        <span class="hidden-mobile">RocksDB源码-0x11-MVCC</span>
+                      <a href="/2026/04/10/Note/Clash%E9%85%8D%E7%BD%AE/" title="Clash配置">
+                        <span class="hidden-mobile">Clash配置</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -664,7 +677,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '911d6140e6f7ed6197a865e46091f21b'
+            id: '989ed28ac3d08a632315bc8e80bde852'
           }
         )
         var gitalk = new Gitalk(options);
