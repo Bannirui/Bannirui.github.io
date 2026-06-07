@@ -48,3 +48,26 @@ date: 2026-06-03 16:04:21
   - M模型矩阵是什么
   - V观察矩阵是什么
   - P投影矩阵是什么
+
+### 2.1 模型矩阵怎么定义
+
+就是上面提到的缩放、旋转、平移的矩阵相乘
+
+### 2.2 观察矩阵怎么定义
+
+这个比较复杂，可以看{%post_link OpenGL/OpenGL-0x0A-摄像机%}
+
+### 2.3 投影矩阵怎么定义
+
+```cpp
+void EditorCamera::updateProjection() {
+    // 宽高比
+    m_aspectRatio = m_viewportWidth / m_viewportHeight;
+    // 投影矩阵的公式
+    m_projection = glm::perspective(glm::radians(m_fov), /* 角度->弧度 */
+                                    m_aspectRatio, /* 宽高比 */
+                                    m_nearClip, /* 近距离 */
+                                    m_farClip /* 远距离 */
+    );
+}
+```
