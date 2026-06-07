@@ -27,7 +27,7 @@
 <meta property="og:description" content="这个就纯属线性代数了  矩阵跟矩阵的乘法规则 单位矩阵  矩阵的变化就是对缩放、旋转、平移的组合，顺序是缩放-&gt;旋转-&gt;平移 在OpenGL-0x01-CMake编译OpenGL项目提到过GLM，进行矩阵运算的时候就借助这个库 1234&#x2F;&#x2F; 变换矩阵 仅仅绕着z轴旋转角度glm::mat4 transform &#x3D; glm::translate(glm::mat4(1.0f), posi">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-06-03T08:04:21.000Z">
-<meta property="article:modified_time" content="2026-06-03T08:09:29.284Z">
+<meta property="article:modified_time" content="2026-06-07T04:13:42.890Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          181 字
+          473 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          2 分钟
+          4 分钟
         
       </span>
     
@@ -441,6 +441,29 @@
 <p>矩阵的变化就是对缩放、旋转、平移的组合，顺序是缩放-&gt;旋转-&gt;平移</p>
 <p>在<a href="/2026/06/01/OpenGL/OpenGL-0x01-CMake%E7%BC%96%E8%AF%91OpenGL%E9%A1%B9%E7%9B%AE/" title="OpenGL-0x01-CMake编译OpenGL项目">OpenGL-0x01-CMake编译OpenGL项目</a>提到过GLM，进行矩阵运算的时候就借助这个库</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 变换矩阵 仅仅绕着z轴旋转角度</span><br>glm::mat4 transform = glm::<span class="hljs-built_in">translate</span>(glm::<span class="hljs-built_in">mat4</span>(<span class="hljs-number">1.0f</span>), position) * <span class="hljs-comment">/*最后移动*/</span><br>                      glm::<span class="hljs-built_in">rotate</span>(glm::<span class="hljs-built_in">mat4</span>(<span class="hljs-number">1.0f</span>), glm::<span class="hljs-built_in">radians</span>(rotation), &#123;<span class="hljs-number">0.0f</span>, <span class="hljs-number">0.0f</span>, <span class="hljs-number">1.0f</span>&#125;) * <span class="hljs-comment">/*再旋转 绕着z轴旋转rotation角度*/</span><br>                      glm::<span class="hljs-built_in">scale</span>(glm::<span class="hljs-built_in">mat4</span>(<span class="hljs-number">1.0f</span>), &#123;size.x, size.y, <span class="hljs-number">1.0f</span>&#125;); <span class="hljs-comment">/*先缩放 对xy缩放*/</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="1-它有什么用处"><a href="#1-它有什么用处" class="headerlink" title="1 它有什么用处"></a>1 它有什么用处</h2><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-built_in">gl_Position</span> = u_ViewProjection * worldPos;<br></code></pre></td></tr></table></figure>
+
+<p>在vertex shader中最终都要向GPU输出一个gl_Position，这就是所谓的剪裁空间坐标，决定着最终渲染出来的效果</p>
+<h2 id="2-矩阵及矩阵运算扮演的角色"><a href="#2-矩阵及矩阵运算扮演的角色" class="headerlink" title="2 矩阵及矩阵运算扮演的角色"></a>2 矩阵及矩阵运算扮演的角色</h2><p>当然可以在每一帧都向GPU传输最新的顶点坐标，显然从内存向显存传输是极大的性能消耗，所以通常都是定义一个初始顶点坐标，然后告诉GPU这个顶点坐标需要经过怎么样的计算<br>才能变成最终的剪裁坐标。</p>
+<p>这里面的公式是什么呢，V(clip)&#x3D;P(投影矩阵)*V(观察矩阵)*M(模型矩阵)*V(local)</p>
+<ul>
+<li>V(local) 物体的本地坐标</li>
+<li>M模型矩阵 把本地坐标转换成世界坐标</li>
+<li>V观察矩阵 把世界坐标转换成观察空间坐标</li>
+<li>P投影矩阵 把观察坐标转换成剪裁空间坐标</li>
+</ul>
+<p>所以渲染的过程变成了</p>
+<ul>
+<li>初始的时候告诉GPU物体的本地坐标是什么</li>
+<li>每一帧更新的时候告诉GPU<ul>
+<li>M模型矩阵是什么</li>
+<li>V观察矩阵是什么</li>
+<li>P投影矩阵是什么</li>
+</ul>
+</li>
+</ul>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
