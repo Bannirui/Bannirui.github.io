@@ -11,7 +11,7 @@ date: 2026-07-30 19:54:21
 - [ ] {%post_link LangGraph/LangGraph-0x03-LangGraph的核心执行模型是什么 2 LangGraph的核心执行模型是什么%}
 - [X] {%post_link LangGraph/LangGraph-0x04-StateGraph为什么需要State 3 StateGraph为什么需要State%}
 - [ ] {%post_link LangGraph/LangGraph-0x05-node函数的设计 4 node函数的设计%}
-- [ ] {%post_link LangGraph/LangGraph-0x06-input_schema为什么存在 5 input_schema为什么存在%}
+- [X] {%post_link LangGraph/LangGraph-0x06-input_schema为什么存在 5 input_schema为什么存在%}
 - [X] {%post_link LangGraph/LangGraph-0x07-add_node到底做了什么 6 add_node到底做了什么%}
 - [X] {%post_link LangGraph/LangGraph-0x08-为什么LangGraph支持普通函数 7 为什么LangGraph支持普通函数%}
 - [X] {%post_link LangGraph/LangGraph-0x09-LangGraph如何自动推断结点输入 8 LangGraph如何自动推断结点输入%}
