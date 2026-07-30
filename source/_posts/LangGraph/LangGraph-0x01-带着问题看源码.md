@@ -18,7 +18,7 @@ date: 2026-07-30 19:54:21
 - [ ] {%post_link LangGraph/LangGraph-0x10-普通的add_edge怎么实现 9 普通的add_edge怎么实现%}
 - [ ] {%post_link LangGraph/LangGraph-0x11-conditional_edge怎么实现 10 conditional edge怎么实现%}
 - [ ] {%post_link LangGraph/LangGraph-0x12-Command是什么 11 Command是什么%}
-- [ ] {%post_link LangGraph/LangGraph-0x13-ends存在的意义是什么 12 ends存在的意义是什么%}
+- [X] {%post_link LangGraph/LangGraph-0x13-ends存在的意义是什么 12 ends存在的意义是什么%}
 - [ ] {%post_link LangGraph/LangGraph-0x14-compile到底发生了什么 13 compile到底发生了什么%}
 - [ ] {%post_link LangGraph/LangGraph-0x15-compile之后为什么不能修改Graph 14 compile之后为什么不能修改Graph%}
 - [ ] {%post_link LangGraph/LangGraph-0x0A-Memory如何实现 15 Memory如何实现%}
