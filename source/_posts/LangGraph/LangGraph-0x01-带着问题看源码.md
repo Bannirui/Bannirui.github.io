@@ -15,7 +15,7 @@ date: 2026-07-30 19:54:21
 - [X] {%post_link LangGraph/LangGraph-0x07-add_node到底做了什么 6 add_node到底做了什么%}
 - [X] {%post_link LangGraph/LangGraph-0x08-为什么LangGraph支持普通函数 7 为什么LangGraph支持普通函数%}
 - [X] {%post_link LangGraph/LangGraph-0x09-LangGraph如何自动推断结点输入 8 LangGraph如何自动推断结点输入%}
-- [ ] {%post_link LangGraph/LangGraph-0x10-普通的add_edge怎么实现 9 普通的add_edge怎么实现%}
+- [X] {%post_link LangGraph/LangGraph-0x10-普通的add_edge怎么实现 9 普通的add_edge怎么实现%}
 - [ ] {%post_link LangGraph/LangGraph-0x11-conditional_edge怎么实现 10 conditional edge怎么实现%}
 - [ ] {%post_link LangGraph/LangGraph-0x12-Command是什么 11 Command是什么%}
 - [X] {%post_link LangGraph/LangGraph-0x13-ends存在的意义是什么 12 ends存在的意义是什么%}
