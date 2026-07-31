@@ -27,3 +27,4 @@ date: 2026-07-30 19:54:21
 - [ ] {%post_link LangGraph/LangGraph-0x13-Streaming如何实现 18 Streaming如何实现%}
 - [ ] {%post_link LangGraph/LangGraph-0x14-RAG节点在LangGraph里面是什么 19 RAG节点在LangGraph里面是什么%}
 - [ ] {%post_link LangGraph/LangGraph-0x15-Tool_Calling结点怎么设计 20 Tool Calling结点怎么设计%}
+- [ ] {%post_link LangGraph/LangGraph-0x16-执行引擎层pregel模型 21 执行引擎层pregel%}
