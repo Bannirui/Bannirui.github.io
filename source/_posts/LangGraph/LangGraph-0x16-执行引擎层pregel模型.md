@@ -9,7 +9,7 @@ date: 2026-07-31 20:37:14
 
 https://kowshik.github.io/JPregel/pregel_paper.pdf
 
-
+我感觉pregel模型其实就是LangGraph整个框架的核心，弄懂了它，LangGraph自然而然就清晰了
 
 ## 1 channel
 
@@ -142,6 +142,61 @@ Pregel会把这个缓存起来
         self.channels = channels or {}
 ```
 
-## 2
+## 2 结点
+
+### 2.1 成员概览
+
+这里面涉及到很多概念，所以要先概览一遍，他们的本质和作用会在下面用到的地方进行解释
+
+```python
+# 客户端丢到StateGraph的结点函数最终的形态就是在pregel模型里面结点 它是pregel引擎的真正执行单元
+class PregelNode:
+    """A node in a Pregel graph. This won't be invoked as a runnable by the graph
+    itself, but instead acts as a container for the components necessary to make
+    a PregelExecutableTask for a node."""
+
+    # 这个结点执行的时候 需要读取那些channel 也就是这个结点函数的输入
+    channels: str | list[str]
+    """The channels that will be passed as input to `bound`.
+    If a str, the node will be invoked with its value if it isn't empty.
+    If a list, the node will be invoked with a dict of those channels' values."""
+
+    # 哪些channel的更新后 会触发这个结点的执行
+    # 为什么有了上面的channels不够还要单独用triggers来作为函数的触发信号 因为读取和触发不是一回事
+    # 比如这个结点函数执行需要2个参数a和b 但是只要等待a更新就表示可以开始执行
+    triggers: list[str]
+    """If any of these channels is written to, this node will be triggered in
+    the next step."""
+
+    # channel里面的数据怎么转换成结点函数的输入
+    # 比如结点函数的签名是def fn(state):需要的是{question:"",docs:[]}
+    # 现在question channel里面的数据是"hello"
+    # docs这个channel里面是["a","b"]
+    # 那么mapper函数就负责把channel里面的数据组装起来成为{question:"hello",docs:["a","b"]}传给fn函数
+    mapper: Callable[[Any], Any] | None
+    """A function to transform the input before passing it to `bound`."""
+    # 结点函数执行完需要怎么做 理解了上面的channels和triggers这个地方也就懂了
+    # 什么意思 对于结点函数而言 它的数据跟控制是分离的
+    # 所以现在函数执行完了 自己的输出可能就是别人需要的输入 因此对别人的数据和控制也是分离的
+    # 这个writers里面就是放了2个函数 1个负责往对应的channel里面更新数据 1个负责往对应的channel里面放控制信号
+    writers: list[Runnable]
+    """A list of writers that will be executed after `bound`, responsible for
+    taking the output of `bound` and writing it to the appropriate channels."""
+    # 实际的执行对象 结点函数不会直接保存 会包装一下
+    bound: Runnable[Any, Any]
+    """The main logic of the node. This will be invoked with the input from 
+    `channels`."""
+    # 结点失败重试策略
+    retry_policy: Sequence[RetryPolicy] | None
+    """The retry policies to use when invoking the node."""
+    # 结点缓存 什么意思呢 比如这个结点函数需要的入参name 同样输入了name="hello"之前执行过了 就直接返回缓存
+    cache_policy: CachePolicy | None
+```
+
+### 2.
+### 2.
+### 2.
+
+
 
 ## 3
