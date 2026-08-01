@@ -11,6 +11,8 @@ https://kowshik.github.io/JPregel/pregel_paper.pdf
 
 我感觉pregel模型其实就是LangGraph整个框架的核心，弄懂了它，LangGraph自然而然就清晰了
 
+[LangGraph对Pregel的介绍](https://reference.langchain.com/python/langgraph/pregel/main/Pregel)
+
 ## 1 channel
 
 ### 1.1 怎么给定义的State每个字段生成对应的channel
@@ -142,7 +144,29 @@ Pregel会把这个缓存起来
         self.channels = channels or {}
 ```
 
-## 2 结点
+#### 1.1.5 图里面邻边作用的channel
+
+```python
+    r"""
+    从图的结构上看结点的邻接靠的边 这个边在pregel被抽象成channel
+    现在需要把start->end这样的邻接关系需要的channel构造好
+    注意这个地方的channel不是共享数据channel 而是控制channel
+    现在图的方向是start->end 也就是说start执行完需要通知end执行 所以需要的channel就是start执行完写控制信号
+    """
+    def attach_edge(self, starts: str | Sequence[str], end: str) -> None:
+        if isinstance(starts, str):
+            # subscribe to start channel
+            if end != END:
+                # start->end方向 start的actor执行完写什么channel通知end可以执行
+                # 写哪个channel就是branch:to:end结点名字
+                self.nodes[starts].writers.append(
+                    ChannelWrite(
+                        (ChannelWriteEntry(_CHANNEL_BRANCH_TO.format(end), None),)
+                    )
+                )
+```
+
+## 2 actor
 
 ### 2.1 成员概览
 
@@ -220,5 +244,31 @@ class PregelNode:
             )
 ```
 
-## 3
-## 4
+## 3 模型的搭建
+
+对于pregel算法，重要的两个概念就是actor跟channel，通过上面明白了他们是什么之后，现在总览一下怎么构建出这个模型的
+
+在StateGraph执行compile的链路里面
+
+### 3.1 顶点构建
+
+```python
+        # 3 构建pregel模型的actor
+        # 给LangGraph不需要显式维护start跟end两个哨兵 你不干就得有人干 所以先构造start结点
+        compiled.attach_node(START, None)
+        for key, node in self.nodes.items():
+            # 把所有注册进来的结点函数都添加到pregel模型图里面
+            compiled.attach_node(key, node)
+```
+
+### 3.2 邻边构建
+
+```python
+        # 4 各个actor怎么彼此控制 也就是有向图里面边怎么构建的 搭建控制信号的channel
+        for start, end in self.edges:
+            compiled.attach_edge(start, end)
+```
+
+## 4 并发模型
+
+至此pregel的channel跟actor都有了，模型有了，怎么让模型工作起来呢
