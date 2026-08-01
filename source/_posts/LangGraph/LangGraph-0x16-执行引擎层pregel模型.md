@@ -1,5 +1,5 @@
 ---
-title: LangGraph-0x16-执行引擎层pergel模型
+title: LangGraph-0x16-执行引擎层pregel模型
 category_bar: true
 categories: LangGraph
 date: 2026-07-31 20:37:14
