@@ -193,10 +193,32 @@ class PregelNode:
     cache_policy: CachePolicy | None
 ```
 
-### 2.
-### 2.
-### 2.
+### 2.2 结点的构造
 
-
+```python
+            # 在pregel模型中结点最重要的属性
+            # triggers 谁告诉我该执行了
+            # channels 我的入参从哪儿来
+            # mapper 入参组装成实参
+            # writers 我执行完要把数据更新到哪儿 要不要发个控制信号
+            # bound 函数对象
+            self.nodes[key] = PregelNode(
+                triggers=[branch_channel], # 就看branch:to:结点函数名 这个channel里面有数据更新 说明自己需要执行了
+                # read state keys and managed values
+                channels=("__root__" if is_single_input else input_channels), # 结点函数要执行依赖的参数从哪个channel来 单个字段的入参特殊约定从__root__拿
+                # coerce state dict to schema class (eg. pydantic model)
+                mapper=mapper, # 怎么把channel里面的数据组装成自己这个函数执行的实参
+                # publish to state keys
+                writers=[ChannelWrite(write_entries)], # 自己执行完后给channel传自己的返回值 甚至也要用channel控制别人执行
+                metadata=node.metadata,
+                retry_policy=node.retry_policy,
+                cache_policy=node.cache_policy,
+                is_error_handler=node.is_error_handler,
+                error_handler_node=node.error_handler_node,
+                bound=node.runnable,  # type: ignore[arg-type] # 结点函数
+                timeout=node.timeout,
+            )
+```
 
 ## 3
+## 4
