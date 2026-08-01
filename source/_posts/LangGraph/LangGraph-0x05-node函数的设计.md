@@ -17,7 +17,7 @@ date: 2026-07-30 20:33:30
 
 ## 1 输入是什么
 
-{%post_link LangGraph/LangGraph-0x09-LangGraph如何自动推断结点输入 %}
+{%post_link LangGraph/LangGraph-0x09-LangGraph如何自动推断结点输入%}
 
 ## 2 返回值是什么
 ## 3 返回值怎么merge

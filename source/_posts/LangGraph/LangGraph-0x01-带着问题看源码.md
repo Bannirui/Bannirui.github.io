@@ -8,7 +8,7 @@ date: 2026-07-30 19:54:21
 漫无目的的看源码容易陷入细节出不来，最好的方式是有场景驱动，下面的是问题就是我预设的结果导向
 
 - [ ] {%post_link LangGraph/LangGraph-0x02-LangGraph解决了LangChain的什么问题 1 LangGraph解决了LangChain的什么问题%}
-- [ ] {%post_link LangGraph/LangGraph-0x03-LangGraph的核心执行模型是什么 2 LangGraph的核心执行模型是什么%}
+- [X] {%post_link LangGraph/LangGraph-0x03-LangGraph的核心执行模型是什么 2 LangGraph的核心执行模型是什么%}
 - [X] {%post_link LangGraph/LangGraph-0x04-StateGraph为什么需要State 3 StateGraph为什么需要State%}
 - [ ] {%post_link LangGraph/LangGraph-0x05-node函数的设计 4 node函数的设计%}
 - [X] {%post_link LangGraph/LangGraph-0x06-input_schema为什么存在 5 input_schema为什么存在%}
