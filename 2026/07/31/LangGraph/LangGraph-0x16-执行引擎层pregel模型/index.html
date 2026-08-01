@@ -1,0 +1,1022 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="没想到底层用的竟然是Pregel模型，当我看到channel的时候我就想到了golang，没想到真的很google，网上找到的论文丢下面了 https:&#x2F;&#x2F;kowshik.github.io&#x2F;JPregel&#x2F;pregel_paper.pdf 我感觉pregel模型其实就是LangGraph整个框架的核心，弄懂了它，LangGraph自然而然就清晰了 LangGraph对Pregel的介绍 1 ch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangGraph-0x16-执行引擎层pregel模型">
+<meta property="og:url" content="https://bannirui.github.io/2026/07/31/LangGraph/LangGraph-0x16-%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E%E5%B1%82pregel%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="没想到底层用的竟然是Pregel模型，当我看到channel的时候我就想到了golang，没想到真的很google，网上找到的论文丢下面了 https:&#x2F;&#x2F;kowshik.github.io&#x2F;JPregel&#x2F;pregel_paper.pdf 我感觉pregel模型其实就是LangGraph整个框架的核心，弄懂了它，LangGraph自然而然就清晰了 LangGraph对Pregel的介绍 1 ch">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-31T12:37:14.000Z">
+<meta property="article:modified_time" content="2026-08-01T08:36:48.481Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>LangGraph-0x16-执行引擎层pregel模型 - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LangGraph-0x16-执行引擎层pregel模型"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-31 20:37" pubdate>
+          2026年7月31日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="LangGraph"
+        id="heading-4923cf0acd7ad1133517eb41a175c8ff" role="tab" data-toggle="collapse" href="#collapse-4923cf0acd7ad1133517eb41a175c8ff"
+        aria-expanded="true"
+      >
+        LangGraph
+        <span class="list-group-count">(23)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-4923cf0acd7ad1133517eb41a175c8ff"
+           role="tabpanel" aria-labelledby="heading-4923cf0acd7ad1133517eb41a175c8ff">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x00-%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83/" title="LangGraph-0x00-源码环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x00-源码环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x01-%E5%B8%A6%E7%9D%80%E9%97%AE%E9%A2%98%E7%9C%8B%E6%BA%90%E7%A0%81/" title="LangGraph-0x01-带着问题看源码"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x01-带着问题看源码</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x02-LangGraph%E8%A7%A3%E5%86%B3%E4%BA%86LangChain%E7%9A%84%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98/" title="LangGraph-0x02-LangGraph解决了LangChain的什么问题"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x02-LangGraph解决了LangChain的什么问题</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x03-LangGraph%E7%9A%84%E6%A0%B8%E5%BF%83%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%9E%8B%E6%98%AF%E4%BB%80%E4%B9%88/" title="LangGraph-0x03-LangGraph的核心执行模型是什么"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x03-LangGraph的核心执行模型是什么</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x04-StateGraph%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81State/" title="LangGraph-0x04-StateGraph为什么需要State"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x04-StateGraph为什么需要State</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x05-node%E5%87%BD%E6%95%B0%E7%9A%84%E8%AE%BE%E8%AE%A1/" title="LangGraph-0x05-node函数的设计"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x05-node函数的设计</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x06-input_schema%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AD%98%E5%9C%A8/" title="LangGraph-0x06-input_schema为什么存在"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x06-input_schema为什么存在</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x07-add_node%E5%88%B0%E5%BA%95%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/" title="LangGraph-0x07-add_node到底做了什么"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x07-add_node到底做了什么</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x08-%E4%B8%BA%E4%BB%80%E4%B9%88LangGraph%E6%94%AF%E6%8C%81%E6%99%AE%E9%80%9A%E5%87%BD%E6%95%B0/" title="LangGraph-0x08-为什么LangGraph支持普通函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x08-为什么LangGraph支持普通函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x09-LangGraph%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E6%8E%A8%E6%96%AD%E7%BB%93%E7%82%B9%E8%BE%93%E5%85%A5/" title="LangGraph-0x09-LangGraph如何自动推断结点输入"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x09-LangGraph如何自动推断结点输入</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x13-Streaming%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0/" title="LangGraph-0x0D-Streaming如何实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x0D-Streaming如何实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x14-RAG%E8%8A%82%E7%82%B9%E5%9C%A8LangGraph%E9%87%8C%E9%9D%A2%E6%98%AF%E4%BB%80%E4%B9%88/" title="LangGraph-0x0E-RAG节点是LangGraph里面是什么"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x0E-RAG节点是LangGraph里面是什么</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x0E-compile%E5%88%B0%E5%BA%95%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/" title="LangGraph-0x0E-compile到底发生了什么"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x0E-compile到底发生了什么</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x15-Tool_Calling%E7%BB%93%E7%82%B9%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1/" title="LangGraph-0x0F-Tool_Calling结点怎么设计"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x0F-Tool_Calling结点怎么设计</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x0A-%E6%99%AE%E9%80%9A%E7%9A%84add_edge%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0/" title="LangGraph-0x10-普通的add_edge怎么实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x10-普通的add_edge怎么实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x0B-conditional_edge%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0/" title="LangGraph-0x11-conditional edge怎么实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x11-conditional edge怎么实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x0C-Command%E6%98%AF%E4%BB%80%E4%B9%88/" title="LangGraph-0x12-Command是什么"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x12-Command是什么</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x0D-ends%E5%AD%98%E5%9C%A8%E7%9A%84%E6%84%8F%E4%B9%89%E6%98%AF%E4%BB%80%E4%B9%88/" title="LangGraph-0x13-ends存在的意义是什么"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x13-ends存在的意义是什么</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x0F-compile%E4%B9%8B%E5%90%8E%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E4%BF%AE%E6%94%B9Graph/" title="LangGraph-0x15-compile之后为什么不能修改Graph"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x15-compile之后为什么不能修改Graph</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/07/30/LangGraph/LangGraph-0x10-Memory%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0/" title="LangGraph-0x16-Memory如何实现"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">LangGraph-0x16-Memory如何实现</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/LangGraph/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LangGraph-0x16-执行引擎层pregel模型</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>没想到底层用的竟然是Pregel模型，当我看到channel的时候我就想到了golang，没想到真的很google，网上找到的论文丢下面了</p>
+<p><a target="_blank" rel="noopener" href="https://kowshik.github.io/JPregel/pregel_paper.pdf">https://kowshik.github.io/JPregel/pregel_paper.pdf</a></p>
+<p>我感觉pregel模型其实就是LangGraph整个框架的核心，弄懂了它，LangGraph自然而然就清晰了</p>
+<p><a target="_blank" rel="noopener" href="https://reference.langchain.com/python/langgraph/pregel/main/Pregel">LangGraph对Pregel的介绍</a></p>
+<h2 id="1-channel"><a href="#1-channel" class="headerlink" title="1 channel"></a>1 channel</h2><h3 id="1-1-怎么给定义的State每个字段生成对应的channel"><a href="#1-1-怎么给定义的State每个字段生成对应的channel" class="headerlink" title="1.1 怎么给定义的State每个字段生成对应的channel"></a>1.1 怎么给定义的State每个字段生成对应的channel</h3><h4 id="1-1-1-单个字段的channel类型"><a href="#1-1-1-单个字段的channel类型" class="headerlink" title="1.1.1 单个字段的channel类型"></a>1.1.1 单个字段的channel类型</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">r&quot;&quot;&quot;</span><br><span class="hljs-string">在给LangGraph定义State的时候 它就是定义了dict</span><br><span class="hljs-string">比如</span><br><span class="hljs-string">class MyState(TypedDict):</span><br><span class="hljs-string">    name: str</span><br><span class="hljs-string">那么就是定义了dict的key是name name这个字段的value类型是str</span><br><span class="hljs-string">那么name这个字段的channel类型就是LastValue(str)</span><br><span class="hljs-string">这个函数解决的就是dict单个字段的channel类型推导</span><br><span class="hljs-string">:param name: dict字段的名字</span><br><span class="hljs-string">:param annotation: dict字段对应value的类型</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_channel</span>(<span class="hljs-params"></span><br><span class="hljs-params">    name: <span class="hljs-built_in">str</span>, annotation: <span class="hljs-type">Any</span>, *, allow_managed: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">True</span></span><br><span class="hljs-params"></span>) -&gt; BaseChannel | ManagedValueSpec:<br>    <span class="hljs-comment"># Strip out Required and NotRequired wrappers</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">hasattr</span>(annotation, <span class="hljs-string">&quot;__origin__&quot;</span>) <span class="hljs-keyword">and</span> annotation.__origin__ <span class="hljs-keyword">in</span> (<br>        Required,<br>        NotRequired,<br>    ):<br>        annotation = annotation.__args__[<span class="hljs-number">0</span>]<br>    <span class="hljs-keyword">if</span> manager := _is_field_managed_value(name, annotation):<br>        <span class="hljs-keyword">if</span> allow_managed:<br>            <span class="hljs-keyword">return</span> manager<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f&quot;This <span class="hljs-subst">&#123;annotation&#125;</span> not allowed in this position&quot;</span>)<br>    <span class="hljs-keyword">elif</span> channel := _is_field_channel(annotation):<br>        channel.key = name<br>        <span class="hljs-keyword">return</span> channel<br>    <span class="hljs-keyword">elif</span> channel := _is_field_binop(annotation):<br>        channel.key = name<br>        <span class="hljs-keyword">return</span> channel<br>    <span class="hljs-comment"># 比如类型是str 那么返回的就是LastValue(str)</span><br>    fallback: LastValue = LastValue(annotation)<br>    fallback.key = name<br>    <span class="hljs-keyword">return</span> fallback<br></code></pre></td></tr></table></figure>
+
+<h4 id="1-1-2-State的channel类型"><a href="#1-1-2-State的channel类型" class="headerlink" title="1.1.2 State的channel类型"></a>1.1.2 State的channel类型</h4><p>能拿到dict某个字段的channel，就能拿到整个State的所有字段的channel</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 拿到LangGraph的State所有字段的channel 关注第1个返回值 是在pregel系统中传递消息用的</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_channels</span>(<span class="hljs-params"></span><br><span class="hljs-params">    schema: <span class="hljs-built_in">type</span>[<span class="hljs-built_in">dict</span>], <span class="hljs-comment"># schema是在LangGraph里面重要的TypedDict State</span></span><br><span class="hljs-params"></span>) -&gt; <span class="hljs-built_in">tuple</span>[<span class="hljs-built_in">dict</span>[<span class="hljs-built_in">str</span>, BaseChannel], <span class="hljs-built_in">dict</span>[<span class="hljs-built_in">str</span>, ManagedValueSpec], <span class="hljs-built_in">dict</span>[<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>]]:<br>    <span class="hljs-comment"># TypedDict是有__annotations__的 所以不会进下面的分支</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-built_in">hasattr</span>(schema, <span class="hljs-string">&quot;__annotations__&quot;</span>):<br>        <span class="hljs-keyword">return</span> (<br>            &#123;<span class="hljs-string">&quot;__root__&quot;</span>: _get_channel(<span class="hljs-string">&quot;__root__&quot;</span>, schema, allow_managed=<span class="hljs-literal">False</span>)&#125;,<br>            &#123;&#125;,<br>            &#123;&#125;,<br>        )<br><br>    <span class="hljs-comment"># 拿到State这个dict的value的类型注解</span><br>    <span class="hljs-comment"># 比如class(TypedDict): question:str 那么这个地方拿到的就是个dict=&#123;&quot;question&quot;:str&#125;</span><br>    type_hints = get_type_hints(schema, include_extras=<span class="hljs-literal">True</span>)<br>    <span class="hljs-comment"># _get_channel解决了每一个字段的名字和channel类型 下面的列表推导式拿到了State这个dict所有字段的name和对应的channel类型</span><br>    all_keys = &#123;<br>        name: _get_channel(name, typ)<br>        <span class="hljs-keyword">for</span> name, typ <span class="hljs-keyword">in</span> type_hints.items()<br>        <span class="hljs-keyword">if</span> name != <span class="hljs-string">&quot;__slots__&quot;</span><br>    &#125;<br>    <span class="hljs-comment"># 返回值分成了3个部分 是为了将来给pergel引擎用的 按照用途分成了3类</span><br>    <span class="hljs-comment"># 第1个返回值判断channel类型是不是BaseChannel 以内置类型来说 比如str-&gt;LastValue(str) LastValue继承了BaseChannel</span><br>    <span class="hljs-comment"># 所以第1个返回值就是拿到了用来在pregel模型中传递消息的所有字段的channel</span><br>    <span class="hljs-keyword">return</span> (<br>        &#123;k: v <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">in</span> all_keys.items() <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(v, BaseChannel)&#125;,<br>        &#123;k: v <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">in</span> all_keys.items() <span class="hljs-keyword">if</span> is_managed_value(v)&#125;,<br>        type_hints,<br>    )<br></code></pre></td></tr></table></figure>
+
+<h4 id="1-1-3-StateGraph构造函数做了什么"><a href="#1-1-3-StateGraph构造函数做了什么" class="headerlink" title="1.1.3 StateGraph构造函数做了什么"></a>1.1.3 StateGraph构造函数做了什么</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 把State字段的channel类型缓存起来 放到channels里面</span><br>self._add_schema(self.state_schema)<br></code></pre></td></tr></table></figure>
+
+<p>那么这个跟pregel有什么关系呢，这个链路是StateGraph构造-&gt;缓存好State字段的channel类型-&gt;StateGraph对象进行compile构建图-&gt;触发CompiledStateGraph构造，而CompiledStateGraph又继承自Pregel，所以也就是这个时候把channels都告诉了pregel模型</p>
+<h4 id="1-1-4-CompiledStateGraph的构造函数"><a href="#1-1-4-CompiledStateGraph的构造函数" class="headerlink" title="1.1.4 CompiledStateGraph的构造函数"></a>1.1.4 CompiledStateGraph的构造函数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 2 最终真正构建好的图就是CompiledStateGraph对象 实例化出来 构造函数的作用仅仅是把StateGraph传进去</span><br><span class="hljs-comment"># 这也是为什么说一旦图构建好后就不能再更改了 因为对客户端而言能修改图结构的接口是add_node和add_edge而它们更改的是StateGraph</span><br><span class="hljs-comment"># 真正的图对象是CompiledStateGraph 所以即使给StateGraph的修改拦截放开也没用</span><br><span class="hljs-comment"># StateGraph是业务抽象层 CompiledStateGraph是执行转换层 CompiledStateGraph又继承了Pregel 说明它的本质就是一个pregel的执行引擎层</span><br>compiled = CompiledStateGraph[StateT, ContextT, InputT, OutputT](<br>    builder=self,<br>    schema_to_mapper=&#123;&#125;,<br>    context_schema=self.context_schema,<br>    nodes=&#123;&#125;,<br>    <span class="hljs-comment"># 这个时候StateGraph就开始把channels里面缓存的State字段的channel类型通过channels字段构造给CompiledStateGraph了</span><br>    <span class="hljs-comment"># 而CompiledStateGraph的构造函数又会调用父类Pregel的构造一路把channels传上去</span><br>    channels=&#123;<br>        **self.channels,<br>        **self.managed,<br>        START: EphemeralValue(self.input_schema),<br>    &#125;,<br></code></pre></td></tr></table></figure>
+
+<h4 id="1-1-4-CompiledStateGraph调用父类Pregel的构造函数"><a href="#1-1-4-CompiledStateGraph调用父类Pregel的构造函数" class="headerlink" title="1.1.4 CompiledStateGraph调用父类Pregel的构造函数"></a>1.1.4 CompiledStateGraph调用父类Pregel的构造函数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params"></span><br><span class="hljs-params">    self,</span><br><span class="hljs-params">    *,</span><br><span class="hljs-params">    builder: StateGraph[StateT, ContextT, InputT, OutputT], <span class="hljs-comment"># 构造CompiledStateGraph会把StateGraph对象传进来</span></span><br><span class="hljs-params">    schema_to_mapper: <span class="hljs-built_in">dict</span>[<span class="hljs-built_in">type</span>[<span class="hljs-type">Any</span>], <span class="hljs-type">Callable</span>[[<span class="hljs-type">Any</span>], <span class="hljs-type">Any</span>] | <span class="hljs-literal">None</span>],</span><br><span class="hljs-params">    **kwargs: <span class="hljs-type">Any</span>,</span><br><span class="hljs-params"></span>) -&gt; <span class="hljs-literal">None</span>:<br>    <span class="hljs-comment"># StateGraph对象执行compile的过程中会构造一个CompiledStateGraph执行到这 会送上来参数channels 就是State字段的channel类型</span><br>    <span class="hljs-built_in">super</span>().__init__(**kwargs)<br></code></pre></td></tr></table></figure>
+
+<p>Pregel会把这个缓存起来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># StateGraph对象-&gt;compile-&gt;CompiledStateGraph构造 StateGraph对象会把自己解析好的State字段的channel类型传进来</span><br>self.channels = channels <span class="hljs-keyword">or</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="1-1-5-图里面邻边作用的channel"><a href="#1-1-5-图里面邻边作用的channel" class="headerlink" title="1.1.5 图里面邻边作用的channel"></a>1.1.5 图里面邻边作用的channel</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-string">r&quot;&quot;&quot;</span><br><span class="hljs-string">从图的结构上看结点的邻接靠的边 这个边在pregel被抽象成channel</span><br><span class="hljs-string">现在需要把start-&gt;end这样的邻接关系需要的channel构造好</span><br><span class="hljs-string">注意这个地方的channel不是共享数据channel 而是控制channel</span><br><span class="hljs-string">现在图的方向是start-&gt;end 也就是说start执行完需要通知end执行 所以需要的channel就是start执行完写控制信号</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">attach_edge</span>(<span class="hljs-params">self, starts: <span class="hljs-built_in">str</span> | <span class="hljs-type">Sequence</span>[<span class="hljs-built_in">str</span>], end: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-literal">None</span>:<br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(starts, <span class="hljs-built_in">str</span>):<br>        <span class="hljs-comment"># subscribe to start channel</span><br>        <span class="hljs-keyword">if</span> end != END:<br>            <span class="hljs-comment"># start-&gt;end方向 start的actor执行完写什么channel通知end可以执行</span><br>            <span class="hljs-comment"># 写哪个channel就是branch:to:end结点名字</span><br>            self.nodes[starts].writers.append(<br>                ChannelWrite(<br>                    (ChannelWriteEntry(_CHANNEL_BRANCH_TO.<span class="hljs-built_in">format</span>(end), <span class="hljs-literal">None</span>),)<br>                )<br>            )<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-actor"><a href="#2-actor" class="headerlink" title="2 actor"></a>2 actor</h2><h3 id="2-1-成员概览"><a href="#2-1-成员概览" class="headerlink" title="2.1 成员概览"></a>2.1 成员概览</h3><p>这里面涉及到很多概念，所以要先概览一遍，他们的本质和作用会在下面用到的地方进行解释</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 客户端丢到StateGraph的结点函数最终的形态就是在pregel模型里面结点 它是pregel引擎的真正执行单元</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">PregelNode</span>:<br>    <span class="hljs-string">&quot;&quot;&quot;A node in a Pregel graph. This won&#x27;t be invoked as a runnable by the graph</span><br><span class="hljs-string">    itself, but instead acts as a container for the components necessary to make</span><br><span class="hljs-string">    a PregelExecutableTask for a node.&quot;&quot;&quot;</span><br><br>    <span class="hljs-comment"># 这个结点执行的时候 需要读取那些channel 也就是这个结点函数的输入</span><br>    channels: <span class="hljs-built_in">str</span> | <span class="hljs-built_in">list</span>[<span class="hljs-built_in">str</span>]<br>    <span class="hljs-string">&quot;&quot;&quot;The channels that will be passed as input to `bound`.</span><br><span class="hljs-string">    If a str, the node will be invoked with its value if it isn&#x27;t empty.</span><br><span class="hljs-string">    If a list, the node will be invoked with a dict of those channels&#x27; values.&quot;&quot;&quot;</span><br><br>    <span class="hljs-comment"># 哪些channel的更新后 会触发这个结点的执行</span><br>    <span class="hljs-comment"># 为什么有了上面的channels不够还要单独用triggers来作为函数的触发信号 因为读取和触发不是一回事</span><br>    <span class="hljs-comment"># 比如这个结点函数执行需要2个参数a和b 但是只要等待a更新就表示可以开始执行</span><br>    triggers: <span class="hljs-built_in">list</span>[<span class="hljs-built_in">str</span>]<br>    <span class="hljs-string">&quot;&quot;&quot;If any of these channels is written to, this node will be triggered in</span><br><span class="hljs-string">    the next step.&quot;&quot;&quot;</span><br><br>    <span class="hljs-comment"># channel里面的数据怎么转换成结点函数的输入</span><br>    <span class="hljs-comment"># 比如结点函数的签名是def fn(state):需要的是&#123;question:&quot;&quot;,docs:[]&#125;</span><br>    <span class="hljs-comment"># 现在question channel里面的数据是&quot;hello&quot;</span><br>    <span class="hljs-comment"># docs这个channel里面是[&quot;a&quot;,&quot;b&quot;]</span><br>    <span class="hljs-comment"># 那么mapper函数就负责把channel里面的数据组装起来成为&#123;question:&quot;hello&quot;,docs:[&quot;a&quot;,&quot;b&quot;]&#125;传给fn函数</span><br>    mapper: <span class="hljs-type">Callable</span>[[<span class="hljs-type">Any</span>], <span class="hljs-type">Any</span>] | <span class="hljs-literal">None</span><br>    <span class="hljs-string">&quot;&quot;&quot;A function to transform the input before passing it to `bound`.&quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 结点函数执行完需要怎么做 理解了上面的channels和triggers这个地方也就懂了</span><br>    <span class="hljs-comment"># 什么意思 对于结点函数而言 它的数据跟控制是分离的</span><br>    <span class="hljs-comment"># 所以现在函数执行完了 自己的输出可能就是别人需要的输入 因此对别人的数据和控制也是分离的</span><br>    <span class="hljs-comment"># 这个writers里面就是放了2个函数 1个负责往对应的channel里面更新数据 1个负责往对应的channel里面放控制信号</span><br>    writers: <span class="hljs-built_in">list</span>[Runnable]<br>    <span class="hljs-string">&quot;&quot;&quot;A list of writers that will be executed after `bound`, responsible for</span><br><span class="hljs-string">    taking the output of `bound` and writing it to the appropriate channels.&quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 实际的执行对象 结点函数不会直接保存 会包装一下</span><br>    bound: Runnable[<span class="hljs-type">Any</span>, <span class="hljs-type">Any</span>]<br>    <span class="hljs-string">&quot;&quot;&quot;The main logic of the node. This will be invoked with the input from </span><br><span class="hljs-string">    `channels`.&quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 结点失败重试策略</span><br>    retry_policy: <span class="hljs-type">Sequence</span>[RetryPolicy] | <span class="hljs-literal">None</span><br>    <span class="hljs-string">&quot;&quot;&quot;The retry policies to use when invoking the node.&quot;&quot;&quot;</span><br>    <span class="hljs-comment"># 结点缓存 什么意思呢 比如这个结点函数需要的入参name 同样输入了name=&quot;hello&quot;之前执行过了 就直接返回缓存</span><br>    cache_policy: CachePolicy | <span class="hljs-literal">None</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-结点的构造"><a href="#2-2-结点的构造" class="headerlink" title="2.2 结点的构造"></a>2.2 结点的构造</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 在pregel模型中结点最重要的属性</span><br><span class="hljs-comment"># triggers 谁告诉我该执行了</span><br><span class="hljs-comment"># channels 我的入参从哪儿来</span><br><span class="hljs-comment"># mapper 入参组装成实参</span><br><span class="hljs-comment"># writers 我执行完要把数据更新到哪儿 要不要发个控制信号</span><br><span class="hljs-comment"># bound 函数对象</span><br>self.nodes[key] = PregelNode(<br>    triggers=[branch_channel], <span class="hljs-comment"># 就看branch:to:结点函数名 这个channel里面有数据更新 说明自己需要执行了</span><br>    <span class="hljs-comment"># read state keys and managed values</span><br>    channels=(<span class="hljs-string">&quot;__root__&quot;</span> <span class="hljs-keyword">if</span> is_single_input <span class="hljs-keyword">else</span> input_channels), <span class="hljs-comment"># 结点函数要执行依赖的参数从哪个channel来 单个字段的入参特殊约定从__root__拿</span><br>    <span class="hljs-comment"># coerce state dict to schema class (eg. pydantic model)</span><br>    mapper=mapper, <span class="hljs-comment"># 怎么把channel里面的数据组装成自己这个函数执行的实参</span><br>    <span class="hljs-comment"># publish to state keys</span><br>    writers=[ChannelWrite(write_entries)], <span class="hljs-comment"># 自己执行完后给channel传自己的返回值 甚至也要用channel控制别人执行</span><br>    metadata=node.metadata,<br>    retry_policy=node.retry_policy,<br>    cache_policy=node.cache_policy,<br>    is_error_handler=node.is_error_handler,<br>    error_handler_node=node.error_handler_node,<br>    bound=node.runnable,  <span class="hljs-comment"># type: ignore[arg-<span class="hljs-built_in">type</span>] # 结点函数</span><br>    timeout=node.timeout,<br>)<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-模型的搭建"><a href="#3-模型的搭建" class="headerlink" title="3 模型的搭建"></a>3 模型的搭建</h2><p>对于pregel算法，重要的两个概念就是actor跟channel，通过上面明白了他们是什么之后，现在总览一下怎么构建出这个模型的</p>
+<p>在StateGraph执行compile的链路里面</p>
+<h3 id="3-1-顶点构建"><a href="#3-1-顶点构建" class="headerlink" title="3.1 顶点构建"></a>3.1 顶点构建</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 3 构建pregel模型的actor</span><br><span class="hljs-comment"># 给LangGraph不需要显式维护start跟end两个哨兵 你不干就得有人干 所以先构造start结点</span><br>compiled.attach_node(START, <span class="hljs-literal">None</span>)<br><span class="hljs-keyword">for</span> key, node <span class="hljs-keyword">in</span> self.nodes.items():<br>    <span class="hljs-comment"># 把所有注册进来的结点函数都添加到pregel模型图里面</span><br>    compiled.attach_node(key, node)<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-邻边构建"><a href="#3-2-邻边构建" class="headerlink" title="3.2 邻边构建"></a>3.2 邻边构建</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 4 各个actor怎么彼此控制 也就是有向图里面边怎么构建的 搭建控制信号的channel</span><br><span class="hljs-keyword">for</span> start, end <span class="hljs-keyword">in</span> self.edges:<br>    compiled.attach_edge(start, end)<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-模型的调度"><a href="#4-模型的调度" class="headerlink" title="4 模型的调度"></a>4 模型的调度</h2><p>至此pregel的channel跟actor都有了，模型有了，怎么让模型工作起来呢。跟其他框架一样最朴素的方式就是套一个while循环就行。</p>
+<p>pregel为了算法的其他治理能力，对loop模型做了一些变种优化，但是本质就是一个死循环。</p>
+<p>比较复杂的流程是第一次启动调度</p>
+<h3 id="4-1-客户端启动CompiledStateGraph"><a href="#4-1-客户端启动CompiledStateGraph" class="headerlink" title="4.1 客户端启动CompiledStateGraph"></a>4.1 客户端启动CompiledStateGraph</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">init_state: Ctx = &#123;<span class="hljs-string">&quot;question&quot;</span>: <span class="hljs-string">&quot;this is my question&quot;</span>&#125;<br>result = graph.invoke(init_state)<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-这个数据会更新到-start-上"><a href="#4-2-这个数据会更新到-start-上" class="headerlink" title="4.2 这个数据会更新到__start__上"></a>4.2 这个数据会更新到__start__上</h3><h4 id="4-2-1-先创建channel"><a href="#4-2-1-先创建channel" class="headerlink" title="4.2.1 先创建channel"></a>4.2.1 先创建channel</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 创建好channel 包括__start__这个channel</span><br>self.channels, self.managed = channels_from_checkpoint(<br>    self.specs,<br>    self.checkpoint,<br>    saver=self.checkpointer,<br>    config=self.checkpoint_config,<br>)<br></code></pre></td></tr></table></figure>
+
+
+<h4 id="4-2-1-往channel写数据"><a href="#4-2-1-往channel写数据" class="headerlink" title="4.2.1 往channel写数据"></a>4.2.1 往channel写数据</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 在CompiledStateGraph调用invoke把输入输入状态丢进来后 这个地方记录一下哪些channel被更新了</span><br><span class="hljs-comment"># 标记__start__被更新了</span><br>self.updated_channels = self._first(<br>    input_keys=self.input_keys, <span class="hljs-comment"># 接收输入状态input的channel 在pregel中的初始接收invoke的channel是__start__</span><br>    updated_channels=<span class="hljs-built_in">set</span>(self.checkpoint.get(<span class="hljs-string">&quot;updated_channels&quot;</span>))  <span class="hljs-comment"># type: ignore[arg-<span class="hljs-built_in">type</span>]</span><br>    <span class="hljs-keyword">if</span> self.checkpoint.get(<span class="hljs-string">&quot;updated_channels&quot;</span>)<br>    <span class="hljs-keyword">else</span> <span class="hljs-literal">None</span>,<br>)<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-3-START订阅的控制信号和数据"><a href="#4-3-START订阅的控制信号和数据" class="headerlink" title="4.3 START订阅的控制信号和数据"></a>4.3 START订阅的控制信号和数据</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">if</span> key == START:<br>    <span class="hljs-comment"># START结点需要特殊处理 特殊在哪儿</span><br>    <span class="hljs-comment"># 1 本质是个哨兵 没有函数执行</span><br>    <span class="hljs-comment"># 2 它订阅的信号channel也是特殊的 谁能驱动start工作呢 就是整个pregel首次调度的时候 在CompiledStateGraph执行invoke的时候是把input输入状态数据提交给了pregel 然后pregel把输入数据写到了__start__这个channel上 所以__start__这个channel的变化就是START Actor执行的信号</span><br>    <span class="hljs-comment"># 3 虽然没有函数 但是逻辑上这个actor也会回调writers里面的两个函数</span><br>    <span class="hljs-comment"># 它跟普通函数的actor的区别在于 普通actor的执行链是 input-&gt;input=proc(input)-&gt;writers(input) 因为START没有proc 所以writers收到的入参还是actor原来的input</span><br>    self.nodes[key] = PregelNode(<br>        tags=[TAG_HIDDEN],<br>        triggers=[START],<br>        channels=START,<br>        writers=[ChannelWrite(write_entries)],<br>    )<br></code></pre></td></tr></table></figure>
+
+<p>triggers和channels都是__start__，这也是为什么pregel可以loop起来的原因。</p>
+<p>至此，pregel模型创建的时候会往__start__写启动数据，这个channel既是控制channel又是数据channel。</p>
+<ul>
+<li>在loop里面找到了哪些channel被更新了</li>
+<li>发现了__start__被更新了，订阅的Actor是START</li>
+<li>看看START的参数channel也是__start__</li>
+<li>START这个是特殊的Actor<ul>
+<li>没有proc执行函数</li>
+<li>自然也就没有mapper组装参数，直接去channel里面拿数据出来就行，因为只有__start__一个channel来源，不需要组装</li>
+</ul>
+</li>
+<li>回调writers<ul>
+<li>把输入状态input的每个字段更新到channel</li>
+<li>发送START下游结点的信号channel</li>
+</ul>
+</li>
+</ul>
+<p>就这样循环起来</p>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/LangGraph/" class="category-chain-item">LangGraph</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LangGraph-0x16-执行引擎层pregel模型</div>
+      <div>https://bannirui.github.io/2026/07/31/LangGraph/LangGraph-0x16-执行引擎层pregel模型/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/07/30/LangGraph/LangGraph-0x15-Tool_Calling%E7%BB%93%E7%82%B9%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1/" title="LangGraph-0x0F-Tool_Calling结点怎么设计">
+                        <span class="hidden-mobile">LangGraph-0x0F-Tool_Calling结点怎么设计</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'eccb5c14c1b5ab4c4b994d0f731e7a48'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
