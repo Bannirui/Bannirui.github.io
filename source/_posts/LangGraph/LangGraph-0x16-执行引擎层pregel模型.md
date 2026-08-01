@@ -269,6 +269,78 @@ class PregelNode:
             compiled.attach_edge(start, end)
 ```
 
-## 4 并发模型
+## 4 模型的调度
 
-至此pregel的channel跟actor都有了，模型有了，怎么让模型工作起来呢
+至此pregel的channel跟actor都有了，模型有了，怎么让模型工作起来呢。跟其他框架一样最朴素的方式就是套一个while循环就行。
+
+pregel为了算法的其他治理能力，对loop模型做了一些变种优化，但是本质就是一个死循环。
+
+比较复杂的流程是第一次启动调度
+
+### 4.1 客户端启动CompiledStateGraph
+
+```python
+init_state: Ctx = {"question": "this is my question"}
+result = graph.invoke(init_state)
+```
+
+### 4.2 这个数据会更新到__start__上
+
+#### 4.2.1 先创建channel
+
+```python
+        # 创建好channel 包括__start__这个channel
+        self.channels, self.managed = channels_from_checkpoint(
+            self.specs,
+            self.checkpoint,
+            saver=self.checkpointer,
+            config=self.checkpoint_config,
+        )
+```
+
+
+#### 4.2.1 往channel写数据
+
+```python
+        # 在CompiledStateGraph调用invoke把输入输入状态丢进来后 这个地方记录一下哪些channel被更新了
+        # 标记__start__被更新了
+        self.updated_channels = self._first(
+            input_keys=self.input_keys, # 接收输入状态input的channel 在pregel中的初始接收invoke的channel是__start__
+            updated_channels=set(self.checkpoint.get("updated_channels"))  # type: ignore[arg-type]
+            if self.checkpoint.get("updated_channels")
+            else None,
+        )
+```
+
+### 4.3 START订阅的控制信号和数据
+
+```python
+        if key == START:
+            # START结点需要特殊处理 特殊在哪儿
+            # 1 本质是个哨兵 没有函数执行
+            # 2 它订阅的信号channel也是特殊的 谁能驱动start工作呢 就是整个pregel首次调度的时候 在CompiledStateGraph执行invoke的时候是把input输入状态数据提交给了pregel 然后pregel把输入数据写到了__start__这个channel上 所以__start__这个channel的变化就是START Actor执行的信号
+            # 3 虽然没有函数 但是逻辑上这个actor也会回调writers里面的两个函数
+            # 它跟普通函数的actor的区别在于 普通actor的执行链是 input->input=proc(input)->writers(input) 因为START没有proc 所以writers收到的入参还是actor原来的input
+            self.nodes[key] = PregelNode(
+                tags=[TAG_HIDDEN],
+                triggers=[START],
+                channels=START,
+                writers=[ChannelWrite(write_entries)],
+            )
+```
+
+triggers和channels都是__start__，这也是为什么pregel可以loop起来的原因。
+
+至此，pregel模型创建的时候会往__start__写启动数据，这个channel既是控制channel又是数据channel。
+
+- 在loop里面找到了哪些channel被更新了
+- 发现了__start__被更新了，订阅的Actor是START
+- 看看START的参数channel也是__start__
+- START这个是特殊的Actor
+  - 没有proc执行函数
+  - 自然也就没有mapper组装参数，直接去channel里面拿数据出来就行，因为只有__start__一个channel来源，不需要组装
+- 回调writers
+  - 把输入状态input的每个字段更新到channel
+  - 发送START下游结点的信号channel
+
+就这样循环起来
