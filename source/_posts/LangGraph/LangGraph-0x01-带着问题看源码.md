@@ -16,7 +16,7 @@ date: 2026-07-30 19:54:21
 - [X] {%post_link LangGraph/LangGraph-0x08-为什么LangGraph支持普通函数 7 为什么LangGraph支持普通函数%}
 - [X] {%post_link LangGraph/LangGraph-0x09-LangGraph如何自动推断结点输入 8 LangGraph如何自动推断结点输入%}
 - [X] {%post_link LangGraph/LangGraph-0x0A-普通的add_edge怎么实现 9 普通的add_edge怎么实现%}
-- [ ] {%post_link LangGraph/LangGraph-0x0B-conditional_edge怎么实现 10 conditional edge怎么实现%}
+- [X] {%post_link LangGraph/LangGraph-0x0B-conditional_edge怎么实现 10 conditional edge怎么实现%}
 - [ ] {%post_link LangGraph/LangGraph-0x0C-Command是什么 11 Command是什么%}
 - [X] {%post_link LangGraph/LangGraph-0x0D-ends存在的意义是什么 12 ends存在的意义是什么%}
 - [X] {%post_link LangGraph/LangGraph-0x0E-compile到底发生了什么 13 compile到底发生了什么%}
