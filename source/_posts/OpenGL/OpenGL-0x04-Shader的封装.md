@@ -1,7 +1,7 @@
 ---
 title: OpenGL-0x04-Shader的封装
 category_bar: true
-categories: Shader
+categories: OpenGL
 date: 2026-06-01 14:18:41
 ---
 
