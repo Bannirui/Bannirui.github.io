@@ -203,7 +203,7 @@ robj *createRawStringObject(const char *ptr, size_t len) {
 
 ```c
 /**
- * @brief 字符串的编码是MEBSTR
+ * @brief 字符串的编码是EMBSTR
  * @param ptr 字符串的字符数组形式
  * @param len 字符串长度
  * @return redisObject实例
