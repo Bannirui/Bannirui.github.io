@@ -183,7 +183,7 @@ struct __attribute__ ((__packed__)) sdshdr64 {
 
   ![](./Redis-0x12-数据结构sds/image-20230401225014847.png)
 
-  ### 3 创建实例
+### 3 创建实例
 
 ```c
 /**
@@ -312,4 +312,3 @@ sds _sdsnewlen(const void *init, size_t initlen, int trymalloc) {
     return s;
 }
 ```
-
