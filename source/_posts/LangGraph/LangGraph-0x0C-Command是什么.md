@@ -1,5 +1,5 @@
 ---
-title: LangGraph-0x12-Command是什么
+title: LangGraph-0x0C-Command是什么
 category_bar: true
 categories: LangGraph
 date: 2026-07-30 21:22:19
