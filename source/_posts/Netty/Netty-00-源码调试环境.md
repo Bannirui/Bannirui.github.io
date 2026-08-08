@@ -2,28 +2,43 @@
 title: Netty源码-00-源码调试环境
 date: 2023-03-06 20:35:31
 category_bar: true
-categories:
-- Netty
-tags:
-- 1刷Netty
+categories: Netty
 ---
 
-## 一 源码
+## 1 源码
 
 笔记注释的[代码地址](https://github.com/Bannirui/netty.git)，分支为study。
 
-## 二 环境
+```sh
+git clone git@github.com:Bannirui/netty.git
+cd netty
+
+git remote add upstream git@github.com:netty/netty.git
+git remote set-url --push upstream no_push
+
+git remote -v
+```
+
+## 2 环境
 
 |       | 版本    |
 | ----- | ------- |
 | Netty | 4.1.169 |
 | Java  | 8       |
 
-## 三 Samples
+```
+sudo apt install openjdk-8-jdk
 
-### 1 服务端
+maven->clean->package
+```
 
-#### 1.1 启动类
+## 3 Samples
+
+项目根目录下有`examples`有官方提供的大量示例代码
+
+### 3.1 服务端
+
+#### 3.1.1 启动类
 
 ```java
 /*
@@ -116,7 +131,7 @@ public final class EchoServer {
 
 ```
 
-#### 1.2 IO处理器
+#### 3.1.2 IO处理器
 
 ```java
 /*
@@ -170,9 +185,9 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
 ```
 
-### 2 客户端
+### 3.2 客户端
 
-#### 2.1 启动类
+#### 3.2.1 启动类
 
 ```java
 /*
@@ -236,7 +251,7 @@ public final class EchoClient {
 
 ```
 
-#### 2.2 IO处理器
+#### 3.2.2 IO处理器
 
 ```java
 /*

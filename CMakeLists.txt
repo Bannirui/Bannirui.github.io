@@ -91,9 +91,9 @@ add_custom_target(hexo_deploy
 )
 
 # 博客目录
-set(POST_DIR "LangGraph")
+set(POST_DIR "Netty")
 # 博客文章名
-set(POST_NAME "${POST_DIR}-0x16-执行引擎层pergel模型")
+set(POST_NAME "${POST_DIR}-10-pipeline")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md
