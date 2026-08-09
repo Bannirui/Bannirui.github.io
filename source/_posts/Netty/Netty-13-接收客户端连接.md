@@ -1,24 +1,21 @@
 ---
-title: Netty源码-09-ServerBootstrapAcceptor
-date: 2023-03-06 21:48:21
+title: Netty-13-接收客户端连接
 category_bar: true
-categories:
-- Netty
-tags:
-- 1刷Netty
+categories: Netty
+date: 2026-08-09 12:49:44
 ---
 
 在ServerBootstrapAcceptor启用之前，此刻Reactor状态应该是：
 
-* NioServerSocketChannel在IO多路复用器上关注着Accept(16)事件
-* pipeline中有4个handler
-  * head
-  * bossHandler
-  * ServerBootstrapAcceptor
-  * tail
-* NioEventLoop已经启动 阻塞在复用器的select上 等待有客户端连接进来
+- NioServerSocketChannel在IO多路复用器上关注着Accept(16)事件
+- pipeline中有4个handler
+  - head
+  - bossHandler
+  - ServerBootstrapAcceptor
+  - tail
+- NioEventLoop已经启动 阻塞在复用器的select上 等待有客户端连接进来
 
-## 一 客户端连接唤醒IO阻塞线程
+## 1 客户端连接唤醒IO阻塞线程
 
 ```java
 // NioEventLoop.java
@@ -46,9 +43,7 @@ if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOp
     unsafe.read();
 ```
 
-
-
-## 二 读取客户端连接
+## 2 读取客户端连接
 
 ```java
 // NioMessageUnsafe
@@ -144,7 +139,7 @@ public void read() {
 }
 ```
 
-## 三 ServerBootstrapAcceptor回调
+## 3 ServerBootstrapAcceptor回调
 
 ```java
 // ServerBootstrapAcceptor.java
@@ -278,17 +273,6 @@ private void register0(ChannelPromise promise) {
 }
 ```
 
-熟悉的注册复用器的环节 注册复用器发生的时机：
+## 4 流程图
 
-* 服务端NioServerSocketChannel
-  * bind(bind+listen)之前复用器关注事件集合为0
-  * bind(bind+listen)之后发布ChannelActive事件增加复用器事件对可读(16)的关注
-* 客户端NioSocketChannel
-  * connect之前复用器关注事件集合为0
-  * connect之后发布ChannelActive事件增加复用器事件对可读(16)的关注
-* 服务端Accept出来的NioSocketChannel
-  * 属于特殊条件下的Channel 注册复用器之后立即发布ChannelActive事件 增加复用器对可读事件(16)的关注
-
-## 四 流程图
-
-![](Netty源码-09-ServerBootstrapAcceptor/202211151045689.png)
+![](Netty-13-接收客户端连接/202211151045689.png)

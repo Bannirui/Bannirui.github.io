@@ -5,7 +5,7 @@ categories: Netty
 date: 2026-08-08 22:16:32
 ---
 
-- [ ] Reactor模型 {%post_link %}
+- [ ] Reactor模型
 - [ ] 服务端启动流程
 - [ ] EventLoop
 - [ ] Channel是什么
