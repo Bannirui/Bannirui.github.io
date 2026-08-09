@@ -4,7 +4,7 @@ category_bar: true
 categories: Netty
 date: 2026-08-08 23:47:42
 ---
-在{% post_link Netty/Netty-07-Channel%}的初始化过程中会给每个Channel实例构造一个Pipeline，因此研究pipeline的入口就是构造方法。
+在{% post_link Netty/Netty-07-负责数据的Channel%}的初始化过程中会给每个Channel实例构造一个Pipeline，因此研究pipeline的入口就是构造方法。
 
 ## 1 类图
 

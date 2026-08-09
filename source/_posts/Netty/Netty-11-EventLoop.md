@@ -260,5 +260,3 @@ protected void run() {
     }
 }
 ```
-
-![](Netty源码-03-NioEventLoop/202211112145377.png)
