@@ -1,0 +1,1023 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 类图关系  Netty中NioEventLoopGroup组件和NioEventLoop组件比较重要，二者关系像是皮毛关系：  NioEventLoopGroup是皮 NioEventLoop是毛  从上面的类图可以看出来，NioEventLoopGroup和NioEventLoop追根溯源都派生自EventLoopGroup。  NioEventLoopGroup充当的角色更多的是对NioE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty-11-EventLoop">
+<meta property="og:url" content="https://bannirui.github.io/2026/08/09/Netty/Netty-11-EventLoop/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="1 类图关系  Netty中NioEventLoopGroup组件和NioEventLoop组件比较重要，二者关系像是皮毛关系：  NioEventLoopGroup是皮 NioEventLoop是毛  从上面的类图可以看出来，NioEventLoopGroup和NioEventLoop追根溯源都派生自EventLoopGroup。  NioEventLoopGroup充当的角色更多的是对NioE">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2026/08/09/Netty/Netty-11-EventLoop/image-20230508162130253.png">
+<meta property="og:image" content="https://bannirui.github.io/2026/08/09/Netty/Netty-11-EventLoop/image-20230508161537489.png">
+<meta property="article:published_time" content="2026-08-08T16:13:42.000Z">
+<meta property="article:modified_time" content="2026-08-09T08:15:41.138Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2026/08/09/Netty/Netty-11-EventLoop/image-20230508162130253.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Netty-11-EventLoop - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Netty-11-EventLoop"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-08-09 00:13" pubdate>
+          2026年8月9日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Netty"
+        id="heading-b26a1a0069605c69ea0c679b5e95fc17" role="tab" data-toggle="collapse" href="#collapse-b26a1a0069605c69ea0c679b5e95fc17"
+        aria-expanded="true"
+      >
+        Netty
+        <span class="list-group-count">(21)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-b26a1a0069605c69ea0c679b5e95fc17"
+           role="tabpanel" aria-labelledby="heading-b26a1a0069605c69ea0c679b5e95fc17">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty-00-%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83/" title="Netty-00-源码调试环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-00-源码调试环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-01-%E5%A5%97%E6%8E%A5%E5%AD%97%E7%BC%96%E7%A8%8B/" title="Netty-01-套接字编程"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-01-套接字编程</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-02-%E5%B8%A6%E7%9D%80%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%E7%9C%8B%E6%BA%90%E7%A0%81/" title="Netty-02-带着什么问题看源码"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-02-带着什么问题看源码</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-03-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AE%9E%E4%BE%8B/" title="Netty-03-服务端实例"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-03-服务端实例</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-04-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%9E%E4%BE%8B/" title="Netty-04-客户端实例"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-04-客户端实例</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-05-Channel/" title="Netty-05-Channel"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-05-Channel</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-06-%E8%B4%9F%E8%B4%A3%E8%BF%9E%E6%8E%A5%E7%9A%84Channel/" title="Netty-06-负责连接的Channel"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-06-负责连接的Channel</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-07-%E8%B4%9F%E8%B4%A3%E6%95%B0%E6%8D%AE%E7%9A%84Channel/" title="Netty-07-负责数据的Channel"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-07-负责数据的Channel</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-08-channel%E7%9A%84factory/" title="Netty-08-channel的factory"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-08-channel的factory</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-09-unsafe/" title="Netty-09-unsafe"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-09-unsafe</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/16/Netty/Netty-0x06-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96/" title="Netty-0x06-数据结构优化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-0x06-数据结构优化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/08/Netty/Netty-10-pipeline/" title="Netty-10-pipeline"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-10-pipeline</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/09/Netty/Netty-11-EventLoop/" title="Netty-11-EventLoop"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Netty-11-EventLoop</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/09/Netty/Netty-12-EventLoopGroup/" title="Netty-12-EventLoopGroup"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-12-EventLoopGroup</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/09/Netty/Netty-13-%E6%8E%A5%E6%94%B6%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5/" title="Netty-13-接收客户端连接"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty-13-接收客户端连接</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-02-FastThreadLocalThread/" title="Netty源码-02-FastThreadLocalThread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-02-FastThreadLocalThread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-04-Selector/" title="Netty源码-04-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-04-Selector</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-06-MpscQueue/" title="Netty源码-06-MpscQueue"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-06-MpscQueue</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-08-ChannelInitializer/" title="Netty源码-08-ChannelInitializer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-08-ChannelInitializer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/Netty/Netty%E6%BA%90%E7%A0%81-10-ChannelFuture/" title="Netty源码-10-ChannelFuture"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Netty源码-10-ChannelFuture</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Netty/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Netty-11-EventLoop</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-类图关系"><a href="#1-类图关系" class="headerlink" title="1 类图关系"></a>1 类图关系</h2><img src="/2026/08/09/Netty/Netty-11-EventLoop/image-20230508162130253.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>Netty中NioEventLoopGroup组件和NioEventLoop组件比较重要，二者关系像是皮毛关系：</p>
+<ul>
+<li>NioEventLoopGroup是皮</li>
+<li>NioEventLoop是毛</li>
+</ul>
+<p>从上面的类图可以看出来，NioEventLoopGroup和NioEventLoop追根溯源都派生自EventLoopGroup。</p>
+<ul>
+<li>NioEventLoopGroup充当的角色更多的是对NioEventLoop的管理，NioEventLoopGroup负责对外。</li>
+<li>NioEventLoop充当的角色是任务执行。</li>
+<li>甚至二者的继承关系可以粗略理解为EventLoop是特殊的EventLoopGroup。</li>
+</ul>
+<p>因此，梳理组件实现的时候，切入口最好选择NioEventLoopGroup<a href="/2026/08/09/Netty/Netty-12-EventLoopGroup/" title="Netty-12-EventLoopGroup">Netty-12-EventLoopGroup</a>，在此之前先宏观理解一下NioEventLoop的设计。</p>
+<h2 id="2-NioEventLoop抽象设计"><a href="#2-NioEventLoop抽象设计" class="headerlink" title="2 NioEventLoop抽象设计"></a>2 NioEventLoop抽象设计</h2><img src="/2026/08/09/Netty/Netty-11-EventLoop/image-20230508161537489.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>记住EventLoop是持有Java的线程的，那么线程被调度执行的入口方法才是核心</p>
+<h2 id="3-构造"><a href="#3-构造" class="headerlink" title="3 构造"></a>3 构造</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 构造方法的访问修饰符是默认的 只能在同包级别下访问 也就是说不对外暴露</span><br><span class="hljs-comment"> * 当前类属性赋值</span><br><span class="hljs-comment"> *   - selectorProvider 提供创建当前OS的多路复用器实例</span><br><span class="hljs-comment"> *   - selectStrategy 定义了Selector多路复用器1次select操作下如何处理任务</span><br><span class="hljs-comment"> *   - selector 基于Java原生Selector优化的版本</span><br><span class="hljs-comment"> *   - unwrappedSelector Java原生Selector</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> parent NioEventLoopGroup实例 标识着NioEventLoop归谁管理</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> executor 任务执行器 ThreadPerTaskExecutor的实例 负责执行任务 逻辑关系上是跟NioEventLoop绑定的</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> selectorProvider 负责创建IO多路复用器 SelectorProvider::provider</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> strategy DefaultSelectStrategyFactory.INSTANCE 负责Selector多路复用器1次select操作如何选择任务(IO任务\普通任务)</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> rejectedExecutionHandler RejectedExecutionHandlers.reject() 定义了NioEventLoop中taskQueue任务队列满了怎么办</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> taskQueueFactory 定义了如何创建taskQueue任务队列-&gt;null</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> tailTaskQueueFactory 定义了如何创建tailTaskQueue任务队列-&gt;null</span><br><span class="hljs-comment"> */</span><br>NioEventLoop(NioEventLoopGroup parent,<br>             Executor executor, <span class="hljs-comment">// 线程执行器 将线程和EventLoop绑定</span><br>             SelectorProvider selectorProvider, <span class="hljs-comment">// Java中IO多路复用器提供器</span><br>             SelectStrategy strategy, <span class="hljs-comment">// 正常任务队列选择策略</span><br>             RejectedExecutionHandler rejectedExecutionHandler, <span class="hljs-comment">// 正常任务队列拒绝策略</span><br>             EventLoopTaskQueueFactory taskQueueFactory, <span class="hljs-comment">// 非IO任务</span><br>             EventLoopTaskQueueFactory tailTaskQueueFactory <span class="hljs-comment">// 收尾任务</span><br>) &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 为什么要用MPSC队列</span><br><span class="hljs-comment">     *   - 为什么要用队列这个数据结构</span><br><span class="hljs-comment">     *     - FIFO特性</span><br><span class="hljs-comment">     *     - Netty是NioEventLoop线程:任务=1:N 所以从任务视角来看 任务有先后</span><br><span class="hljs-comment">     *   - 为什么不是用现有的数据结构比如ArrayBlockingQueue\LinkedBlockingQueue\PriorityQueue</span><br><span class="hljs-comment">     *     - 首先得保证线程安全</span><br><span class="hljs-comment">     *     - 其次它们的生产者\消费者模型是N:N</span><br><span class="hljs-comment">     *     - 但是Netty中现在场景是1个NioEventLoop工作线程 N个任务 也就是生产者:消费者=N:1</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-built_in">super</span>(parent, <span class="hljs-comment">// NioEventLoop归属的NioEventLoopGroup</span><br>            executor,<br>            <span class="hljs-literal">false</span>,<br>            newTaskQueue(taskQueueFactory), <span class="hljs-comment">// 非IO任务队列 Netty对队列数据结构的优化</span><br>            newTaskQueue(tailTaskQueueFactory), <span class="hljs-comment">// 收尾任务队列</span><br>            rejectedExecutionHandler<br>    ); <span class="hljs-comment">// 调用父类构造方法</span><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * IO多路复用器提供器 用于创建多路复用器实现</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-built_in">this</span>.provider = ObjectUtil.checkNotNull(selectorProvider, <span class="hljs-string">&quot;selectorProvider&quot;</span>);<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 定义了将来Selector的1次select怎么处理任务</span><br><span class="hljs-comment">     *   - IO任务怎么处理</span><br><span class="hljs-comment">     *   - taskQueue任务队列中任务怎么处理</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-built_in">this</span>.selectStrategy = ObjectUtil.checkNotNull(strategy, <span class="hljs-string">&quot;selectStrategy&quot;</span>);<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 开启NIO中的组件Selector</span><br><span class="hljs-comment">     * 通过上面提供的selectorProvider创建适配当前OS平台的Selector多路复用器实现</span><br><span class="hljs-comment">     * 意味着NioEventLoopGroup这个线程池中每个线程NioEventLoop都有自己的selector</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">SelectorTuple</span> <span class="hljs-variable">selectorTuple</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.openSelector();<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 创建NioEventLoop绑定的selector对象</span><br><span class="hljs-comment">     * 初始化了IO多路复用器</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-built_in">this</span>.selector = selectorTuple.selector; <span class="hljs-comment">// Netty优化过的IO多路复用器</span><br>    <span class="hljs-built_in">this</span>.unwrappedSelector = selectorTuple.unwrappedSelector; <span class="hljs-comment">// Java原生的多路复用器</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-怎么接收任务的"><a href="#4-怎么接收任务的" class="headerlink" title="4 怎么接收任务的"></a>4 怎么接收任务的</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>实现类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>execute</td>
+<td>SingleThreadEventExecutor</td>
+</tr>
+<tr>
+<td>submit</td>
+<td>AbstractEventExecutor</td>
+</tr>
+<tr>
+<td>schedule</td>
+<td>AbstractScheduledEventExecutor</td>
+</tr>
+<tr>
+<td>scheduleAtFixedRate</td>
+<td>AbstractScheduledEventExecutor</td>
+</tr>
+<tr>
+<td>scheduleWithFixedDelay</td>
+<td>AbstractScheduledEventExecutor</td>
+</tr>
+<tr>
+<td>register</td>
+<td>SingleThreadEventLoop</td>
+</tr>
+</tbody></table>
+<p>提交的普通任务都将缓存在taskQueue这种队列中。</p>
+<h2 id="5-线程的创建"><a href="#5-线程的创建" class="headerlink" title="5 线程的创建"></a>5 线程的创建</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 有任务提交过来希望被执行</span><br><span class="hljs-comment"> * EventLoop本质是跟Java的线程1:1映射的 而且EventLoop只有一个线程 所以意味着这个线程只会启动一次</span><br><span class="hljs-comment"> * 创建线程的时机就是在任务提交过来的时候</span><br><span class="hljs-comment"> *   - java向cpp创建线程</span><br><span class="hljs-comment"> *   - cpp向os创建线程 并且告诉os这个线程的entry point是哪儿 对应着java的一个函数</span><br><span class="hljs-comment"> *   - 等线程被cpu调度起来后就会顺着entry point回调到java里面的这个函数</span><br><span class="hljs-comment"> * 所以在EventLoop中用inEventLoop作为标识线程是不是已经创建了 保证只有一个线程 不会重复创建</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">execute</span><span class="hljs-params">(Runnable task, <span class="hljs-type">boolean</span> immediate)</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * NioEventLoop只有一个线程 且它的阻塞点只有在IO多路复用器操作上</span><br><span class="hljs-comment">     * 因此当前添加任务的线程</span><br><span class="hljs-comment">     *     - NioEventLoop线程自己给自己添加任务 说明它压根没有被阻塞 而且肯定已经处于运行中状态</span><br><span class="hljs-comment">     *         - 这个线程已经被创建执行 那么这个新添加的任务被放到了非IO任务队列中 迟早会被取出来执行</span><br><span class="hljs-comment">     *     - 不是NioEventLoop线程 是其他线程往NioEventLoop添加任务</span><br><span class="hljs-comment">     *         - 如果NioEventLoop线程还没被创建执行 那么相当于任务裹挟着线程进行延迟创建并执行任务</span><br><span class="hljs-comment">     *         - 非IO任务队列没有任务 也没有IO事件到达时 NioEventLoop线程迟早会阻塞在复用器上</span><br><span class="hljs-comment">     *             - 阻塞期间有IO事件到达 退出select阻塞继续工作</span><br><span class="hljs-comment">     *             - 有定时任务还可能超时退出select NioEventLoop线程继续工作</span><br><span class="hljs-comment">     *             - 没有定时任务就永远阻塞 唤醒的方式 只有外部线程往NioEventLoop添加新任务触发selector复用器的wakeup()</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">inEventLoop</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">super</span>.inEventLoop();<br>    <span class="hljs-built_in">this</span>.addTask(task); <span class="hljs-comment">// 添加任务到taskQueue中 如果任务队列已经满了 就触发拒绝策略(抛异常)</span><br>    <span class="hljs-keyword">if</span> (!inEventLoop) &#123;<br>        <span class="hljs-comment">// NioEventLoop线程创建启动的时机就是提交进来的第一个异步任务 在这个方法里面创建线程并为线程的调度指定好entry point</span><br>        <span class="hljs-built_in">this</span>.startThread();<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.isShutdown()) &#123;<br>            <span class="hljs-type">boolean</span> <span class="hljs-variable">reject</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-keyword">if</span> (removeTask(task)) reject = <span class="hljs-literal">true</span>;<br>            &#125; <span class="hljs-keyword">catch</span> (UnsupportedOperationException e) &#123;<br>                <span class="hljs-comment">// The task queue does not support removal so the best thing we can do is to just move on and</span><br>                <span class="hljs-comment">// hope we will be able to pick-up the task before its completely terminated.</span><br>                <span class="hljs-comment">// In worst case we will log on termination.</span><br>            &#125;<br>            <span class="hljs-keyword">if</span> (reject) reject();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">// NioEventLoop中线程阻塞点有且只有一个是在复用器上 因此addTaskWakesUp为false</span><br>    <span class="hljs-keyword">if</span> (!addTaskWakesUp &amp;&amp; immediate) <span class="hljs-built_in">this</span>.wakeup(inEventLoop); <span class="hljs-comment">// 唤醒阻塞的线程 这个wakeup(...)方法在子类NioEventLoop中特定的实现(借助复用器进行唤醒阻塞在复用器上的线程)</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="6-线程的运行模型"><a href="#6-线程的运行模型" class="headerlink" title="6 线程的运行模型"></a>6 线程的运行模型</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">selectCnt</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 当前EventLoop事件循环器代表的线程执行复用器select空轮询操作计数(Java对EPoll多路复用的实现缺陷 以阻塞方式执行复用器select 在没有读写事件时可能也会返回 产生空轮询 导致CPU负载)</span><br>    <span class="hljs-keyword">for</span> (;;) &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">int</span> strategy;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-comment">/**</span><br><span class="hljs-comment">                     * strategy这个值只有3种情况 决定复用器如何执行(阻塞/非阻塞)</span><br><span class="hljs-comment">                     *     - 非IO任务队列为空-&gt;-1-&gt;复用器即将以阻塞方式执行一次看看有没有IO任务</span><br><span class="hljs-comment">                     *     - 非IO任务队列(常规任务队列taskQueue+收尾任务队列tailTasks)有任务 复用器以非阻塞方式执行一次看看有没有IO任务</span><br><span class="hljs-comment">                     *         - 没有IO事件-&gt;0</span><br><span class="hljs-comment">                     *         - 有IO事件-&gt;Channel数量</span><br><span class="hljs-comment">                     *</span><br><span class="hljs-comment">                     * 这样设计的方式是不要让复用器阻塞调用导致非IO任务不能及时执行</span><br><span class="hljs-comment">                     * 也就是尽可能多执行IO任务和非IO任务</span><br><span class="hljs-comment">                     */</span><br>                strategy = <span class="hljs-built_in">this</span>.selectStrategy.calculateStrategy(<span class="hljs-built_in">this</span>.selectNowSupplier, <span class="hljs-built_in">super</span>.hasTasks());<br>                <span class="hljs-keyword">switch</span> (strategy) &#123;<br>                    <span class="hljs-keyword">case</span> SelectStrategy.CONTINUE: <span class="hljs-comment">// -2</span><br>                        <span class="hljs-keyword">continue</span>;<br><br>                    <span class="hljs-keyword">case</span> SelectStrategy.BUSY_WAIT: <span class="hljs-comment">// -3</span><br>                        <span class="hljs-comment">// fall-through to SELECT since the busy-wait is not supported with NIO</span><br><br>                    <span class="hljs-keyword">case</span> SelectStrategy.SELECT: <span class="hljs-comment">// -1 任务队列为空 将线程阻塞在复用器上 唤醒时机有两种情况(阻塞期间有IO事件到达 阻塞指定事件后主动结束阻塞开始执行定时任务)</span><br>                        <span class="hljs-type">long</span> <span class="hljs-variable">curDeadlineNanos</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">super</span>.nextScheduledTaskDeadlineNanos(); <span class="hljs-comment">// 定时任务队列中下一个待执行定时任务还有多久可以被唤醒执行 -1表示没有定时任务可以执行</span><br>                        <span class="hljs-keyword">if</span> (curDeadlineNanos == -<span class="hljs-number">1L</span>) curDeadlineNanos = NONE; <span class="hljs-comment">// nothing on the calendar // 边界情况 没有定时任务要执行</span><br>                        <span class="hljs-built_in">this</span>.nextWakeupNanos.set(curDeadlineNanos); <span class="hljs-comment">// 下一次啥时候将线程唤醒</span><br>                        <span class="hljs-keyword">try</span> &#123;<br>                            <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">super</span>.hasTasks()) strategy = <span class="hljs-built_in">this</span>.select(curDeadlineNanos); <span class="hljs-comment">// select()方法阻塞 超时时间是为了执行可能存在的定时任务 如果没有定时任务就将一直阻塞在复用器的select()操作上等待被唤醒</span><br>                        &#125; <span class="hljs-keyword">finally</span> &#123;<br>                            <span class="hljs-comment">// This update is just to help block unnecessary selector wakeups</span><br>                            <span class="hljs-comment">// so use of lazySet is ok (no race condition)</span><br>                            nextWakeupNanos.lazySet(AWAKE);<br>                        &#125;<br>                        <span class="hljs-comment">// fall through</span><br>                    <span class="hljs-keyword">default</span>:<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;<br>                <span class="hljs-comment">// If we receive an IOException here its because the Selector is messed up. Let&#x27;s rebuild</span><br>                <span class="hljs-comment">// the selector and retry. https://github.com/netty/netty/issues/8566</span><br>                rebuildSelector0();<br>                selectCnt = <span class="hljs-number">0</span>;<br>                handleLoopException(e);<br>                <span class="hljs-keyword">continue</span>;<br>            &#125;<br><br>            selectCnt++; <span class="hljs-comment">// 复用器select次数 但是疯狂自增的场景只会发生在没有非IO任务 本应该阻塞在复用器上的线程却一直select时 也就是空轮询</span><br>            cancelledKeys = <span class="hljs-number">0</span>;<br>            needsToSelectAgain = <span class="hljs-literal">false</span>;<br>            <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">ioRatio</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.ioRatio; <span class="hljs-comment">// 默认值是50</span><br>            <span class="hljs-type">boolean</span> ranTasks; <span class="hljs-comment">// 标识taskQueue中任务都被执行过一轮</span><br>            <span class="hljs-keyword">if</span> (ioRatio == <span class="hljs-number">100</span>) &#123; <span class="hljs-comment">// 100-&gt;先处理IO任务 再执行非IO任务</span><br>                <span class="hljs-keyword">try</span> &#123;<br>                    <span class="hljs-keyword">if</span> (strategy &gt; <span class="hljs-number">0</span>) <span class="hljs-built_in">this</span>.processSelectedKeys(); <span class="hljs-comment">// 处理IO任务</span><br>                &#125; <span class="hljs-keyword">finally</span> &#123;<br>                    <span class="hljs-comment">// Ensure we always run tasks.</span><br>                    ranTasks = <span class="hljs-built_in">super</span>.runAllTasks(); <span class="hljs-comment">// 处理所有的非IO任务</span><br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (strategy &gt; <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// 不是100 先保证处理完所有IO任务 如果此时非IO任务很多(还是把所有非IO任务都执行完 耗时很多的话) 可能导致新到的IO任务不能得到及时处理 所以通过IoRatio参数控制非IO任务的处理时长</span><br>                <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">ioStartTime</span> <span class="hljs-operator">=</span> System.nanoTime(); <span class="hljs-comment">// 记录IO任务处理开始时间</span><br>                <span class="hljs-keyword">try</span> &#123;<br>                    <span class="hljs-built_in">this</span>.processSelectedKeys(); <span class="hljs-comment">// 处理IO任务</span><br>                &#125; <span class="hljs-keyword">finally</span> &#123;<br>                    <span class="hljs-comment">// Ensure we always run tasks.</span><br>                    <span class="hljs-comment">// 计算耗时 IO任务处理耗时</span><br>                    <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">ioTime</span> <span class="hljs-operator">=</span> System.nanoTime() - ioStartTime;<br>                    <span class="hljs-comment">/**</span><br><span class="hljs-comment">                         * 计算非IO任务可以处理的时长 限定非IO任务处理时间 处理非IO任务</span><br><span class="hljs-comment">                         */</span><br>                    ranTasks = <span class="hljs-built_in">super</span>.runAllTasks(ioTime * (<span class="hljs-number">100</span> - ioRatio) / ioRatio);<br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span><br>                ranTasks = <span class="hljs-built_in">super</span>.runAllTasks(<span class="hljs-number">0</span>); <span class="hljs-comment">// This will run the minimum number of tasks 非IO任务处理时间形参为0 但是内部实现对超时统计是有条件的 因此至少一次超时统计内这个时间段的非IO任务可以有机会处理</span><br><br>            <span class="hljs-keyword">if</span> (ranTasks || strategy &gt; <span class="hljs-number">0</span>) selectCnt = <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.unexpectedSelectorWakeup(selectCnt)) selectCnt = <span class="hljs-number">0</span>; <span class="hljs-comment">// 任务判定可能发生了空轮询 如果发生了空轮询场景 就通过重建复用器方式尽量避免再次发生空轮询</span><br>        &#125; <span class="hljs-keyword">catch</span> (CancelledKeyException e) &#123;<br>            <span class="hljs-comment">// Harmless exception - log anyway</span><br>        &#125; <span class="hljs-keyword">catch</span> (Error e) &#123;<br>            <span class="hljs-keyword">throw</span> e;<br>        &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>            handleLoopException(t);<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            <span class="hljs-comment">// Always handle shutdown even if the loop processing threw an exception.</span><br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-keyword">if</span> (isShuttingDown()) &#123;<br>                    closeAll();<br>                    <span class="hljs-keyword">if</span> (confirmShutdown()) <span class="hljs-keyword">return</span>;<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Error e) &#123;<br>                <span class="hljs-keyword">throw</span> e;<br>            &#125; <span class="hljs-keyword">catch</span> (Throwable t) &#123;<br>                handleLoopException(t);<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Netty/" class="category-chain-item">Netty</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Netty-11-EventLoop</div>
+      <div>https://bannirui.github.io/2026/08/09/Netty/Netty-11-EventLoop/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年8月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/08/09/Netty/Netty-12-EventLoopGroup/" title="Netty-12-EventLoopGroup">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Netty-12-EventLoopGroup</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/08/08/Netty/Netty-10-pipeline/" title="Netty-10-pipeline">
+                        <span class="hidden-mobile">Netty-10-pipeline</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '6e9326582d706b631afcca3f556006e8'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
