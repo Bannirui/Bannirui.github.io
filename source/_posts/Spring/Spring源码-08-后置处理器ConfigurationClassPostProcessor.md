@@ -1,9 +1,8 @@
 ---
-title: Spring源码-08-后置处理器ConfigurationClassPostProcessor
+title: Spring-08-后置处理器ConfigurationClassPostProcessor
 date: 2023-03-11 00:28:17
 category_bar: true
-tags: Spring@6.0.3
-categories: Spring源码
+categories: Spring
 ---
 
 Bean工厂后置处理器。

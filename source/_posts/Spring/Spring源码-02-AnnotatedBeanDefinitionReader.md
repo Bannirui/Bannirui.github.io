@@ -1,9 +1,8 @@
 ---
-title: Spring源码-02-AnnotatedBeanDefinitionReader
+title: Spring-02-AnnotatedBeanDefinitionReader
 date: 2023-03-11 00:10:13
 category_bar: true
-tags: Spring@6.0.3
-categories: Spring源码
+categories: Spring
 ---
 
 AnnotatedBeanDefinitionReader，注解Bean读取器。

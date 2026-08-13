@@ -1,9 +1,8 @@
 ---
-title: Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法
+title: Spring-05-容器refresh之invokeBeanFactoryPostProcessors方法
 date: 2023-03-11 00:20:59
 category_bar: true
-tags: Spring@6.0.3
-categories: Spring源码
+categories: Spring
 ---
 
 ConfigurationClassPostProcessor作用的时机 扫描注册用户BeanDefinition到Bean工厂。

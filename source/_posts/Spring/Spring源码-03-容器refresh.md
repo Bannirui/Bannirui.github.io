@@ -1,9 +1,8 @@
 ---
-title: Spring源码-03-容器refresh
+title: Spring-03-容器refresh
 date: 2023-03-11 00:13:56
 category_bar: true
-tags: Spring@6.0.3
-categories: Spring源码
+categories: Spring
 ---
 
 ## 1 refresh
@@ -140,19 +139,19 @@ public void refresh() throws BeansException, IllegalStateException {
 
 ## 2 步骤
 
-| 序号 | 传送门                                                       |
-| ---- | ------------------------------------------------------------ |
-| 1    | prepareRefresh方法                                           |
-| 2    | prepareBeanFactory方法                                       |
-| 3    | postProcessBeanFactory方法                                   |
+| 序号 | 传送门                                                                                                        |
+| ---- |------------------------------------------------------------------------------------------------------------|
+| 1    | prepareRefresh方法                                                                                           |
+| 2    | prepareBeanFactory方法                                                                                       |
+| 3    | postProcessBeanFactory方法                                                                                   |
 | 4    | {% post_link Spring/Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法 invokeBeanFactoryPostProces %} |
-| 5    | {% post_link Spring/Spring源码-10-容器refresh之registerBeanPostProcessors方法 registerBeanPostProcessors方法 %} |
-| 6    | initMessageSource方法                                        |
-| 7    | initApplicationEventMulticaster方法                          |
-| 8    | onRefresh方法                                                |
-| 9    | registerListeners方法                                        |
-| 10   | finishBeanFactoryInitialization方法                          |
-| 11   | finishRefresh方法                                            |
+| 5    | {% post_link Spring/Spring源码-10-容器refresh之registerBeanPostProcessors方法 registerBeanPostProcessors方法 %}     |
+| 6    | initMessageSource方法                                                                                        |
+| 7    | {%post_link Spring/Spring-11-事件传播器%}                                                                       |
+| 8    | onRefresh方法                                                                                                |
+| 9    | {%post_link Spring/Spring-12-事件要传播给谁%}                                                                     |
+| 10   | finishBeanFactoryInitialization方法                                                                          |
+| 11   | finishRefresh方法                                                                                            |
 
 ## 3 示意图
 
