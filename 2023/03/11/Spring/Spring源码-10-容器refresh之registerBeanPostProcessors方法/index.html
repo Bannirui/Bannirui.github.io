@@ -21,22 +21,21 @@
   
     <meta name="description" content="12345678910111213&#x2F;&#x2F; AbstractApplicationContext.java&#x2F;**				 * 5 Bean实例化初始化之前将后置处理器注册到容器中				 * 后置处理器的职责				 *     - BeanDefinition都已经注册到了Bean工厂中(DefaultListableBeanFactory的beanDefinitionMap)				 *">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring源码-10-容器refresh之registerBeanPostProcessors方法">
+<meta property="og:title" content="Spring-10-容器refresh之registerBeanPostProcessors方法">
 <meta property="og:url" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="12345678910111213&#x2F;&#x2F; AbstractApplicationContext.java&#x2F;**				 * 5 Bean实例化初始化之前将后置处理器注册到容器中				 * 后置处理器的职责				 *     - BeanDefinition都已经注册到了Bean工厂中(DefaultListableBeanFactory的beanDefinitionMap)				 *">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-03-10T16:34:35.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.523Z">
+<meta property="article:modified_time" content="2026-08-13T16:37:53.521Z">
 <meta property="article:author" content="dingrui">
-<meta property="article:tag" content="Spring@6.0.3">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Spring源码-10-容器refresh之registerBeanPostProcessors方法 - HEX BLOG</title>
+  <title>Spring-10-容器refresh之registerBeanPostProcessors方法 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -225,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Spring源码-10-容器refresh之registerBeanPostProcessors方法"></span>
+            <span id="subtitle" data-typed-text="Spring-10-容器refresh之registerBeanPostProcessors方法"></span>
           
         </div>
 
@@ -313,17 +312,17 @@
     
     <div class="category row nomargin-x">
       <a class="category-item 
-          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Spring源码"
-        id="heading-87c18251c318fac4214d443ce91418ea" role="tab" data-toggle="collapse" href="#collapse-87c18251c318fac4214d443ce91418ea"
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Spring"
+        id="heading-38008dd81c2f4d7985ecf6e0ce8af1d1" role="tab" data-toggle="collapse" href="#collapse-38008dd81c2f4d7985ecf6e0ce8af1d1"
         aria-expanded="true"
       >
-        Spring源码
-        <span class="list-group-count">(11)</span>
+        Spring
+        <span class="list-group-count">(13)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
-      <div class="category-collapse collapse show" id="collapse-87c18251c318fac4214d443ce91418ea"
-           role="tabpanel" aria-labelledby="heading-87c18251c318fac4214d443ce91418ea">
+      <div class="category-collapse collapse show" id="collapse-38008dd81c2f4d7985ecf6e0ce8af1d1"
+           role="tabpanel" aria-labelledby="heading-38008dd81c2f4d7985ecf6e0ce8af1d1">
         
         
           
@@ -332,100 +331,118 @@
     
       
       
-        <a href="/2023/03/10/Spring/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring源码-00-环境搭建"
+        <a href="/2023/03/10/Spring/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring-00-环境搭建"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-00-环境搭建</span>
+          <span class="category-post">Spring-00-环境搭建</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" title="Spring源码-01-Bean容器"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" title="Spring-01-Bean容器"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-01-Bean容器</span>
+          <span class="category-post">Spring-01-Bean容器</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring源码-02-AnnotatedBeanDefinitionReader"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring-02-AnnotatedBeanDefinitionReader"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-02-AnnotatedBeanDefinitionReader</span>
+          <span class="category-post">Spring-02-AnnotatedBeanDefinitionReader</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" title="Spring源码-03-容器refresh"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" title="Spring-03-容器refresh"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-03-容器refresh</span>
+          <span class="category-post">Spring-03-容器refresh</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring源码-04-Bean工厂BeanFactory"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring-04-Bean工厂BeanFactory"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-04-Bean工厂BeanFactory</span>
+          <span class="category-post">Spring-04-Bean工厂BeanFactory</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" title="Spring-05-容器refresh之invokeBeanFactoryPostProcessors方法"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法</span>
+          <span class="category-post">Spring-05-容器refresh之invokeBeanFactoryPostProcessors方法</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-06-Bean%E5%B7%A5%E5%8E%82%E4%B9%8BgetBean%E6%96%B9%E6%B3%95/" title="Spring源码-06-Bean工厂之getBean方法"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-06-Bean%E5%B7%A5%E5%8E%82%E4%B9%8BgetBean%E6%96%B9%E6%B3%95/" title="Spring-06-Bean工厂之getBean方法"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-06-Bean工厂之getBean方法</span>
+          <span class="category-post">Spring-06-Bean工厂之getBean方法</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-07-Bean%E5%B7%A5%E5%8E%82%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" title="Spring源码-07-Bean工厂后置处理器"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-07-Bean%E5%B7%A5%E5%8E%82%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" title="Spring-07-Bean工厂后置处理器"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-07-Bean工厂后置处理器</span>
+          <span class="category-post">Spring-07-Bean工厂后置处理器</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-08-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8ConfigurationClassPostProcessor/" title="Spring源码-08-后置处理器ConfigurationClassPostProcessor"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-08-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8ConfigurationClassPostProcessor/" title="Spring-08-后置处理器ConfigurationClassPostProcessor"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-08-后置处理器ConfigurationClassPostProcessor</span>
+          <span class="category-post">Spring-08-后置处理器ConfigurationClassPostProcessor</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" title="Spring源码-09-配置类解析器ConfigurationClassParser"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" title="Spring-09-配置类解析器ConfigurationClassParser"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-09-配置类解析器ConfigurationClassParser</span>
+          <span class="category-post">Spring-09-配置类解析器ConfigurationClassParser</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-10-容器refresh之registerBeanPostProcessors方法"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" title="Spring-10-容器refresh之registerBeanPostProcessors方法"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">Spring源码-10-容器refresh之registerBeanPostProcessors方法</span>
+          <span class="category-post">Spring-10-容器refresh之registerBeanPostProcessors方法</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/13/Spring/Spring-11-%E4%BA%8B%E4%BB%B6%E4%BC%A0%E6%92%AD%E5%99%A8/" title="Spring-11-事件传播器"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-11-事件传播器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/13/Spring/Spring-12-%E4%BA%8B%E4%BB%B6%E8%A6%81%E4%BC%A0%E6%92%AD%E7%BB%99%E8%B0%81/" title="Spring-12-事件要传播给谁"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-12-事件要传播给谁</span>
         </a>
       
     
@@ -447,7 +464,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Spring源码-10-容器refresh之registerBeanPostProcessors方法</h1>
+            <h1 id="seo-header">Spring-10-容器refresh之registerBeanPostProcessors方法</h1>
             
             
               <div class="markdown-body">
@@ -458,7 +475,7 @@
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerBeanPostProcessors</span><span class="hljs-params">(</span><br><span class="hljs-params">    ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext)</span> &#123;<br><br>    <span class="hljs-comment">// WARNING: Although it may appear that the body of this method can be easily</span><br>    <span class="hljs-comment">// refactored to avoid the use of multiple loops and multiple lists, the use</span><br>    <span class="hljs-comment">// of multiple lists and multiple passes over the names of processors is</span><br>    <span class="hljs-comment">// intentional. We must ensure that we honor the contracts for PriorityOrdered</span><br>    <span class="hljs-comment">// and Ordered processors. Specifically, we must NOT cause processors to be</span><br>    <span class="hljs-comment">// instantiated (via getBean() invocations) or registered in the ApplicationContext</span><br>    <span class="hljs-comment">// in the wrong order.</span><br>    <span class="hljs-comment">//</span><br>    <span class="hljs-comment">// Before submitting a pull request (PR) to change this method, please review the</span><br>    <span class="hljs-comment">// list of all declined PRs involving changes to PostProcessorRegistrationDelegate</span><br>    <span class="hljs-comment">// to ensure that your proposal does not result in a breaking change:</span><br>    <span class="hljs-comment">// https://github.com/spring-projects/spring-framework/issues?q=PostProcessorRegistrationDelegate+is%3Aclosed+label%3A%22status%3A+declined%22</span><br><br>    String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>);<br><br>    <span class="hljs-comment">// Register BeanPostProcessorChecker that logs an info message when</span><br>    <span class="hljs-comment">// a bean is created during BeanPostProcessor instantiation, i.e. when</span><br>    <span class="hljs-comment">// a bean is not eligible for getting processed by all BeanPostProcessors.</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">beanProcessorTargetCount</span> <span class="hljs-operator">=</span> beanFactory.getBeanPostProcessorCount() + <span class="hljs-number">1</span> + postProcessorNames.length;<br>    beanFactory.addBeanPostProcessor(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanPostProcessorChecker</span>(beanFactory, beanProcessorTargetCount));<br><br>    <span class="hljs-comment">// Separate between BeanPostProcessors that implement PriorityOrdered,</span><br>    <span class="hljs-comment">// Ordered, and the rest.</span><br>    List&lt;BeanPostProcessor&gt; priorityOrderedPostProcessors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    List&lt;BeanPostProcessor&gt; internalPostProcessors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    List&lt;String&gt; orderedPostProcessorNames = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    List&lt;String&gt; nonOrderedPostProcessorNames = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">for</span> (String ppName : postProcessorNames) &#123;<br>        <span class="hljs-keyword">if</span> (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) &#123;<br>            <span class="hljs-type">BeanPostProcessor</span> <span class="hljs-variable">pp</span> <span class="hljs-operator">=</span> beanFactory.getBean(ppName, BeanPostProcessor.class); <span class="hljs-comment">// 后置处理器实例</span><br>            priorityOrderedPostProcessors.add(pp);<br>            <span class="hljs-keyword">if</span> (pp <span class="hljs-keyword">instanceof</span> MergedBeanDefinitionPostProcessor) &#123;<br>                internalPostProcessors.add(pp);<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (beanFactory.isTypeMatch(ppName, Ordered.class)) &#123;<br>            orderedPostProcessorNames.add(ppName);<br>        &#125;<br>        <span class="hljs-keyword">else</span> &#123;<br>            nonOrderedPostProcessorNames.add(ppName);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">// First, register the BeanPostProcessors that implement PriorityOrdered.</span><br>    sortPostProcessors(priorityOrderedPostProcessors, beanFactory);<br>    registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors); <span class="hljs-comment">// 后置处理器实例注册到Bean工厂beanPostProcessors中</span><br><br>    <span class="hljs-comment">// Next, register the BeanPostProcessors that implement Ordered.</span><br>    List&lt;BeanPostProcessor&gt; orderedPostProcessors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;(orderedPostProcessorNames.size());<br>    <span class="hljs-keyword">for</span> (String ppName : orderedPostProcessorNames) &#123;<br>        <span class="hljs-type">BeanPostProcessor</span> <span class="hljs-variable">pp</span> <span class="hljs-operator">=</span> beanFactory.getBean(ppName, BeanPostProcessor.class);<br>        orderedPostProcessors.add(pp);<br>        <span class="hljs-keyword">if</span> (pp <span class="hljs-keyword">instanceof</span> MergedBeanDefinitionPostProcessor) &#123;<br>            internalPostProcessors.add(pp);<br>        &#125;<br>    &#125;<br>    sortPostProcessors(orderedPostProcessors, beanFactory);<br>    registerBeanPostProcessors(beanFactory, orderedPostProcessors);<br><br>    <span class="hljs-comment">// Now, register all regular BeanPostProcessors.</span><br>    List&lt;BeanPostProcessor&gt; nonOrderedPostProcessors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;(nonOrderedPostProcessorNames.size());<br>    <span class="hljs-keyword">for</span> (String ppName : nonOrderedPostProcessorNames) &#123;<br>        <span class="hljs-type">BeanPostProcessor</span> <span class="hljs-variable">pp</span> <span class="hljs-operator">=</span> beanFactory.getBean(ppName, BeanPostProcessor.class);<br>        nonOrderedPostProcessors.add(pp);<br>        <span class="hljs-keyword">if</span> (pp <span class="hljs-keyword">instanceof</span> MergedBeanDefinitionPostProcessor) &#123;<br>            internalPostProcessors.add(pp);<br>        &#125;<br>    &#125;<br>    registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors);<br><br>    <span class="hljs-comment">// Finally, re-register all internal BeanPostProcessors.</span><br>    sortPostProcessors(internalPostProcessors, beanFactory);<br>    registerBeanPostProcessors(beanFactory, internalPostProcessors);<br><br>    <span class="hljs-comment">// Re-register post-processor for detecting inner beans as ApplicationListeners,</span><br>    <span class="hljs-comment">// moving it to the end of the processor chain (for picking up proxies etc).</span><br>    beanFactory.addBeanPostProcessor(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ApplicationListenerDetector</span>(applicationContext));<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>上述涉及到Bean后置处理器注册，在<a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring源码-04-Bean工厂BeanFactory">BeanFactory</a>中。</p>
+<p>上述涉及到Bean后置处理器注册，在<a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring-04-Bean工厂BeanFactory">BeanFactory</a>中。</p>
 
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
@@ -486,7 +503,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
+  <a href="/categories/Spring/" class="category-chain-item">Spring</a>
   
   
 
@@ -498,13 +515,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/Spring-6-0-3/" class="print-no-link">#Spring@6.0.3</a>
-      
-    </div>
-  
 </div>
 
 
@@ -513,7 +523,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Spring源码-10-容器refresh之registerBeanPostProcessors方法</div>
+      <div>Spring-10-容器refresh之registerBeanPostProcessors方法</div>
       <div>https://bannirui.github.io/2023/03/11/Spring/Spring源码-10-容器refresh之registerBeanPostProcessors方法/</div>
     </div>
     <div class="license-meta">
@@ -568,8 +578,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" title="Spring源码-09-配置类解析器ConfigurationClassParser">
-                        <span class="hidden-mobile">Spring源码-09-配置类解析器ConfigurationClassParser</span>
+                      <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" title="Spring-09-配置类解析器ConfigurationClassParser">
+                        <span class="hidden-mobile">Spring-09-配置类解析器ConfigurationClassParser</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

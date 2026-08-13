@@ -21,7 +21,7 @@
   
     <meta name="description" content="1 类关系  2 宏观视角  3 容器创建注解Bean方式 123456public class AnnotationCtxMain02 &amp;#123;    public static void main(String[] args) &amp;#123;        new AnnotationConfigApplicationContext(MyCfg02.class);    &amp;#125;&amp;#12">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring源码-01-Bean容器">
+<meta property="og:title" content="Spring-01-Bean容器">
 <meta property="og:url" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/index.html">
 <meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="1 类关系  2 宏观视角  3 容器创建注解Bean方式 123456public class AnnotationCtxMain02 &amp;#123;    public static void main(String[] args) &amp;#123;        new AnnotationConfigApplicationContext(MyCfg02.class);    &amp;#125;&amp;#12">
@@ -30,9 +30,8 @@
 <meta property="og:image" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/202212052214091.png">
 <meta property="og:image" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/202212052214264.png">
 <meta property="article:published_time" content="2023-03-10T16:04:52.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.507Z">
+<meta property="article:modified_time" content="2026-08-13T16:37:53.503Z">
 <meta property="article:author" content="dingrui">
-<meta property="article:tag" content="Spring@6.0.3">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/202212052214122.png">
   
@@ -40,7 +39,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Spring源码-01-Bean容器 - HEX BLOG</title>
+  <title>Spring-01-Bean容器 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -229,7 +228,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Spring源码-01-Bean容器"></span>
+            <span id="subtitle" data-typed-text="Spring-01-Bean容器"></span>
           
         </div>
 
@@ -317,17 +316,17 @@
     
     <div class="category row nomargin-x">
       <a class="category-item 
-          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Spring源码"
-        id="heading-87c18251c318fac4214d443ce91418ea" role="tab" data-toggle="collapse" href="#collapse-87c18251c318fac4214d443ce91418ea"
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Spring"
+        id="heading-38008dd81c2f4d7985ecf6e0ce8af1d1" role="tab" data-toggle="collapse" href="#collapse-38008dd81c2f4d7985ecf6e0ce8af1d1"
         aria-expanded="true"
       >
-        Spring源码
-        <span class="list-group-count">(11)</span>
+        Spring
+        <span class="list-group-count">(13)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
-      <div class="category-collapse collapse show" id="collapse-87c18251c318fac4214d443ce91418ea"
-           role="tabpanel" aria-labelledby="heading-87c18251c318fac4214d443ce91418ea">
+      <div class="category-collapse collapse show" id="collapse-38008dd81c2f4d7985ecf6e0ce8af1d1"
+           role="tabpanel" aria-labelledby="heading-38008dd81c2f4d7985ecf6e0ce8af1d1">
         
         
           
@@ -336,100 +335,118 @@
     
       
       
-        <a href="/2023/03/10/Spring/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring源码-00-环境搭建"
+        <a href="/2023/03/10/Spring/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring-00-环境搭建"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-00-环境搭建</span>
+          <span class="category-post">Spring-00-环境搭建</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" title="Spring源码-01-Bean容器"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/" title="Spring-01-Bean容器"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">Spring源码-01-Bean容器</span>
+          <span class="category-post">Spring-01-Bean容器</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring源码-02-AnnotatedBeanDefinitionReader"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring-02-AnnotatedBeanDefinitionReader"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-02-AnnotatedBeanDefinitionReader</span>
+          <span class="category-post">Spring-02-AnnotatedBeanDefinitionReader</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" title="Spring源码-03-容器refresh"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" title="Spring-03-容器refresh"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-03-容器refresh</span>
+          <span class="category-post">Spring-03-容器refresh</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring源码-04-Bean工厂BeanFactory"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-04-Bean%E5%B7%A5%E5%8E%82BeanFactory/" title="Spring-04-Bean工厂BeanFactory"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-04-Bean工厂BeanFactory</span>
+          <span class="category-post">Spring-04-Bean工厂BeanFactory</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-05-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BinvokeBeanFactoryPostProcessors%E6%96%B9%E6%B3%95/" title="Spring-05-容器refresh之invokeBeanFactoryPostProcessors方法"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-05-容器refresh之invokeBeanFactoryPostProcessors方法</span>
+          <span class="category-post">Spring-05-容器refresh之invokeBeanFactoryPostProcessors方法</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-06-Bean%E5%B7%A5%E5%8E%82%E4%B9%8BgetBean%E6%96%B9%E6%B3%95/" title="Spring源码-06-Bean工厂之getBean方法"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-06-Bean%E5%B7%A5%E5%8E%82%E4%B9%8BgetBean%E6%96%B9%E6%B3%95/" title="Spring-06-Bean工厂之getBean方法"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-06-Bean工厂之getBean方法</span>
+          <span class="category-post">Spring-06-Bean工厂之getBean方法</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-07-Bean%E5%B7%A5%E5%8E%82%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" title="Spring源码-07-Bean工厂后置处理器"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-07-Bean%E5%B7%A5%E5%8E%82%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" title="Spring-07-Bean工厂后置处理器"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-07-Bean工厂后置处理器</span>
+          <span class="category-post">Spring-07-Bean工厂后置处理器</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-08-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8ConfigurationClassPostProcessor/" title="Spring源码-08-后置处理器ConfigurationClassPostProcessor"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-08-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8ConfigurationClassPostProcessor/" title="Spring-08-后置处理器ConfigurationClassPostProcessor"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-08-后置处理器ConfigurationClassPostProcessor</span>
+          <span class="category-post">Spring-08-后置处理器ConfigurationClassPostProcessor</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" title="Spring源码-09-配置类解析器ConfigurationClassParser"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-09-%E9%85%8D%E7%BD%AE%E7%B1%BB%E8%A7%A3%E6%9E%90%E5%99%A8ConfigurationClassParser/" title="Spring-09-配置类解析器ConfigurationClassParser"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-09-配置类解析器ConfigurationClassParser</span>
+          <span class="category-post">Spring-09-配置类解析器ConfigurationClassParser</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" title="Spring源码-10-容器refresh之registerBeanPostProcessors方法"
+        <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-10-%E5%AE%B9%E5%99%A8refresh%E4%B9%8BregisterBeanPostProcessors%E6%96%B9%E6%B3%95/" title="Spring-10-容器refresh之registerBeanPostProcessors方法"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">Spring源码-10-容器refresh之registerBeanPostProcessors方法</span>
+          <span class="category-post">Spring-10-容器refresh之registerBeanPostProcessors方法</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/13/Spring/Spring-11-%E4%BA%8B%E4%BB%B6%E4%BC%A0%E6%92%AD%E5%99%A8/" title="Spring-11-事件传播器"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-11-事件传播器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/13/Spring/Spring-12-%E4%BA%8B%E4%BB%B6%E8%A6%81%E4%BC%A0%E6%92%AD%E7%BB%99%E8%B0%81/" title="Spring-12-事件要传播给谁"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-12-事件要传播给谁</span>
         </a>
       
     
@@ -451,7 +468,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Spring源码-01-Bean容器</h1>
+            <h1 id="seo-header">Spring-01-Bean容器</h1>
             
             
               <div class="markdown-body">
@@ -480,7 +497,7 @@
 <p>也就是如图：</p>
 <img src="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-01-Bean%E5%AE%B9%E5%99%A8/202212052214264.png" srcset="/img/loading.gif" lazyload class="">
 
-<h3 id="3-2-注解Bean读取器"><a href="#3-2-注解Bean读取器" class="headerlink" title="3.2 注解Bean读取器"></a>3.2 注解Bean读取器</h3><a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring源码-02-AnnotatedBeanDefinitionReader">AnnotatedBeanDefinitionReader组件</a>。
+<h3 id="3-2-注解Bean读取器"><a href="#3-2-注解Bean读取器" class="headerlink" title="3.2 注解Bean读取器"></a>3.2 注解Bean读取器</h3><a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring-02-AnnotatedBeanDefinitionReader">AnnotatedBeanDefinitionReader组件</a>。
 
 <p>完成了2个工作：</p>
 <ul>
@@ -494,7 +511,7 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-08-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8ConfigurationClassPostProcessor/" title="Spring源码-08-后置处理器ConfigurationClassPostProcessor">ConfigurationClassPostProcessor</a></td>
+<td><a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-08-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8ConfigurationClassPostProcessor/" title="Spring-08-后置处理器ConfigurationClassPostProcessor">ConfigurationClassPostProcessor</a></td>
 </tr>
 <tr>
 <td>AutowiredAnnotationBeanPostProcessor</td>
@@ -515,7 +532,7 @@
 <td>DefaultEventListenerFactory</td>
 </tr>
 </tbody></table>
-<h2 id="4"><a href="#4" class="headerlink" title="4 "></a>4 <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" title="Spring源码-03-容器refresh">refresh</a></h2>
+<h2 id="4"><a href="#4" class="headerlink" title="4 "></a>4 <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-03-%E5%AE%B9%E5%99%A8refresh/" title="Spring-03-容器refresh">refresh</a></h2>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -542,7 +559,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Spring%E6%BA%90%E7%A0%81/" class="category-chain-item">Spring源码</a>
+  <a href="/categories/Spring/" class="category-chain-item">Spring</a>
   
   
 
@@ -554,13 +571,6 @@
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/Spring-6-0-3/" class="print-no-link">#Spring@6.0.3</a>
-      
-    </div>
-  
 </div>
 
 
@@ -569,7 +579,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Spring源码-01-Bean容器</div>
+      <div>Spring-01-Bean容器</div>
       <div>https://bannirui.github.io/2023/03/11/Spring/Spring源码-01-Bean容器/</div>
     </div>
     <div class="license-meta">
@@ -614,9 +624,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring源码-02-AnnotatedBeanDefinitionReader">
+                      <a href="/2023/03/11/Spring/Spring%E6%BA%90%E7%A0%81-02-AnnotatedBeanDefinitionReader/" title="Spring-02-AnnotatedBeanDefinitionReader">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Spring源码-02-AnnotatedBeanDefinitionReader</span>
+                        <span class="hidden-mobile">Spring-02-AnnotatedBeanDefinitionReader</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -624,8 +634,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/10/Spring/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring源码-00-环境搭建">
-                        <span class="hidden-mobile">Spring源码-00-环境搭建</span>
+                      <a href="/2023/03/10/Spring/Spring%E6%BA%90%E7%A0%81-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring-00-环境搭建">
+                        <span class="hidden-mobile">Spring-00-环境搭建</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
