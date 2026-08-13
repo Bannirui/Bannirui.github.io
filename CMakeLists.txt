@@ -91,9 +91,9 @@ add_custom_target(hexo_deploy
 )
 
 # 博客目录
-set(POST_DIR "Netty")
+set(POST_DIR "Spring-Boot")
 # 博客文章名
-set(POST_NAME "${POST_DIR}-14-MQTT协议")
+set(POST_NAME "${POST_DIR}-0x00-源码环境")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md
