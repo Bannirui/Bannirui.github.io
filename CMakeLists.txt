@@ -93,7 +93,7 @@ add_custom_target(hexo_deploy
 # 博客目录
 set(POST_DIR "Spring")
 # 博客文章名
-set(POST_NAME "${POST_DIR}-16-真正创建Bean")
+set(POST_NAME "${POST_DIR}-02-怎么根据启动类找到所有BeanDefinition的")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md

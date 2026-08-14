@@ -14,7 +14,7 @@ categories: Spring
 ## 1 它有什么组件
 
 - beanFactory 实现是DefaultListableBeanFactory
-- reader 实现是AnnotatedBeanDefinitionReader
+- reader 实现是AnnotatedBeanDefinitionReader 这个地方有个重要的点 在refresh的invokeBeanFactoryPostProcessors会用到 {%post_link Spring/Spring-02-怎么根据启动类找到所有BeanDefinition的%}
 - scanner 实现是ClassPathBeanDefinitionScanner
 
 ```java

@@ -112,5 +112,4 @@ public static void registerBeanPostProcessors(
 }
 ```
 
-上述涉及到Bean后置处理器注册，在{% post_link Spring/Spring源码-04-Bean工厂BeanFactory BeanFactory %}中。
 

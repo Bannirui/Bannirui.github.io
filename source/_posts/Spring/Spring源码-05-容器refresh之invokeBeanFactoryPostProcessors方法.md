@@ -237,7 +237,4 @@ public static void invokeBeanFactoryPostProcessors(
 
 ## 2 {% post_link Spring/Spring源码-06-Bean工厂之getBean方法 getBean方法 %}
 
-## 3 {% post_link Spring/Spring源码-07-Bean工厂后置处理器 Bean工厂后置处理器回调 %}
-
-## 4 {% post_link Spring/Spring源码-08-后置处理器ConfigurationClassPostProcessor ConfigurationClassPostProcessor后置处理器回调 %}
 
