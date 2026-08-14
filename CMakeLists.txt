@@ -91,9 +91,9 @@ add_custom_target(hexo_deploy
 )
 
 # 博客目录
-set(POST_DIR "SpringBoot")
+set(POST_DIR "Spring")
 # 博客文章名
-set(POST_NAME "${POST_DIR}-06-启动类的BeanDefinition缓存起来")
+set(POST_NAME "${POST_DIR}-16-真正创建Bean")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md

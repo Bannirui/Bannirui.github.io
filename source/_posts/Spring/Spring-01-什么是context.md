@@ -146,13 +146,13 @@ categories: Spring
 
 - 1 准备context
 - 2 从context中把BeanFactory对象拿出来
-- 3 增强BeanFactory
+- 3 增强BeanFactory {%post_link Spring/Spring-13-增强BeanFactory%}
 - 4 扩展点
-- 5 让BeanFactoryPostProcessor修改BeanDefinition
-- 6 让BeanPostProcessor修改Bean
+- 5 让BeanFactoryPostProcessor修改BeanDefinition {%post_link Spring/Spring-14-开始大规模解析BeanDefinition%}
+- 6 让BeanPostProcessor修改Bean {%post_link Spring/Spring-15-准备Bean创建过程的拦截器%}
 - 7 国际化
 - 8 构造事件发布器
 - 9 扩展点
 - 10 注册ApplicationListener
-- 11 真正创建Bean
+- 11 真正创建Bean {%post_link Spring/Spring-16-真正创建Bean%}
 - 12 Bean完成创建
