@@ -1,5 +1,5 @@
 ---
-title: Spring-Boot-01-SpringBoot的生命周期怎么控制的
+title: SpringBoot-01-SpringBoot的生命周期怎么控制的
 category_bar: true
 categories: SpringBoot
 date: 2026-08-13 20:14:14
@@ -33,6 +33,8 @@ spring体系的ApplicationEvent派生出spring boot体系的SpringApplicationEve
 ## 2 EventPublishingRunListener
 
 spring boot把这个类注册在了spring.factories里面在启动过程中会扫描加载出来
+
+{%post_link SpringBoot/SpringBoot-03-SpringBoot的SPI%}
 
 ```java
 		// 会拿到EventPublishingRunListener 配置在了spring.factories里面 启动时候会加载进来

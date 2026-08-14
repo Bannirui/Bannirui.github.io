@@ -21,6 +21,8 @@ git checkout my-study-6.0.3
 sudo apt install openjdk-17-jdk
 ```
 
+新版本的分支看{%post_link SpringBoot/SpringBoot-00-源码环境%}
+
 ## 2 文件修改
 
 修改源码路径下gradle.properties，增加两行
