@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" >
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dingrui">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Spring-04-什么是Bean的容器  先对BeanFactory有了了解，也就是说一个框架已经有了能力实现对Bean对象的管理，那么下一步是什么，肯定是围绕已有核心能力提供周边建设，context就是面向应用的一个，打包好的，开箱即用的一整套东西 从SpringBoot看的时候，用了AnnotationConfigApplicationContext 1 它有什么组件 beanFactory">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring-01-什么是context">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/Spring/Spring-01-%E4%BB%80%E4%B9%88%E6%98%AFcontext/index.html">
+<meta property="og:site_name" content="HEX BLOG">
+<meta property="og:description" content="Spring-04-什么是Bean的容器  先对BeanFactory有了了解，也就是说一个框架已经有了能力实现对Bean对象的管理，那么下一步是什么，肯定是围绕已有核心能力提供周边建设，context就是面向应用的一个，打包好的，开箱即用的一整套东西 从SpringBoot看的时候，用了AnnotationConfigApplicationContext 1 它有什么组件 beanFactory">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-10T16:04:52.000Z">
+<meta property="article:modified_time" content="2026-08-14T12:19:04.599Z">
+<meta property="article:author" content="dingrui">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Spring-01-什么是context - HEX BLOG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/iconfont_gmail/iconfont.css">
+<link rel="stylesheet" href="/css/iconfont_outlook/iconfont.css">
+<link rel="stylesheet" href="/css/my-collapse.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"bannirui.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":2,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-N6M7VZCQMD"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-N6M7VZCQMD", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-N6M7VZCQMD');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>HEX BLOG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archive</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Category</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tag</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Spring-01-什么是context"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-11 00:04" pubdate>
+          2023年3月11日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          722 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="Spring"
+        id="heading-38008dd81c2f4d7985ecf6e0ce8af1d1" role="tab" data-toggle="collapse" href="#collapse-38008dd81c2f4d7985ecf6e0ce8af1d1"
+        aria-expanded="true"
+      >
+        Spring
+        <span class="list-group-count">(15)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-38008dd81c2f4d7985ecf6e0ce8af1d1"
+           role="tabpanel" aria-labelledby="heading-38008dd81c2f4d7985ecf6e0ce8af1d1">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2023/03/10/Spring/Spring-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring-00-环境搭建"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-00-环境搭建</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring-01-%E4%BB%80%E4%B9%88%E6%98%AFcontext/" title="Spring-01-什么是context"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">Spring-01-什么是context</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/14/Spring/Spring-02-%E6%80%8E%E4%B9%88%E6%A0%B9%E6%8D%AE%E5%90%AF%E5%8A%A8%E7%B1%BB%E6%89%BE%E5%88%B0%E6%89%80%E6%9C%89BeanDefinition%E7%9A%84/" title="Spring-02-怎么根据启动类找到所有BeanDefinition的"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-02-怎么根据启动类找到所有BeanDefinition的</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring-03-%E4%BB%80%E4%B9%88%E6%98%AFBeanPostProcessor/" title="Spring-03-什么是BeanPostProcessor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-03-什么是BeanPostProcessor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring-04-%E4%BB%80%E4%B9%88%E6%98%AFBean%E7%9A%84%E5%AE%B9%E5%99%A8/" title="Spring-04-什么是Bean的容器"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-04-什么是Bean的容器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/14/Spring/Spring-05-%E4%BB%80%E4%B9%88%E6%98%AFFactoryBean/" title="Spring-05-什么是FactoryBean"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-05-什么是FactoryBean</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/15/Spring/Spring-06-%E7%94%A8BeanDefinition%E5%88%9B%E5%BB%BABean/" title="Spring-06-用BeanDefinition创建Bean"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-06-用BeanDefinition创建Bean</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring-07-%E6%89%80%E8%B0%93%E7%9A%84BeanFactoryPostProcessor/" title="Spring-07-所谓的BeanFactoryPostProcessor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-07-所谓的BeanFactoryPostProcessor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/Spring/Spring-08-ConfigurationClassPostProcessor%E6%A0%B9%E6%8D%AE%E6%B3%A8%E8%A7%A3%E5%88%9B%E5%BB%BA%E6%96%B0BeanDefinition/" title="Spring-08-ConfigurationClassPostProcessor根据注解创建新BeanDefinition"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-08-ConfigurationClassPostProcessor根据注解创建新BeanDefinition</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/13/Spring/Spring-11-%E4%BA%8B%E4%BB%B6%E4%BC%A0%E6%92%AD%E5%99%A8/" title="Spring-11-事件传播器"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-11-事件传播器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/13/Spring/Spring-12-%E4%BA%8B%E4%BB%B6%E8%A6%81%E4%BC%A0%E6%92%AD%E7%BB%99%E8%B0%81/" title="Spring-12-事件要传播给谁"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-12-事件要传播给谁</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/14/Spring/Spring-13-%E5%A2%9E%E5%BC%BABeanFactory/" title="Spring-13-增强BeanFactory"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-13-增强BeanFactory</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/14/Spring/Spring-14-%E5%BC%80%E5%A7%8B%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%A7%A3%E6%9E%90BeanDefinition/" title="Spring-14-开始大规模解析BeanDefinition"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-14-开始大规模解析BeanDefinition</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/14/Spring/Spring-15-%E5%87%86%E5%A4%87Bean%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B%E7%9A%84%E6%8B%A6%E6%88%AA%E5%99%A8/" title="Spring-15-准备Bean创建过程的拦截器"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-15-准备Bean创建过程的拦截器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2026/08/14/Spring/Spring-16-%E7%9C%9F%E6%AD%A3%E5%88%9B%E5%BB%BABean/" title="Spring-16-真正创建Bean"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Spring-16-真正创建Bean</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Spring-01-什么是context</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <a href="/2023/03/11/Spring/Spring-04-%E4%BB%80%E4%B9%88%E6%98%AFBean%E7%9A%84%E5%AE%B9%E5%99%A8/" title="Spring-04-什么是Bean的容器">Spring-04-什么是Bean的容器</a>
+
+<p>先对BeanFactory有了了解，也就是说一个框架已经有了能力实现对Bean对象的管理，那么下一步是什么，肯定是围绕已有核心能力提供周边建设，context就是面向应用的一个，打包好的，开箱即用的一整套东西</p>
+<p>从SpringBoot看的时候，用了AnnotationConfigApplicationContext</p>
+<h2 id="1-它有什么组件"><a href="#1-它有什么组件" class="headerlink" title="1 它有什么组件"></a>1 它有什么组件</h2><ul>
+<li>beanFactory 实现是DefaultListableBeanFactory</li>
+<li>reader 实现是AnnotatedBeanDefinitionReader 这个地方有个重要的点 在refresh的invokeBeanFactoryPostProcessors会用到 <a href="/2026/08/14/Spring/Spring-02-%E6%80%8E%E4%B9%88%E6%A0%B9%E6%8D%AE%E5%90%AF%E5%8A%A8%E7%B1%BB%E6%89%BE%E5%88%B0%E6%89%80%E6%9C%89BeanDefinition%E7%9A%84/" title="Spring-02-怎么根据启动类找到所有BeanDefinition的">Spring-02-怎么根据启动类找到所有BeanDefinition的</a></li>
+<li>scanner 实现是ClassPathBeanDefinitionScanner</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">AnnotationConfigApplicationContext</span><span class="hljs-params">()</span> &#123;<br>	<span class="hljs-comment">// 会隐式调用到父类GenericApplicationContext 构造一个beanFactory的DefaultListableFactory对象出来</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * 为什么要构造下面这两个玩意 本质都是为了找到BeanDefinition 然后把BeanDefinition缓存到BeanFactory里面</span><br><span class="hljs-comment">	 * 将来给过来的信息可能是一个打了注解的类 也有可能是下包路径</span><br><span class="hljs-comment">	 * 下面两个各司其职</span><br><span class="hljs-comment">	 */</span><br>	<span class="hljs-built_in">this</span>.reader = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AnnotatedBeanDefinitionReader</span>(<span class="hljs-built_in">this</span>);<br>	<span class="hljs-built_in">this</span>.scanner = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClassPathBeanDefinitionScanner</span>(<span class="hljs-built_in">this</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">GenericApplicationContext</span><span class="hljs-params">()</span> &#123;<br>	<span class="hljs-comment">// Spring的核心</span><br>	<span class="hljs-built_in">this</span>.beanFactory = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultListableBeanFactory</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-大名鼎鼎的refresh"><a href="#2-大名鼎鼎的refresh" class="headerlink" title="2 大名鼎鼎的refresh"></a>2 大名鼎鼎的refresh</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">refresh</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> BeansException, IllegalStateException &#123;<br>	<span class="hljs-built_in">this</span>.startupShutdownLock.lock();<br>	<span class="hljs-keyword">try</span> &#123;<br>		<span class="hljs-built_in">this</span>.startupShutdownThread = Thread.currentThread();<br><br>		<span class="hljs-type">StartupStep</span> <span class="hljs-variable">contextRefresh</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.applicationStartup.start(<span class="hljs-string">&quot;spring.context.refresh&quot;</span>);<br><br>		<span class="hljs-comment">// Prepare this context for refreshing.</span><br>		<span class="hljs-comment">// 1 准备context</span><br>		prepareRefresh();<br><br>		<span class="hljs-comment">// Tell the subclass to refresh the internal bean factory.</span><br>		<span class="hljs-comment">// 2 从context中把BeanFactory对象拿出来 DefaultListableBeanFactory</span><br>		<span class="hljs-type">ConfigurableListableBeanFactory</span> <span class="hljs-variable">beanFactory</span> <span class="hljs-operator">=</span> obtainFreshBeanFactory();<br><br>		<span class="hljs-comment">// Prepare the bean factory for use in this context.</span><br>		<span class="hljs-comment">// 3 增强BeanFactory context给BeanFactory准备一些基础设施</span><br>		prepareBeanFactory(beanFactory);<br><br>		<span class="hljs-keyword">try</span> &#123;<br>			<span class="hljs-comment">// Allows post-processing of the bean factory in context subclasses.</span><br>			<span class="hljs-comment">// 4 context的一个扩展点 默认是空实现 预留的口子 想做一些增强操作的就重写这个方法</span><br>			postProcessBeanFactory(beanFactory);<br>			<span class="hljs-type">StartupStep</span> <span class="hljs-variable">beanPostProcess</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.applicationStartup.start(<span class="hljs-string">&quot;spring.context.beans.post-process&quot;</span>);<br>			<span class="hljs-comment">// Invoke factory processors registered as beans in the context.</span><br>			<span class="hljs-comment">/**</span><br><span class="hljs-comment">			 * 5 让BeanFactoryPostProcessor修改BeanDefinition</span><br><span class="hljs-comment">			 * SpringBoot启动的时候只往BeanFactory里面缓存了一个启动类的BeanDefinition 在这个地方就要开始围绕这个启动类的BeanDefinition找到枝枝蔓蔓</span><br><span class="hljs-comment">			 * BeanFactoryPostProcessor作用时机是在Bean实例化之前 操作对象是BeanDefinition</span><br><span class="hljs-comment">			 */</span><br>			invokeBeanFactoryPostProcessors(beanFactory);<br>			<span class="hljs-comment">// Register bean processors that intercept bean creation.</span><br>			<span class="hljs-comment">/**</span><br><span class="hljs-comment">			 * 6 BeanPostProcessor作用时机是Bean实例化过程中 操作对象是Bean对象 在实例创建过程中进行干预</span><br><span class="hljs-comment">			 * 为什么要先注册BeanPostProcessor呢 因为后面会真正创建Bean</span><br><span class="hljs-comment">			 */</span><br>			registerBeanPostProcessors(beanFactory);<br>			beanPostProcess.end();<br><br>			<span class="hljs-comment">// Initialize message source for this context.</span><br>			<span class="hljs-comment">// 7 国际化</span><br>			initMessageSource();<br><br>			<span class="hljs-comment">// Initialize event multicaster for this context.</span><br>			<span class="hljs-comment">// 8 构造事件发布器</span><br>			initApplicationEventMulticaster();<br><br>			<span class="hljs-comment">// Initialize other special beans in specific context subclasses.</span><br>			<span class="hljs-comment">// 9 给具体的ApplicationContext扩展</span><br>			onRefresh();<br><br>			<span class="hljs-comment">// Check for listener beans and register them.</span><br>			<span class="hljs-comment">// 10 注册ApplicationListener</span><br>			registerListeners();<br><br>			<span class="hljs-comment">// Instantiate all remaining (non-lazy-init) singletons.</span><br>			<span class="hljs-comment">// 11 真正创建Bean</span><br>			finishBeanFactoryInitialization(beanFactory);<br><br>			<span class="hljs-comment">// Last step: publish corresponding event.</span><br>			<span class="hljs-comment">// 12 所有主要的Bean都创建完成了 对context做一些最终的工作</span><br>			finishRefresh();<br>		&#125;<br><br>		<span class="hljs-keyword">catch</span> (RuntimeException | Error ex) &#123;<br>			<span class="hljs-keyword">if</span> (logger.isWarnEnabled()) &#123;<br>				logger.warn(<span class="hljs-string">&quot;Exception encountered during context initialization - &quot;</span> +<br>						<span class="hljs-string">&quot;cancelling refresh attempt: &quot;</span> + ex);<br>			&#125;<br><br>			<span class="hljs-comment">// Stop already started Lifecycle beans to avoid dangling resources.</span><br>			<span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.lifecycleProcessor != <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-built_in">this</span>.lifecycleProcessor.isRunning()) &#123;<br>				<span class="hljs-keyword">try</span> &#123;<br>					<span class="hljs-built_in">this</span>.lifecycleProcessor.stop();<br>				&#125;<br>				<span class="hljs-keyword">catch</span> (Throwable ex2) &#123;<br>					logger.warn(<span class="hljs-string">&quot;Exception thrown from LifecycleProcessor on cancelled refresh&quot;</span>, ex2);<br>				&#125;<br>			&#125;<br><br>			<span class="hljs-comment">// Destroy already created singletons to avoid dangling resources.</span><br>			destroyBeans();<br><br>			<span class="hljs-comment">// Reset &#x27;active&#x27; flag.</span><br>			cancelRefresh(ex);<br><br>			<span class="hljs-comment">// Propagate exception to caller.</span><br>			<span class="hljs-keyword">throw</span> ex;<br>		&#125;<br><br>		<span class="hljs-keyword">finally</span> &#123;<br>			contextRefresh.end();<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">finally</span> &#123;<br>		<span class="hljs-built_in">this</span>.startupShutdownThread = <span class="hljs-literal">null</span>;<br>		<span class="hljs-built_in">this</span>.startupShutdownLock.unlock();<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我会把核心的步骤单独成一个篇章</p>
+<ul>
+<li>1 准备context</li>
+<li>2 从context中把BeanFactory对象拿出来</li>
+<li>3 增强BeanFactory <a href="/2026/08/14/Spring/Spring-13-%E5%A2%9E%E5%BC%BABeanFactory/" title="Spring-13-增强BeanFactory">Spring-13-增强BeanFactory</a></li>
+<li>4 扩展点</li>
+<li>5 让BeanFactoryPostProcessor修改BeanDefinition <a href="/2026/08/14/Spring/Spring-14-%E5%BC%80%E5%A7%8B%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%A7%A3%E6%9E%90BeanDefinition/" title="Spring-14-开始大规模解析BeanDefinition">Spring-14-开始大规模解析BeanDefinition</a></li>
+<li>6 让BeanPostProcessor修改Bean <a href="/2026/08/14/Spring/Spring-15-%E5%87%86%E5%A4%87Bean%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B%E7%9A%84%E6%8B%A6%E6%88%AA%E5%99%A8/" title="Spring-15-准备Bean创建过程的拦截器">Spring-15-准备Bean创建过程的拦截器</a></li>
+<li>7 国际化</li>
+<li>8 构造事件发布器</li>
+<li>9 扩展点</li>
+<li>10 注册ApplicationListener</li>
+<li>11 真正创建Bean <a href="/2026/08/14/Spring/Spring-16-%E7%9C%9F%E6%AD%A3%E5%88%9B%E5%BB%BABean/" title="Spring-16-真正创建Bean">Spring-16-真正创建Bean</a></li>
+<li>12 Bean完成创建</li>
+</ul>
+
+<div id="gitalk-container"></div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+		<script>
+		var gitalkConfig = {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":"Bannirui","distractionFreeMode":false};
+	    gitalkConfig.id = md5(location.pathname);
+		var gitalk = new Gitalk(gitalkConfig);
+	    gitalk.render("gitalk-container");
+	    </script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Spring/" class="category-chain-item">Spring</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Spring-01-什么是context</div>
+      <div>https://bannirui.github.io/2023/03/11/Spring/Spring-01-什么是context/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dingrui</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/11/Spring/Spring-03-%E4%BB%80%E4%B9%88%E6%98%AFBeanPostProcessor/" title="Spring-03-什么是BeanPostProcessor">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Spring-03-什么是BeanPostProcessor</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/10/Spring/Spring-00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Spring-00-环境搭建">
+                        <span class="hidden-mobile">Spring-00-环境搭建</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '262d14f21fbae6df16afc0afb33751b0'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
