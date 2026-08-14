@@ -25,7 +25,7 @@ spring体系的ApplicationEvent派生出spring boot体系的SpringApplicationEve
 
 这7大事件本质都是spring framework的事件体系，那么spring boot是怎么处理事件的呢
 
-看过{%post_link Spring/Spring源码-03-容器refresh%}就应该清楚在执行完refresh后就拥有了发布事件能力
+看过{%post_link Spring/Spring-01-什么是context%}就应该清楚在执行完refresh后就拥有了发布事件能力
 
 - 第1 spring boot在refresh之前是完全没有建立spring framework的事件发布能力的
 - 第2 自始至终 这几个事件的发布spring boot都是用自己建设的机制完成的
