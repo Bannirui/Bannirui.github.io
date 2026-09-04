@@ -27,7 +27,7 @@
 <meta property="og:description" content="关于结点函数参数类型，先看LangGraph-0x06-input_schema为什么存在 1 指定了入参类型除了input_schema，还有一种指定方式，通过input参数 12345678910# 兼容老版本的参数input传进来 就是现在的input_schemaif (input_ :&#x3D; kwargs.get(&quot;input&quot;, MISSING)) is not MIS">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-07-30T12:41:23.000Z">
-<meta property="article:modified_time" content="2026-07-30T16:14:02.988Z">
+<meta property="article:modified_time" content="2026-09-04T03:13:00.503Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -548,7 +548,7 @@
 <li>恰好只有一个形参</li>
 <li>有好几个形参</li>
 </ul>
-<p>每个人的开发习惯不一样，有人习惯<code>def fn(a:A)-&gt;B:</code>，有个习惯<code>def fn(a):</code>，有类型注解的就好办，入参的类型就是注解的类型</p>
+<p>每个人的开发习惯不一样，有人习惯<code>def fn(a:A)-&gt;B:</code>，有人习惯<code>def fn(a):</code>，有类型注解的就好办，入参的类型就是注解的类型</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python">                <span class="hljs-comment"># 执行到说明经过了上面3个检查 要么是对象 要么是函数 如果是对象就是有__call__函数的对象 函数就不管是普通函数还是类方法了反正是函数</span><br>                <span class="hljs-comment"># 结点是对象的__call__函数</span><br>                <span class="hljs-comment"># 不是有__call__函数的对象说明结点就是函数</span><br>                <span class="hljs-comment"># 每个人开发习惯不一样 有的人会写类型注解 比如def fn(a:A)-&gt;B: 把函数的参数列表对应的类型注解拿出来</span><br>                <span class="hljs-comment"># 参数列表的样子&#123;&#x27;state&#x27;:&lt;class &#x27;__main__.Ctx&#x27;&gt;, &#x27;return&#x27;: &lt;class &#x27;dict&#x27;&gt;&#125; key是形参名字 value是形参对应的类型注解</span><br>                hints := get_type_hints(<span class="hljs-built_in">getattr</span>(action, <span class="hljs-string">&quot;__call__&quot;</span>))<br>                <span class="hljs-keyword">or</span> get_type_hints(action)<br><br>...<br><br>                    <span class="hljs-comment"># 参数列表拿到这个结点函数的形参的注解类型</span><br>                    <span class="hljs-keyword">if</span> input_hint := hints.get(first_parameter_name):<br>                        <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(input_hint, <span class="hljs-built_in">type</span>) <span class="hljs-keyword">and</span> get_type_hints(input_hint):<br>                            inferred_input_schema = input_hint<br></code></pre></td></tr></table></figure>
 
 <p>上面的源码解决了什么问题，有类型注解的，有一个或者多个形参的，都用第一个形参的类型注解当作推断出来的形参类型。</p>
