@@ -19,29 +19,26 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 定位jdk的入口1.1 全局搜索main方法我对c\cpp的了解还停留在语言语法层面，对工程构建并不熟悉，因此只能使用原始的方式。 下个断点，然后启动Java进程再根据调用栈往回精确定位。   1.2 启动Java进程  代码就一行，只要能让Java进程运行起来，停在断点就行。 123456public class VMLoaderTest &amp;#123;    public static vo">
+    <meta name="description" content="之前在mac上编译的openjdk源码jvm-00-编译openjdk，两个原因促使我要在Linux上操作一下  mac机子老了，性能不行了，编译一次发烫厉害 一鼓作气，借着这个机会把以前没学的源码重拾  1 安装jdk21作为boot官网下个java21用作openjdk22的boot 1234567mkdir -p MyApp&#x2F;jdk&#x2F;21mv ~&#x2F;MyDownload&#x2F;jdk-21_linu">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm-0x02-启动入口">
-<meta property="og:url" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/index.html">
+<meta property="og:title" content="jvm-01-在Linux上编译openjdk22">
+<meta property="og:url" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="1 定位jdk的入口1.1 全局搜索main方法我对c\cpp的了解还停留在语言语法层面，对工程构建并不熟悉，因此只能使用原始的方式。 下个断点，然后启动Java进程再根据调用栈往回精确定位。   1.2 启动Java进程  代码就一行，只要能让Java进程运行起来，停在断点就行。 123456public class VMLoaderTest &amp;#123;    public static vo">
+<meta property="og:description" content="之前在mac上编译的openjdk源码jvm-00-编译openjdk，两个原因促使我要在Linux上操作一下  mac机子老了，性能不行了，编译一次发烫厉害 一鼓作气，借着这个机会把以前没学的源码重拾  1 安装jdk21作为boot官网下个java21用作openjdk22的boot 1234567mkdir -p MyApp&#x2F;jdk&#x2F;21mv ~&#x2F;MyDownload&#x2F;jdk-21_linu">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131417621.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131631218.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131959054.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427153405355.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427154208275.png">
-<meta property="article:published_time" content="2023-04-27T05:08:32.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.670Z">
+<meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
+<meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png">
+<meta property="article:published_time" content="2025-06-13T14:47:26.000Z">
+<meta property="article:modified_time" content="2026-09-20T15:56:30.284Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131417621.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>jvm-0x02-启动入口 - HEX BLOG</title>
+  <title>jvm-01-在Linux上编译openjdk22 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -230,7 +227,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="jvm-0x02-启动入口"></span>
+            <span id="subtitle" data-typed-text="jvm-01-在Linux上编译openjdk22"></span>
           
         </div>
 
@@ -241,8 +238,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-04-27 13:08" pubdate>
-          2023年4月27日 下午
+        <time datetime="2025-06-13 22:47" pubdate>
+          2025年6月13日 晚上
         </time>
       </span>
     
@@ -253,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          776 字
+          289 字
         
       </span>
     
@@ -264,7 +261,7 @@
         
         
         
-          7 分钟
+          3 分钟
         
       </span>
     
@@ -337,100 +334,100 @@
     
       
       
-        <a href="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-0x00-编译openjdk"
+        <a href="/2023/03/10/java/jvm-00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-00-编译openjdk"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x00-编译openjdk</span>
+          <span class="category-post">jvm-00-编译openjdk</span>
         </a>
       
     
       
       
-        <a href="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-0x01-在Linux上编译openjdk22"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-0x01-在Linux上编译openjdk22</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-0x02-启动入口"
+        <a href="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-01-在Linux上编译openjdk22"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">jvm-0x02-启动入口</span>
+          <span class="category-post">jvm-01-在Linux上编译openjdk22</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-0x03-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-0x03-Java入口函数"
+        <a href="/2025/09/25/java/jvm-02-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" title="jvm-02-用Docker作编译环境"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x03-Java入口函数</span>
+          <span class="category-post">jvm-02-用Docker作编译环境</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-0x04-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-0x04-设置运行环境参数"
+        <a href="/2023/04/27/java/jvm-03-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-03-启动入口"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x04-设置运行环境参数</span>
+          <span class="category-post">jvm-03-启动入口</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-0x05-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-0x05-pthread系统调用"
+        <a href="/2023/04/28/java/jvm-04-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-04-Java入口函数"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x05-pthread系统调用</span>
+          <span class="category-post">jvm-04-Java入口函数</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-0x06-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-0x06-加载JVM"
+        <a href="/2023/04/28/java/jvm-05-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-04-设置运行环境参数"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x06-加载JVM</span>
+          <span class="category-post">jvm-04-设置运行环境参数</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-0x07-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-0x07-加载动态链接库"
+        <a href="/2023/04/28/java/jvm-06-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-05-pthread系统调用"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x07-加载动态链接库</span>
+          <span class="category-post">jvm-05-pthread系统调用</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-0x08-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-0x08-JVM启动参数"
+        <a href="/2023/05/04/java/jvm-07-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-06-加载JVM"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x08-JVM启动参数</span>
+          <span class="category-post">jvm-06-加载JVM</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-0x09-JVM%E5%90%AF%E5%8A%A8/" title="jvm-0x09-JVM启动"
+        <a href="/2023/05/04/java/jvm-08-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-07-加载动态链接库"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x09-JVM启动</span>
+          <span class="category-post">jvm-07-加载动态链接库</span>
         </a>
       
     
       
       
-        <a href="/2025/09/25/java/jvm-0x10-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" title="jvm-0x10-用Docker作编译环境"
+        <a href="/2023/05/04/java/jvm-09-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-08-JVM启动参数"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x10-用Docker作编译环境</span>
+          <span class="category-post">jvm-08-JVM启动参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/05/04/java/jvm-10-JVM%E5%90%AF%E5%8A%A8/" title="jvm-09-JVM启动"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-09-JVM启动</span>
         </a>
       
     
@@ -452,41 +449,36 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">jvm-0x02-启动入口</h1>
+            <h1 id="seo-header">jvm-01-在Linux上编译openjdk22</h1>
             
             
               <div class="markdown-body">
                 
-                <h3 id="1-定位jdk的入口"><a href="#1-定位jdk的入口" class="headerlink" title="1 定位jdk的入口"></a>1 定位jdk的入口</h3><h4 id="1-1-全局搜索main方法"><a href="#1-1-全局搜索main方法" class="headerlink" title="1.1 全局搜索main方法"></a>1.1 全局搜索main方法</h4><p>我对c\cpp的了解还停留在语言语法层面，对工程构建并不熟悉，因此只能使用原始的方式。</p>
-<p>下个断点，然后启动Java进程再根据调用栈往回精确定位。</p>
-<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131417621.png" srcset="/img/loading.gif" lazyload class="">
+                <p>之前在mac上编译的openjdk源码<a href="/2023/03/10/java/jvm-00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-00-编译openjdk">jvm-00-编译openjdk</a>，两个原因促使我要在Linux上操作一下</p>
+<ul>
+<li>mac机子老了，性能不行了，编译一次发烫厉害</li>
+<li>一鼓作气，借着这个机会把以前没学的源码重拾</li>
+</ul>
+<h3 id="1-安装jdk21作为boot"><a href="#1-安装jdk21作为boot" class="headerlink" title="1 安装jdk21作为boot"></a>1 安装jdk21作为boot</h3><p><a target="_blank" rel="noopener" href="https://www.oracle.com/cn/java/technologies/downloads/#java21">官网下个java21用作openjdk22的boot</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">mkdir</span> -p MyApp/jdk/21<br><span class="hljs-built_in">mv</span> ~/MyDownload/jdk-21_linux-x64_bin.deb ~/MyApp/jdk/21<br><span class="hljs-built_in">cd</span> MyApp/jdk/21<br>sudo apt install ./jdk-21_linux-x64_bin.deb<br>dpkg -l|grep jdk<br>java -version<br>dpkg -L jdk-21<br></code></pre></td></tr></table></figure>
 
-<h4 id="1-2-启动Java进程"><a href="#1-2-启动Java进程" class="headerlink" title="1.2 启动Java进程"></a>1.2 启动Java进程</h4><img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131631218.png" srcset="/img/loading.gif" lazyload class="">
+<p>在zsh中修改一下对应环境变量</p>
+<img src="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png" srcset="/img/loading.gif" lazyload class="">
 
-<p>代码就一行，只要能让Java进程运行起来，停在断点就行。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">VMLoaderTest</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;HELLO WORLD&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="2-下载源码"><a href="#2-下载源码" class="headerlink" title="2 下载源码"></a>2 下载源码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/jdk.git<br><span class="hljs-built_in">cd</span> jdk<br>git remote add upstream git@github.com:openjdk/jdk.git<br>git remote set-url --push upstream no_push<br>git remote -v<br>git checkout jdk_22_study<br></code></pre></td></tr></table></figure>
 
-<h4 id="1-3-调用栈"><a href="#1-3-调用栈" class="headerlink" title="1.3 调用栈"></a>1.3 调用栈</h4><p>从线程调用栈可以看出来1.1搜索出来的就是Jdk源码的入口main方法所在之处。</p>
-<p>即src&#x2F;java.base&#x2F;share&#x2F;native&#x2F;launcher&#x2F;main.c。</p>
-<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427131959054.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="3-生成make脚本"><a href="#3-生成make脚本" class="headerlink" title="3 生成make脚本"></a>3 生成make脚本</h3><p>先安装依赖</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install autoconf<br>sudo apt install zip<br>sudo apt-get install libasound2-dev<br>sudo apt-get install libcups2-dev<br>sudo apt-get install libfontconfig1-dev<br>sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev<br></code></pre></td></tr></table></figure>
 
-<h3 id="2-main方法"><a href="#2-main方法" class="headerlink" title="2 main方法"></a>2 main方法</h3><h4 id="2-1-场景"><a href="#2-1-场景" class="headerlink" title="2.1 场景"></a>2.1 场景</h4><p>指定一个明确的启动场景，方便更直观地理解代码流程。</p>
-<p>从1.2中可以知道写了一个叫VMLoaderTest.java的源码单文件，然后通过javac命令将其编译为字节码文件，该Java类为VMLoaderTest。</p>
-<p>然后通过java命令执行该该类的main方法，完整命令为<code>java VMLoaderTest</code>。</p>
-<p>而编译好的<code>java</code>可执行文件放在哪儿取决于编译的设置，比如我的路径是<code>build/macosx-x86_64-server-slowdebug/jdk/bin/java</code>。</p>
-<h4 id="2-2-启动参数"><a href="#2-2-启动参数" class="headerlink" title="2.2 启动参数"></a>2.2 启动参数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c">JNIEXPORT <span class="hljs-type">int</span><br><span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 通过java命令执行javac编译好的Java字节码</span><br><span class="hljs-comment">     * 即VMLoaderTest.java经过javac编译好的类是VMLoaderTest</span><br><span class="hljs-comment">     * 比如执行的是java VMLoaderTest</span><br><span class="hljs-comment">     * 那么这个地方main方法接收到的是2个参数</span><br><span class="hljs-comment">     *   - java可执行文件全路径</span><br><span class="hljs-comment">     *   - VMLoaderTest</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">int</span> margc;<br>    <span class="hljs-type">char</span>** margv;<br>    <span class="hljs-type">int</span> jargc;<br>    <span class="hljs-type">char</span>** jargv;<br>    <span class="hljs-type">const</span> jboolean const_javaw = JNI_FALSE;<br></code></pre></td></tr></table></figure>
+<p>比如在用windows的wsl时，要防止自动推导当前系统以及交叉编译，明确告知就是Linux平台，build和host参数要指定</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">bash configure \<br>--build=x86_64-linux-gnu \<br>--host=x86_64-linux-gnu \<br>--target=x86_64-linux-gnu \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=/home/dingrui/MyApp/jdk/jdk-21.0.10 \<br>--disable-warnings-as-errors<br></code></pre></td></tr></table></figure>
 
-<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427153405355.png" srcset="/img/loading.gif" lazyload class="">
+<p>看下build目录下生成的conf名称linux-x86_64-server-slowdebug</p>
+<h3 id="4-编译"><a href="#4-编译" class="headerlink" title="4 编译"></a>4 编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=linux-x86_64-server-slowdebug compile-commands<br><br>make CONF=linux-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
 
-<h4 id="2-2-解析启动参数"><a href="#2-2-解析启动参数" class="headerlink" title="2.2 解析启动参数"></a>2.2 解析启动参数</h4><p>没有在启动参数中指定预处理可选项的时候，解析出来的就是main方法的启动参数。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs c">&#123;<br>       <span class="hljs-comment">// accommodate the NULL at the end</span><br>       <span class="hljs-comment">// 长度3的数组</span><br>       JLI_List args = JLI_List_new(argc + <span class="hljs-number">1</span>);<br>       <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;<br><br>       <span class="hljs-comment">// Add first arg, which is the app name</span><br>       <span class="hljs-comment">// 数组首元素就是编译好的java可执行文件全路径</span><br>       JLI_List_add(args, JLI_StringDup(argv[<span class="hljs-number">0</span>]));<br>       <span class="hljs-comment">// Append JDK_JAVA_OPTIONS</span><br>       <span class="hljs-keyword">if</span> (JLI_AddArgsFromEnvVar(args, JDK_JAVA_OPTIONS)) &#123; <span class="hljs-comment">// 从环境变量中加载键JDK_JAVA_OPTIONS对应的值放到列表args里面 没有配置这个环境变量这个分支不执行</span><br>           <span class="hljs-comment">// JLI_SetTraceLauncher is not called yet</span><br>           <span class="hljs-comment">// Show _JAVA_OPTIONS content along with JDK_JAVA_OPTIONS to aid diagnosis</span><br>           <span class="hljs-keyword">if</span> (getenv(JLDEBUG_ENV_ENTRY)) &#123;<br>               <span class="hljs-type">char</span> *tmp = getenv(<span class="hljs-string">&quot;_JAVA_OPTIONS&quot;</span>);<br>               <span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span> != tmp) &#123;<br>                   JLI_ReportMessage(ARG_INFO_ENVVAR, <span class="hljs-string">&quot;_JAVA_OPTIONS&quot;</span>, tmp);<br>               &#125;<br>           &#125;<br>       &#125;<br>       <span class="hljs-comment">// Iterate the rest of command line</span><br>       <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt; argc; i++) &#123;<br>           JLI_List argsInFile = JLI_PreprocessArg(argv[i], JNI_TRUE);<br>           <span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span> == argsInFile) &#123; <span class="hljs-comment">// 将VMLoaderTest放到args中 其实就是为了将来JVM初始化好回调到Java类中的main方法</span><br>               JLI_List_add(args, JLI_StringDup(argv[i]));<br>           &#125; <span class="hljs-keyword">else</span> &#123;<br>               <span class="hljs-type">int</span> cnt, idx;<br>               cnt = argsInFile-&gt;size;<br>               <span class="hljs-keyword">for</span> (idx = <span class="hljs-number">0</span>; idx &lt; cnt; idx++) &#123;<br>                   JLI_List_add(args, argsInFile-&gt;elements[idx]);<br>               &#125;<br>               <span class="hljs-comment">// Shallow free, we reuse the string to avoid copy</span><br>               JLI_MemFree(argsInFile-&gt;elements);<br>               JLI_MemFree(argsInFile);<br>           &#125;<br>       &#125;<br>       margc = args-&gt;size; <span class="hljs-comment">// main方法实际的启动参数</span><br>       <span class="hljs-comment">// add the NULL pointer at argv[argc]</span><br>       JLI_List_add(args, <span class="hljs-literal">NULL</span>); <span class="hljs-comment">// args数组中最后一个脚标占位了null</span><br>       margv = args-&gt;elements;<br>   &#125;<br></code></pre></td></tr></table></figure>
+<h3 id="5-运行java"><a href="#5-运行java" class="headerlink" title="5 运行java"></a>5 运行java</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/linux-x86_64-server-slowdebug/jdk/bin/java --version<br></code></pre></td></tr></table></figure>
 
-<h4 id="2-3-调用JLI-Launch"><a href="#2-3-调用JLI-Launch" class="headerlink" title="2.3 调用JLI_Launch"></a>2.3 调用JLI_Launch</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 当启动执行Java时没有指定启动参数和可选项时</span><br><span class="hljs-comment"> * 即默认的方式 java xxx</span><br><span class="hljs-comment"> * 调用JLI_Launch的参数就是main方法的启动参数</span><br><span class="hljs-comment"> *   - margc=2</span><br><span class="hljs-comment"> *   - margv</span><br><span class="hljs-comment"> *     - /Users/dingrui/Dev/code/git/cpp/jdk/build/macosx-x86_64-server-slowdebug/jdk/bin/java</span><br><span class="hljs-comment"> *     - VMLoaderTest</span><br><span class="hljs-comment"> *   - jargc=0</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * pname标识的是program name</span><br><span class="hljs-comment"> * lname标识的是launcher name</span><br><span class="hljs-comment"> * 这2个是通过宏指定的</span><br><span class="hljs-comment"> *   - pname-&gt;java</span><br><span class="hljs-comment"> *   - lname-&gt;openjdk</span><br><span class="hljs-comment"> */</span><br>    <span class="hljs-keyword">return</span> JLI_Launch(margc, margv,<br>                   jargc, (<span class="hljs-type">const</span> <span class="hljs-type">char</span>**) jargv,<br>                   <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>,<br>                   VERSION_STRING,<br>                   DOT_VERSION,<br>                   (const_progname != <span class="hljs-literal">NULL</span>) ? const_progname : *margv,<br>                   (const_launcher != <span class="hljs-literal">NULL</span>) ? const_launcher : *margv,<br>                   jargc &gt; <span class="hljs-number">0</span>,<br>                   const_cpwildcard, const_javaw, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
-
-
-
-<img src="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/image-20230427154208275.png" srcset="/img/loading.gif" lazyload class="">
-
+<img src="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -533,8 +525,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>jvm-0x02-启动入口</div>
-      <div>https://bannirui.github.io/2023/04/27/java/jvm-0x02-启动入口/</div>
+      <div>jvm-01-在Linux上编译openjdk22</div>
+      <div>https://bannirui.github.io/2025/06/13/java/jvm-01-在Linux上编译openjdk22/</div>
     </div>
     <div class="license-meta">
       
@@ -546,7 +538,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年4月27日</div>
+          <div>2025年6月13日</div>
         </div>
       
       
@@ -578,9 +570,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/04/28/java/jvm-0x03-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-0x03-Java入口函数">
+                      <a href="/2025/06/15/Linux/linux-0x10-%E5%BC%80%E5%90%AF%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6/" title="linux-0x10-开启分页机制">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">jvm-0x03-Java入口函数</span>
+                        <span class="hidden-mobile">linux-0x10-开启分页机制</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -588,8 +580,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/04/26/SideProject/IM%E8%81%8A%E5%A4%A9%E7%B3%BB%E7%BB%9F/" title="IM聊天系统">
-                        <span class="hidden-mobile">IM聊天系统</span>
+                      <a href="/2025/06/12/etcd/etcd-0x0D-%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B/" title="etcd-0x0D-消息类型">
+                        <span class="hidden-mobile">etcd-0x0D-消息类型</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -612,7 +604,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'e8c05e555d682182c53f52a2f4231992'
+            id: 'ac7e743959021085b7c339f3d44184d6'
           }
         )
         var gitalk = new Gitalk(options);

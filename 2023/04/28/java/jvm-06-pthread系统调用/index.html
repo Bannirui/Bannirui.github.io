@@ -19,26 +19,23 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="之前在mac上编译的openjdk源码jvm-0x00-编译openjdk，两个原因促使我要在Linux上操作一下  mac机子老了，性能不行了，编译一次发烫厉害 一鼓作气，借着这个机会把以前没学的源码重拾  1 安装jdk21作为boot官网下个java21用作openjdk22的boot 1234567mkdir -p MyApp&#x2F;jdk&#x2F;21mv ~&#x2F;MyDownload&#x2F;jdk-21_li">
+    <meta name="description" content="系统调用。 1 pthread_create1.1 函数原型123intpthread_create(pthread_t *thread, const pthread_attr_t *attr,                   void *(*start_routine)(void *), void *arg);  1.2 详解123456789101112131415161718192021">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm-0x01-在Linux上编译openjdk22">
-<meta property="og:url" content="https://bannirui.github.io/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/index.html">
+<meta property="og:title" content="jvm-05-pthread系统调用">
+<meta property="og:url" content="https://bannirui.github.io/2023/04/28/java/jvm-06-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="之前在mac上编译的openjdk源码jvm-0x00-编译openjdk，两个原因促使我要在Linux上操作一下  mac机子老了，性能不行了，编译一次发烫厉害 一鼓作气，借着这个机会把以前没学的源码重拾  1 安装jdk21作为boot官网下个java21用作openjdk22的boot 1234567mkdir -p MyApp&#x2F;jdk&#x2F;21mv ~&#x2F;MyDownload&#x2F;jdk-21_li">
+<meta property="og:description" content="系统调用。 1 pthread_create1.1 函数原型123intpthread_create(pthread_t *thread, const pthread_attr_t *attr,                   void *(*start_routine)(void *), void *arg);  1.2 详解123456789101112131415161718192021">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
-<meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png">
-<meta property="article:published_time" content="2025-06-13T14:47:26.000Z">
-<meta property="article:modified_time" content="2026-03-24T14:56:11.167Z">
+<meta property="article:published_time" content="2023-04-28T06:01:05.000Z">
+<meta property="article:modified_time" content="2026-09-20T15:49:00.216Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>jvm-0x01-在Linux上编译openjdk22 - HEX BLOG</title>
+  <title>jvm-05-pthread系统调用 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -227,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="jvm-0x01-在Linux上编译openjdk22"></span>
+            <span id="subtitle" data-typed-text="jvm-05-pthread系统调用"></span>
           
         </div>
 
@@ -238,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-06-13 22:47" pubdate>
-          2025年6月13日 晚上
+        <time datetime="2023-04-28 14:01" pubdate>
+          2023年4月28日 下午
         </time>
       </span>
     
@@ -250,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          289 字
+          124 字
         
       </span>
     
@@ -261,7 +258,7 @@
         
         
         
-          3 分钟
+          2 分钟
         
       </span>
     
@@ -334,100 +331,100 @@
     
       
       
-        <a href="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-0x00-编译openjdk"
+        <a href="/2023/03/10/java/jvm-00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-00-编译openjdk"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x00-编译openjdk</span>
+          <span class="category-post">jvm-00-编译openjdk</span>
         </a>
       
     
       
       
-        <a href="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-0x01-在Linux上编译openjdk22"
+        <a href="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-01-在Linux上编译openjdk22"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-01-在Linux上编译openjdk22</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2025/09/25/java/jvm-02-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" title="jvm-02-用Docker作编译环境"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-02-用Docker作编译环境</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/27/java/jvm-03-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-03-启动入口"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-03-启动入口</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-04-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-04-Java入口函数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-04-Java入口函数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-05-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-04-设置运行环境参数"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">jvm-04-设置运行环境参数</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/04/28/java/jvm-06-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-05-pthread系统调用"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">jvm-0x01-在Linux上编译openjdk22</span>
+          <span class="category-post">jvm-05-pthread系统调用</span>
         </a>
       
     
       
       
-        <a href="/2023/04/27/java/jvm-0x02-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-0x02-启动入口"
+        <a href="/2023/05/04/java/jvm-07-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-06-加载JVM"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x02-启动入口</span>
+          <span class="category-post">jvm-06-加载JVM</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-0x03-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-0x03-Java入口函数"
+        <a href="/2023/05/04/java/jvm-08-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-07-加载动态链接库"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x03-Java入口函数</span>
+          <span class="category-post">jvm-07-加载动态链接库</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-0x04-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-0x04-设置运行环境参数"
+        <a href="/2023/05/04/java/jvm-09-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-08-JVM启动参数"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x04-设置运行环境参数</span>
+          <span class="category-post">jvm-08-JVM启动参数</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-0x05-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-0x05-pthread系统调用"
+        <a href="/2023/05/04/java/jvm-10-JVM%E5%90%AF%E5%8A%A8/" title="jvm-09-JVM启动"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-0x05-pthread系统调用</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-0x06-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-0x06-加载JVM"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-0x06-加载JVM</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-0x07-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-0x07-加载动态链接库"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-0x07-加载动态链接库</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-0x08-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-0x08-JVM启动参数"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-0x08-JVM启动参数</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-0x09-JVM%E5%90%AF%E5%8A%A8/" title="jvm-0x09-JVM启动"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-0x09-JVM启动</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2025/09/25/java/jvm-0x10-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" title="jvm-0x10-用Docker作编译环境"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-0x10-用Docker作编译环境</span>
+          <span class="category-post">jvm-09-JVM启动</span>
         </a>
       
     
@@ -449,36 +446,25 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">jvm-0x01-在Linux上编译openjdk22</h1>
+            <h1 id="seo-header">jvm-05-pthread系统调用</h1>
             
             
               <div class="markdown-body">
                 
-                <p>之前在mac上编译的openjdk源码<a href="/2023/03/10/java/jvm-0x00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-0x00-编译openjdk">jvm-0x00-编译openjdk</a>，两个原因促使我要在Linux上操作一下</p>
-<ul>
-<li>mac机子老了，性能不行了，编译一次发烫厉害</li>
-<li>一鼓作气，借着这个机会把以前没学的源码重拾</li>
-</ul>
-<h3 id="1-安装jdk21作为boot"><a href="#1-安装jdk21作为boot" class="headerlink" title="1 安装jdk21作为boot"></a>1 安装jdk21作为boot</h3><p><a target="_blank" rel="noopener" href="https://www.oracle.com/cn/java/technologies/downloads/#java21">官网下个java21用作openjdk22的boot</a></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">mkdir</span> -p MyApp/jdk/21<br><span class="hljs-built_in">mv</span> ~/MyDownload/jdk-21_linux-x64_bin.deb ~/MyApp/jdk/21<br><span class="hljs-built_in">cd</span> MyApp/jdk/21<br>sudo apt install ./jdk-21_linux-x64_bin.deb<br>dpkg -l|grep jdk<br>java -version<br>dpkg -L jdk-21<br></code></pre></td></tr></table></figure>
+                <p>系统调用。</p>
+<h3 id="1-pthread-create"><a href="#1-pthread-create" class="headerlink" title="1 pthread_create"></a>1 pthread_create</h3><h4 id="1-1-函数原型"><a href="#1-1-函数原型" class="headerlink" title="1.1 函数原型"></a>1.1 函数原型</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">pthread_create</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> *thread, <span class="hljs-type">const</span> <span class="hljs-type">pthread_attr_t</span> *attr,</span><br><span class="hljs-params">                   <span class="hljs-type">void</span> *(*start_routine)(<span class="hljs-type">void</span> *), <span class="hljs-type">void</span> *arg)</span>;<br></code></pre></td></tr></table></figure>
 
-<p>在zsh中修改一下对应环境变量</p>
-<img src="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="1-2-详解"><a href="#1-2-详解" class="headerlink" title="1.2 详解"></a>1.2 详解</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs xml">The pthread_create() function is used to create a new thread, with<br>attributes specified by attr, within a process.  If attr is NULL, the<br>default attributes are used.  If the attributes specified by attr are<br>modified later, the thread&#x27;s attributes are not affected.  Upon suc-<br>cessful completion pthread_create() will store the ID of the created<br>thread in the location specified by thread.<br><br>The thread is created executing start_routine with arg as its sole<br>argument.  If the start_routine returns, the effect is as if there was<br>an implicit call to pthread_exit() using the return value of<br>start_routine as the exit status.  Note that the thread in which<br>main() was originally invoked differs from this.  When it returns from<br>main(), the effect is as if there was an implicit call to exit() using<br>the return value of main() as the exit status.<br><br>Upon thread exit the storage for the thread must be reclaimed by<br>another thread via a call to pthread_join().  Alternatively,<br>pthread_detach() may be called on the thread to indicate that the sys-<br>tem may automatically reclaim the thread storage upon exit.  The<br>pthread_attr_setdetachstate() function may be used on the attr argu-<br>ment passed to pthread_create() in order to achieve the same effect as<br>a call to pthread_detach() on the newly created thread.<br><br>The signal state of the new thread is initialized as:<br><br>o   The signal mask is inherited from the creating thread.<br><br>o   The set of signals pending for the new thread is empty.<br></code></pre></td></tr></table></figure>
 
-<h3 id="2-下载源码"><a href="#2-下载源码" class="headerlink" title="2 下载源码"></a>2 下载源码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/jdk.git<br><span class="hljs-built_in">cd</span> jdk<br>git remote add upstream git@github.com:openjdk/jdk.git<br>git remote set-url --push upstream no_push<br>git remote -v<br>git checkout jdk_22_study<br></code></pre></td></tr></table></figure>
+<h4 id="1-3-返回值"><a href="#1-3-返回值" class="headerlink" title="1.3 返回值"></a>1.3 返回值</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs xml">If successful, the pthread_create() function will return zero.  Other-<br>wise an error number will be returned to indicate the error.<br></code></pre></td></tr></table></figure>
 
-<h3 id="3-生成make脚本"><a href="#3-生成make脚本" class="headerlink" title="3 生成make脚本"></a>3 生成make脚本</h3><p>先安装依赖</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install autoconf<br>sudo apt install zip<br>sudo apt-get install libasound2-dev<br>sudo apt-get install libcups2-dev<br>sudo apt-get install libfontconfig1-dev<br>sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev<br></code></pre></td></tr></table></figure>
+<h3 id="2-pthread-detach"><a href="#2-pthread-detach" class="headerlink" title="2 pthread_detach"></a>2 pthread_detach</h3><h4 id="2-1-函数原型"><a href="#2-1-函数原型" class="headerlink" title="2.1 函数原型"></a>2.1 函数原型</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">pthread_detach</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> thread)</span>;<br></code></pre></td></tr></table></figure>
 
-<p>比如在用windows的wsl时，要防止自动推导当前系统以及交叉编译，明确告知就是Linux平台，build和host参数要指定</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">bash configure \<br>--build=x86_64-linux-gnu \<br>--host=x86_64-linux-gnu \<br>--target=x86_64-linux-gnu \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=/home/dingrui/MyApp/jdk/jdk-21.0.10 \<br>--disable-warnings-as-errors<br></code></pre></td></tr></table></figure>
+<h4 id="2-2-详解"><a href="#2-2-详解" class="headerlink" title="2.2 详解"></a>2.2 详解</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml">The pthread_detach() function is used to indicate to the implementa-<br>tion that storage for the thread thread can be reclaimed when the<br>thread terminates.  If thread has not terminated, pthread_detach()<br>will not cause it to terminate.  The effect of multiple<br>pthread_detach() calls on the same target thread is unspecified.<br></code></pre></td></tr></table></figure>
 
-<p>看下build目录下生成的conf名称linux-x86_64-server-slowdebug</p>
-<h3 id="4-编译"><a href="#4-编译" class="headerlink" title="4 编译"></a>4 编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=linux-x86_64-server-slowdebug compile-commands<br><br>make CONF=linux-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
+<h4 id="2-3-返回值"><a href="#2-3-返回值" class="headerlink" title="2.3 返回值"></a>2.3 返回值</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml">If successful, the pthread_detach() function will return zero.  Other-<br>wise an error number will be returned to indicate the error.  Note<br>that the function does not change the value of errno as it did for<br>some drafts of the standard.  These early drafts also passed a pointer<br>to pthread_t as the argument.  Beware!<br></code></pre></td></tr></table></figure>
 
-<h3 id="5-运行java"><a href="#5-运行java" class="headerlink" title="5 运行java"></a>5 运行java</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/linux-x86_64-server-slowdebug/jdk/bin/java --version<br></code></pre></td></tr></table></figure>
 
-<img src="/2025/06/13/java/jvm-0x01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png" srcset="/img/loading.gif" lazyload class="">
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -525,8 +511,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>jvm-0x01-在Linux上编译openjdk22</div>
-      <div>https://bannirui.github.io/2025/06/13/java/jvm-0x01-在Linux上编译openjdk22/</div>
+      <div>jvm-05-pthread系统调用</div>
+      <div>https://bannirui.github.io/2023/04/28/java/jvm-06-pthread系统调用/</div>
     </div>
     <div class="license-meta">
       
@@ -538,7 +524,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年6月13日</div>
+          <div>2023年4月28日</div>
         </div>
       
       
@@ -570,9 +556,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/06/15/Linux/linux-0x10-%E5%BC%80%E5%90%AF%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6/" title="linux-0x10-开启分页机制">
+                      <a href="/2023/05/04/java/jvm-08-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-07-加载动态链接库">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">linux-0x10-开启分页机制</span>
+                        <span class="hidden-mobile">jvm-07-加载动态链接库</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -580,8 +566,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/06/12/etcd/etcd-0x0D-%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B/" title="etcd-0x0D-消息类型">
-                        <span class="hidden-mobile">etcd-0x0D-消息类型</span>
+                      <a href="/2023/04/28/java/jvm-05-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-04-设置运行环境参数">
+                        <span class="hidden-mobile">jvm-04-设置运行环境参数</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -604,7 +590,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '421732b4f9f317495d54b0284edc93ac'
+            id: '27e14aa25364a3f252b562959a8f5033'
           }
         )
         var gitalk = new Gitalk(options);
