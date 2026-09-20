@@ -1,5 +1,5 @@
 ---
-title: jvm-0x00-编译openjdk
+title: jvm-00-编译openjdk
 category_bar: true
 date: 2023-03-10 23:18:14
 categories: jvm
@@ -83,12 +83,14 @@ git checkout -b jdk_22_study
 
 #### 1.4 Boot JDK安装
 
-![](./jvm-0x00-编译openjdk/1739895872.png)
+![](./jvm-00-编译openjdk/1739895872.png)
+
 因为jdk15我在现在的电脑环境上已经编译不成功了，因为macos sdk新版本已经不维护某个工具了，因此先到homebrew上看看x86支持的最新的jdk是openjdk21
 因此以jdk21为BootJDK来编译jdk22
 
 #### 1.5 字符集修改
-![](./jvm-0x00-编译openjdk/1739896129.png)
+
+![](./jvm-00-编译openjdk/1739896129.png)
 
 #### 1.6 configure脚本
 
@@ -128,7 +130,8 @@ sudo make CONF=macosx-x86_64-server-slowdebug
 ```shell
 ./build/macosx-x86_64-server-slowdebug/jdk/bin/java -version
 ```
-![](./jvm-0x00-编译openjdk/1739984881.png)
+
+![](./jvm-00-编译openjdk/1739984881.png)
 
 #### 1.9 重新编译
 
@@ -144,7 +147,7 @@ sudo make CONF=macosx-x86_64-server-slowdebug
 - 先用javac编译java文件
 - 再用java执行class文件
 
-![](./jvm-0x00-编译openjdk/1739987381.png)
+![](./jvm-00-编译openjdk/1739987381.png)
 
 麻烦的地方在于每新建一个新的java文件就要新增一个对应的调试配置
 
@@ -157,10 +160,10 @@ sudo make CONF=macosx-x86_64-server-slowdebug
 
 [Git地址](https://github.com/Bannirui/openjdk15-debug.git)
 
-![](./jvm-0x00-编译openjdk/1739988179.png)
+![](./jvm-00-编译openjdk/1739988179.png)
 
 #### 3.2 新建SDK
 
 用编译好的jdk作为自己项目的sdk，Sourcepath选择jdk源码路径src下所有文件，这样后面就可以随便写注释，写完注释只要重新build一下jdk源码就行
 
-![](./jvm-0x00-编译openjdk/1739988290.png)
+![](./jvm-00-编译openjdk/1739988290.png)

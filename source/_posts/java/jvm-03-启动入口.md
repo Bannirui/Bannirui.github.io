@@ -1,5 +1,5 @@
 ---
-title: jvm-0x02-启动入口
+title: jvm-03-启动入口
 date: 2023-04-27 13:08:32
 category_bar: true
 categories: jvm
@@ -13,11 +13,11 @@ categories: jvm
 
 下个断点，然后启动Java进程再根据调用栈往回精确定位。
 
-![](./jvm-0x01-启动入口/image-20230427131417621.png)
+![](./jvm-03-启动入口/image-20230427131417621.png)
 
 #### 1.2 启动Java进程
 
-![](./jvm-0x02-启动入口/image-20230427131631218.png)
+![](./jvm-03-启动入口/image-20230427131631218.png)
 
 代码就一行，只要能让Java进程运行起来，停在断点就行。
 
@@ -36,7 +36,7 @@ public class VMLoaderTest {
 
 即src/java.base/share/native/launcher/main.c。
 
-![](./jvm-0x02-启动入口/image-20230427131959054.png)
+![](./jvm-03-启动入口/image-20230427131959054.png)
 
 ### 2 main方法
 
@@ -71,7 +71,7 @@ main(int argc, char **argv)
     const jboolean const_javaw = JNI_FALSE;
 ```
 
-![](./jvm-0x02-启动入口/image-20230427153405355.png)
+![](./jvm-03-启动入口/image-20230427153405355.png)
 
 #### 2.2 解析启动参数
 
@@ -151,6 +151,4 @@ main(int argc, char **argv)
                    const_cpwildcard, const_javaw, 0);
 ```
 
-
-
-![](./jvm-0x02-启动入口/image-20230427154208275.png)
+![](./jvm-03-启动入口/image-20230427154208275.png)

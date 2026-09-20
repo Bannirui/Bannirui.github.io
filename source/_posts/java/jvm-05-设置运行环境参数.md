@@ -1,5 +1,5 @@
 ---
-title: jvm-0x04-设置运行环境参数
+title: jvm-04-设置运行环境参数
 date: 2023-04-28 13:31:57
 category_bar: true
 categories: jvm
@@ -118,7 +118,7 @@ static void MacOSXStartup(int argc, char *argv[]) {
 }
 ```
 
-#### 2.1 {% post_link java/jvm-0x05-pthread系统调用 %}
+#### 2.1 {% post_link java/jvm-06-pthread系统调用 %}
 
 创建好线程，线程处于就绪状态，等待被cpu调度，一旦被调度成功，新线程就开始执行。
 
@@ -126,7 +126,7 @@ static void MacOSXStartup(int argc, char *argv[]) {
 
 即线程被cpu调度之后，开始执行的逻辑。
 
-这个里面还涉及到{% post_link java/jvm-0x07-加载动态链接库 %}。
+这个里面还涉及到{% post_link java/jvm-08-加载动态链接库 %}。
 
 ```c
 /**

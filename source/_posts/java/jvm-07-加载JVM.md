@@ -1,5 +1,5 @@
 ---
-title: jvm-0x06-加载JVM
+title: jvm-06-加载JVM
 date: 2023-05-04 14:17:45
 category_bar: true
 categories: jvm

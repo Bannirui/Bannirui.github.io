@@ -1,11 +1,11 @@
 ---
-title: jvm-0x01-在Linux上编译openjdk22
+title: jvm-01-在Linux上编译openjdk22
 category_bar: true
 date: 2025-06-13 22:47:26
 categories: jvm
 ---
 
-之前在mac上编译的openjdk源码{% post_link java/jvm-0x00-编译openjdk %}，两个原因促使我要在Linux上操作一下
+之前在mac上编译的openjdk源码{% post_link java/jvm-00-编译openjdk %}，两个原因促使我要在Linux上操作一下
 
 - mac机子老了，性能不行了，编译一次发烫厉害
 - 一鼓作气，借着这个机会把以前没学的源码重拾
@@ -26,7 +26,7 @@ dpkg -L jdk-21
 
 在zsh中修改一下对应环境变量
 
-![](./jvm-0x01-在Linux上编译openjdk22/1749827522.png)
+![](./jvm-01-在Linux上编译openjdk22/1749827522.png)
 
 ### 2 下载源码
 
@@ -82,4 +82,4 @@ make CONF=linux-x86_64-server-slowdebug
 ./build/linux-x86_64-server-slowdebug/jdk/bin/java --version
 ```
 
-![](./jvm-0x01-在Linux上编译openjdk22/1749834411.png)
+![](./jvm-01-在Linux上编译openjdk22/1749834411.png)

@@ -1,11 +1,11 @@
 ---
-title: jvm-0x10-用Docker作编译环境
+title: jvm-02-用Docker作编译环境
 category_bar: true
 date: 2025-09-25 00:16:54
 categories: jvm
 ---
 
-前面已经在mac{% post_link java/jvm-0x00-编译openjdk %}和linux{% post_link java/jvm-0x01-在Linux上编译openjdk22 %}物理机上折腾过编译，之所以还在不厌其烦整编译，主要原因是我经常切换不同设备，很难保证环境工具的一致性，而且在物理机上编译确实可能对我现有的工具链产生侵入，所以这次又有docker上进行编译。想必这也是我最后一次做编译环境，后面就彻底统一了。
+前面已经在mac{% post_link java/jvm-00-编译openjdk %}和linux{% post_link java/jvm-01-在Linux上编译openjdk22 %}物理机上折腾过编译，之所以还在不厌其烦整编译，主要原因是我经常切换不同设备，很难保证环境工具的一致性，而且在物理机上编译确实可能对我现有的工具链产生侵入，所以这次又有docker上进行编译。想必这也是我最后一次做编译环境，后面就彻底统一了。
 
 后面我尽量长期坚持更新源码笔记会在[GIT仓库](https://github.com/Bannirui/jdk.git)的`jdk_22_study`分支上。
 
@@ -111,4 +111,4 @@ make CONF=linux-x86_64-server-slowdebug
 
 > 最后，在mac+docker的方式不能调试，原因就是虚拟机里面跑虚拟机行不通
 
-![](./jvm-0x10-用Docker作编译环境/1758805066.png)
+![](./jvm-02-用Docker作编译环境/1758805066.png)
