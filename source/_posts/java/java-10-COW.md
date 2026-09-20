@@ -1,5 +1,5 @@
 ---
-title: java源码-0x0A-COW
+title: java-10-COW
 date: 2023-03-11 13:49:26
 category_bar: true
 categories: java
@@ -33,7 +33,7 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
 
 实现跟ArrayList几乎一样，只关注List的几个常用api就行。
 
- ![img](./java源码-0x0A-COW/1150150-20220518113218173-612745225.png)
+ ![img](./java-10-COW/1150150-20220518113218173-612745225.png)
 
 ### 4.1 CopyOnWriteArrayList#get(int)
 

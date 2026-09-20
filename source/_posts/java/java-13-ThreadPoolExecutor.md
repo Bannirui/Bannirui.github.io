@@ -1,5 +1,5 @@
 ---
-title: java源码-0x0D-ThreadPoolExecutor
+title: java-13-ThreadPoolExecutor
 date: 2023-03-11 13:49:09
 category_bar: true
 categories: java
@@ -19,7 +19,7 @@ categories: java
 
 ## 2 类图
 
-![](./java源码-0x0D-ThreadPoolExecutor/202211171808449.png)
+![](./java-13-ThreadPoolExecutor/202211171808449.png)
 
 ## 3 构造方法
 
@@ -412,9 +412,7 @@ final void runWorker(Worker w) {
 }
 ```
 
-
-
-![](./java源码-0x0D-ThreadPoolExecutor/202211212301110.png)
+![](./java-13-ThreadPoolExecutor/202211212301110.png)
 
 ### 4.4 工作线程保活
 

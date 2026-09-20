@@ -1,5 +1,5 @@
 ---
-title: java源码-0x05-宏定义
+title: java-05-宏定义
 category_bar: true
 date: 2024-03-10 00:37:36
 categories: java
@@ -21,7 +21,7 @@ categories: java
 
 #### <a id="1">1.1 JNIEXPORT</a>
 
-![](./java源码-0x05-宏定义/1710002661.png)
+![](./java-05-宏定义/1710002661.png)
 
 #### <a id="2">1.2 JNICALL</a>
 

@@ -1,5 +1,5 @@
 ---
-title: java源码-0x09-SynchronousQueue
+title: java-09-SynchronousQueue
 date: 2023-03-11 13:48:55
 category_bar: true
 categories: java
@@ -7,7 +7,7 @@ categories: java
 
 ## 1 类图
 
-![](./java源码-0x09-SynchronousQueue/202211221522904.png)
+![](./java-09-SynchronousQueue/202211221522904.png)
 
 ## 2 构造方法
 

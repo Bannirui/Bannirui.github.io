@@ -1,5 +1,5 @@
 ---
-title: java源码-0x04-biasedLocking
+title: java-04-biasedLocking
 category_bar: true
 date: 2024-03-09 23:53:05
 categories: java

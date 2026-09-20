@@ -1,5 +1,5 @@
 ---
-title: java源码-0x0E-Timer
+title: java-14-Timer
 date: 2023-03-04 11:15:39
 category_bar: true
 categories: java
@@ -42,7 +42,7 @@ public class TimerTest {
 
 ## 2 源码分析
 
-![](./java源码-0x0E-Timer/20230304114344005.png)
+![](./java-14-Timer/20230304114344005.png)
 
 涉及到的几个类
 

@@ -1,5 +1,5 @@
 ---
-title: java源码-0x0F-Selector
+title: java-15-Selector
 date: 2023-03-06 22:49:17
 category_bar: true
 categories: java
@@ -184,7 +184,7 @@ public static SelectorProvider provider() {
 
 通过全局搜索openjdk源码发现有3个实现，不同系统类型，该实现不同。
 
-![](java源码-0x0F-Selector/2022-11-04_3.39.27.png)
+![](java-15-Selector/2022-11-04_3.39.27.png)
 
 * solaris：
 
@@ -299,13 +299,13 @@ Jdk11版本下：
 
 ### 2 Java IO多路复用器流程
 
-![](./java源码-0x0F-Selector/202211162242013.png)
+![](./java-15-Selector/202211162242013.png)
 
 类图关系明显使用了模板方法的设计模式，将通用API封装在顶层抽象，将具体实现延迟到具体实现类各自关注细节，假使将来有其他的OS平台系统调用可选，就可以只要简单继承SelectorImpl就行，也做到了对修改关闭，对功能开发这样的基本原则。
 
 #### 2.1Selector提供了``select(...)`` 抽象
 
-![](./java源码-0x0F-Selector/202211162241501.png)
+![](./java-15-Selector/202211162241501.png)
 
 以select()为例：
 
@@ -346,7 +346,7 @@ protected abstract int doSelect(Consumer<SelectionKey> action, long timeout)
 
 #### 2.2 AbstractSelector提供了``register()``抽象
 
-![](./java源码-0x0F-Selector/202211162240074.png)
+![](./java-15-Selector/202211162240074.png)
 
 ```java
 // SelectableChannel.java

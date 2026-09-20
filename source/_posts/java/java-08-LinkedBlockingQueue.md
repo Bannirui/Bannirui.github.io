@@ -1,5 +1,5 @@
 ---
-title: java源码-0x08-LinkedBlockingQueue
+title: java-08-LinkedBlockingQueue
 date: 2023-03-11 13:48:19
 category_bar: true
 categories: java
@@ -7,7 +7,7 @@ categories: java
 
 ## 1 类图
 
-![](./java源码-0x08-LinkedBlockingQueue/202211221522904.png)
+![](./java-08-LinkedBlockingQueue/202211221522904.png)
 
 ## 2 构造方法
 

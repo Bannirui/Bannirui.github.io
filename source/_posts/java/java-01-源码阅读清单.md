@@ -1,5 +1,5 @@
 ---
-title: java源码-0x01-源码阅读清单
+title: java-01-源码阅读清单
 category_bar: true
 date: 2024-03-07 12:19:28
 categories: java
@@ -43,7 +43,7 @@ categories: java
 
 #### <a id="1">1 java.lang</a>
 
-- {% post_link java/java源码-0x02-Object Object %}
+- {% post_link java/java-02-Object Object %}
 
 - [ ] String
 

@@ -1,5 +1,5 @@
 ---
-title: java源码-0x07-ArrayBlockingQueue
+title: java-07-ArrayBlockingQueue
 date: 2023-03-11 13:47:49
 category_bar: true
 categories: java
@@ -15,7 +15,7 @@ categories: java
 
 ## 2 类图
 
-![](./java源码-0x07-ArrayBlockingQueue/202211221522904.png)
+![](./java-07-ArrayBlockingQueue/202211221522904.png)
 
 ## 3 构造方法
 
