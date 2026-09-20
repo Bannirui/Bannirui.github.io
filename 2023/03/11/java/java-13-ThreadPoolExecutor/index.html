@@ -21,24 +21,24 @@
   
     <meta name="description" content="1 Executors工具类创建ThreadPoolExecutor    SingleThreadExecutor newFixedThreadPool newCachedThreadPool newScheduledThreadPool newSingleThreadScheduledExecutor    corePoolSize 1 n 0 n 1   maximumPoolSize 1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java源码-0x0D-ThreadPoolExecutor">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/index.html">
+<meta property="og:title" content="java-13-ThreadPoolExecutor">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/java/java-13-ThreadPoolExecutor/index.html">
 <meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="1 Executors工具类创建ThreadPoolExecutor    SingleThreadExecutor newFixedThreadPool newCachedThreadPool newScheduledThreadPool newSingleThreadScheduledExecutor    corePoolSize 1 n 0 n 1   maximumPoolSize 1">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/202211171808449.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/202211212301110.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java-13-ThreadPoolExecutor/202211171808449.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java-13-ThreadPoolExecutor/202211212301110.png">
 <meta property="article:published_time" content="2023-03-11T05:49:09.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.654Z">
+<meta property="article:modified_time" content="2026-09-20T16:11:00.784Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/202211171808449.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/java/java-13-ThreadPoolExecutor/202211171808449.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>java源码-0x0D-ThreadPoolExecutor - HEX BLOG</title>
+  <title>java-13-ThreadPoolExecutor - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -227,7 +227,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="java源码-0x0D-ThreadPoolExecutor"></span>
+            <span id="subtitle" data-typed-text="java-13-ThreadPoolExecutor"></span>
           
         </div>
 
@@ -334,136 +334,136 @@
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java源码-0x01-源码阅读清单"
+        <a href="/2024/03/07/java/java-01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java-01-源码阅读清单"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x01-源码阅读清单</span>
+          <span class="category-post">java-01-源码阅读清单</span>
         </a>
       
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x02-Object/" title="java源码-0x02-Object"
+        <a href="/2024/03/07/java/java-02-Object/" title="java-02-Object"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x02-Object</span>
+          <span class="category-post">java-02-Object</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord"
+        <a href="/2024/03/09/java/java-03-MarkWord/" title="java-03-MarkWord"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x03-MarkWord</span>
+          <span class="category-post">java-03-MarkWord</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking"
+        <a href="/2024/03/09/java/java-04-biasedLocking/" title="java-04-biasedLocking"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x04-biasedLocking</span>
+          <span class="category-post">java-04-biasedLocking</span>
         </a>
       
     
       
       
-        <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义"
+        <a href="/2024/03/10/java/java-05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java-05-宏定义"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x05-宏定义</span>
+          <span class="category-post">java-05-宏定义</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS"
+        <a href="/2023/03/11/java/java-06-AQS/" title="java-06-AQS"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x06-AQS</span>
+          <span class="category-post">java-06-AQS</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue"
+        <a href="/2023/03/11/java/java-07-ArrayBlockingQueue/" title="java-07-ArrayBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x07-ArrayBlockingQueue</span>
+          <span class="category-post">java-07-ArrayBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/" title="java源码-0x08-LinkedBlockingQueue"
+        <a href="/2023/03/11/java/java-08-LinkedBlockingQueue/" title="java-08-LinkedBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x08-LinkedBlockingQueue</span>
+          <span class="category-post">java-08-LinkedBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue"
+        <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x09-SynchronousQueue</span>
+          <span class="category-post">java-09-SynchronousQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW"
+        <a href="/2023/03/11/java/java-10-COW/" title="java-10-COW"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0A-COW</span>
+          <span class="category-post">java-10-COW</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0B-synchronized/" title="java源码-0x0B-synchronized"
+        <a href="/2023/03/11/java/java-11-synchronized/" title="java-11-synchronized"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0B-synchronized</span>
+          <span class="category-post">java-11-synchronized</span>
         </a>
       
     
       
       
-        <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread"
+        <a href="/2023/03/10/java/java-12-Thread/" title="java-12-Thread"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0C-Thread</span>
+          <span class="category-post">java-12-Thread</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor"
+        <a href="/2023/03/11/java/java-13-ThreadPoolExecutor/" title="java-13-ThreadPoolExecutor"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">java源码-0x0D-ThreadPoolExecutor</span>
+          <span class="category-post">java-13-ThreadPoolExecutor</span>
         </a>
       
     
       
       
-        <a href="/2023/03/04/java/java%E6%BA%90%E7%A0%81-0x0E-Timer/" title="java源码-0x0E-Timer"
+        <a href="/2023/03/04/java/java-14-Timer/" title="java-14-Timer"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0E-Timer</span>
+          <span class="category-post">java-14-Timer</span>
         </a>
       
     
       
       
-        <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector"
+        <a href="/2023/03/06/java/java-15-Selector/" title="java-15-Selector"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0F-Selector</span>
+          <span class="category-post">java-15-Selector</span>
         </a>
       
     
@@ -485,7 +485,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">java源码-0x0D-ThreadPoolExecutor</h1>
+            <h1 id="seo-header">java-13-ThreadPoolExecutor</h1>
             
             
               <div class="markdown-body">
@@ -558,7 +558,7 @@
 <td>AbortPolicy</td>
 </tr>
 </tbody></table>
-<h2 id="2-类图"><a href="#2-类图" class="headerlink" title="2 类图"></a>2 类图</h2><img src="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/202211171808449.png" srcset="/img/loading.gif" lazyload class="">
+<h2 id="2-类图"><a href="#2-类图" class="headerlink" title="2 类图"></a>2 类图</h2><img src="/2023/03/11/java/java-13-ThreadPoolExecutor/202211171808449.png" srcset="/img/loading.gif" lazyload class="">
 
 <h2 id="3-构造方法"><a href="#3-构造方法" class="headerlink" title="3 构造方法"></a>3 构造方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ThreadPoolExecutor.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-type">boolean</span> allowCoreThreadTimeOut; <span class="hljs-comment">// 标识核心线程是否保活 默认情况下核心线程保活 线程池空闲时即使没有任务也不销毁核心线程</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> corePoolSize; <span class="hljs-comment">// 线程池的核心线程数量 核心线程保活情况下允许的空闲线程数量上限 核心线程不保活情况下线程池空闲时活跃线程数就是0</span><br><br><br><span class="hljs-keyword">public</span> <span class="hljs-title function_">ThreadPoolExecutor</span><span class="hljs-params">(<span class="hljs-type">int</span> corePoolSize,</span><br><span class="hljs-params">                          <span class="hljs-type">int</span> maximumPoolSize,</span><br><span class="hljs-params">                          <span class="hljs-type">long</span> keepAliveTime, // 空闲线程的保活时间 如果某个线程的空闲时间超过这个值都没有任务给它做 就可以被关闭了 但是这个值在默认的情况下并不是对所有线程都起作用 线程数&lt;=corePoolSize的线程不会因为空闲太长被回收 对于&gt;corePoolSize的线程才会回收 可以手动设置allowCoreThreadTimeOut(<span class="hljs-literal">true</span>)</span>设置空闲回收作用于所有线程<br>                          TimeUnit unit,<br>                          BlockingQueue&lt;Runnable&gt; workQueue,<br>                          ThreadFactory threadFactory,<br>                          RejectedExecutionHandler handler) &#123; <span class="hljs-comment">// 构造方法仅仅是设置一些必要的阈值 不涉及线程资源创建(懒加载)</span><br>    <span class="hljs-keyword">if</span> (corePoolSize &lt; <span class="hljs-number">0</span> ||<br>        maximumPoolSize &lt;= <span class="hljs-number">0</span> ||<br>        maximumPoolSize &lt; corePoolSize ||<br>        keepAliveTime &lt; <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(); <span class="hljs-comment">// 简单地有效性校验</span><br>    <span class="hljs-keyword">if</span> (workQueue == <span class="hljs-literal">null</span> || threadFactory == <span class="hljs-literal">null</span> || handler == <span class="hljs-literal">null</span>)<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullPointerException</span>();<br>    <span class="hljs-built_in">this</span>.corePoolSize = corePoolSize;<br>    <span class="hljs-built_in">this</span>.maximumPoolSize = maximumPoolSize;<br>    <span class="hljs-built_in">this</span>.workQueue = workQueue; <span class="hljs-comment">// 阻塞队列放线程池任务</span><br>    <span class="hljs-built_in">this</span>.keepAliveTime = unit.toNanos(keepAliveTime);<br>    <span class="hljs-built_in">this</span>.threadFactory = threadFactory;<br>    <span class="hljs-built_in">this</span>.handler = handler; <span class="hljs-comment">// 阻塞队列满了之后拒绝策略(默认是直接往上抛异常)</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -627,9 +627,7 @@
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ThreadPoolExecutor.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 线程池工作线程启动 工作线程的线程模型</span><br><span class="hljs-comment">     *     - 执行工作线程上的指定任务</span><br><span class="hljs-comment">     *     - 阻塞队列获取任务</span><br><span class="hljs-comment">     *         - 阻塞</span><br><span class="hljs-comment">     *         - 工作线程销毁</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">runWorker</span><span class="hljs-params">(Worker w)</span> &#123;<br>    <span class="hljs-type">Thread</span> <span class="hljs-variable">wt</span> <span class="hljs-operator">=</span> Thread.currentThread();<br>    <span class="hljs-type">Runnable</span> <span class="hljs-variable">task</span> <span class="hljs-operator">=</span> w.firstTask;<br>    w.firstTask = <span class="hljs-literal">null</span>;<br>    w.unlock(); <span class="hljs-comment">// allow interrupts</span><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">completedAbruptly</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>; <span class="hljs-comment">// 标识工作线程健康状态 工作线程执行的内容是线程池外界提交进来的任务 如果执行任务出现异常 本质就是Java线程受到了异常影响 线程池就要针对这个Java线程替换掉工作线程</span><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 对于线程池中的一条工作线程而言 要执行任务只有两个来源</span><br><span class="hljs-comment">             *     - 线程池工作线程创建时候指定了回调任务</span><br><span class="hljs-comment">             *     - 工作线程从线程池任务队列中获取</span><br><span class="hljs-comment">             */</span><br>        <span class="hljs-keyword">while</span> (task != <span class="hljs-literal">null</span> || (task = <span class="hljs-built_in">this</span>.getTask()) != <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 线程池有任务待工作线程执行</span><br>            w.lock();<br>            <span class="hljs-comment">// If pool is stopping, ensure thread is interrupted;</span><br>            <span class="hljs-comment">// if not, ensure thread is not interrupted.  This</span><br>            <span class="hljs-comment">// requires a recheck in second case to deal with</span><br>            <span class="hljs-comment">// shutdownNow race while clearing interrupt</span><br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 线程池状态检测</span><br><span class="hljs-comment">                 * STOP TIDYING TERMINATED都不接收新任务 并且中断正在执行的任务 丢弃阻塞队列中任务</span><br><span class="hljs-comment">                 * 工作线程在运行中 持有了任务 但是还没开始执行</span><br><span class="hljs-comment">                 * 给Java线程打上中断标识</span><br><span class="hljs-comment">                 */</span><br>            <span class="hljs-keyword">if</span> (<br>                (<br>                    runStateAtLeast(ctl.get(), STOP) ||<br>                    (Thread.interrupted() &amp;&amp; runStateAtLeast(ctl.get(), STOP))<br>                ) &amp;&amp;<br>                !wt.isInterrupted()<br>            ) wt.interrupt(); <span class="hljs-comment">// 中断Java线程(给Java线程设置一个中断标识 Java线程仍然继续运行)</span><br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-built_in">this</span>.beforeExecute(wt, task); <span class="hljs-comment">// 预留的钩子</span><br>                <span class="hljs-keyword">try</span> &#123;<br>                    task.run(); <span class="hljs-comment">// 线程池工作线程执行任务实例 对于线程池外提交任务的线程而言 这个执行任务的线程就是异步线程</span><br>                    <span class="hljs-built_in">this</span>.afterExecute(task, <span class="hljs-literal">null</span>);<br>                &#125; <span class="hljs-keyword">catch</span> (Throwable ex) &#123;<br>                    <span class="hljs-built_in">this</span>.afterExecute(task, ex); <span class="hljs-comment">// 预留的钩子</span><br>                    <span class="hljs-keyword">throw</span> ex;<br>                &#125;<br>            &#125; <span class="hljs-keyword">finally</span> &#123;<br>                task = <span class="hljs-literal">null</span>;<br>                w.completedTasks++;<br>                w.unlock();<br>            &#125;<br>        &#125;<br>        completedAbruptly = <span class="hljs-literal">false</span>; <span class="hljs-comment">// 能执行到这说明提交到线程池的任务代码逻辑没有异常</span><br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">             * 能执行到这的就两种情况</span><br><span class="hljs-comment">             *     - 工作线程空闲了</span><br><span class="hljs-comment">             *         - 线程池没有任务可执行了 对线程有保活机制但是已经超时了 需要销毁工作线程</span><br><span class="hljs-comment">             *         - 这种工作线程的Java线程还存活着</span><br><span class="hljs-comment">             *         - 线程池的工作线程数已经重新设置过(减1)</span><br><span class="hljs-comment">             *     - 工作线程执行任务出现了异常</span><br><span class="hljs-comment">             *         - 这种工作线程的Java线程已经因为异常退出了</span><br><span class="hljs-comment">             *         - 线程池的工作线程数没有重新设置过(需要减1)</span><br><span class="hljs-comment">             */</span><br>        <span class="hljs-built_in">this</span>.processWorkerExit(w, completedAbruptly);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-
-
-<img src="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/202211212301110.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/11/java/java-13-ThreadPoolExecutor/202211212301110.png" srcset="/img/loading.gif" lazyload class="">
 
 <h3 id="4-4-工作线程保活"><a href="#4-4-工作线程保活" class="headerlink" title="4.4 工作线程保活"></a>4.4 工作线程保活</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ThreadPoolExecutor.java</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 线程池工作线程从线程池任务队列取任务(线程池工作线程) 通过阻塞队列的阻塞机制实现工作线程的保活机制</span><br><span class="hljs-comment">     * 一旦返回null也就意味着工作线程空闲了</span><br><span class="hljs-comment">     *     - 返回null标识这条工作线程要被销毁</span><br><span class="hljs-comment">     *     - 返回null之前更新线程池工作线程数(减-)</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">private</span> Runnable <span class="hljs-title function_">getTask</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 标识位 标识工作线程要被销毁</span><br><span class="hljs-comment">         * 线程池中活跃的工作线程应该只有两种状态</span><br><span class="hljs-comment">         *    - 执行任务中</span><br><span class="hljs-comment">         *    - 从阻塞队列上取任务</span><br><span class="hljs-comment">         *        - 获取到任务</span><br><span class="hljs-comment">         *        - 虽然没获取到任务 但是线程保活 阻塞在任务队列上</span><br><span class="hljs-comment">         * 对于从任务队列上没获取到任务的工作线程 他们属于空闲线程 需要被销毁</span><br><span class="hljs-comment">         * 对于销毁而言 线程池需要做两件事情</span><br><span class="hljs-comment">         *     - 更新ctl工作线程数 原子操作 可能因为竞争而失败</span><br><span class="hljs-comment">         *     - 将工作线程从缓存workers中删除</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * 所以用timedOut标识某个工作线程已经被线程池判定需要销毁 但是CAS修改ctl工作线程数失败了 for轮询中就提前对已经判定销毁的线程执行销毁动作就行</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">timedOut</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// Did the last poll() time out?</span><br><br>    <span class="hljs-keyword">for</span> (;;) &#123; <span class="hljs-comment">// 轮询 取到了任务就返回出去</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> ctl.get();<br><br>        <span class="hljs-comment">// Check if queue empty only if necessary.</span><br>        <span class="hljs-comment">// STOP TIDYING TERMINATED状态的线程池 不处理任务队列中的任务了 这样状态下的工作线程直接销毁掉</span><br>        <span class="hljs-keyword">if</span> (runStateAtLeast(c, SHUTDOWN)<br>            &amp;&amp; (runStateAtLeast(c, STOP) || workQueue.isEmpty())) &#123;<br><br>            <span class="hljs-built_in">this</span>.decrementWorkerCount(); <span class="hljs-comment">// 更新线程池工作线程数(减1)</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 返回null标识该工作线程空闲了需要被销毁</span><br>        &#125;<br><br>        <span class="hljs-type">int</span> <span class="hljs-variable">wc</span> <span class="hljs-operator">=</span> workerCountOf(c);<br><br>        <span class="hljs-comment">// Are workers subject to culling?</span><br>        <span class="hljs-type">boolean</span> <span class="hljs-variable">timed</span> <span class="hljs-operator">=</span> allowCoreThreadTimeOut || wc &gt; corePoolSize; <span class="hljs-comment">// 对工作线程进行永久保活</span><br><br>        <span class="hljs-keyword">if</span> ((wc &gt; maximumPoolSize || (timed &amp;&amp; timedOut))<br>            &amp;&amp; (wc &gt; <span class="hljs-number">1</span> || workQueue.isEmpty())) &#123; <span class="hljs-comment">// 工作线程可以直接销毁</span><br>            <span class="hljs-keyword">if</span> (compareAndDecrementWorkerCount(c)) <span class="hljs-comment">// CAS修改完工作线程数后返回null标识可以销毁的空闲工作线程</span><br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">                 * 线程池逻辑上将工作线程分为了核心线程和非核心线程</span><br><span class="hljs-comment">                 * 但是本质上都是工作线程-&gt;Java线程 没有标识区分</span><br><span class="hljs-comment">                 * 实现上利用阻塞队列阻塞机制</span><br><span class="hljs-comment">                 *     - 对核心线程进行空闲永久保活 线程池只负责永久保活corePoolSize数量的工作线程 而不必要具体他们是谁</span><br><span class="hljs-comment">                 *     - 非核心线程空闲指定时长保活</span><br><span class="hljs-comment">                 * 阻塞队列</span><br><span class="hljs-comment">                 *     - poll 为空时线程超时阻塞+队列为空条件打破</span><br><span class="hljs-comment">                 *     - take 为空时线程永久阻塞+队列为空条件打破</span><br><span class="hljs-comment">                 */</span><br>            <span class="hljs-type">Runnable</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> timed ?<br>                workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :<br>            workQueue.take();<br>            <span class="hljs-keyword">if</span> (r != <span class="hljs-literal">null</span>)<br>                <span class="hljs-keyword">return</span> r;<br>            timedOut = <span class="hljs-literal">true</span>; <span class="hljs-comment">// 运行到这说明当前工作线程从阻塞队列被唤醒不是因为有任务达到 而是因为阻塞超时时间到了 也就是这个是非核心空闲工作线程 需要被回收 打上标识</span><br>        &#125; <span class="hljs-keyword">catch</span> (InterruptedException retry) &#123;<br>            timedOut = <span class="hljs-literal">false</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
@@ -678,8 +676,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>java源码-0x0D-ThreadPoolExecutor</div>
-      <div>https://bannirui.github.io/2023/03/11/java/java源码-0x0D-ThreadPoolExecutor/</div>
+      <div>java-13-ThreadPoolExecutor</div>
+      <div>https://bannirui.github.io/2023/03/11/java/java-13-ThreadPoolExecutor/</div>
     </div>
     <div class="license-meta">
       
@@ -723,9 +721,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS">
+                      <a href="/2023/03/11/java/java-06-AQS/" title="java-06-AQS">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">java源码-0x06-AQS</span>
+                        <span class="hidden-mobile">java-06-AQS</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -733,8 +731,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue">
-                        <span class="hidden-mobile">java源码-0x09-SynchronousQueue</span>
+                      <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue">
+                        <span class="hidden-mobile">java-09-SynchronousQueue</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -757,7 +755,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'c369f6394ab8395984a65fb0ecc70a63'
+            id: '3ffacd34a907fcaccf62e9ef6921782f'
           }
         )
         var gitalk = new Gitalk(options);

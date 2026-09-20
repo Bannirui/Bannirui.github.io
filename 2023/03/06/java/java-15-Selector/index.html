@@ -21,26 +21,26 @@
   
     <meta name="description" content="对操作系统而言： 1 多路复用就是os提供了系统调用，能一次性知道多个fd的状态。 2 不同的操作系统类型有不同的实现方式，实现方式即使是轮询也是发生在kernel中，其效率肯定远远大于在内核外的轮询。  select 数组容量限制fd数量的无差别轮询O(N) 发生内存拷贝 poll 没有fd数量限制的链表无差别轮询O(N) 发生内存拷贝 epoll 近乎O(1)时间复杂度  就Java而言，封装">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java源码-0x0F-Selector">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/index.html">
+<meta property="og:title" content="java-15-Selector">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/06/java/java-15-Selector/index.html">
 <meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="对操作系统而言： 1 多路复用就是os提供了系统调用，能一次性知道多个fd的状态。 2 不同的操作系统类型有不同的实现方式，实现方式即使是轮询也是发生在kernel中，其效率肯定远远大于在内核外的轮询。  select 数组容量限制fd数量的无差别轮询O(N) 发生内存拷贝 poll 没有fd数量限制的链表无差别轮询O(N) 发生内存拷贝 epoll 近乎O(1)时间复杂度  就Java而言，封装">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/2022-11-04_3.39.27.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162242013.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162241501.png">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162240074.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java-15-Selector/2022-11-04_3.39.27.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java-15-Selector/202211162242013.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java-15-Selector/202211162241501.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/06/java/java-15-Selector/202211162240074.png">
 <meta property="article:published_time" content="2023-03-06T14:49:17.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.654Z">
+<meta property="article:modified_time" content="2026-09-20T16:13:37.212Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/2022-11-04_3.39.27.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/06/java/java-15-Selector/2022-11-04_3.39.27.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>java源码-0x0F-Selector - HEX BLOG</title>
+  <title>java-15-Selector - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -229,7 +229,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="java源码-0x0F-Selector"></span>
+            <span id="subtitle" data-typed-text="java-15-Selector"></span>
           
         </div>
 
@@ -336,136 +336,136 @@
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java源码-0x01-源码阅读清单"
+        <a href="/2024/03/07/java/java-01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java-01-源码阅读清单"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x01-源码阅读清单</span>
+          <span class="category-post">java-01-源码阅读清单</span>
         </a>
       
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x02-Object/" title="java源码-0x02-Object"
+        <a href="/2024/03/07/java/java-02-Object/" title="java-02-Object"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x02-Object</span>
+          <span class="category-post">java-02-Object</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord"
+        <a href="/2024/03/09/java/java-03-MarkWord/" title="java-03-MarkWord"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x03-MarkWord</span>
+          <span class="category-post">java-03-MarkWord</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking"
+        <a href="/2024/03/09/java/java-04-biasedLocking/" title="java-04-biasedLocking"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x04-biasedLocking</span>
+          <span class="category-post">java-04-biasedLocking</span>
         </a>
       
     
       
       
-        <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义"
+        <a href="/2024/03/10/java/java-05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java-05-宏定义"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x05-宏定义</span>
+          <span class="category-post">java-05-宏定义</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS"
+        <a href="/2023/03/11/java/java-06-AQS/" title="java-06-AQS"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x06-AQS</span>
+          <span class="category-post">java-06-AQS</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue"
+        <a href="/2023/03/11/java/java-07-ArrayBlockingQueue/" title="java-07-ArrayBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x07-ArrayBlockingQueue</span>
+          <span class="category-post">java-07-ArrayBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/" title="java源码-0x08-LinkedBlockingQueue"
+        <a href="/2023/03/11/java/java-08-LinkedBlockingQueue/" title="java-08-LinkedBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x08-LinkedBlockingQueue</span>
+          <span class="category-post">java-08-LinkedBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue"
+        <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x09-SynchronousQueue</span>
+          <span class="category-post">java-09-SynchronousQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW"
+        <a href="/2023/03/11/java/java-10-COW/" title="java-10-COW"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0A-COW</span>
+          <span class="category-post">java-10-COW</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0B-synchronized/" title="java源码-0x0B-synchronized"
+        <a href="/2023/03/11/java/java-11-synchronized/" title="java-11-synchronized"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0B-synchronized</span>
+          <span class="category-post">java-11-synchronized</span>
         </a>
       
     
       
       
-        <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread"
+        <a href="/2023/03/10/java/java-12-Thread/" title="java-12-Thread"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0C-Thread</span>
+          <span class="category-post">java-12-Thread</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor"
+        <a href="/2023/03/11/java/java-13-ThreadPoolExecutor/" title="java-13-ThreadPoolExecutor"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0D-ThreadPoolExecutor</span>
+          <span class="category-post">java-13-ThreadPoolExecutor</span>
         </a>
       
     
       
       
-        <a href="/2023/03/04/java/java%E6%BA%90%E7%A0%81-0x0E-Timer/" title="java源码-0x0E-Timer"
+        <a href="/2023/03/04/java/java-14-Timer/" title="java-14-Timer"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0E-Timer</span>
+          <span class="category-post">java-14-Timer</span>
         </a>
       
     
       
       
-        <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector"
+        <a href="/2023/03/06/java/java-15-Selector/" title="java-15-Selector"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">java源码-0x0F-Selector</span>
+          <span class="category-post">java-15-Selector</span>
         </a>
       
     
@@ -487,7 +487,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">java源码-0x0F-Selector</h1>
+            <h1 id="seo-header">java-15-Selector</h1>
             
             
               <div class="markdown-body">
@@ -546,7 +546,7 @@
 <li>适配JDK版本的默认Provider。</li>
 </ul>
 <h5 id="1-2-2-sun-nio-ch-DefaultSelectorProvider-create"><a href="#1-2-2-sun-nio-ch-DefaultSelectorProvider-create" class="headerlink" title="1.2.2 sun.nio.ch.DefaultSelectorProvider.create()"></a>1.2.2 sun.nio.ch.DefaultSelectorProvider.create()</h5><p>通过全局搜索openjdk源码发现有3个实现，不同系统类型，该实现不同。</p>
-<img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/2022-11-04_3.39.27.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/06/java/java-15-Selector/2022-11-04_3.39.27.png" srcset="/img/loading.gif" lazyload class="">
 
 <ul>
 <li><p>solaris：</p>
@@ -612,15 +612,15 @@
 </ul>
 </li>
 </ul>
-<h3 id="2-Java-IO多路复用器流程"><a href="#2-Java-IO多路复用器流程" class="headerlink" title="2 Java IO多路复用器流程"></a>2 Java IO多路复用器流程</h3><img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162242013.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="2-Java-IO多路复用器流程"><a href="#2-Java-IO多路复用器流程" class="headerlink" title="2 Java IO多路复用器流程"></a>2 Java IO多路复用器流程</h3><img src="/2023/03/06/java/java-15-Selector/202211162242013.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>类图关系明显使用了模板方法的设计模式，将通用API封装在顶层抽象，将具体实现延迟到具体实现类各自关注细节，假使将来有其他的OS平台系统调用可选，就可以只要简单继承SelectorImpl就行，也做到了对修改关闭，对功能开发这样的基本原则。</p>
-<h4 id="2-1Selector提供了select-抽象"><a href="#2-1Selector提供了select-抽象" class="headerlink" title="2.1Selector提供了select(...) 抽象"></a>2.1Selector提供了<code>select(...)</code> 抽象</h4><img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162241501.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="2-1Selector提供了select-抽象"><a href="#2-1Selector提供了select-抽象" class="headerlink" title="2.1Selector提供了select(...) 抽象"></a>2.1Selector提供了<code>select(...)</code> 抽象</h4><img src="/2023/03/06/java/java-15-Selector/202211162241501.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>以select()为例：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Selector.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-type">int</span> <span class="hljs-title function_">select</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException;<br><br><span class="hljs-comment">// SelectorImpl</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">select</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.lockAndDoSelect(<span class="hljs-literal">null</span>, -<span class="hljs-number">1</span>);<br>&#125;<br><br><span class="hljs-comment">// SelectorImpl</span><br><span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-title function_">lockAndDoSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>    <span class="hljs-keyword">throws</span> IOException<br>&#123; <span class="hljs-comment">// 从Selector#select()过来 action=null timeout=-1</span><br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>) &#123; <span class="hljs-comment">// 管程锁</span><br>        <span class="hljs-built_in">this</span>.ensureOpen(); <span class="hljs-comment">// 通过AbstractSelector#selectorOpen标识判断</span><br>        <span class="hljs-keyword">if</span> (inSelect) <span class="hljs-comment">// 线程重入判断</span><br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalStateException</span>(<span class="hljs-string">&quot;select in progress&quot;</span>);<br>        inSelect = <span class="hljs-literal">true</span>; <span class="hljs-comment">// 在同步代码块中修改值 释放锁后修改回去 以此为线程重入的依据</span><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>.publicSelectedKeys) &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.doSelect(action, timeout);<br>            &#125;<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            inSelect = <span class="hljs-literal">false</span>;<br>        &#125;<br>    &#125;<br>&#125;<br><br><br><span class="hljs-comment">// SelectorImpl</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-type">int</span> <span class="hljs-title function_">doSelect</span><span class="hljs-params">(Consumer&lt;SelectionKey&gt; action, <span class="hljs-type">long</span> timeout)</span><br>        <span class="hljs-keyword">throws</span> IOException; <span class="hljs-comment">// 实现留给子类关注 macos的实现类在KQueueSelectorImpl</span><br></code></pre></td></tr></table></figure>
 
-<h4 id="2-2-AbstractSelector提供了register-抽象"><a href="#2-2-AbstractSelector提供了register-抽象" class="headerlink" title="2.2 AbstractSelector提供了register()抽象"></a>2.2 AbstractSelector提供了<code>register()</code>抽象</h4><img src="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/202211162240074.png" srcset="/img/loading.gif" lazyload class="">
+<h4 id="2-2-AbstractSelector提供了register-抽象"><a href="#2-2-AbstractSelector提供了register-抽象" class="headerlink" title="2.2 AbstractSelector提供了register()抽象"></a>2.2 AbstractSelector提供了<code>register()</code>抽象</h4><img src="/2023/03/06/java/java-15-Selector/202211162240074.png" srcset="/img/loading.gif" lazyload class="">
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// SelectableChannel.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(Selector sel, <span class="hljs-type">int</span> ops)</span><br>    <span class="hljs-keyword">throws</span> ClosedChannelException<br>&#123; <span class="hljs-comment">// 向复用器sel注册当前Channel 关注Channel的ops事件</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.register(sel, ops, <span class="hljs-literal">null</span>);<br>&#125;<br><br><span class="hljs-comment">// SelectableChannel.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(Selector sel, <span class="hljs-type">int</span> ops, Object att)</span><br>        <span class="hljs-keyword">throws</span> ClosedChannelException; <span class="hljs-comment">// 向复用器sel注册Channel 对Channel的ops事件关注 Channel附加数据att</span><br><br><span class="hljs-comment">// AbstractSelectableChannel.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(Selector sel, <span class="hljs-type">int</span> ops, Object att)</span><br>    <span class="hljs-keyword">throws</span> ClosedChannelException<br>&#123; <span class="hljs-comment">// 向复用器sel注册Channel 对Channel的ops事件关注 Channel的附加数据att</span><br>    <span class="hljs-keyword">if</span> ((ops &amp; ~validOps()) != <span class="hljs-number">0</span>) <span class="hljs-comment">// 参数校验 确保复用器要关注的事件是有效的</span><br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>();<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">this</span>.isOpen()) <span class="hljs-comment">// 参数校验 确保channel是处于监听状态的</span><br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClosedChannelException</span>();<br>    <span class="hljs-keyword">synchronized</span> (regLock) &#123;<br>        <span class="hljs-keyword">if</span> (isBlocking())<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalBlockingModeException</span>();<br>        <span class="hljs-keyword">synchronized</span> (keyLock) &#123;<br>            <span class="hljs-comment">// re-check if channel has been closed</span><br>            <span class="hljs-keyword">if</span> (!isOpen()) <span class="hljs-comment">// 典型的Double-Check</span><br>                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClosedChannelException</span>();<br>            <span class="hljs-type">SelectionKey</span> <span class="hljs-variable">k</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.findKey(sel); <span class="hljs-comment">// k代表的是注册在sel这个复用器上的channel</span><br>            <span class="hljs-keyword">if</span> (k != <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// channel已经注册过了复用器 这个方法再次被调用可能意味着修改某些参数</span><br>                k.attach(att); <span class="hljs-comment">// 可能Channel的附加数据att变更了(场景 写大量数据时分批写 每个tcp缓冲填满时不阻塞等待 Channel发送完第一批数据时 再次将Channel注册到复用器上 继续关注可写事件 将剩余没写完的数据挂到att上)</span><br>                k.interestOps(ops); <span class="hljs-comment">// 可能Channel关注的事件变更了</span><br>            &#125; <span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// Channel首次向复用器上注册</span><br>                <span class="hljs-comment">// New registration</span><br>                k = ((AbstractSelector)sel).register(<span class="hljs-built_in">this</span>, ops, att); <span class="hljs-comment">// channel注册复用器成功后返回的SelectionKey相当于是对channel的封装</span><br>                <span class="hljs-built_in">this</span>.addKey(k); <span class="hljs-comment">// 把复用器注册成功的channel缓存到keys集合中</span><br>            &#125;<br>            <span class="hljs-keyword">return</span> k;<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// AbstractSelector</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(AbstractSelectableChannel ch,</span><br><span class="hljs-params">                                             <span class="hljs-type">int</span> ops, Object att)</span>; <span class="hljs-comment">// 将Channel注册到复用器上 关注Channel的ops事件 Channel携带的数据为att</span><br><br><span class="hljs-comment">// SelectorImpl.java</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> SelectionKey <span class="hljs-title function_">register</span><span class="hljs-params">(AbstractSelectableChannel ch,</span><br><span class="hljs-params">                                      <span class="hljs-type">int</span> ops,</span><br><span class="hljs-params">                                      Object attachment)</span><br>&#123; <span class="hljs-comment">// 将Channel注册到复用器上 关注Channel的ops事件 Channel携带了数据attachment</span><br>    <span class="hljs-keyword">if</span> (!(ch <span class="hljs-keyword">instanceof</span> SelChImpl))<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalSelectorException</span>();<br>    <span class="hljs-type">SelectionKeyImpl</span> <span class="hljs-variable">k</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SelectionKeyImpl</span>((SelChImpl)ch, <span class="hljs-built_in">this</span>); <span class="hljs-comment">// 数据结构封装</span><br>    k.attach(attachment); <span class="hljs-comment">// Channel携带的数据</span><br><br>    <span class="hljs-comment">// register (if needed) before adding to key set</span><br>    <span class="hljs-built_in">this</span>.implRegister(k); <span class="hljs-comment">// channel注册复用器前置检查确认Channel处于Open状态</span><br><br>    <span class="hljs-comment">// add to the selector&#x27;s key set, removing it immediately if the selector</span><br>    <span class="hljs-comment">// is closed. The key is not in the channel&#x27;s key set at this point but</span><br>    <span class="hljs-comment">// it may be observed by a thread iterating over the selector&#x27;s key set.</span><br>    <span class="hljs-built_in">this</span>.keys.add(k); <span class="hljs-comment">// 监听的Channel 让复用器监听哪些Channel</span><br>    <span class="hljs-keyword">try</span> &#123;<br>        k.interestOps(ops); <span class="hljs-comment">// 让复用器监听Channel的什么事件 将事件(新增/移除/覆盖更新)缓存到updateKeys</span><br>    &#125; <span class="hljs-keyword">catch</span> (ClosedSelectorException e) &#123;<br>        <span class="hljs-keyword">assert</span> ch.keyFor(<span class="hljs-built_in">this</span>) == <span class="hljs-literal">null</span>;<br>        keys.remove(k);<br>        k.cancel();<br>        <span class="hljs-keyword">throw</span> e;<br>    &#125;<br>    <span class="hljs-keyword">return</span> k;<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -794,8 +794,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>java源码-0x0F-Selector</div>
-      <div>https://bannirui.github.io/2023/03/06/java/java源码-0x0F-Selector/</div>
+      <div>java-15-Selector</div>
+      <div>https://bannirui.github.io/2023/03/06/java/java-15-Selector/</div>
     </div>
     <div class="license-meta">
       
@@ -873,7 +873,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '9b0b0856df0abd22cec0772b1310f8c7'
+            id: '8347093b2bf0db037ff663772d8b95f7'
           }
         )
         var gitalk = new Gitalk(options);

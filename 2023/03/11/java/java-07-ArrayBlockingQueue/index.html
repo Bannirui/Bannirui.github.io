@@ -19,23 +19,25 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="偏向锁相关的实现都在文件src&#x2F;hotspot&#x2F;share&#x2F;runtime&#x2F;biasedLocking.cpp中 方法API  revoke  revoke    		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;">
+    <meta name="description" content="1 阻塞队列API    Throws exception Special value Blocks Times out    Insert add(e) offer(e) put(e) offer(e, time, unit)   Remove remove() poll() take() poll(time, uint)   Examine element() peek()     2 类图">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java源码-0x04-biasedLocking">
-<meta property="og:url" content="https://bannirui.github.io/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/index.html">
+<meta property="og:title" content="java-07-ArrayBlockingQueue">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/java/java-07-ArrayBlockingQueue/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="偏向锁相关的实现都在文件src&#x2F;hotspot&#x2F;share&#x2F;runtime&#x2F;biasedLocking.cpp中 方法API  revoke  revoke    		 		var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;">
+<meta property="og:description" content="1 阻塞队列API    Throws exception Special value Blocks Times out    Insert add(e) offer(e) put(e) offer(e, time, unit)   Remove remove() poll() take() poll(time, uint)   Examine element() peek()     2 类图">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-03-09T15:53:05.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.638Z">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java-07-ArrayBlockingQueue/202211221522904.png">
+<meta property="article:published_time" content="2023-03-11T05:47:49.000Z">
+<meta property="article:modified_time" content="2026-09-20T16:20:35.464Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/java/java-07-ArrayBlockingQueue/202211221522904.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>java源码-0x04-biasedLocking - HEX BLOG</title>
+  <title>java-07-ArrayBlockingQueue - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="java源码-0x04-biasedLocking"></span>
+            <span id="subtitle" data-typed-text="java-07-ArrayBlockingQueue"></span>
           
         </div>
 
@@ -235,8 +237,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-03-09 23:53" pubdate>
-          2024年3月9日 晚上
+        <time datetime="2023-03-11 13:47" pubdate>
+          2023年3月11日 下午
         </time>
       </span>
     
@@ -247,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          47 字
+          702 字
         
       </span>
     
@@ -258,7 +260,7 @@
         
         
         
-          1 分钟
+          6 分钟
         
       </span>
     
@@ -331,136 +333,136 @@
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java源码-0x01-源码阅读清单"
+        <a href="/2024/03/07/java/java-01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java-01-源码阅读清单"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x01-源码阅读清单</span>
+          <span class="category-post">java-01-源码阅读清单</span>
         </a>
       
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x02-Object/" title="java源码-0x02-Object"
+        <a href="/2024/03/07/java/java-02-Object/" title="java-02-Object"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x02-Object</span>
+          <span class="category-post">java-02-Object</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord"
+        <a href="/2024/03/09/java/java-03-MarkWord/" title="java-03-MarkWord"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x03-MarkWord</span>
+          <span class="category-post">java-03-MarkWord</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking"
+        <a href="/2024/03/09/java/java-04-biasedLocking/" title="java-04-biasedLocking"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java-04-biasedLocking</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2024/03/10/java/java-05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java-05-宏定义"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java-05-宏定义</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java-06-AQS/" title="java-06-AQS"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java-06-AQS</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java-07-ArrayBlockingQueue/" title="java-07-ArrayBlockingQueue"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">java源码-0x04-biasedLocking</span>
+          <span class="category-post">java-07-ArrayBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义"
+        <a href="/2023/03/11/java/java-08-LinkedBlockingQueue/" title="java-08-LinkedBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x05-宏定义</span>
+          <span class="category-post">java-08-LinkedBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS"
+        <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x06-AQS</span>
+          <span class="category-post">java-09-SynchronousQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue"
+        <a href="/2023/03/11/java/java-10-COW/" title="java-10-COW"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x07-ArrayBlockingQueue</span>
+          <span class="category-post">java-10-COW</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/" title="java源码-0x08-LinkedBlockingQueue"
+        <a href="/2023/03/11/java/java-11-synchronized/" title="java-11-synchronized"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x08-LinkedBlockingQueue</span>
+          <span class="category-post">java-11-synchronized</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue"
+        <a href="/2023/03/10/java/java-12-Thread/" title="java-12-Thread"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x09-SynchronousQueue</span>
+          <span class="category-post">java-12-Thread</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW"
+        <a href="/2023/03/11/java/java-13-ThreadPoolExecutor/" title="java-13-ThreadPoolExecutor"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0A-COW</span>
+          <span class="category-post">java-13-ThreadPoolExecutor</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0B-synchronized/" title="java源码-0x0B-synchronized"
+        <a href="/2023/03/04/java/java-14-Timer/" title="java-14-Timer"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0B-synchronized</span>
+          <span class="category-post">java-14-Timer</span>
         </a>
       
     
       
       
-        <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread"
+        <a href="/2023/03/06/java/java-15-Selector/" title="java-15-Selector"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0C-Thread</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">java源码-0x0D-ThreadPoolExecutor</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/03/04/java/java%E6%BA%90%E7%A0%81-0x0E-Timer/" title="java源码-0x0E-Timer"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">java源码-0x0E-Timer</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">java源码-0x0F-Selector</span>
+          <span class="category-post">java-15-Selector</span>
         </a>
       
     
@@ -482,17 +484,90 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">java源码-0x04-biasedLocking</h1>
+            <h1 id="seo-header">java-07-ArrayBlockingQueue</h1>
             
             
               <div class="markdown-body">
                 
-                <p>偏向锁相关的实现都在文件<code>src/hotspot/share/runtime/biasedLocking.cpp</code>中</p>
-<p>方法API</p>
-<ul>
-<li><a href="#1">revoke</a></li>
-</ul>
-<h3 id="revoke"><a href="#revoke" class="headerlink" title="revoke"></a><a id="1">revoke</a></h3>
+                <h2 id="1-阻塞队列API"><a href="#1-阻塞队列API" class="headerlink" title="1 阻塞队列API"></a>1 阻塞队列API</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>Throws exception</th>
+<th>Special value</th>
+<th>Blocks</th>
+<th>Times out</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Insert</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+<td>put(e)</td>
+<td>offer(e, time, unit)</td>
+</tr>
+<tr>
+<td>Remove</td>
+<td>remove()</td>
+<td>poll()</td>
+<td>take()</td>
+<td>poll(time, uint)</td>
+</tr>
+<tr>
+<td>Examine</td>
+<td>element()</td>
+<td>peek()</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="2-类图"><a href="#2-类图" class="headerlink" title="2 类图"></a>2 类图</h2><img src="/2023/03/11/java/java-07-ArrayBlockingQueue/202211221522904.png" srcset="/img/loading.gif" lazyload class="">
+
+<h2 id="3-构造方法"><a href="#3-构造方法" class="headerlink" title="3 构造方法"></a>3 构造方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ArrayBlockingQueue.java</span><br><span class="hljs-keyword">final</span> Object[] items; <span class="hljs-comment">// 存放数据元素的数组</span><br><span class="hljs-type">int</span> putIndex; <span class="hljs-comment">// put脚标</span><br><span class="hljs-type">int</span> count; <span class="hljs-comment">// 队列中存放的元素数量</span><br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * ReentrantLock</span><br><span class="hljs-comment">     *     - 保证多生产者多消费者场景下线程安全</span><br><span class="hljs-comment">     *     - 通过条件队列实现阻塞/通知模式</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">final</span> ReentrantLock lock;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * ReentrantLock锁的条件队列</span><br><span class="hljs-comment">     * 队列已经空了就无法继续take元素 让线程阻塞在条件队列上</span><br><span class="hljs-comment">     * 阻塞在上面的线程只有队列不为空才会被唤醒 有机会继续竞争take元素</span><br><span class="hljs-comment">     */</span><br><span class="hljs-meta">@SuppressWarnings(&quot;serial&quot;)</span>  <span class="hljs-comment">// Classes implementing Condition may be serializable.</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Condition notEmpty;<br><br><span class="hljs-comment">/** Condition for waiting puts */</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * ReentrantLock锁的条件队列</span><br><span class="hljs-comment">     * 队列已经满了就无法继续put元素 让线程阻塞在条件队列上</span><br><span class="hljs-comment">     * 阻塞在上面的线程只有队列不满才会被唤醒 有机会继续竞争put元素</span><br><span class="hljs-comment">     */</span><br><span class="hljs-meta">@SuppressWarnings(&quot;serial&quot;)</span>  <span class="hljs-comment">// Classes implementing Condition may be serializable.</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Condition notFull;<br><br><span class="hljs-keyword">public</span> <span class="hljs-title function_">ArrayBlockingQueue</span><span class="hljs-params">(<span class="hljs-type">int</span> capacity, <span class="hljs-type">boolean</span> fair)</span> &#123;<br>    <span class="hljs-keyword">if</span> (capacity &lt;= <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>();<br>    <span class="hljs-built_in">this</span>.items = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[capacity]; <span class="hljs-comment">// 数据结构使用数组 必须指定容量进行初始化</span><br>    lock = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReentrantLock</span>(fair); <span class="hljs-comment">// 默认使用非公平锁 吞吐高于公平锁</span><br>    notEmpty = lock.newCondition();<br>    notFull =  lock.newCondition();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>ArrayBlockingQueue使用的数据结构是数组，通过两个指针移动控制元素入队出队，循环往复。</p>
+<p>阻塞的实现依赖于ReentrantLock的条件队列。</p>
+<h2 id="4-API"><a href="#4-API" class="headerlink" title="4 API"></a>4 API</h2><h3 id="4-1-put"><a href="#4-1-put" class="headerlink" title="4.1 put"></a>4.1 put</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ArrayBlockingQueue.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">put</span><span class="hljs-params">(E e)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>        Objects.requireNonNull(e);<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">lock</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.lock;<br>        lock.lockInterruptibly();<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">while</span> (count == items.length)<br>                notFull.await(); <span class="hljs-comment">// 队列已经满了就把put线程阻塞在条件队列上 等待有其他线程take走元素唤醒put线程</span><br>            <span class="hljs-built_in">this</span>.enqueue(e); <span class="hljs-comment">// 元素入队操作</span><br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            lock.unlock();<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ArrayBlockingQueue.java</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">enqueue</span><span class="hljs-params">(E e)</span> &#123; <span class="hljs-comment">// 元素入队操作</span><br>        <span class="hljs-comment">// assert lock.isHeldByCurrentThread();</span><br>        <span class="hljs-comment">// assert lock.getHoldCount() == 1;</span><br>        <span class="hljs-comment">// assert items[putIndex] == null;</span><br>        <span class="hljs-keyword">final</span> Object[] items = <span class="hljs-built_in">this</span>.items;<br>        items[<span class="hljs-built_in">this</span>.putIndex] = e;<br>        <span class="hljs-keyword">if</span> (++putIndex == <span class="hljs-built_in">this</span>.items.length) putIndex = <span class="hljs-number">0</span>; <span class="hljs-comment">// 移动put脚标</span><br>        <span class="hljs-built_in">this</span>.count++; <span class="hljs-comment">// 更新元素数量</span><br>        <span class="hljs-built_in">this</span>.notEmpty.signal(); <span class="hljs-comment">// 尝试唤醒曾经因为队列空了阻塞的take线程</span><br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-take"><a href="#4-2-take" class="headerlink" title="4.2 take"></a>4.2 take</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ArrayBlockingQueue.java</span><br><span class="hljs-keyword">public</span> E <span class="hljs-title function_">take</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">lock</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.lock;<br>    lock.lockInterruptibly();<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-keyword">while</span> (count == <span class="hljs-number">0</span>)<br>            notEmpty.await(); <span class="hljs-comment">// 队列已经空了就把当前take线程阻塞在ReentrantLock的条件队列上 等待其他线程put元素后唤醒take线程</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.dequeue(); <span class="hljs-comment">// 元素出队</span><br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        lock.unlock();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ArrayBlockingQueue.java</span><br><span class="hljs-keyword">private</span> E <span class="hljs-title function_">dequeue</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// assert lock.isHeldByCurrentThread();</span><br>    <span class="hljs-comment">// assert lock.getHoldCount() == 1;</span><br>    <span class="hljs-comment">// assert items[takeIndex] != null;</span><br>    <span class="hljs-keyword">final</span> Object[] items = <span class="hljs-built_in">this</span>.items;<br>    <span class="hljs-meta">@SuppressWarnings(&quot;unchecked&quot;)</span><br>    <span class="hljs-type">E</span> <span class="hljs-variable">e</span> <span class="hljs-operator">=</span> (E) items[takeIndex]; <span class="hljs-comment">// 取到的元素</span><br>    items[takeIndex] = <span class="hljs-literal">null</span>; <span class="hljs-comment">// help GC</span><br>    <span class="hljs-keyword">if</span> (++takeIndex == items.length) takeIndex = <span class="hljs-number">0</span>; <span class="hljs-comment">// 移动take脚标</span><br>    count--; <span class="hljs-comment">// 元素数量跟新</span><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.itrs != <span class="hljs-literal">null</span>)<br>        <span class="hljs-built_in">this</span>.itrs.elementDequeued();<br>    <span class="hljs-built_in">this</span>.notFull.signal(); <span class="hljs-comment">// 尝试唤醒曾经可能因为队列满了而阻塞的put线程</span><br>    <span class="hljs-keyword">return</span> e;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5 总结"></a><em>5</em> 总结</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>ArrayBlockingQueue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据结构</td>
+<td>数组</td>
+</tr>
+<tr>
+<td>是否有界</td>
+<td>有界，必须指定大小初始化数组</td>
+</tr>
+<tr>
+<td>锁实现</td>
+<td>ReentrantLock</td>
+</tr>
+<tr>
+<td>锁数量</td>
+<td>1</td>
+</tr>
+<tr>
+<td>线程阻塞机制</td>
+<td>ReentrantLock条件队列阻塞&#x2F;通知唤醒</td>
+</tr>
+<tr>
+<td>生产者消费者用锁</td>
+<td>共用同一个锁</td>
+</tr>
+</tbody></table>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -539,8 +614,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>java源码-0x04-biasedLocking</div>
-      <div>https://bannirui.github.io/2024/03/09/java/java源码-0x04-biasedLocking/</div>
+      <div>java-07-ArrayBlockingQueue</div>
+      <div>https://bannirui.github.io/2023/03/11/java/java-07-ArrayBlockingQueue/</div>
     </div>
     <div class="license-meta">
       
@@ -552,7 +627,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年3月9日</div>
+          <div>2023年3月11日</div>
         </div>
       
       
@@ -584,9 +659,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义">
+                      <a href="/2023/03/11/java/java-08-LinkedBlockingQueue/" title="java-08-LinkedBlockingQueue">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">java源码-0x05-宏定义</span>
+                        <span class="hidden-mobile">java-08-LinkedBlockingQueue</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -594,8 +669,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord">
-                        <span class="hidden-mobile">java源码-0x03-MarkWord</span>
+                      <a href="/2023/03/11/Spring/Spring-08-ConfigurationClassPostProcessor%E6%A0%B9%E6%8D%AE%E6%B3%A8%E8%A7%A3%E5%88%9B%E5%BB%BA%E6%96%B0BeanDefinition/" title="Spring-08-ConfigurationClassPostProcessor根据注解创建新BeanDefinition">
+                        <span class="hidden-mobile">Spring-08-ConfigurationClassPostProcessor根据注解创建新BeanDefinition</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -618,7 +693,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '279fa750a4ebd747d9a1eb12a94ae83d'
+            id: 'df2f41c46d25f878a2bf72d58f7ec67e'
           }
         )
         var gitalk = new Gitalk(options);

@@ -21,21 +21,25 @@
   
     <meta name="description" content="摘要  AQS是什么 使用方式 源码原理  1 AQS是什么摘自java doc，简而言之就是该类基于阻塞队列为同步锁的实现提供了框架功能 1Provides a framework for implementing blocking locks and related synchronizers (semaphores, events, etc) that rely on first-in-fi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java源码-0x06-AQS">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/index.html">
+<meta property="og:title" content="java-06-AQS">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/java/java-06-AQS/index.html">
 <meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="摘要  AQS是什么 使用方式 源码原理  1 AQS是什么摘自java doc，简而言之就是该类基于阻塞队列为同步锁的实现提供了框架功能 1Provides a framework for implementing blocking locks and related synchronizers (semaphores, events, etc) that rely on first-in-fi">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java-06-AQS/1150150-20220218001926234-697481967.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java-06-AQS/1150150-20220218004148083-900495659.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java-06-AQS/1150150-20220218114951074-1257964797.png">
 <meta property="article:published_time" content="2023-03-11T05:49:20.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.618Z">
+<meta property="article:modified_time" content="2026-09-20T16:19:33.727Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/java/java-06-AQS/1150150-20220218001926234-697481967.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>java源码-0x06-AQS - HEX BLOG</title>
+  <title>java-06-AQS - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +228,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="java源码-0x06-AQS"></span>
+            <span id="subtitle" data-typed-text="java-06-AQS"></span>
           
         </div>
 
@@ -331,136 +335,136 @@
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java源码-0x01-源码阅读清单"
+        <a href="/2024/03/07/java/java-01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java-01-源码阅读清单"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x01-源码阅读清单</span>
+          <span class="category-post">java-01-源码阅读清单</span>
         </a>
       
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x02-Object/" title="java源码-0x02-Object"
+        <a href="/2024/03/07/java/java-02-Object/" title="java-02-Object"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x02-Object</span>
+          <span class="category-post">java-02-Object</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord"
+        <a href="/2024/03/09/java/java-03-MarkWord/" title="java-03-MarkWord"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x03-MarkWord</span>
+          <span class="category-post">java-03-MarkWord</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking"
+        <a href="/2024/03/09/java/java-04-biasedLocking/" title="java-04-biasedLocking"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x04-biasedLocking</span>
+          <span class="category-post">java-04-biasedLocking</span>
         </a>
       
     
       
       
-        <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义"
+        <a href="/2024/03/10/java/java-05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java-05-宏定义"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x05-宏定义</span>
+          <span class="category-post">java-05-宏定义</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS"
+        <a href="/2023/03/11/java/java-06-AQS/" title="java-06-AQS"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">java源码-0x06-AQS</span>
+          <span class="category-post">java-06-AQS</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue"
+        <a href="/2023/03/11/java/java-07-ArrayBlockingQueue/" title="java-07-ArrayBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x07-ArrayBlockingQueue</span>
+          <span class="category-post">java-07-ArrayBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/" title="java源码-0x08-LinkedBlockingQueue"
+        <a href="/2023/03/11/java/java-08-LinkedBlockingQueue/" title="java-08-LinkedBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x08-LinkedBlockingQueue</span>
+          <span class="category-post">java-08-LinkedBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue"
+        <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x09-SynchronousQueue</span>
+          <span class="category-post">java-09-SynchronousQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW"
+        <a href="/2023/03/11/java/java-10-COW/" title="java-10-COW"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0A-COW</span>
+          <span class="category-post">java-10-COW</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0B-synchronized/" title="java源码-0x0B-synchronized"
+        <a href="/2023/03/11/java/java-11-synchronized/" title="java-11-synchronized"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0B-synchronized</span>
+          <span class="category-post">java-11-synchronized</span>
         </a>
       
     
       
       
-        <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread"
+        <a href="/2023/03/10/java/java-12-Thread/" title="java-12-Thread"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0C-Thread</span>
+          <span class="category-post">java-12-Thread</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor"
+        <a href="/2023/03/11/java/java-13-ThreadPoolExecutor/" title="java-13-ThreadPoolExecutor"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0D-ThreadPoolExecutor</span>
+          <span class="category-post">java-13-ThreadPoolExecutor</span>
         </a>
       
     
       
       
-        <a href="/2023/03/04/java/java%E6%BA%90%E7%A0%81-0x0E-Timer/" title="java源码-0x0E-Timer"
+        <a href="/2023/03/04/java/java-14-Timer/" title="java-14-Timer"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0E-Timer</span>
+          <span class="category-post">java-14-Timer</span>
         </a>
       
     
       
       
-        <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector"
+        <a href="/2023/03/06/java/java-15-Selector/" title="java-15-Selector"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0F-Selector</span>
+          <span class="category-post">java-15-Selector</span>
         </a>
       
     
@@ -482,7 +486,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">java源码-0x06-AQS</h1>
+            <h1 id="seo-header">java-06-AQS</h1>
             
             
               <div class="markdown-body">
@@ -514,7 +518,7 @@
 <li>队列的实现方式</li>
 <li>线程实例的处理方式</li>
 </ul>
-<h3 id="3-1-类图"><a href="#3-1-类图" class="headerlink" title="3.1 类图"></a>3.1 类图</h3>
+<h3 id="3-1-类图"><a href="#3-1-类图" class="headerlink" title="3.1 类图"></a>3.1 类图</h3><img src="/2023/03/11/java/java-06-AQS/1150150-20220218001926234-697481967.png" srcset="/img/loading.gif" lazyload class="">
 
 <ul>
 <li>Lock定义了ReentrantLock的顶层抽象，我们只关注#lock(…)和#unLock(…)</li>
@@ -523,10 +527,10 @@
 <li>AQS中内部类Node</li>
 </ul>
 <h3 id="3-2-构造方法"><a href="#3-2-构造方法" class="headerlink" title="3.2 构造方法"></a>3.2 构造方法</h3><p>ReentrantLock中属性sync，构造方法仅仅是指定sync是FairSync还是NonfairSync的实例，默认是NonFairSync</p>
-
+<img src="/2023/03/11/java/java-06-AQS/1150150-20220218004148083-900495659.png" srcset="/img/loading.gif" lazyload class="">
 
 <h3 id="3-3-ReentrantLock-lock-…-方法"><a href="#3-3-ReentrantLock-lock-…-方法" class="headerlink" title="3.3 ReentrantLock#lock(…)方法"></a>3.3 ReentrantLock#lock(…)方法</h3><p> 时序</p>
-
+<img src="/2023/03/11/java/java-06-AQS/1150150-20220218114951074-1257964797.png" srcset="/img/loading.gif" lazyload class="">
 
 <h4 id="3-3-1-AQS-acquire-…"><a href="#3-3-1-AQS-acquire-…" class="headerlink" title="3.3.1 AQS#acquire(…)"></a>3.3.1 AQS#acquire(…)</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">acquire</span><span class="hljs-params">(<span class="hljs-type">int</span> arg)</span> &#123;<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">this</span>.tryAcquire(arg) &amp;&amp;<br>        <span class="hljs-built_in">this</span>.acquireQueued(<span class="hljs-built_in">this</span>.addWaiter(Node.EXCLUSIVE), arg))<br>        <span class="hljs-built_in">this</span>.selfInterrupt(); <span class="hljs-comment">// 给当前线程设置中断状态 这边给线程设置中断状态 仅仅是为了恢复现场而已 能进到这个分支说明在acquireQueued()方法中检测到这个线程曾经被设置过ture的中断状态 但是彼时为了for轮询抢锁的过程中不至于耗死cpu 没有编程式响应中断 但是把中断状态抹除了 现在再根据当时的状态还原</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -583,8 +587,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>java源码-0x06-AQS</div>
-      <div>https://bannirui.github.io/2023/03/11/java/java源码-0X06-AQS/</div>
+      <div>java-06-AQS</div>
+      <div>https://bannirui.github.io/2023/03/11/java/java-06-AQS/</div>
     </div>
     <div class="license-meta">
       
@@ -628,9 +632,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW">
+                      <a href="/2023/03/11/java/java-10-COW/" title="java-10-COW">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">java源码-0x0A-COW</span>
+                        <span class="hidden-mobile">java-10-COW</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -638,8 +642,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor">
-                        <span class="hidden-mobile">java源码-0x0D-ThreadPoolExecutor</span>
+                      <a href="/2023/03/11/java/java-13-ThreadPoolExecutor/" title="java-13-ThreadPoolExecutor">
+                        <span class="hidden-mobile">java-13-ThreadPoolExecutor</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -662,7 +666,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'cbb27c61586450eaf0fceda9e464c2b1'
+            id: 'e0a23e905a7e66a2ff0328afdd7a7c84'
           }
         )
         var gitalk = new Gitalk(options);

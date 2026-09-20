@@ -19,25 +19,23 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1 宏定义宏定义着实太多，甚至有的嵌套地太深，只能遇到了就记录一下 当然了，很多宏的定义都是跨平台的，所以以linux+gcc的环境为例  JNIEXPORT  JNICALL  JVM_ENTRY  JVM_END   1.1 JNIEXPORT  1.2 JNICALL1#define JNICALL  1.3 JVM_ENTRY1234567#define JVM_ENTRY(result_">
+    <meta name="description" content="整体计划是将Java的源码事无巨细地过一遍  一是弥补一下认知缺陷  二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难  在此过程中完善对计算机OS的知识体系建立   难度很大，过程很大，工程很大，所以能否完结也是待定 阅读顺序   1 java.lang    2 java.util    3 java.util.concurrent    4">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java源码-0x05-宏定义">
-<meta property="og:url" content="https://bannirui.github.io/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/index.html">
+<meta property="og:title" content="java-01-源码阅读清单">
+<meta property="og:url" content="https://bannirui.github.io/2024/03/07/java/java-01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="1 宏定义宏定义着实太多，甚至有的嵌套地太深，只能遇到了就记录一下 当然了，很多宏的定义都是跨平台的，所以以linux+gcc的环境为例  JNIEXPORT  JNICALL  JVM_ENTRY  JVM_END   1.1 JNIEXPORT  1.2 JNICALL1#define JNICALL  1.3 JVM_ENTRY1234567#define JVM_ENTRY(result_">
+<meta property="og:description" content="整体计划是将Java的源码事无巨细地过一遍  一是弥补一下认知缺陷  二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难  在此过程中完善对计算机OS的知识体系建立   难度很大，过程很大，工程很大，所以能否完结也是待定 阅读顺序   1 java.lang    2 java.util    3 java.util.concurrent    4">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/1710002661.png">
-<meta property="article:published_time" content="2024-03-09T16:37:36.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.638Z">
+<meta property="article:published_time" content="2024-03-07T04:19:28.000Z">
+<meta property="article:modified_time" content="2026-09-20T16:23:47.020Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/1710002661.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>java源码-0x05-宏定义 - HEX BLOG</title>
+  <title>java-01-源码阅读清单 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -226,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="java源码-0x05-宏定义"></span>
+            <span id="subtitle" data-typed-text="java-01-源码阅读清单"></span>
           
         </div>
 
@@ -237,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-03-10 00:37" pubdate>
-          2024年3月10日 凌晨
+        <time datetime="2024-03-07 12:19" pubdate>
+          2024年3月7日 中午
         </time>
       </span>
     
@@ -249,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          248 字
+          175 字
         
       </span>
     
@@ -260,7 +258,7 @@
         
         
         
-          3 分钟
+          2 分钟
         
       </span>
     
@@ -333,136 +331,136 @@
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java源码-0x01-源码阅读清单"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">java源码-0x01-源码阅读清单</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x02-Object/" title="java源码-0x02-Object"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">java源码-0x02-Object</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">java源码-0x03-MarkWord</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">java源码-0x04-biasedLocking</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义"
+        <a href="/2024/03/07/java/java-01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java-01-源码阅读清单"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">java源码-0x05-宏定义</span>
+          <span class="category-post">java-01-源码阅读清单</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS"
+        <a href="/2024/03/07/java/java-02-Object/" title="java-02-Object"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x06-AQS</span>
+          <span class="category-post">java-02-Object</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue"
+        <a href="/2024/03/09/java/java-03-MarkWord/" title="java-03-MarkWord"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x07-ArrayBlockingQueue</span>
+          <span class="category-post">java-03-MarkWord</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/" title="java源码-0x08-LinkedBlockingQueue"
+        <a href="/2024/03/09/java/java-04-biasedLocking/" title="java-04-biasedLocking"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x08-LinkedBlockingQueue</span>
+          <span class="category-post">java-04-biasedLocking</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue"
+        <a href="/2024/03/10/java/java-05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java-05-宏定义"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x09-SynchronousQueue</span>
+          <span class="category-post">java-05-宏定义</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW"
+        <a href="/2023/03/11/java/java-06-AQS/" title="java-06-AQS"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0A-COW</span>
+          <span class="category-post">java-06-AQS</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0B-synchronized/" title="java源码-0x0B-synchronized"
+        <a href="/2023/03/11/java/java-07-ArrayBlockingQueue/" title="java-07-ArrayBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0B-synchronized</span>
+          <span class="category-post">java-07-ArrayBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread"
+        <a href="/2023/03/11/java/java-08-LinkedBlockingQueue/" title="java-08-LinkedBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0C-Thread</span>
+          <span class="category-post">java-08-LinkedBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor"
+        <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0D-ThreadPoolExecutor</span>
+          <span class="category-post">java-09-SynchronousQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/04/java/java%E6%BA%90%E7%A0%81-0x0E-Timer/" title="java源码-0x0E-Timer"
+        <a href="/2023/03/11/java/java-10-COW/" title="java-10-COW"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0E-Timer</span>
+          <span class="category-post">java-10-COW</span>
         </a>
       
     
       
       
-        <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector"
+        <a href="/2023/03/11/java/java-11-synchronized/" title="java-11-synchronized"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0F-Selector</span>
+          <span class="category-post">java-11-synchronized</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/10/java/java-12-Thread/" title="java-12-Thread"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java-12-Thread</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/11/java/java-13-ThreadPoolExecutor/" title="java-13-ThreadPoolExecutor"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java-13-ThreadPoolExecutor</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/04/java/java-14-Timer/" title="java-14-Timer"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java-14-Timer</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2023/03/06/java/java-15-Selector/" title="java-15-Selector"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">java-15-Selector</span>
         </a>
       
     
@@ -484,40 +482,425 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">java源码-0x05-宏定义</h1>
+            <h1 id="seo-header">java-01-源码阅读清单</h1>
             
             
               <div class="markdown-body">
                 
-                <h3 id="1-宏定义"><a href="#1-宏定义" class="headerlink" title="1 宏定义"></a>1 宏定义</h3><p>宏定义着实太多，甚至有的嵌套地太深，只能遇到了就记录一下</p>
-<p>当然了，很多宏的定义都是跨平台的，所以以linux+gcc的环境为例</p>
+                <p>整体计划是将Java的源码事无巨细地过一遍</p>
 <ul>
-<li><p><a href="#1">JNIEXPORT</a></p>
+<li><p>一是弥补一下认知缺陷</p>
 </li>
-<li><p><a href="#2">JNICALL</a></p>
+<li><p>二是争取从CPP到Java由底至上地理解Java这个语言，很多时候总会感觉多了一层屏障导致理解困难</p>
 </li>
-<li><p><a href="#3">JVM_ENTRY</a></p>
-</li>
-<li><p><a href="#4">JVM_END</a></p>
+<li><p>在此过程中完善对计算机OS的知识体系建立</p>
 </li>
 </ul>
-<h4 id="1-1-JNIEXPORT"><a href="#1-1-JNIEXPORT" class="headerlink" title="1.1 JNIEXPORT"></a><a id="1">1.1 JNIEXPORT</a></h4><img src="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/1710002661.png" srcset="/img/loading.gif" lazyload class="">
+<p>难度很大，过程很大，工程很大，所以能否完结也是待定</p>
+<h3 id="阅读顺序"><a href="#阅读顺序" class="headerlink" title="阅读顺序"></a>阅读顺序</h3><ul>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#1">1 java.lang</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#2">2 java.util</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#3">3 java.util.concurrent</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#4">4 java.util.concurrent.atomic</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#5">5 java.lang.reflect</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#6">6 java.lang.annotation</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#7">7 java.util.concurrent.locks</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#8">8 java.io</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#9">9 java.nio</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#10">10 java.sql</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#11">11 java.net</a></p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+<a href="#12">12 java.math</a></p>
+</li>
+</ul>
+<h4 id="1-java-lang"><a href="#1-java-lang" class="headerlink" title="1 java.lang"></a><a id="1">1 java.lang</a></h4><ul>
+<li><a href="/2024/03/07/java/java-02-Object/" title="java-02-Object">Object</a>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+String</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractStringBuilder</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+StringBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+StringBuilder</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Boolean</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Byte</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Double</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Float</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Integer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Long</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Short</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Thread</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ThreadLocal</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Enum</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Throwable</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Error</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Exception</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Class</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ClassLoader</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Compiler</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+System</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Package</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Void</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Number</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Math</p>
+</li>
+</ul>
+<h4 id="2-java-util"><a href="#2-java-util" class="headerlink" title="2 java.util"></a><a id="2">2 java.util</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+AbstractList</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractSet </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ArrayList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedList</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+HashMap </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Hashtable</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+HashSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedHashMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LinkedHashSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+TreeMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+TreeSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Vector</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Queue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Stack</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SortedMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SortedSet </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Collections</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Arrays</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Comparator</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Iterator</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Base64 </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Date</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+EventListener</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Random </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SubList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Timer </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+UUID </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+WeakHashMap</p>
+</li>
+</ul>
+<h4 id="3-java-util-concurrent"><a href="#3-java-util-concurrent" class="headerlink" title="3 java.util.concurrent"></a><a id="3">3 java.util.concurrent</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+ConcurrentHashMap</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Executor</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractExecutorService </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ExecutorService </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ThreadPoolExecutor</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BlockingQueue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AbstractQueuedSynchronizer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CountDownLatch</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+FutureTask</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Semaphore</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CyclicBarrier</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CopyOnWriteArrayList </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+SynchronousQueue</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BlockingDeque </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Callable</p>
+</li>
+</ul>
+<h4 id="4-java-util-concurrent-atomic"><a href="#4-java-util-concurrent-atomic" class="headerlink" title="4 java.util.concurrent.atomic"></a><a id="4">4 java.util.concurrent.atomic</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+AtomicBoolean</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicInteger</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicLong </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+AtomicReference</p>
+</li>
+</ul>
+<h4 id="5-java-lang-reflect"><a href="#5-java-lang-reflect" class="headerlink" title="5 java.lang.reflect"></a><a id="5">5 java.lang.reflect</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Field</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Method</p>
+</li>
+</ul>
+<h4 id="6-java-lang-annotation"><a href="#6-java-lang-annotation" class="headerlink" title="6 java.lang.annotation"></a><a id="6">6 java.lang.annotation</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Annotation</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Target</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Inherited</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Retention</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Documented</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ElementType</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Native </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Repeatable</p>
+</li>
+</ul>
+<h4 id="7-java-util-concurrent-locks"><a href="#7-java-util-concurrent-locks" class="headerlink" title="7 java.util.concurrent.locks"></a><a id="7">7 java.util.concurrent.locks</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Lock </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Condition</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ReentrantLock</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ReentrantReadWriteLock</p>
+</li>
+</ul>
+<h4 id="8-java-io"><a href="#8-java-io" class="headerlink" title="8 java.io"></a><a id="8">8 java.io</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+File</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+InputStream</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+OutputStream</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Reader</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Writer</p>
+</li>
+</ul>
+<h4 id="9-java-nio"><a href="#9-java-nio" class="headerlink" title="9 java.nio"></a><a id="9">9 java.nio</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Buffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ByteBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+CharBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+DoubleBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+FloatBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+IntBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+LongBuffer</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ShortBuffer</p>
+</li>
+</ul>
+<h4 id="10-java-sql"><a href="#10-java-sql" class="headerlink" title="10 java.sql"></a><a id="10">10 java.sql</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Connection</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Driver </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+DriverManager </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+JDBCType </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ResultSet</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+Statement</p>
+</li>
+</ul>
+<h4 id="11-java-net"><a href="#11-java-net" class="headerlink" title="11 java.net"></a><a id="11">11 java.net</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+Socket </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+ServerSocket </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URI </p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URL</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+URLEncoder</p>
+</li>
+</ul>
+<h4 id="12-java-math"><a href="#12-java-math" class="headerlink" title="12 java.math"></a><a id="12">12 java.math</a></h4><ul>
+<li><p><input disabled="" type="checkbox"> 
+BigDecimal</p>
+</li>
+<li><p><input disabled="" type="checkbox"> 
+BigInteger</p>
+</li>
+</ul>
 
-<h4 id="1-2-JNICALL"><a href="#1-2-JNICALL" class="headerlink" title="1.2 JNICALL"></a><a id="2">1.2 JNICALL</a></h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> JNICALL</span><br></code></pre></td></tr></table></figure>
-
-<h4 id="1-3-JVM-ENTRY"><a href="#1-3-JVM-ENTRY" class="headerlink" title="1.3 JVM_ENTRY"></a><a id="3">1.3 JVM_ENTRY</a></h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> JVM_ENTRY(result_type, header)                               \</span><br><span class="hljs-meta">extern <span class="hljs-string">&quot;C&quot;</span> &#123;                                                         \</span><br><span class="hljs-meta">  result_type JNICALL header &#123;                                       \</span><br><span class="hljs-meta">    JavaThread* thread=JavaThread::thread_from_jni_environment(env); \</span><br><span class="hljs-meta">    ThreadInVMfromNative __tiv(thread);                              \</span><br><span class="hljs-meta">    debug_only(VMNativeEntryWrapper __vew;)                          \</span><br><span class="hljs-meta">    VM_ENTRY_BASE(result_type, header, thread)</span><br></code></pre></td></tr></table></figure>
-
-<h4 id="1-4-JVM-END"><a href="#1-4-JVM-END" class="headerlink" title="1.4 JVM_END"></a><a id="4">1.4 JVM_END</a></h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> JVM_END &#125; &#125;</span><br></code></pre></td></tr></table></figure>
-
-<h3 id="2-示例"><a href="#2-示例" class="headerlink" title="2 示例"></a>2 示例</h3><h4 id="2-1-JNIEXPORT和JNICALL"><a href="#2-1-JNIEXPORT和JNICALL" class="headerlink" title="2.1 JNIEXPORT和JNICALL"></a>2.1 JNIEXPORT和JNICALL</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">JNIEXPORT <span class="hljs-type">void</span> JNICALL</span><br><span class="hljs-function"><span class="hljs-title">JVM_MonitorWait</span><span class="hljs-params">(JNIEnv *env, jobject obj, jlong ms)</span></span>;<br></code></pre></td></tr></table></figure>
-
-<p>替换为</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">__attribute__((<span class="hljs-built_in">visibility</span>(<span class="hljs-string">&quot;default&quot;</span>)))<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">JVM_MonitorWait</span><span class="hljs-params">(JNIEnv *env, jobject obj, jlong ms)</span></span>;<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-2-JVM-ENTRY和JVM-END"><a href="#2-2-JVM-ENTRY和JVM-END" class="headerlink" title="2.2 JVM_ENTRY和JVM_END"></a>2.2 JVM_ENTRY和JVM_END</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">JVM_ENTRY</span>(<span class="hljs-type">void</span>, <span class="hljs-built_in">JVM_MonitorWait</span>(JNIEnv* env, jobject handle, jlong ms))<br>  <span class="hljs-built_in">JVMWrapper</span>(<span class="hljs-string">&quot;JVM_MonitorWait&quot;</span>);<br>  <span class="hljs-function">Handle <span class="hljs-title">obj</span><span class="hljs-params">(THREAD, JNIHandles::resolve_non_null(handle))</span></span>;<br>  <span class="hljs-function">JavaThreadInObjectWaitState <span class="hljs-title">jtiows</span><span class="hljs-params">(thread, ms != <span class="hljs-number">0</span>)</span></span>;<br>  <span class="hljs-keyword">if</span> (JvmtiExport::<span class="hljs-built_in">should_post_monitor_wait</span>()) &#123;<br>    JvmtiExport::<span class="hljs-built_in">post_monitor_wait</span>((JavaThread *)THREAD, (oop)<span class="hljs-built_in">obj</span>(), ms);<br><br>    <span class="hljs-comment">// The current thread already owns the monitor and it has not yet</span><br>    <span class="hljs-comment">// been added to the wait queue so the current thread cannot be</span><br>    <span class="hljs-comment">// made the successor. This means that the JVMTI_EVENT_MONITOR_WAIT</span><br>    <span class="hljs-comment">// event handler cannot accidentally consume an unpark() meant for</span><br>    <span class="hljs-comment">// the ParkEvent associated with this ObjectMonitor.</span><br>  &#125;<br>  ObjectSynchronizer::<span class="hljs-built_in">wait</span>(obj, ms, CHECK);<br>JVM_END<br></code></pre></td></tr></table></figure>
-
-<p>替换为</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> &#123;<br>  <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">JVM_MonitorWait</span><span class="hljs-params">(JNIEnv* env, jobject handle, jlong ms)</span>)</span><br><span class="hljs-function">  </span>&#123;<br>    JavaThread* thread=JavaThread::<span class="hljs-built_in">thread_from_jni_environment</span>(env);<br>    ThreadInVMfromNative __tiv(thread);<br>    <span class="hljs-built_in">debug_only</span>(VMNativeEntryWrapper __vew;)<br>    <span class="hljs-built_in">VM_ENTRY_BASE</span>(result_type, header, thread)<br>  <span class="hljs-built_in">JVMWrapper</span>(<span class="hljs-string">&quot;JVM_MonitorWait&quot;</span>);<br>  <span class="hljs-function">Handle <span class="hljs-title">obj</span><span class="hljs-params">(THREAD, JNIHandles::resolve_non_null(handle))</span></span>;<br>  <span class="hljs-function">JavaThreadInObjectWaitState <span class="hljs-title">jtiows</span><span class="hljs-params">(thread, ms != <span class="hljs-number">0</span>)</span></span>;<br>  <span class="hljs-keyword">if</span> (JvmtiExport::<span class="hljs-built_in">should_post_monitor_wait</span>())<br>  &#123;<br>    JvmtiExport::<span class="hljs-built_in">post_monitor_wait</span>((JavaThread *)THREAD, (oop)<span class="hljs-built_in">obj</span>(), ms);<br><br>    <span class="hljs-comment">// The current thread already owns the monitor and it has not yet</span><br>    <span class="hljs-comment">// been added to the wait queue so the current thread cannot be</span><br>    <span class="hljs-comment">// made the successor. This means that the JVMTI_EVENT_MONITOR_WAIT</span><br>    <span class="hljs-comment">// event handler cannot accidentally consume an unpark() meant for</span><br>    <span class="hljs-comment">// the ParkEvent associated with this ObjectMonitor.</span><br>  &#125;<br>  ObjectSynchronizer::<span class="hljs-built_in">wait</span>(obj, ms, CHECK);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -564,8 +947,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>java源码-0x05-宏定义</div>
-      <div>https://bannirui.github.io/2024/03/10/java/java源码-0x05-宏定义/</div>
+      <div>java-01-源码阅读清单</div>
+      <div>https://bannirui.github.io/2024/03/07/java/java-01-源码阅读清单/</div>
     </div>
     <div class="license-meta">
       
@@ -577,7 +960,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年3月10日</div>
+          <div>2024年3月7日</div>
         </div>
       
       
@@ -609,9 +992,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/03/28/IDEA/IDEA%E5%86%85%E7%BD%AEmaven%E6%8F%92%E4%BB%B6%E7%A6%81%E7%94%A8http/" title="IDEA内置maven插件禁用http">
+                      <a href="/2024/03/07/java/java-02-Object/" title="java-02-Object">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">IDEA内置maven插件禁用http</span>
+                        <span class="hidden-mobile">java-02-Object</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -619,8 +1002,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking">
-                        <span class="hidden-mobile">java源码-0x04-biasedLocking</span>
+                      <a href="/2024/03/03/Hexo/Hexo%E4%B8%BB%E9%A2%98-Fluid/" title="Hexo主题-Fluid">
+                        <span class="hidden-mobile">Hexo主题-Fluid</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -643,7 +1026,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'cd86bce0f4e9e6cb875a6b90d3257300'
+            id: 'f902412ba02cacfc5b11024c08ad9091'
           }
         )
         var gitalk = new Gitalk(options);

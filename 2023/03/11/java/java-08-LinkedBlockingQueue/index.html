@@ -21,23 +21,23 @@
   
     <meta name="description" content="1 类图  2 构造方法123456789101112131415161718192021222324&#x2F;&#x2F; LinkedBlockingQueue.java&#x2F;&#x2F; take锁    private final ReentrantLock takeLock &#x3D; new ReentrantLock();    &#x2F;&#x2F; put锁    private final ReentrantLock putLock">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java源码-0x08-LinkedBlockingQueue">
-<meta property="og:url" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/index.html">
+<meta property="og:title" content="java-08-LinkedBlockingQueue">
+<meta property="og:url" content="https://bannirui.github.io/2023/03/11/java/java-08-LinkedBlockingQueue/index.html">
 <meta property="og:site_name" content="HEX BLOG">
 <meta property="og:description" content="1 类图  2 构造方法123456789101112131415161718192021222324&#x2F;&#x2F; LinkedBlockingQueue.java&#x2F;&#x2F; take锁    private final ReentrantLock takeLock &#x3D; new ReentrantLock();    &#x2F;&#x2F; put锁    private final ReentrantLock putLock">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/202211221522904.png">
+<meta property="og:image" content="https://bannirui.github.io/2023/03/11/java/java-08-LinkedBlockingQueue/202211221522904.png">
 <meta property="article:published_time" content="2023-03-11T05:48:19.000Z">
-<meta property="article:modified_time" content="2026-03-13T16:33:39.650Z">
+<meta property="article:modified_time" content="2026-09-20T16:21:20.860Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/202211221522904.png">
+<meta name="twitter:image" content="https://bannirui.github.io/2023/03/11/java/java-08-LinkedBlockingQueue/202211221522904.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>java源码-0x08-LinkedBlockingQueue - HEX BLOG</title>
+  <title>java-08-LinkedBlockingQueue - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -226,7 +226,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="java源码-0x08-LinkedBlockingQueue"></span>
+            <span id="subtitle" data-typed-text="java-08-LinkedBlockingQueue"></span>
           
         </div>
 
@@ -333,136 +333,136 @@
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java源码-0x01-源码阅读清单"
+        <a href="/2024/03/07/java/java-01-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95/" title="java-01-源码阅读清单"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x01-源码阅读清单</span>
+          <span class="category-post">java-01-源码阅读清单</span>
         </a>
       
     
       
       
-        <a href="/2024/03/07/java/java%E6%BA%90%E7%A0%81-0x02-Object/" title="java源码-0x02-Object"
+        <a href="/2024/03/07/java/java-02-Object/" title="java-02-Object"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x02-Object</span>
+          <span class="category-post">java-02-Object</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x03-MarkWord/" title="java源码-0x03-MarkWord"
+        <a href="/2024/03/09/java/java-03-MarkWord/" title="java-03-MarkWord"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x03-MarkWord</span>
+          <span class="category-post">java-03-MarkWord</span>
         </a>
       
     
       
       
-        <a href="/2024/03/09/java/java%E6%BA%90%E7%A0%81-0x04-biasedLocking/" title="java源码-0x04-biasedLocking"
+        <a href="/2024/03/09/java/java-04-biasedLocking/" title="java-04-biasedLocking"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x04-biasedLocking</span>
+          <span class="category-post">java-04-biasedLocking</span>
         </a>
       
     
       
       
-        <a href="/2024/03/10/java/java%E6%BA%90%E7%A0%81-0x05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java源码-0x05-宏定义"
+        <a href="/2024/03/10/java/java-05-%E5%AE%8F%E5%AE%9A%E4%B9%89/" title="java-05-宏定义"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x05-宏定义</span>
+          <span class="category-post">java-05-宏定义</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0X06-AQS/" title="java源码-0x06-AQS"
+        <a href="/2023/03/11/java/java-06-AQS/" title="java-06-AQS"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x06-AQS</span>
+          <span class="category-post">java-06-AQS</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue"
+        <a href="/2023/03/11/java/java-07-ArrayBlockingQueue/" title="java-07-ArrayBlockingQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x07-ArrayBlockingQueue</span>
+          <span class="category-post">java-07-ArrayBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/" title="java源码-0x08-LinkedBlockingQueue"
+        <a href="/2023/03/11/java/java-08-LinkedBlockingQueue/" title="java-08-LinkedBlockingQueue"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">java源码-0x08-LinkedBlockingQueue</span>
+          <span class="category-post">java-08-LinkedBlockingQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue"
+        <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x09-SynchronousQueue</span>
+          <span class="category-post">java-09-SynchronousQueue</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0A-COW/" title="java源码-0x0A-COW"
+        <a href="/2023/03/11/java/java-10-COW/" title="java-10-COW"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0A-COW</span>
+          <span class="category-post">java-10-COW</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0B-synchronized/" title="java源码-0x0B-synchronized"
+        <a href="/2023/03/11/java/java-11-synchronized/" title="java-11-synchronized"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0B-synchronized</span>
+          <span class="category-post">java-11-synchronized</span>
         </a>
       
     
       
       
-        <a href="/2023/03/10/java/java%E6%BA%90%E7%A0%81-0x0C-Thread/" title="java源码-0x0C-Thread"
+        <a href="/2023/03/10/java/java-12-Thread/" title="java-12-Thread"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0C-Thread</span>
+          <span class="category-post">java-12-Thread</span>
         </a>
       
     
       
       
-        <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x0D-ThreadPoolExecutor/" title="java源码-0x0D-ThreadPoolExecutor"
+        <a href="/2023/03/11/java/java-13-ThreadPoolExecutor/" title="java-13-ThreadPoolExecutor"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0D-ThreadPoolExecutor</span>
+          <span class="category-post">java-13-ThreadPoolExecutor</span>
         </a>
       
     
       
       
-        <a href="/2023/03/04/java/java%E6%BA%90%E7%A0%81-0x0E-Timer/" title="java源码-0x0E-Timer"
+        <a href="/2023/03/04/java/java-14-Timer/" title="java-14-Timer"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0E-Timer</span>
+          <span class="category-post">java-14-Timer</span>
         </a>
       
     
       
       
-        <a href="/2023/03/06/java/java%E6%BA%90%E7%A0%81-0x0F-Selector/" title="java源码-0x0F-Selector"
+        <a href="/2023/03/06/java/java-15-Selector/" title="java-15-Selector"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">java源码-0x0F-Selector</span>
+          <span class="category-post">java-15-Selector</span>
         </a>
       
     
@@ -484,12 +484,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">java源码-0x08-LinkedBlockingQueue</h1>
+            <h1 id="seo-header">java-08-LinkedBlockingQueue</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="1-类图"><a href="#1-类图" class="headerlink" title="1 类图"></a>1 类图</h2><img src="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x08-LinkedBlockingQueue/202211221522904.png" srcset="/img/loading.gif" lazyload class="">
+                <h2 id="1-类图"><a href="#1-类图" class="headerlink" title="1 类图"></a>1 类图</h2><img src="/2023/03/11/java/java-08-LinkedBlockingQueue/202211221522904.png" srcset="/img/loading.gif" lazyload class="">
 
 <h2 id="2-构造方法"><a href="#2-构造方法" class="headerlink" title="2 构造方法"></a>2 构造方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// LinkedBlockingQueue.java</span><br><br><span class="hljs-comment">// take锁</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">takeLock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReentrantLock</span>();<br>    <br><span class="hljs-comment">// put锁</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ReentrantLock</span> <span class="hljs-variable">putLock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReentrantLock</span>();<br>    <br><span class="hljs-keyword">public</span> <span class="hljs-title function_">LinkedBlockingQueue</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-built_in">this</span>(Integer.MAX_VALUE);<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Creates a &#123;<span class="hljs-doctag">@code</span> LinkedBlockingQueue&#125; with the given (fixed) capacity.</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> capacity the capacity of this queue</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@throws</span> IllegalArgumentException if &#123;<span class="hljs-doctag">@code</span> capacity&#125; is not greater</span><br><span class="hljs-comment">     *         than zero</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">LinkedBlockingQueue</span><span class="hljs-params">(<span class="hljs-type">int</span> capacity)</span> &#123;<br>        <span class="hljs-keyword">if</span> (capacity &lt;= <span class="hljs-number">0</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>();<br>        <span class="hljs-built_in">this</span>.capacity = capacity;<br>        last = head = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Node</span>&lt;E&gt;(<span class="hljs-literal">null</span>); <span class="hljs-comment">// 初始化单链表 头节点跟尾节点都是哑节点</span><br>    &#125;<br></code></pre></td></tr></table></figure>
 
@@ -580,8 +580,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>java源码-0x08-LinkedBlockingQueue</div>
-      <div>https://bannirui.github.io/2023/03/11/java/java源码-0x08-LinkedBlockingQueue/</div>
+      <div>java-08-LinkedBlockingQueue</div>
+      <div>https://bannirui.github.io/2023/03/11/java/java-08-LinkedBlockingQueue/</div>
     </div>
     <div class="license-meta">
       
@@ -625,9 +625,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x09-SynchronousQueue/" title="java源码-0x09-SynchronousQueue">
+                      <a href="/2023/03/11/java/java-09-SynchronousQueue/" title="java-09-SynchronousQueue">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">java源码-0x09-SynchronousQueue</span>
+                        <span class="hidden-mobile">java-09-SynchronousQueue</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -635,8 +635,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/11/java/java%E6%BA%90%E7%A0%81-0x07-ArrayBlockingQueue/" title="java源码-0x07-ArrayBlockingQueue">
-                        <span class="hidden-mobile">java源码-0x07-ArrayBlockingQueue</span>
+                      <a href="/2023/03/11/java/java-07-ArrayBlockingQueue/" title="java-07-ArrayBlockingQueue">
+                        <span class="hidden-mobile">java-07-ArrayBlockingQueue</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -659,7 +659,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '48474b7045bbd8f44c5b79dd72a3e2e6'
+            id: '3e1019c78ed887fd6092efaf0540001b'
           }
         )
         var gitalk = new Gitalk(options);
