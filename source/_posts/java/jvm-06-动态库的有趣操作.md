@@ -1,5 +1,5 @@
 ---
-title: jvm-07-加载动态链接库
+title: jvm-06-动态库的有趣操作
 date: 2023-05-04 13:37:40
 category_bar: true
 categories: jvm

@@ -91,9 +91,10 @@ add_custom_target(hexo_deploy
 )
 
 # 博客目录
-set(POST_DIR "Spring")
+set(POST_DIR "java")
+set(POST_PREFIX "jvm")
 # 博客文章名
-set(POST_NAME "${POST_DIR}-06-用BeanDefinition创建Bean")
+set(POST_NAME "${POST_PREFIX}-11-x")
 # hexo new post
 add_custom_target(hexo_new
         COMMAND ${NODE_ENV} ${NPX_BIN} hexo new post ${POST_NAME} -p /${POST_DIR}/${POST_NAME}.md
