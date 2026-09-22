@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="系统调用。 1 pthread_create1.1 函数原型123intpthread_create(pthread_t *thread, const pthread_attr_t *attr,                   void *(*start_routine)(void *), void *arg);  1.2 详解123456789101112131415161718192021">
+    <meta name="description" content="12345678910111213141516171819202122232425262728293031323334353637383940414243&#x2F;** * 从动态库里面找到3个函数地址保存到ifn里面 * 单纯用系统函数dlopen&#x2F;dlsym * @param jvmpath libjvm.so动态库的路径 &#x2F;home&#x2F;dingrui&#x2F;MyDev&#x2F;cpp&#x2F;jdk&#x2F;build&#x2F;linux">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm-05-pthread系统调用">
-<meta property="og:url" content="https://bannirui.github.io/2023/04/28/java/jvm-06-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/index.html">
+<meta property="og:title" content="jvm-05-加载JVM动态库">
+<meta property="og:url" content="https://bannirui.github.io/2023/05/04/java/jvm-05-%E5%8A%A0%E8%BD%BDJVM%E5%8A%A8%E6%80%81%E5%BA%93/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="系统调用。 1 pthread_create1.1 函数原型123intpthread_create(pthread_t *thread, const pthread_attr_t *attr,                   void *(*start_routine)(void *), void *arg);  1.2 详解123456789101112131415161718192021">
+<meta property="og:description" content="12345678910111213141516171819202122232425262728293031323334353637383940414243&#x2F;** * 从动态库里面找到3个函数地址保存到ifn里面 * 单纯用系统函数dlopen&#x2F;dlsym * @param jvmpath libjvm.so动态库的路径 &#x2F;home&#x2F;dingrui&#x2F;MyDev&#x2F;cpp&#x2F;jdk&#x2F;build&#x2F;linux">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-04-28T06:01:05.000Z">
-<meta property="article:modified_time" content="2026-09-20T15:49:00.216Z">
+<meta property="article:published_time" content="2023-05-04T06:17:45.000Z">
+<meta property="article:modified_time" content="2026-09-22T15:44:08.647Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>jvm-05-pthread系统调用 - HEX BLOG</title>
+  <title>jvm-05-加载JVM动态库 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="jvm-05-pthread系统调用"></span>
+            <span id="subtitle" data-typed-text="jvm-05-加载JVM动态库"></span>
           
         </div>
 
@@ -235,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-04-28 14:01" pubdate>
-          2023年4月28日 下午
+        <time datetime="2023-05-04 14:17" pubdate>
+          2023年5月4日 下午
         </time>
       </span>
     
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          124 字
+          225 字
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         jvm
-        <span class="list-group-count">(11)</span>
+        <span class="list-group-count">(9)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -367,7 +367,7 @@
     
       
       
-        <a href="/2023/04/28/java/jvm-04-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-04-Java入口函数"
+        <a href="/2023/04/28/java/jvm-04-JLI_Launch/" title="jvm-04-Java入口函数"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">jvm-04-Java入口函数</span>
@@ -376,55 +376,37 @@
     
       
       
-        <a href="/2023/04/28/java/jvm-05-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-04-设置运行环境参数"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-04-设置运行环境参数</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/28/java/jvm-06-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-05-pthread系统调用"
+        <a href="/2023/05/04/java/jvm-05-%E5%8A%A0%E8%BD%BDJVM%E5%8A%A8%E6%80%81%E5%BA%93/" title="jvm-05-加载JVM动态库"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">jvm-05-pthread系统调用</span>
+          <span class="category-post">jvm-05-加载JVM动态库</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-07-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-06-加载JVM"
+        <a href="/2023/05/04/java/jvm-06-%E5%8A%A8%E6%80%81%E5%BA%93%E7%9A%84%E6%9C%89%E8%B6%A3%E6%93%8D%E4%BD%9C/" title="jvm-06-动态库的有趣操作"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-06-加载JVM</span>
+          <span class="category-post">jvm-06-动态库的有趣操作</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-08-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-07-加载动态链接库"
+        <a href="/2023/05/04/java/jvm-07-JVM%E7%9A%84%E5%90%AF%E5%8A%A8/" title="jvm-07-JVM的启动"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-07-加载动态链接库</span>
+          <span class="category-post">jvm-07-JVM的启动</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-09-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-08-JVM启动参数"
+        <a href="/2026/09/23/java/jvm-08-JavaMain%E5%B9%B2%E4%BA%86%E4%BB%80%E4%B9%88/" title="jvm-08-JavaMain干了什么"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-08-JVM启动参数</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-10-JVM%E5%90%AF%E5%8A%A8/" title="jvm-09-JVM启动"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-09-JVM启动</span>
+          <span class="category-post">jvm-08-JavaMain干了什么</span>
         </a>
       
     
@@ -446,24 +428,14 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">jvm-05-pthread系统调用</h1>
+            <h1 id="seo-header">jvm-05-加载JVM动态库</h1>
             
             
               <div class="markdown-body">
                 
-                <p>系统调用。</p>
-<h3 id="1-pthread-create"><a href="#1-pthread-create" class="headerlink" title="1 pthread_create"></a>1 pthread_create</h3><h4 id="1-1-函数原型"><a href="#1-1-函数原型" class="headerlink" title="1.1 函数原型"></a>1.1 函数原型</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">pthread_create</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> *thread, <span class="hljs-type">const</span> <span class="hljs-type">pthread_attr_t</span> *attr,</span><br><span class="hljs-params">                   <span class="hljs-type">void</span> *(*start_routine)(<span class="hljs-type">void</span> *), <span class="hljs-type">void</span> *arg)</span>;<br></code></pre></td></tr></table></figure>
+                <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 从动态库里面找到3个函数地址保存到ifn里面</span><br><span class="hljs-comment"> * 单纯用系统函数dlopen/dlsym</span><br><span class="hljs-comment"> * @param jvmpath libjvm.so动态库的路径 /home/dingrui/MyDev/cpp/jdk/build/linux-x86_64-server-slowdebug/jdk/lib/server/libjvm.so</span><br><span class="hljs-comment"> * @param ifn 保存动态库的3个函数地址</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function">jboolean</span><br><span class="hljs-function"><span class="hljs-title">LoadJavaVM</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *jvmpath, InvocationFunctions *ifn)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">void</span> *libjvm;<br><br>    <span class="hljs-built_in">JLI_TraceLauncher</span>(<span class="hljs-string">&quot;JVM path is %s\n&quot;</span>, jvmpath);<br><br>    libjvm = <span class="hljs-built_in">dlopen</span>(jvmpath, RTLD_NOW + RTLD_GLOBAL);<br>    <span class="hljs-keyword">if</span> (libjvm == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">JLI_ReportErrorMessage</span>(DLL_ERROR1, __LINE__);<br>        <span class="hljs-built_in">JLI_ReportErrorMessage</span>(DLL_ERROR2, jvmpath, <span class="hljs-built_in">dlerror</span>());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br>    <span class="hljs-comment">// jvm动态库的这3个函数实现在jni.cpp里面</span><br>    ifn-&gt;CreateJavaVM = (CreateJavaVM_t)<br>        <span class="hljs-built_in">dlsym</span>(libjvm, <span class="hljs-string">&quot;JNI_CreateJavaVM&quot;</span>);<br>    <span class="hljs-keyword">if</span> (ifn-&gt;CreateJavaVM == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">JLI_ReportErrorMessage</span>(DLL_ERROR2, jvmpath, <span class="hljs-built_in">dlerror</span>());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br><br>    ifn-&gt;GetDefaultJavaVMInitArgs = (GetDefaultJavaVMInitArgs_t)<br>        <span class="hljs-built_in">dlsym</span>(libjvm, <span class="hljs-string">&quot;JNI_GetDefaultJavaVMInitArgs&quot;</span>);<br>    <span class="hljs-keyword">if</span> (ifn-&gt;GetDefaultJavaVMInitArgs == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">JLI_ReportErrorMessage</span>(DLL_ERROR2, jvmpath, <span class="hljs-built_in">dlerror</span>());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br><br>    ifn-&gt;GetCreatedJavaVMs = (GetCreatedJavaVMs_t)<br>        <span class="hljs-built_in">dlsym</span>(libjvm, <span class="hljs-string">&quot;JNI_GetCreatedJavaVMs&quot;</span>);<br>    <span class="hljs-keyword">if</span> (ifn-&gt;GetCreatedJavaVMs == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">JLI_ReportErrorMessage</span>(DLL_ERROR2, jvmpath, <span class="hljs-built_in">dlerror</span>());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> JNI_TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h4 id="1-2-详解"><a href="#1-2-详解" class="headerlink" title="1.2 详解"></a>1.2 详解</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs xml">The pthread_create() function is used to create a new thread, with<br>attributes specified by attr, within a process.  If attr is NULL, the<br>default attributes are used.  If the attributes specified by attr are<br>modified later, the thread&#x27;s attributes are not affected.  Upon suc-<br>cessful completion pthread_create() will store the ID of the created<br>thread in the location specified by thread.<br><br>The thread is created executing start_routine with arg as its sole<br>argument.  If the start_routine returns, the effect is as if there was<br>an implicit call to pthread_exit() using the return value of<br>start_routine as the exit status.  Note that the thread in which<br>main() was originally invoked differs from this.  When it returns from<br>main(), the effect is as if there was an implicit call to exit() using<br>the return value of main() as the exit status.<br><br>Upon thread exit the storage for the thread must be reclaimed by<br>another thread via a call to pthread_join().  Alternatively,<br>pthread_detach() may be called on the thread to indicate that the sys-<br>tem may automatically reclaim the thread storage upon exit.  The<br>pthread_attr_setdetachstate() function may be used on the attr argu-<br>ment passed to pthread_create() in order to achieve the same effect as<br>a call to pthread_detach() on the newly created thread.<br><br>The signal state of the new thread is initialized as:<br><br>o   The signal mask is inherited from the creating thread.<br><br>o   The set of signals pending for the new thread is empty.<br></code></pre></td></tr></table></figure>
-
-<h4 id="1-3-返回值"><a href="#1-3-返回值" class="headerlink" title="1.3 返回值"></a>1.3 返回值</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs xml">If successful, the pthread_create() function will return zero.  Other-<br>wise an error number will be returned to indicate the error.<br></code></pre></td></tr></table></figure>
-
-<h3 id="2-pthread-detach"><a href="#2-pthread-detach" class="headerlink" title="2 pthread_detach"></a>2 pthread_detach</h3><h4 id="2-1-函数原型"><a href="#2-1-函数原型" class="headerlink" title="2.1 函数原型"></a>2.1 函数原型</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">pthread_detach</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> thread)</span>;<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-2-详解"><a href="#2-2-详解" class="headerlink" title="2.2 详解"></a>2.2 详解</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml">The pthread_detach() function is used to indicate to the implementa-<br>tion that storage for the thread thread can be reclaimed when the<br>thread terminates.  If thread has not terminated, pthread_detach()<br>will not cause it to terminate.  The effect of multiple<br>pthread_detach() calls on the same target thread is unspecified.<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-3-返回值"><a href="#2-3-返回值" class="headerlink" title="2.3 返回值"></a>2.3 返回值</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml">If successful, the pthread_detach() function will return zero.  Other-<br>wise an error number will be returned to indicate the error.  Note<br>that the function does not change the value of errno as it did for<br>some drafts of the standard.  These early drafts also passed a pointer<br>to pthread_t as the argument.  Beware!<br></code></pre></td></tr></table></figure>
-
+<p>这个系统调用还是很有趣的<a href="/2023/05/04/java/jvm-06-%E5%8A%A8%E6%80%81%E5%BA%93%E7%9A%84%E6%9C%89%E8%B6%A3%E6%93%8D%E4%BD%9C/" title="jvm-06-动态库的有趣操作">jvm-06-动态库的有趣操作</a></p>
 
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
@@ -511,8 +483,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>jvm-05-pthread系统调用</div>
-      <div>https://bannirui.github.io/2023/04/28/java/jvm-06-pthread系统调用/</div>
+      <div>jvm-05-加载JVM动态库</div>
+      <div>https://bannirui.github.io/2023/05/04/java/jvm-05-加载JVM动态库/</div>
     </div>
     <div class="license-meta">
       
@@ -524,7 +496,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年4月28日</div>
+          <div>2023年5月4日</div>
         </div>
       
       
@@ -556,9 +528,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/05/04/java/jvm-08-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-07-加载动态链接库">
+                      <a href="/2023/05/04/java/jvm-07-JVM%E7%9A%84%E5%90%AF%E5%8A%A8/" title="jvm-07-JVM的启动">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">jvm-07-加载动态链接库</span>
+                        <span class="hidden-mobile">jvm-07-JVM的启动</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -566,8 +538,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/04/28/java/jvm-05-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-04-设置运行环境参数">
-                        <span class="hidden-mobile">jvm-04-设置运行环境参数</span>
+                      <a href="/2023/05/04/java/jvm-06-%E5%8A%A8%E6%80%81%E5%BA%93%E7%9A%84%E6%9C%89%E8%B6%A3%E6%93%8D%E4%BD%9C/" title="jvm-06-动态库的有趣操作">
+                        <span class="hidden-mobile">jvm-06-动态库的有趣操作</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -590,7 +562,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '27e14aa25364a3f252b562959a8f5033'
+            id: 'a5cf9d5bc7629875501800dafe550bf5'
           }
         )
         var gitalk = new Gitalk(options);

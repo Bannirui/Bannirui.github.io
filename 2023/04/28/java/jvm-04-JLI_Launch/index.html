@@ -19,15 +19,15 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="JVM启动的前置准备，加载JVM动态链接库，JVM启动涉及到的函数。 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172&#x2F;** * 从jvm的动态链接库中获取出3个启动JVM需要的">
+    <meta name="description" content="这个函数进行了一些列的操作  加载libjjvm 参数解析 Classpath的获取和设置 系统属性设置 JVM初始化&#x2F;    &#x2F;&#x2F; 把jvm动态库里面3个函数地址保存在ifn里面 初始化jvm的时候要用  return JVMInit(&amp;ifn, threadStackSize, argc, argv, mode, what, ret);**&#96;&amp;#9">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm-06-加载JVM">
-<meta property="og:url" content="https://bannirui.github.io/2023/05/04/java/jvm-07-%E5%8A%A0%E8%BD%BDJVM/index.html">
+<meta property="og:title" content="jvm-04-Java入口函数">
+<meta property="og:url" content="https://bannirui.github.io/2023/04/28/java/jvm-04-JLI_Launch/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="JVM启动的前置准备，加载JVM动态链接库，JVM启动涉及到的函数。 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172&#x2F;** * 从jvm的动态链接库中获取出3个启动JVM需要的">
+<meta property="og:description" content="这个函数进行了一些列的操作  加载libjjvm 参数解析 Classpath的获取和设置 系统属性设置 JVM初始化&#x2F;    &#x2F;&#x2F; 把jvm动态库里面3个函数地址保存在ifn里面 初始化jvm的时候要用  return JVMInit(&amp;ifn, threadStackSize, argc, argv, mode, what, ret);**&#96;&amp;#9">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-05-04T06:17:45.000Z">
-<meta property="article:modified_time" content="2026-09-20T15:48:38.916Z">
+<meta property="article:published_time" content="2023-04-28T05:18:56.000Z">
+<meta property="article:modified_time" content="2026-09-22T15:49:28.016Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -35,7 +35,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>jvm-06-加载JVM - HEX BLOG</title>
+  <title>jvm-04-Java入口函数 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="jvm-06-加载JVM"></span>
+            <span id="subtitle" data-typed-text="jvm-04-Java入口函数"></span>
           
         </div>
 
@@ -235,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-05-04 14:17" pubdate>
-          2023年5月4日 下午
+        <time datetime="2023-04-28 13:18" pubdate>
+          2023年4月28日 下午
         </time>
       </span>
     
@@ -247,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          374 字
+          166 字
         
       </span>
     
@@ -258,7 +258,7 @@
         
         
         
-          4 分钟
+          2 分钟
         
       </span>
     
@@ -317,7 +317,7 @@
         aria-expanded="true"
       >
         jvm
-        <span class="list-group-count">(11)</span>
+        <span class="list-group-count">(9)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -367,64 +367,46 @@
     
       
       
-        <a href="/2023/04/28/java/jvm-04-Java%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0/" title="jvm-04-Java入口函数"
+        <a href="/2023/04/28/java/jvm-04-JLI_Launch/" title="jvm-04-Java入口函数"
            class="list-group-item list-group-item-action
-           ">
+           active">
           <span class="category-post">jvm-04-Java入口函数</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-05-%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%8F%82%E6%95%B0/" title="jvm-04-设置运行环境参数"
+        <a href="/2023/05/04/java/jvm-05-%E5%8A%A0%E8%BD%BDJVM%E5%8A%A8%E6%80%81%E5%BA%93/" title="jvm-05-加载JVM动态库"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-04-设置运行环境参数</span>
+          <span class="category-post">jvm-05-加载JVM动态库</span>
         </a>
       
     
       
       
-        <a href="/2023/04/28/java/jvm-06-pthread%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" title="jvm-05-pthread系统调用"
+        <a href="/2023/05/04/java/jvm-06-%E5%8A%A8%E6%80%81%E5%BA%93%E7%9A%84%E6%9C%89%E8%B6%A3%E6%93%8D%E4%BD%9C/" title="jvm-06-动态库的有趣操作"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-05-pthread系统调用</span>
+          <span class="category-post">jvm-06-动态库的有趣操作</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-07-%E5%8A%A0%E8%BD%BDJVM/" title="jvm-06-加载JVM"
+        <a href="/2023/05/04/java/jvm-07-JVM%E7%9A%84%E5%90%AF%E5%8A%A8/" title="jvm-07-JVM的启动"
            class="list-group-item list-group-item-action
-           active">
-          <span class="category-post">jvm-06-加载JVM</span>
+           ">
+          <span class="category-post">jvm-07-JVM的启动</span>
         </a>
       
     
       
       
-        <a href="/2023/05/04/java/jvm-08-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-07-加载动态链接库"
+        <a href="/2026/09/23/java/jvm-08-JavaMain%E5%B9%B2%E4%BA%86%E4%BB%80%E4%B9%88/" title="jvm-08-JavaMain干了什么"
            class="list-group-item list-group-item-action
            ">
-          <span class="category-post">jvm-07-加载动态链接库</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-09-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-08-JVM启动参数"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-08-JVM启动参数</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-10-JVM%E5%90%AF%E5%8A%A8/" title="jvm-09-JVM启动"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-09-JVM启动</span>
+          <span class="category-post">jvm-08-JavaMain干了什么</span>
         </a>
       
     
@@ -446,13 +428,25 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">jvm-06-加载JVM</h1>
+            <h1 id="seo-header">jvm-04-Java入口函数</h1>
             
             
               <div class="markdown-body">
                 
-                <p>JVM启动的前置准备，加载JVM动态链接库，JVM启动涉及到的函数。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 从jvm的动态链接库中获取出3个启动JVM需要的函数 在进行JVM启动时机时直接调用加载出来的函数就行</span><br><span class="hljs-comment"> *   - JNI_CreateJavaVM</span><br><span class="hljs-comment"> *   - JNI_GetDefaultJavaVMInitArgs</span><br><span class="hljs-comment"> *   - JNI_GetCreatedJavaVMs</span><br><span class="hljs-comment"> * @param jvmpath jvm路径 libjvm.dylib的全路径</span><br><span class="hljs-comment"> *                即动态链接库文件 应该是jvm的实现被编译成了动态链接库 在运行时通过插件方式进行使用</span><br><span class="hljs-comment"> *                /jdk/build/macosx-x86_64-server-slowdebug/jdk/lib/server/lib/libjvm.dylib</span><br><span class="hljs-comment"> * @param ifn 从动态链接库中获取指定的3个函数</span><br><span class="hljs-comment"> *              - JNI_CreateJavaVM</span><br><span class="hljs-comment"> *              - JNI_GetDefaultJavaVMInitArgs</span><br><span class="hljs-comment"> *              - JNI_GetCreatedJavaVMs</span><br><span class="hljs-comment"> */</span><br>jboolean<br><span class="hljs-title function_">LoadJavaVM</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *jvmpath, InvocationFunctions *ifn)</span><br>&#123;<br>    Dl_info dlinfo;<br>    <span class="hljs-comment">// 动态链接库打开后的句柄</span><br>    <span class="hljs-type">void</span> *libjvm;<br><br>    JLI_TraceLauncher(<span class="hljs-string">&quot;JVM path is %s\n&quot;</span>, jvmpath);<br><br><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> STATIC_BUILD</span><br>    libjvm = dlopen(jvmpath, RTLD_NOW + RTLD_GLOBAL); <span class="hljs-comment">// 系统调用 打开动态链接库文件</span><br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>    libjvm = dlopen(<span class="hljs-literal">NULL</span>, RTLD_FIRST);<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>    <span class="hljs-keyword">if</span> (libjvm == <span class="hljs-literal">NULL</span>) &#123;<br>        JLI_ReportErrorMessage(DLL_ERROR1, __LINE__);<br>        <span class="hljs-comment">// 通过dlerror显式获取动态链接库的操作失败的出错信息</span><br>        JLI_ReportErrorMessage(DLL_ERROR2, jvmpath, dlerror());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 获取JNI_CreateJavaVM函数</span><br><span class="hljs-comment">     * 声明在jni.h中</span><br><span class="hljs-comment">     * 实现在jni.cpp中</span><br><span class="hljs-comment">     */</span><br>    ifn-&gt;CreateJavaVM = (CreateJavaVM_t)<br>        dlsym(libjvm, <span class="hljs-string">&quot;JNI_CreateJavaVM&quot;</span>);<br>    <span class="hljs-keyword">if</span> (ifn-&gt;CreateJavaVM == <span class="hljs-literal">NULL</span>) &#123;<br>        JLI_ReportErrorMessage(DLL_ERROR2, jvmpath, dlerror());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 获取JNI_GetDefaultJavaVMInitArgs函数</span><br><span class="hljs-comment">     * 声明在jni.h中</span><br><span class="hljs-comment">     * 实现在jni.cpp中</span><br><span class="hljs-comment">     */</span><br>    ifn-&gt;GetDefaultJavaVMInitArgs = (GetDefaultJavaVMInitArgs_t)<br>        dlsym(libjvm, <span class="hljs-string">&quot;JNI_GetDefaultJavaVMInitArgs&quot;</span>);<br>    <span class="hljs-keyword">if</span> (ifn-&gt;GetDefaultJavaVMInitArgs == <span class="hljs-literal">NULL</span>) &#123;<br>        JLI_ReportErrorMessage(DLL_ERROR2, jvmpath, dlerror());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 获取JNI_GetCreatedJavaVMs函数</span><br><span class="hljs-comment">     * 声明在jni.h中</span><br><span class="hljs-comment">     * 实现在jni.cpp中</span><br><span class="hljs-comment">     */</span><br>    ifn-&gt;GetCreatedJavaVMs = (GetCreatedJavaVMs_t)<br>    dlsym(libjvm, <span class="hljs-string">&quot;JNI_GetCreatedJavaVMs&quot;</span>);<br>    <span class="hljs-keyword">if</span> (ifn-&gt;GetCreatedJavaVMs == <span class="hljs-literal">NULL</span>) &#123;<br>        JLI_ReportErrorMessage(DLL_ERROR2, jvmpath, dlerror());<br>        <span class="hljs-keyword">return</span> JNI_FALSE;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> JNI_TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
+                <p>这个函数进行了一些列的操作</p>
+<ul>
+<li>加载libjjvm</li>
+<li>参数解析</li>
+<li>Classpath的获取和设置</li>
+<li>系统属性设置</li>
+<li>JVM初始化<br>&#x2F;    &#x2F;&#x2F; 把jvm动态库里面3个函数地址保存在ifn里面 初始化jvm的时候要用<br>  return JVMInit(&amp;ifn, threadStackSize, argc, argv, mode, what, ret);<br>**&#96;&#96;&#96;jacpp&#96;&#96;</li>
+</ul>
+<p>最重要的是JVM的初始化，但是在JVM初始化过程中有对jvm动态库的3个函数依赖，因此要先把动态库里面那3个函数地址掏出来</p>
+<ul>
+<li><a href="/2023/05/04/java/jvm-05-%E5%8A%A0%E8%BD%BDJVM%E5%8A%A8%E6%80%81%E5%BA%93/" title="jvm-05-加载JVM动态库">jvm-05-加载JVM动态库</a></li>
+<li><a href="/2023/05/04/java/jvm-07-JVM%E7%9A%84%E5%90%AF%E5%8A%A8/" title="jvm-07-JVM的启动">jvm-07-JVM的启动</a></li>
+</ul>
+
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -499,8 +493,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>jvm-06-加载JVM</div>
-      <div>https://bannirui.github.io/2023/05/04/java/jvm-07-加载JVM/</div>
+      <div>jvm-04-Java入口函数</div>
+      <div>https://bannirui.github.io/2023/04/28/java/jvm-04-JLI_Launch/</div>
     </div>
     <div class="license-meta">
       
@@ -512,7 +506,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年5月4日</div>
+          <div>2023年4月28日</div>
         </div>
       
       
@@ -544,9 +538,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/05/04/java/jvm-09-JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/" title="jvm-08-JVM启动参数">
+                      <a href="/2023/05/04/java/jvm-06-%E5%8A%A8%E6%80%81%E5%BA%93%E7%9A%84%E6%9C%89%E8%B6%A3%E6%93%8D%E4%BD%9C/" title="jvm-06-动态库的有趣操作">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">jvm-08-JVM启动参数</span>
+                        <span class="hidden-mobile">jvm-06-动态库的有趣操作</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -554,8 +548,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/05/04/java/jvm-08-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93/" title="jvm-07-加载动态链接库">
-                        <span class="hidden-mobile">jvm-07-加载动态链接库</span>
+                      <a href="/2023/04/27/java/jvm-03-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-03-启动入口">
+                        <span class="hidden-mobile">jvm-03-启动入口</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -578,7 +572,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '67185d00fa0bef7bb8ef631e9a1a6fb6'
+            id: 'b0809ea333f4fe92b476ee73056fdaaf'
           }
         )
         var gitalk = new Gitalk(options);
