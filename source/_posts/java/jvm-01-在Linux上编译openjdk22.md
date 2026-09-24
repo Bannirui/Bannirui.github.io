@@ -83,3 +83,18 @@ make CONF=linux-x86_64-server-slowdebug
 ```
 
 ![](./jvm-01-在Linux上编译openjdk22/1749834411.png)
+
+### 6 用vscode读源码
+
+用Clion内存占用太大，换用vscode
+
+创建当前项目的配置`touch .vscode/settings.json`
+
+```json
+{
+    // HotSpot代码
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/linux-x86_64-server-slowdebug/compile_commands.json",
+    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+}
+```
