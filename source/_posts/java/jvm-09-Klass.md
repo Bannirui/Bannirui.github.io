@@ -109,3 +109,66 @@ void Klass::append_to_sibling_list() {
   debug_only(verify();)
 }
 ```
+
+## 3 HotSpot VM创建Klass类的实例过程
+
+```cpp
+// HotSpot VM创建Klass类的实例过程
+InstanceKlass* InstanceKlass::allocate_instance_klass(const ClassFileParser& parser, TRAPS) {
+  // 计算创建InstanceKlass实例要多大内存空间=InstanKlass本身大小+vtable+itable+nonstatic_oop_map+接口的实现类
+  const int size = InstanceKlass::size(parser.vtable_size(),
+                                       parser.itable_size(),
+                                       nonstatic_oop_map_size(parser.total_oop_map_count()),
+                                       parser.is_interface());
+
+  const Symbol* const class_name = parser.class_name();
+  assert(class_name != nullptr, "invariant");
+  ClassLoaderData* loader_data = parser.loader_data();
+  assert(loader_data != nullptr, "invariant");
+
+  InstanceKlass* ik;
+
+  // Allocation
+  if (parser.is_instance_ref_klass()) {
+    // java.lang.ref.Reference
+    ik = new (loader_data, size, THREAD) InstanceRefKlass(parser);
+  } else if (class_name == vmSymbols::java_lang_Class()) {
+    // mirror - java.lang.Class
+    ik = new (loader_data, size, THREAD) InstanceMirrorKlass(parser);
+  } else if (is_stack_chunk_class(class_name, loader_data)) {
+    // stack chunk
+    ik = new (loader_data, size, THREAD) InstanceStackChunkKlass(parser);
+  } else if (is_class_loader(class_name, parser)) {
+    // class loader - java.lang.ClassLoader
+    ik = new (loader_data, size, THREAD) InstanceClassLoaderKlass(parser);
+  } else {
+    // normal
+    ik = new (loader_data, size, THREAD) InstanceKlass(parser);
+  }
+
+  // Check for pending exception before adding to the loader data and incrementing
+  // class count.  Can get OOM here.
+  if (HAS_PENDING_EXCEPTION) {
+    return nullptr;
+  }
+
+  return ik;
+}
+```
+
+重点是什么，重点是重载了new运算符，控制了C++类实例的内存空间
+
+## 4 Java的元数据为什么没有放到堆上
+
+```cpp
+  /**
+   * 重载了new运算符 目的是控制Klass类实例的空间放在元数据区
+   * Klass一般不会卸载 因此没有放到堆中进行管理 堆是垃圾回收的重点区域 将类的元数据放到堆中时回收的效率会降低
+   */
+  void* operator new(size_t size, ClassLoaderData* loader_data, size_t word_size, TRAPS) throw();
+
+  void* Klass::operator new(size_t size, ClassLoaderData* loader_data, size_t word_size, TRAPS) throw() {
+  // 在元数据区分配内存空间
+  return Metaspace::allocate(loader_data, word_size, MetaspaceObj::ClassType, THREAD);
+}
+```
