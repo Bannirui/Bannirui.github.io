@@ -16,6 +16,8 @@ Klass就是Java对象的具体类型
 
 因为普通的Java类和数组的内存布局方式不同，所以体系派生出两类
 
+![](./jvm-09-Klass/1790256619.png)
+
 - {%post_link java/jvm-10-普通类型InstanceKlass%}
 - {%post_link java/jvm-11-数组类型ArrayKlass%}
 
