@@ -27,9 +27,12 @@ Klass就是Java对象的具体类型
 
 ```cpp
   /**
-   * 数组类型时 _layout_helper的最高位是1 说明是负数
-   * 对象类型时 _layout_helper的最高位是0 说明是正数
-   * 只要判断_layout_helper就可以区分数组和对象
+   * 对象的布局描述
+   * 这个值只可能是3种情况
+   *   - 1 什么都不是 用0表示
+   *   - 2 普通的Java类型 最高位是0 用正数表示 含义是这个Java类的对象创建需要的内存大小
+   *   - 3 Java数组类型 最高位是1 用负数表示 它是一个组合值 包含了tag hsize etype esize
+   * 只要判断_layout_helper是正数还是负数就可以区分数组和对象
    */
   jint        _layout_helper;
 ```
