@@ -19,17 +19,19 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+    <meta name="description" content="这个类实例表示特殊的java.lang.Class类，这个类新增了一个静态属性用来保存静态字段的起始偏移量   1 Java类的静态字段存储12345&#x2F;&#x2F; Klass表示Java类 oop表示Java对象 Java类可能定义了非静态字段 也可能定义了静态字段&#x2F;&#x2F; 非静态字段存储在oop中&#x2F;&#x2F; 静态字段存储在当前Java类的java.lang.Class对象中 而Class的类型就用的是Instan">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jvm-13-表示java_lang_Class类的InstanceMirrorKlass">
 <meta property="og:url" content="https://bannirui.github.io/2026/09/24/java/jvm-13-%E8%A1%A8%E7%A4%BAjava_lang_Class%E7%B1%BB%E7%9A%84InstanceMirrorKlass/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+<meta property="og:description" content="这个类实例表示特殊的java.lang.Class类，这个类新增了一个静态属性用来保存静态字段的起始偏移量   1 Java类的静态字段存储12345&#x2F;&#x2F; Klass表示Java类 oop表示Java对象 Java类可能定义了非静态字段 也可能定义了静态字段&#x2F;&#x2F; 非静态字段存储在oop中&#x2F;&#x2F; 静态字段存储在当前Java类的java.lang.Class对象中 而Class的类型就用的是Instan">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2026/09/24/java/jvm-13-%E8%A1%A8%E7%A4%BAjava_lang_Class%E7%B1%BB%E7%9A%84InstanceMirrorKlass/1790266181.png">
 <meta property="article:published_time" content="2026-09-24T14:05:43.000Z">
-<meta property="article:modified_time" content="2026-09-24T15:18:00.300Z">
+<meta property="article:modified_time" content="2026-09-24T16:13:23.635Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2026/09/24/java/jvm-13-%E8%A1%A8%E7%A4%BAjava_lang_Class%E7%B1%BB%E7%9A%84InstanceMirrorKlass/1790266181.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -247,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          27 字
+          240 字
         
       </span>
     
@@ -258,7 +260,7 @@
         
         
         
-          1 分钟
+          3 分钟
         
       </span>
     
@@ -487,7 +489,12 @@
             
               <div class="markdown-body">
                 
-                
+                <p>这个类实例表示特殊的java.lang.Class类，这个类新增了一个静态属性用来保存静态字段的起始偏移量</p>
+<img src="/2026/09/24/java/jvm-13-%E8%A1%A8%E7%A4%BAjava_lang_Class%E7%B1%BB%E7%9A%84InstanceMirrorKlass/1790266181.png" srcset="/img/loading.gif" lazyload class="">
+
+<h2 id="1-Java类的静态字段存储"><a href="#1-Java类的静态字段存储" class="headerlink" title="1 Java类的静态字段存储"></a>1 Java类的静态字段存储</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// Klass表示Java类 oop表示Java对象 Java类可能定义了非静态字段 也可能定义了静态字段</span><br><span class="hljs-comment">// 非静态字段存储在oop中</span><br><span class="hljs-comment">// 静态字段存储在当前Java类的java.lang.Class对象中 而Class的类型就用的是InstanceMirrorKlass这个Klass表示</span><br><span class="hljs-comment">// 这个字段用来定位静态字段的存储位置</span><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> _offset_of_static_fields;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-怎么计算"><a href="#2-怎么计算" class="headerlink" title="2 怎么计算"></a>2 怎么计算</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 初始化offset_of_static_fields属性</span><br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">init_offset_of_static_fields</span><span class="hljs-params">()</span> </span>&#123;<br>  <span class="hljs-comment">// Cache the offset of the static fields in the Class instance</span><br>  <span class="hljs-built_in">assert</span>(_offset_of_static_fields == <span class="hljs-number">0</span>, <span class="hljs-string">&quot;once&quot;</span>);<br>  <span class="hljs-comment">// Java类创建对象占用的内存多少个字节 oop后面紧跟着就开始存储静态字段的值 所以能定位到静态字段存储在什么位置上</span><br>  _offset_of_static_fields = InstanceMirrorKlass::<span class="hljs-built_in">cast</span>(vmClasses::<span class="hljs-built_in">Class_klass</span>())-&gt;<span class="hljs-built_in">size_helper</span>() &lt;&lt; LogHeapWordSize;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
