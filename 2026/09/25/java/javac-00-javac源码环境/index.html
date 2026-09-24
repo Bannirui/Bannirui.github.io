@@ -19,26 +19,23 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="之前在mac上编译的openjdk源码jvm-00-编译openjdk，两个原因促使我要在Linux上操作一下  mac机子老了，性能不行了，编译一次发烫厉害 一鼓作气，借着这个机会把以前没学的源码重拾  1 安装jdk21作为boot官网下个java21用作openjdk22的boot 1234567mkdir -p MyApp&#x2F;jdk&#x2F;21mv ~&#x2F;MyDownload&#x2F;jdk-21_linu">
+    <meta name="description" content="javac的源码仅仅是jdk工程的一部分，因此整个配置跟jvm环境搭建一样jvm-01-在Linux上编译openjdk22 唯一的区别就是让vscode能识别java项目，进行javac源码的跳转，只要配置.vscode&#x2F;settings.json就行 下面是完整的vscode配置 12345678910111213141516171819202122&amp;#123;    &#x2F;&#x2F; HotSpot代码">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jvm-01-在Linux上编译openjdk22">
-<meta property="og:url" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/index.html">
+<meta property="og:title" content="javac-00-javac源码环境">
+<meta property="og:url" content="https://bannirui.github.io/2026/09/25/java/javac-00-javac%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="之前在mac上编译的openjdk源码jvm-00-编译openjdk，两个原因促使我要在Linux上操作一下  mac机子老了，性能不行了，编译一次发烫厉害 一鼓作气，借着这个机会把以前没学的源码重拾  1 安装jdk21作为boot官网下个java21用作openjdk22的boot 1234567mkdir -p MyApp&#x2F;jdk&#x2F;21mv ~&#x2F;MyDownload&#x2F;jdk-21_linu">
+<meta property="og:description" content="javac的源码仅仅是jdk工程的一部分，因此整个配置跟jvm环境搭建一样jvm-01-在Linux上编译openjdk22 唯一的区别就是让vscode能识别java项目，进行javac源码的跳转，只要配置.vscode&#x2F;settings.json就行 下面是完整的vscode配置 12345678910111213141516171819202122&amp;#123;    &#x2F;&#x2F; HotSpot代码">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
-<meta property="og:image" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png">
-<meta property="article:published_time" content="2025-06-13T14:47:26.000Z">
-<meta property="article:modified_time" content="2026-09-24T17:45:16.049Z">
+<meta property="article:published_time" content="2026-09-24T17:43:58.000Z">
+<meta property="article:modified_time" content="2026-09-24T17:47:11.382Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://bannirui.github.io/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>jvm-01-在Linux上编译openjdk22 - HEX BLOG</title>
+  <title>javac-00-javac源码环境 - HEX BLOG</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -227,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="jvm-01-在Linux上编译openjdk22"></span>
+            <span id="subtitle" data-typed-text="javac-00-javac源码环境"></span>
           
         </div>
 
@@ -238,8 +235,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-06-13 22:47" pubdate>
-          2025年6月13日 晚上
+        <time datetime="2026-09-25 01:43" pubdate>
+          2026年9月25日 凌晨
         </time>
       </span>
     
@@ -250,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          355 字
+          189 字
         
       </span>
     
@@ -261,7 +258,7 @@
         
         
         
-          3 分钟
+          2 分钟
         
       </span>
     
@@ -315,17 +312,17 @@
     
     <div class="category row nomargin-x">
       <a class="category-item 
-          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="jvm"
-        id="heading-6ce80d8ef01f5e98f941f200bba3baee" role="tab" data-toggle="collapse" href="#collapse-6ce80d8ef01f5e98f941f200bba3baee"
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="javac"
+        id="heading-75ebbe73c10d267d17ea3d8fcdc32f15" role="tab" data-toggle="collapse" href="#collapse-75ebbe73c10d267d17ea3d8fcdc32f15"
         aria-expanded="true"
       >
-        jvm
-        <span class="list-group-count">(15)</span>
+        javac
+        <span class="list-group-count">(1)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
-      <div class="category-collapse collapse show" id="collapse-6ce80d8ef01f5e98f941f200bba3baee"
-           role="tabpanel" aria-labelledby="heading-6ce80d8ef01f5e98f941f200bba3baee">
+      <div class="category-collapse collapse show" id="collapse-75ebbe73c10d267d17ea3d8fcdc32f15"
+           role="tabpanel" aria-labelledby="heading-75ebbe73c10d267d17ea3d8fcdc32f15">
         
         
           
@@ -334,136 +331,10 @@
     
       
       
-        <a href="/2023/03/10/java/jvm-00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-00-编译openjdk"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-00-编译openjdk</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-01-在Linux上编译openjdk22"
+        <a href="/2026/09/25/java/javac-00-javac%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83/" title="javac-00-javac源码环境"
            class="list-group-item list-group-item-action
            active">
-          <span class="category-post">jvm-01-在Linux上编译openjdk22</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2025/09/25/java/jvm-02-%E7%94%A8Docker%E4%BD%9C%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" title="jvm-02-用Docker作编译环境"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-02-用Docker作编译环境</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/27/java/jvm-03-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3/" title="jvm-03-启动入口"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-03-启动入口</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/04/28/java/jvm-04-JLI_Launch/" title="jvm-04-Java入口函数"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-04-Java入口函数</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-05-%E5%8A%A0%E8%BD%BDJVM%E5%8A%A8%E6%80%81%E5%BA%93/" title="jvm-05-加载JVM动态库"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-05-加载JVM动态库</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-06-%E5%8A%A8%E6%80%81%E5%BA%93%E7%9A%84%E6%9C%89%E8%B6%A3%E6%93%8D%E4%BD%9C/" title="jvm-06-动态库的有趣操作"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-06-动态库的有趣操作</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2023/05/04/java/jvm-07-JVM%E7%9A%84%E5%90%AF%E5%8A%A8/" title="jvm-07-JVM的启动"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-07-JVM的启动</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2026/09/23/java/jvm-08-JavaMain%E5%B9%B2%E4%BA%86%E4%BB%80%E4%B9%88/" title="jvm-08-JavaMain干了什么"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-08-JavaMain干了什么</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2026/09/24/java/jvm-09-Klass/" title="jvm-09-Klass"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-09-Klass</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2026/09/24/java/jvm-10-%E6%99%AE%E9%80%9A%E7%B1%BB%E5%9E%8BInstanceKlass/" title="jvm-10-普通类型InstanceKlass"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-10-普通类型InstanceKlass</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2026/09/24/java/jvm-11-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8BArrayKlass/" title="jvm-11-数组类型ArrayKlass"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-11-数组类型ArrayKlass</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2026/09/24/java/jvm-12-%E8%A1%A8%E7%A4%BAJava%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E7%9A%84InstanceRefKlass/" title="jvm-12-表示Java引用类型的InstanceRefKlass"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-12-表示Java引用类型的InstanceRefKlass</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2026/09/24/java/jvm-13-%E8%A1%A8%E7%A4%BAjava_lang_Class%E7%B1%BB%E7%9A%84InstanceMirrorKlass/" title="jvm-13-表示java_lang_Class类的InstanceMirrorKlass"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-13-表示java_lang_Class类的InstanceMirrorKlass</span>
-        </a>
-      
-    
-      
-      
-        <a href="/2026/09/24/java/jvm-14-%E8%A1%A8%E7%A4%BAjava_lang_ClassLoader%E7%B1%BB%E7%9A%84InstanceClassLoaderKlass/" title="jvm-14-表示java_lang_ClassLoader类的InstanceClassLoaderKlass"
-           class="list-group-item list-group-item-action
-           ">
-          <span class="category-post">jvm-14-表示java_lang_ClassLoader类的InstanceClassLoaderKlass</span>
+          <span class="category-post">javac-00-javac源码环境</span>
         </a>
       
     
@@ -485,40 +356,15 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">jvm-01-在Linux上编译openjdk22</h1>
+            <h1 id="seo-header">javac-00-javac源码环境</h1>
             
             
               <div class="markdown-body">
                 
-                <p>之前在mac上编译的openjdk源码<a href="/2023/03/10/java/jvm-00-%E7%BC%96%E8%AF%91openjdk/" title="jvm-00-编译openjdk">jvm-00-编译openjdk</a>，两个原因促使我要在Linux上操作一下</p>
-<ul>
-<li>mac机子老了，性能不行了，编译一次发烫厉害</li>
-<li>一鼓作气，借着这个机会把以前没学的源码重拾</li>
-</ul>
-<h3 id="1-安装jdk21作为boot"><a href="#1-安装jdk21作为boot" class="headerlink" title="1 安装jdk21作为boot"></a>1 安装jdk21作为boot</h3><p><a target="_blank" rel="noopener" href="https://www.oracle.com/cn/java/technologies/downloads/#java21">官网下个java21用作openjdk22的boot</a></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">mkdir</span> -p MyApp/jdk/21<br><span class="hljs-built_in">mv</span> ~/MyDownload/jdk-21_linux-x64_bin.deb ~/MyApp/jdk/21<br><span class="hljs-built_in">cd</span> MyApp/jdk/21<br>sudo apt install ./jdk-21_linux-x64_bin.deb<br>dpkg -l|grep jdk<br>java -version<br>dpkg -L jdk-21<br></code></pre></td></tr></table></figure>
-
-<p>在zsh中修改一下对应环境变量</p>
-<img src="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749827522.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="2-下载源码"><a href="#2-下载源码" class="headerlink" title="2 下载源码"></a>2 下载源码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> git@github.com:Bannirui/jdk.git<br><span class="hljs-built_in">cd</span> jdk<br>git remote add upstream git@github.com:openjdk/jdk.git<br>git remote set-url --push upstream no_push<br>git remote -v<br>git checkout jdk_22_study<br></code></pre></td></tr></table></figure>
-
-<h3 id="3-生成make脚本"><a href="#3-生成make脚本" class="headerlink" title="3 生成make脚本"></a>3 生成make脚本</h3><p>先安装依赖</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install autoconf<br>sudo apt install zip<br>sudo apt-get install libasound2-dev<br>sudo apt-get install libcups2-dev<br>sudo apt-get install libfontconfig1-dev<br>sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev<br></code></pre></td></tr></table></figure>
-
-<p>比如在用windows的wsl时，要防止自动推导当前系统以及交叉编译，明确告知就是Linux平台，build和host参数要指定</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">bash configure \<br>--build=x86_64-linux-gnu \<br>--host=x86_64-linux-gnu \<br>--target=x86_64-linux-gnu \<br>--with-debug-level=slowdebug \<br>--with-jvm-variants=server \<br>--with-freetype=bundled \<br>--with-boot-jdk=/home/dingrui/MyApp/jdk/jdk-21.0.10 \<br>--disable-warnings-as-errors<br></code></pre></td></tr></table></figure>
-
-<p>看下build目录下生成的conf名称linux-x86_64-server-slowdebug</p>
-<h3 id="4-编译"><a href="#4-编译" class="headerlink" title="4 编译"></a>4 编译</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">make CONF=linux-x86_64-server-slowdebug compile-commands<br><br>make CONF=linux-x86_64-server-slowdebug<br></code></pre></td></tr></table></figure>
-
-<h3 id="5-运行java"><a href="#5-运行java" class="headerlink" title="5 运行java"></a>5 运行java</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./build/linux-x86_64-server-slowdebug/jdk/bin/java --version<br></code></pre></td></tr></table></figure>
-
-<img src="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/1749834411.png" srcset="/img/loading.gif" lazyload class="">
-
-<h3 id="6-用vscode读源码"><a href="#6-用vscode读源码" class="headerlink" title="6 用vscode读源码"></a>6 用vscode读源码</h3><p>用Clion内存占用太大，换用vscode</p>
-<p>创建当前项目的配置<code>touch .vscode/settings.json</code></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-comment">// HotSpot代码</span><br>    <span class="hljs-attr">&quot;C_Cpp.default.compileCommands&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;$&#123;workspaceFolder&#125;/build/linux-x86_64-server-slowdebug/compile_commands.json&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;C_Cpp.errorSquiggles&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;disabled&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;C_Cpp.default.intelliSenseMode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;linux-gcc-x64&quot;</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+                <p>javac的源码仅仅是jdk工程的一部分，因此整个配置跟jvm环境搭建一样<a href="/2025/06/13/java/jvm-01-%E5%9C%A8Linux%E4%B8%8A%E7%BC%96%E8%AF%91openjdk22/" title="jvm-01-在Linux上编译openjdk22">jvm-01-在Linux上编译openjdk22</a></p>
+<p>唯一的区别就是让vscode能识别java项目，进行javac源码的跳转，只要配置<code>.vscode/settings.json</code>就行</p>
+<p>下面是完整的vscode配置</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-comment">// HotSpot代码</span><br>    <span class="hljs-attr">&quot;C_Cpp.default.compileCommands&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;$&#123;workspaceFolder&#125;/build/linux-x86_64-server-slowdebug/compile_commands.json&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;C_Cpp.errorSquiggles&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;disabled&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;C_Cpp.default.intelliSenseMode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;linux-gcc-x64&quot;</span><span class="hljs-punctuation">,</span><br><br>    <span class="hljs-comment">// javac代码</span><br>    <span class="hljs-attr">&quot;java.project.sourcePaths&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>        <span class="hljs-string">&quot;src/jdk.compiler/share/classes&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-string">&quot;src/java.compiler/share/classes&quot;</span><br>    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br><br>    <span class="hljs-attr">&quot;java.autobuild.enabled&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br><br>    <span class="hljs-attr">&quot;search.exclude&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;**/build/**&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;**/.git/**&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br><br>    <span class="hljs-attr">&quot;editor.formatOnSave&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;files.maxMemoryForLargeFilesMB&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4096</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
@@ -545,7 +391,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/jvm/" class="category-chain-item">jvm</a>
+  <a href="/categories/javac/" class="category-chain-item">javac</a>
   
   
 
@@ -565,8 +411,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>jvm-01-在Linux上编译openjdk22</div>
-      <div>https://bannirui.github.io/2025/06/13/java/jvm-01-在Linux上编译openjdk22/</div>
+      <div>javac-00-javac源码环境</div>
+      <div>https://bannirui.github.io/2026/09/25/java/javac-00-javac源码环境/</div>
     </div>
     <div class="license-meta">
       
@@ -578,7 +424,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年6月13日</div>
+          <div>2026年9月25日</div>
         </div>
       
       
@@ -610,18 +456,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/06/15/Linux/linux-0x10-%E5%BC%80%E5%90%AF%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6/" title="linux-0x10-开启分页机制">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">linux-0x10-开启分页机制</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/06/12/etcd/etcd-0x0D-%E6%B6%88%E6%81%AF%E7%B1%BB%E5%9E%8B/" title="etcd-0x0D-消息类型">
-                        <span class="hidden-mobile">etcd-0x0D-消息类型</span>
+                      <a href="/2026/09/24/java/jvm-14-%E8%A1%A8%E7%A4%BAjava_lang_ClassLoader%E7%B1%BB%E7%9A%84InstanceClassLoaderKlass/" title="jvm-14-表示java_lang_ClassLoader类的InstanceClassLoaderKlass">
+                        <span class="hidden-mobile">jvm-14-表示java_lang_ClassLoader类的InstanceClassLoaderKlass</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -644,7 +484,7 @@
         var options = Object.assign(
           {"clientID":"7045d14418805a2028d8","clientSecret":"1631bb54c4a78f35ba07c1d35af98e8057babde9","repo":"Bannirui.github.io","owner":"Bannirui","admin":["Bannirui"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'ac7e743959021085b7c339f3d44184d6'
+            id: '8ae1bfd4ecf00f5b24cc1e97f55dfaef'
           }
         )
         var gitalk = new Gitalk(options);
