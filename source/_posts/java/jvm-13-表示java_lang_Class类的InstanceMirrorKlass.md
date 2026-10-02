@@ -33,6 +33,6 @@ date: 2026-09-24 22:05:43
 
 ## 3 Hostspot启动过程中怎么初始化Java基本类型的mirror值的
 
-也就是Java基本类型的java.lang.Class是怎么初始化的
+也就是Java基本类型的java.lang.Class对象是怎么初始化的
 
-todo
+见{%post_link java/jvm-03-启动入口%}调用链是怎么执行到`initialize_basic_type_mirrors`函数的

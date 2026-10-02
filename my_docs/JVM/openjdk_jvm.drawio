@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="第 1 页" id="dTczXmJjCxzsLryLJW9k">
-    <mxGraphModel dx="2772" dy="2168" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1967" dy="1755" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -343,20 +343,41 @@
         <mxCell id="xqBKrl-_xXen6gzYIUcA-58" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-57">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-64" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="xqBKrl-_xXen6gzYIUcA-53" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Universe::genesis" vertex="1">
           <mxGeometry height="30" width="114.5" x="1928.5" y="420" as="geometry" />
         </mxCell>
         <mxCell id="xqBKrl-_xXen6gzYIUcA-57" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TypeArrayKlass::create_klass" vertex="1">
-          <mxGeometry height="30" width="170" x="1900.75" y="490" as="geometry" />
+          <mxGeometry height="30" width="170" x="1710.75" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="xqBKrl-_xXen6gzYIUcA-59" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="基本类型的一维数组实例" vertex="1">
-          <mxGeometry height="30" width="145" x="1745" y="490" as="geometry" />
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-59" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="创建基本类型的一维数组实例" vertex="1">
+          <mxGeometry height="30" width="170" x="1530" y="500" as="geometry" />
         </mxCell>
         <mxCell id="xqBKrl-_xXen6gzYIUcA-60" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="入口" vertex="1">
           <mxGeometry height="30" width="60" x="1520" y="-480" as="geometry" />
         </mxCell>
         <mxCell id="xqBKrl-_xXen6gzYIUcA-62" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="main" vertex="1">
           <mxGeometry height="30" width="60" x="1594" y="-480" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-67" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-65">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-63" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SystemDictionary::initialize" vertex="1">
+          <mxGeometry height="30" width="170" x="1928.5" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-68" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-66">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-65" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="vmClasses::resolve_all" vertex="1">
+          <mxGeometry height="30" width="170" x="1928.5" y="565" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-66" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Universe::initialize_basic_type_mirrors" vertex="1">
+          <mxGeometry height="30" width="215" x="1906" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-69" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="创建基本类型的Class对象" vertex="1">
+          <mxGeometry height="30" width="160" x="1740" y="630" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

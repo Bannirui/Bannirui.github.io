@@ -34,7 +34,7 @@ date: 2026-09-24 00:50:14
 
 Hotspot VM在初始化的时候就会创建Java中8个基本类型的一维数组实例TypeArrayKlass
 
-![](./jvm-11-数组类型ArrayKlass/1790952384.png)
+见{%post_link java/jvm-03-启动入口%}调用链是怎么执行到`create_klass`函数的
 
 ### 1.3 构造TypeArrayKlass对象
 
