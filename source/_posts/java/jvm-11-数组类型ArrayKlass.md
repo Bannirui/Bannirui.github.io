@@ -111,3 +111,16 @@ void ArrayKlass::complete_create_array_klass(ArrayKlass* k, Klass* super_klass, 
 - 基本类型的mirror值Class对象创建 {%post_link java/jvm-13-表示java_lang_Class类的InstanceMirrorKlass%}
 
 ## 2 ObjArrayKlass表示数组组件类型是对象类型
+
+它的属性用途是判断数组元素是类还是数组
+
+### 2.1 属性
+
+```cpp
+  // 数组的组件类型 不是元素类型
+  Klass* _element_klass;            // The klass of the elements of this array type
+  // 数组的元素类型 可以是InstanceKlass或者TypeArrayKlass 因此可能是元素类型也可能是TypeArrayKlass
+  // 一维基本类型的数组用TypeArrayKlass表示
+  // 二维基本类型数组用ObjArrayKlass表示 它的bottom_klass是TypeArrayKlass
+  Klass* _bottom_klass;             // The one-dimensional type (InstanceKlass or TypeArrayKlass)
+```
