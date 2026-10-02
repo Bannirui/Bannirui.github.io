@@ -5,7 +5,7 @@ categories: jvm
 date: 2026-09-24 00:50:14
 ---
 
-它是继承自{%post_link java/jvm-09-Klass%}，是所有数组类的抽象基类
+它是继承自{%post_link java/jvm-09-Java类的表示Klass%}，是所有数组类的抽象基类
 
 ```cpp
   // 数组的维度 比如int[][][]的维度就是3
@@ -107,7 +107,7 @@ void ArrayKlass::complete_create_array_klass(ArrayKlass* k, Klass* super_klass, 
 
 涉及到两个流程
 
-- vtable是怎么初始化的 {%post_link java/jvm-09-Klass%}
+- vtable是怎么初始化的 {%post_link java/jvm-09-Java类的表示Klass%}
 - 基本类型的mirror值Class对象创建 {%post_link java/jvm-13-表示java_lang_Class类的InstanceMirrorKlass%}
 
 ## 2 ObjArrayKlass表示数组组件类型是对象类型

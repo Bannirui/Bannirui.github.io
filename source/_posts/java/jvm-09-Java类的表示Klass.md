@@ -1,5 +1,5 @@
 ---
-title: jvm-09-Klass
+title: jvm-09-Java类的表示Klass
 category_bar: true
 categories: jvm
 date: 2026-09-24 00:40:47
