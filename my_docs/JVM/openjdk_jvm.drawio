@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="第 1 页" id="dTczXmJjCxzsLryLJW9k">
-    <mxGraphModel dx="1967" dy="1755" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2772" dy="2168" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -203,6 +203,160 @@
         </mxCell>
         <mxCell id="xqBKrl-_xXen6gzYIUcA-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Java的类都派生自Object 定义了虚方法可以被继承和重写" vertex="1">
           <mxGeometry height="30" width="186" x="360" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-10" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-5">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1625" y="-460" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-11" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-12" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="JLI_Launch" vertex="1">
+          <mxGeometry height="30" width="90" x="1580" y="-420" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="LoadJavaVM" vertex="1">
+          <mxGeometry height="30" width="90" x="1470" y="-340" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-20" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="IniatializeJVM" vertex="1">
+          <mxGeometry height="30" width="90" x="1670" y="-90" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-13" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="JVMInit" vertex="1">
+          <mxGeometry height="30" width="90" x="1670" y="-340" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-15" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="ContinueInNewThread" vertex="1">
+          <mxGeometry height="30" width="130" x="1650" y="-280" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-17" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="CallJavaMainInNewThread" vertex="1">
+          <mxGeometry height="30" width="170" x="1630" y="-220" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-18" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-16" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="JavaMain" vertex="1">
+          <mxGeometry height="30" width="90" x="1670" y="-160" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-35" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-37" connectable="0" parent="xqBKrl-_xXen6gzYIUcA-35" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="调用到jvm动态库的函数" vertex="1">
+          <mxGeometry relative="1" x="-0.0406" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="CreateJavaVM" vertex="1">
+          <mxGeometry height="30" width="90" x="1670" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-23" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-26" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-27" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="jvm动态库" vertex="1">
+          <mxGeometry height="40" width="120" x="2290" y="-160" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-31" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;shape=link;" target="xqBKrl-_xXen6gzYIUcA-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-22" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillStyle=auto;" value="CreateJavaVM" vertex="1">
+          <mxGeometry height="30" width="120" x="2068" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-32" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;shape=link;" target="xqBKrl-_xXen6gzYIUcA-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="GetDefaultJavaVMInitArgs" vertex="1">
+          <mxGeometry height="30" width="160" x="2270" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="GetCreatedJavaVMs" vertex="1">
+          <mxGeometry height="30" width="120" x="2481" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-39" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="JNI_CreateJavaVM" vertex="1">
+          <mxGeometry height="30" width="120" x="2068" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-29" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="JNI_GetDefaultJavaVMInitArgs" vertex="1">
+          <mxGeometry height="30" width="200" x="2250" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-33" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="ifn指针" vertex="1">
+          <mxGeometry height="30" width="60" x="2030" y="-70" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-34" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="jni源码" vertex="1">
+          <mxGeometry height="30" width="60" x="1990" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-41" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-38" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="JNI_CreateJavaVM_inner" vertex="1">
+          <mxGeometry height="30" width="170" x="2043" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-43" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-40" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Threads::create_vm" vertex="1">
+          <mxGeometry height="30" width="145" x="2055.5" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-49" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-45">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-51" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-52" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="xqBKrl-_xXen6gzYIUcA-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-42" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="init_globals2" vertex="1">
+          <mxGeometry height="30" width="114.5" x="2070.75" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-54" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-44" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="universe2_init" vertex="1">
+          <mxGeometry height="30" width="114.5" x="1928.5" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-45" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="javaClasses_init" vertex="1">
+          <mxGeometry height="30" width="114.5" x="2070.75" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-46" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="interpreter_init_code" vertex="1">
+          <mxGeometry height="30" width="114.5" x="2230" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-58" edge="1" parent="1" source="xqBKrl-_xXen6gzYIUcA-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="xqBKrl-_xXen6gzYIUcA-57">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-53" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Universe::genesis" vertex="1">
+          <mxGeometry height="30" width="114.5" x="1928.5" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-57" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TypeArrayKlass::create_klass" vertex="1">
+          <mxGeometry height="30" width="170" x="1900.75" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-59" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="基本类型的一维数组实例" vertex="1">
+          <mxGeometry height="30" width="145" x="1745" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-60" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="入口" vertex="1">
+          <mxGeometry height="30" width="60" x="1520" y="-480" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-62" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="main" vertex="1">
+          <mxGeometry height="30" width="60" x="1594" y="-480" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -172,3 +172,7 @@ InstanceKlass* InstanceKlass::allocate_instance_klass(const ClassFileParser& par
   return Metaspace::allocate(loader_data, word_size, MetaspaceObj::ClassType, THREAD);
 }
 ```
+
+## 5 vtable是怎么初始化的
+
+todo

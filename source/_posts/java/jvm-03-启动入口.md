@@ -5,9 +5,9 @@ category_bar: true
 categories: jvm
 ---
 
-### 1 定位jdk的入口
+## 1 定位jdk的入口
 
-#### 1.1 全局搜索main方法
+### 1.1 全局搜索main方法
 
 我对c\cpp的了解还停留在语言语法层面，对工程构建并不熟悉，因此只能使用原始的方式。
 
@@ -15,7 +15,7 @@ categories: jvm
 
 ![](./jvm-03-启动入口/image-20230427131417621.png)
 
-#### 1.2 启动Java进程
+### 1.2 启动Java进程
 
 ![](./jvm-03-启动入口/image-20230427131631218.png)
 
@@ -30,7 +30,7 @@ public class VMLoaderTest {
 }
 ```
 
-#### 1.3 调用栈
+### 1.3 调用栈
 
 从线程调用栈可以看出来1.1搜索出来的就是Jdk源码的入口main方法所在之处。
 
@@ -38,9 +38,9 @@ public class VMLoaderTest {
 
 ![](./jvm-03-启动入口/image-20230427131959054.png)
 
-### 2 main方法
+## 2 main方法
 
-#### 2.1 场景
+### 2.1 场景
 
 指定一个明确的启动场景，方便更直观地理解代码流程。
 
@@ -50,7 +50,7 @@ public class VMLoaderTest {
 
 而编译好的`java`可执行文件放在哪儿取决于编译的设置，比如我的路径是`build/macosx-x86_64-server-slowdebug/jdk/bin/java`。
 
-#### 2.2 启动参数
+### 2.2 启动参数
 
 ```c
 JNIEXPORT int
@@ -73,7 +73,7 @@ main(int argc, char **argv)
 
 ![](./jvm-03-启动入口/image-20230427153405355.png)
 
-#### 2.2 解析启动参数
+### 2.3 解析启动参数
 
 没有在启动参数中指定预处理可选项的时候，解析出来的就是main方法的启动参数。
 
@@ -121,7 +121,7 @@ main(int argc, char **argv)
     }
 ```
 
-#### 2.3 调用JLI_Launch
+### 2.4 调用JLI_Launch
 
 ```c
 /**
@@ -151,4 +151,8 @@ main(int argc, char **argv)
                    const_cpwildcard, const_javaw, 0);
 ```
 
-![](./jvm-03-启动入口/image-20230427154208275.png)
+{%post_link java/jvm-04-JLI_Launch%}
+
+## 3 启动过程的调用链
+
+![](./jvm-03-启动入口/1790951801.png)
