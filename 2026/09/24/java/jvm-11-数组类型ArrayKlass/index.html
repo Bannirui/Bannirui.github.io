@@ -19,17 +19,20 @@
   <meta name="author" content="dingrui">
   <meta name="keywords" content="">
   
-    <meta name="description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+    <meta name="description" content="它是继承自jvm-09-Klass，是所有数组类的抽象基类 12345&#x2F;&#x2F; 数组的维度 比如int[][][]的维度就是3int      _dimension;         &#x2F;&#x2F; This is n&amp;#x27;th-dimensional array.&#x2F;&#x2F; 数组的多维转换不单单是高维度到低维度 也需要低维度到高维度 所以每个维度都维护了两个指针 指向更高维度和更低维度 每个维度就像用双向链表">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jvm-11-数组类型ArrayKlass">
 <meta property="og:url" content="https://bannirui.github.io/2026/09/24/java/jvm-11-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8BArrayKlass/index.html">
 <meta property="og:site_name" content="HEX BLOG">
-<meta property="og:description" content="var gitalkConfig &#x3D; {&quot;clientID&quot;:&quot;7045d14418805a2028d8&quot;,&quot;clientSecret&quot;:&quot;1631bb54c4a78f35ba07c1d35af98e8057babde9&quot;,&quot;repo&quot;:&quot;Bannirui.github.io&quot;,&quot;owner&quot;:&quot;Bannirui&quot;,&quot;admin&quot;:&quot;Bannirui&quot;,&quot;distractionF">
+<meta property="og:description" content="它是继承自jvm-09-Klass，是所有数组类的抽象基类 12345&#x2F;&#x2F; 数组的维度 比如int[][][]的维度就是3int      _dimension;         &#x2F;&#x2F; This is n&amp;#x27;th-dimensional array.&#x2F;&#x2F; 数组的多维转换不单单是高维度到低维度 也需要低维度到高维度 所以每个维度都维护了两个指针 指向更高维度和更低维度 每个维度就像用双向链表">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bannirui.github.io/2026/09/24/java/jvm-11-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8BArrayKlass/1790951950.png">
+<meta property="og:image" content="https://bannirui.github.io/2026/09/24/java/jvm-11-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8BArrayKlass/1790952384.png">
 <meta property="article:published_time" content="2026-09-23T16:50:14.000Z">
-<meta property="article:modified_time" content="2026-09-23T17:04:10.375Z">
+<meta property="article:modified_time" content="2026-10-02T15:19:40.911Z">
 <meta property="article:author" content="dingrui">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bannirui.github.io/2026/09/24/java/jvm-11-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8BArrayKlass/1790951950.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -247,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          27 字
+          617 字
         
       </span>
     
@@ -258,7 +261,7 @@
         
         
         
-          1 分钟
+          6 分钟
         
       </span>
     
@@ -487,7 +490,30 @@
             
               <div class="markdown-body">
                 
-                
+                <p>它是继承自<a href="/2026/09/24/java/jvm-09-Klass/" title="jvm-09-Klass">jvm-09-Klass</a>，是所有数组类的抽象基类</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 数组的维度 比如int[][][]的维度就是3</span><br><span class="hljs-type">int</span>      _dimension;         <span class="hljs-comment">// This is n&#x27;th-dimensional array.</span><br><span class="hljs-comment">// 数组的多维转换不单单是高维度到低维度 也需要低维度到高维度 所以每个维度都维护了两个指针 指向更高维度和更低维度 每个维度就像用双向链表串起来一样</span><br>Klass* <span class="hljs-keyword">volatile</span> _higher_dimension;  <span class="hljs-comment">// Refers the (n+1)&#x27;th-dimensional array (if present).</span><br>Klass* <span class="hljs-keyword">volatile</span> _lower_dimension;   <span class="hljs-comment">// Refers the (n-1)&#x27;th-dimensional array (if present).</span><br></code></pre></td></tr></table></figure>
+
+<img src="/2026/09/24/java/jvm-11-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8BArrayKlass/1790951950.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>从ArrayKlass的类图知道有两个子类</p>
+<h2 id="1-TypeArrayKlass表示数组组件类型是Java基本类型"><a href="#1-TypeArrayKlass表示数组组件类型是Java基本类型" class="headerlink" title="1 TypeArrayKlass表示数组组件类型是Java基本类型"></a>1 TypeArrayKlass表示数组组件类型是Java基本类型</h2><h3 id="1-1-max-length"><a href="#1-1-max-length" class="headerlink" title="1.1 max_length"></a>1.1 max_length</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 数组允许的最大长度是多少</span><br>jint _max_length;            <span class="hljs-comment">// maximum number of elements allowed in an array</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="1-2-数组类的特点"><a href="#1-2-数组类的特点" class="headerlink" title="1.2 数组类的特点"></a>1.2 数组类的特点</h3><p>数组类和普通类不同，数组类没有对应的Class文件，因此数组类是虚拟机直接创建的</p>
+<p>Hotspot VM在初始化的时候就会创建Java中8个基本类型的一维数组实例TypeArrayKlass</p>
+<img src="/2026/09/24/java/jvm-11-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8BArrayKlass/1790952384.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="1-3-构造TypeArrayKlass对象"><a href="#1-3-构造TypeArrayKlass对象" class="headerlink" title="1.3 构造TypeArrayKlass对象"></a>1.3 构造TypeArrayKlass对象</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 给Java基本类型创建TypeArrayKlass实例</span><br><span class="hljs-comment"> * @param type 哪种Java基本类型</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function">TypeArrayKlass* <span class="hljs-title">TypeArrayKlass::create_klass</span><span class="hljs-params">(BasicType type,</span></span><br><span class="hljs-params"><span class="hljs-function">                                      <span class="hljs-type">const</span> <span class="hljs-type">char</span>* name_str, TRAPS)</span> </span>&#123;<br>  <span class="hljs-comment">// 在Hotspot中 所有的字符串都是用Symbol实例表示的 以达到重用的目的</span><br>  Symbol* sym = <span class="hljs-literal">nullptr</span>;<br>  <span class="hljs-keyword">if</span> (name_str != <span class="hljs-literal">nullptr</span>) &#123;<br>    sym = SymbolTable::<span class="hljs-built_in">new_permanent_symbol</span>(name_str);<br>  &#125;<br><br>  <span class="hljs-comment">// 用系统类加载器加载数组类型</span><br>  ClassLoaderData* null_loader_data = ClassLoaderData::<span class="hljs-built_in">the_null_class_loader_data</span>();<br>  <span class="hljs-comment">// 创建TypeArrayKlass并完成部分属性的初始化</span><br>  TypeArrayKlass* ak = TypeArrayKlass::<span class="hljs-built_in">allocate</span>(null_loader_data, type, sym, CHECK_NULL);<br><br>  <span class="hljs-comment">// Call complete_create_array_klass after all instance variables have been initialized.</span><br>  <span class="hljs-comment">// 初始化TypeArrayKlass中的属性</span><br>  <span class="hljs-built_in">complete_create_array_klass</span>(ak, ak-&gt;<span class="hljs-built_in">super</span>(), ModuleEntryTable::<span class="hljs-built_in">javabase_moduleEntry</span>(), CHECK_NULL);<br><br>  <span class="hljs-comment">// Add all classes to our internal class loader list here,</span><br>  <span class="hljs-comment">// including classes in the bootstrap (null) class loader.</span><br>  <span class="hljs-comment">// Do this step after creating the mirror so that if the</span><br>  <span class="hljs-comment">// mirror creation fails, loaded_classes_do() doesn&#x27;t find</span><br>  <span class="hljs-comment">// an array class without a mirror.</span><br>  null_loader_data-&gt;<span class="hljs-built_in">add_class</span>(ak);<br>  <span class="hljs-built_in">JFR_ONLY</span>(<span class="hljs-built_in">ASSIGN_PRIMITIVE_CLASS_ID</span>(ak);)<br>  <span class="hljs-keyword">return</span> ak;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="1-3-1-创建实例"><a href="#1-3-1-创建实例" class="headerlink" title="1.3.1 创建实例"></a>1.3.1 创建实例</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">TypeArrayKlass* <span class="hljs-title">TypeArrayKlass::allocate</span><span class="hljs-params">(ClassLoaderData* loader_data, BasicType type, Symbol* name, TRAPS)</span> </span>&#123;<br>  <span class="hljs-built_in">assert</span>(TypeArrayKlass::<span class="hljs-built_in">header_size</span>() &lt;= InstanceKlass::<span class="hljs-built_in">header_size</span>(),<br>      <span class="hljs-string">&quot;array klasses must be same size as InstanceKlass&quot;</span>);<br><br>  <span class="hljs-comment">// TypeArrayKlass实例要占用的内存是多大</span><br>  <span class="hljs-type">int</span> size = ArrayKlass::<span class="hljs-built_in">static_size</span>(TypeArrayKlass::<span class="hljs-built_in">header_size</span>());<br>  <span class="hljs-comment">// 重载new运算符为对象分配内存</span><br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">new</span> (loader_data, size, THREAD) <span class="hljs-built_in">TypeArrayKlass</span>(type, name);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="1-3-2-属性初始化"><a href="#1-3-2-属性初始化" class="headerlink" title="1.3.2 属性初始化"></a>1.3.2 属性初始化</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 初始化TypeArrayKlass中的属性</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ArrayKlass::complete_create_array_klass</span><span class="hljs-params">(ArrayKlass* k, Klass* super_klass, ModuleEntry* module_entry, TRAPS)</span> </span>&#123;<br>  k-&gt;<span class="hljs-built_in">initialize_supers</span>(super_klass, <span class="hljs-literal">nullptr</span>, CHECK);<br>  <span class="hljs-comment">// 初始化vtable</span><br>  k-&gt;<span class="hljs-built_in">vtable</span>().<span class="hljs-built_in">initialize_vtable</span>();<br><br>  <span class="hljs-comment">// During bootstrapping, before java.base is defined, the module_entry may not be present yet.</span><br>  <span class="hljs-comment">// These classes will be put on a fixup list and their module fields will be patched once</span><br>  <span class="hljs-comment">// java.base is defined.</span><br>  <span class="hljs-built_in">assert</span>((module_entry != <span class="hljs-literal">nullptr</span>) || ((module_entry == <span class="hljs-literal">nullptr</span>) &amp;&amp; !ModuleEntryTable::<span class="hljs-built_in">javabase_defined</span>()),<br>         <span class="hljs-string">&quot;module entry not available post &quot;</span> JAVA_BASE_NAME <span class="hljs-string">&quot; definition&quot;</span>);<br>  oop <span class="hljs-keyword">module</span> = (module_entry != <span class="hljs-literal">nullptr</span>) ? module_entry-&gt;<span class="hljs-built_in">module</span>() : (oop)<span class="hljs-literal">nullptr</span>;<br>  <span class="hljs-comment">// 初始化了java.lang.Class对象中静态字段的值 这样静态字段就可以正常使用了</span><br>  java_lang_Class::<span class="hljs-built_in">create_mirror</span>(k, <span class="hljs-built_in">Handle</span>(THREAD, k-&gt;<span class="hljs-built_in">class_loader</span>()), <span class="hljs-built_in">Handle</span>(THREAD, <span class="hljs-keyword">module</span>), <span class="hljs-built_in">Handle</span>(), <span class="hljs-built_in">Handle</span>(), CHECK);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>涉及到两个流程</p>
+<ul>
+<li>vtable是怎么初始化的 <a href="/2026/09/24/java/jvm-09-Klass/" title="jvm-09-Klass">jvm-09-Klass</a></li>
+<li>基本类型的mirror值Class对象创建 <a href="/2026/09/24/java/jvm-13-%E8%A1%A8%E7%A4%BAjava_lang_Class%E7%B1%BB%E7%9A%84InstanceMirrorKlass/" title="jvm-13-表示java_lang_Class类的InstanceMirrorKlass">jvm-13-表示java_lang_Class类的InstanceMirrorKlass</a></li>
+</ul>
+<h2 id="2-ObjArrayKlass表示数组组件类型是对象类型"><a href="#2-ObjArrayKlass表示数组组件类型是对象类型" class="headerlink" title="2 ObjArrayKlass表示数组组件类型是对象类型"></a>2 ObjArrayKlass表示数组组件类型是对象类型</h2>
 <div id="gitalk-container"></div>
 <script src="https://cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"><script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
