@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="第 1 页" id="dTczXmJjCxzsLryLJW9k">
-    <mxGraphModel dx="2759" dy="2168" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1967" dy="1755" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -13,7 +13,7 @@
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-40" edge="1" parent="1" source="oSnCfIbTqxkEJGBrm_6g-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="oSnCfIbTqxkEJGBrm_6g-37">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="oSnCfIbTqxkEJGBrm_6g-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="layout_helper成员" vertex="1">
+        <mxCell id="oSnCfIbTqxkEJGBrm_6g-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="layout_helper" vertex="1">
           <mxGeometry height="40" width="120" x="240" y="80" as="geometry" />
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-26" edge="1" parent="1" source="oSnCfIbTqxkEJGBrm_6g-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;dashed=1;" target="oSnCfIbTqxkEJGBrm_6g-20">
@@ -44,7 +44,7 @@
           <mxGeometry height="40" width="120" x="640" y="160" as="geometry" />
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Metadata" vertex="1">
-          <mxGeometry height="40" width="120" x="240" y="-40" as="geometry" />
+          <mxGeometry height="40" width="120" x="240" y="-150" as="geometry" />
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-18" edge="1" parent="1" source="oSnCfIbTqxkEJGBrm_6g-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="oSnCfIbTqxkEJGBrm_6g-2">
           <mxGeometry relative="1" as="geometry" />
@@ -76,7 +76,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="ObjectArrayKlass" vertex="1">
-          <mxGeometry height="40" width="120" x="600" y="280" as="geometry" />
+          <mxGeometry height="40" width="120" x="540" y="280" as="geometry" />
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-16" edge="1" parent="1" source="oSnCfIbTqxkEJGBrm_6g-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="oSnCfIbTqxkEJGBrm_6g-4">
           <mxGeometry relative="1" as="geometry" />
@@ -120,7 +120,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-33" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Klass" vertex="1">
-          <mxGeometry height="40" width="120" x="240" y="40" as="geometry" />
+          <mxGeometry height="40" width="120" x="240" as="geometry" />
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-41" edge="1" parent="1" source="oSnCfIbTqxkEJGBrm_6g-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;dashed=1;" target="oSnCfIbTqxkEJGBrm_6g-28">
           <mxGeometry relative="1" as="geometry" />
@@ -194,6 +194,15 @@
         </mxCell>
         <mxCell id="oSnCfIbTqxkEJGBrm_6g-60" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="8位" vertex="1">
           <mxGeometry height="30" width="60" x="920" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="vtable_len" vertex="1">
+          <mxGeometry height="40" width="120" x="240" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Klass的成员" vertex="1">
+          <mxGeometry height="30" width="80" x="150" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="xqBKrl-_xXen6gzYIUcA-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Java的类都派生自Object 定义了虚方法可以被继承和重写" vertex="1">
+          <mxGeometry height="30" width="186" x="360" y="45" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
