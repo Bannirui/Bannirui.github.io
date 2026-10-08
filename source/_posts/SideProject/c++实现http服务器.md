@@ -3,7 +3,6 @@ title: c++实现http服务器
 category_bar: true
 date: 2026-01-22 16:01:01
 categories: SideProject
-tags: 网络编程
 ---
 
 网络编程是个宽泛的话题，学习技能的有效方式是干中学，通过实现一个网络服务器可以触达网络编程相关的点滴。

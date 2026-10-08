@@ -3,7 +3,6 @@ title: IDEA插件开发
 date: 2023-10-27 13:18:26
 category_bar: true
 categories: SideProject
-tags: IDEA
 ---
 
 故事还得从下面两个插件说起
